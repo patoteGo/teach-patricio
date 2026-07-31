@@ -1,0 +1,41 @@
+name: Sync lesson index
+
+# Auto-regenerates the "Completed lessons" table in README.md from whatever
+# HTML files live in lessons/. Fires whenever a lesson is added or changed.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'lessons/**'
+  workflow_dispatch: # manual run from the Actions tab
+
+permissions:
+  contents: write # lets the bot push the README update back to main
+
+# Idempotent rewrite -> last run wins, safe to cancel a queued one.
+concurrency:
+  group: sync-readme
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Regenerate lesson table in README
+        run: python3 .github/scripts/sync_readme.py
+
+      - name: Commit if README changed
+        run: |
+          git diff --quiet README.md && {
+            echo "README already in sync"
+            exit 0
+          }
+          bot="github-actions[bot]"
+          mail="41898282+${bot}@users.noreply.github.com"
+          git config user.name  "$bot"
+          git config user.email "$mail"
+          git add README.md
+          git commit -m "docs(readme): sync lesson index"
+          git push

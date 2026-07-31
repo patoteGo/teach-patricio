@@ -27,18 +27,29 @@ machine.
 
 ## 📘 Lessons
 
-Each lesson is a self-contained, graphical HTML file. Open it in any browser —
-no build step.
+Each lesson is a self-contained, graphical HTML file — open it in any browser,
+no build step. The **Completed** table below is auto-generated from the
+`lessons/` folder by a GitHub Action on every push, so it never drifts.
 
+<!-- lessons:start -->
 | # | Lesson | Status |
 |---|--------|--------|
-| 01 | [The Core Loop](./lessons/0001-the-core-loop.html) — what Pi *is*, the four tools, the repeating turn | ✅ Done |
-| 02 | Driving the TUI — steering, branching, compaction | 🚧 Planned |
-| 03 | Sessions, `/tree`, and context compaction | 🚧 Planned |
-| 04 | Project context — `AGENTS.md` & `.pi/settings.json` | 🚧 Planned |
-| 05 | Writing your first **skill** | 🚧 Planned |
-| 06 | Extensions — extending Pi without forking it | 🚧 Planned |
-| 07 | Packages & the trust/security model | 🚧 Planned |
+| 01 | [The Core Loop](./lessons/0001-the-core-loop.html) | ✅ Done |
+<!-- lessons:end -->
+
+> ➕ Drop a new `lessons/NNNN-*.html` and push — the table updates itself on
+> the next push (see `.github/workflows/sync-lessons.yml`).
+
+### 🚧 Roadmap
+
+The planned sequence (delete each line as it ships):
+
+- **02** — Driving the TUI: steering, branching, compaction
+- **03** — Sessions, `/tree`, and context compaction
+- **04** — Project context: `AGENTS.md` & `.pi/settings.json`
+- **05** — Writing your first **skill**
+- **06** — Extensions: extending Pi without forking it
+- **07** — Packages & the trust/security model
 
 ## 🗂 Repo map
 
@@ -48,6 +59,7 @@ teach-patricio/
 ├── RESOURCES.md          # Curated, high-trust sources (docs, posts, communities)
 ├── NOTES.md              # Teaching notes & session log (internal)
 ├── README.md             # You are here
+├── .github/              # CI: auto-syncs the lesson table below
 ├── lessons/              # Graphical, self-contained HTML lessons
 │   └── 0001-the-core-loop.html
 ├── learning-records/     # One short markdown note per learning session
