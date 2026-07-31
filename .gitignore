@@ -1,0 +1,14 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor / IDE cruft
+.vscode/
+.idea/
+*.swp
+
+# Logs
+*.log
+
+# Local-only notes (never leave the machine)
+NOTES.local.md

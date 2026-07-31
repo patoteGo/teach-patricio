@@ -1,0 +1,722 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pi · Lesson 1 — The Core Loop</title>
+    <link rel="stylesheet" href="../assets/style.css" />
+  </head>
+  <body>
+    <article class="lesson">
+      <!-- ===================== HERO ===================== -->
+      <header class="hero">
+        <span class="eyebrow">⬡ Lesson 01 · Foundations</span>
+        <h1>Pi is a loop,<br />not a chat box.</h1>
+        <p class="lead">
+          Before any power move, lock in the one mental model that makes every
+          feature click: what Pi actually <em>is</em>, the four tools it hands
+          the model, and the turn that repeats until your job is done.
+        </p>
+        <p class="lesson-nav-top">
+          ↑ Part of the <a href="../MISSION.md">Pi Power-User</a> course · next:
+          <a href="./0002-driving-the-tui.html">Driving the TUI</a>
+        </p>
+      </header>
+
+      <!-- ===================== 1. WHAT PI IS ===================== -->
+      <h2 class="section"><span class="num">1</span>What Pi actually is</h2>
+      <p class="kicker">
+        One sentence to anchor everything: Pi is a
+        <strong>minimal terminal harness</strong> that loops a model over a
+        handful of file-and-shell tools. It is deliberately not an IDE, not an
+        agent framework, not a chat app.
+      </p>
+
+      <!-- SVG: the minimal core -->
+      <div style="margin: 24px 0 8px">
+        <svg
+          viewBox="0 0 820 250"
+          width="100%"
+          role="img"
+          aria-label="Pi minimal core: harness hosting a model, four tools, and a session log"
+        >
+          <defs>
+            <linearGradient id="gPi" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#6c4bf0" />
+              <stop offset="1" stop-color="#0fb9a4" />
+            </linearGradient>
+          </defs>
+
+          <!-- the harness shell -->
+          <rect
+            x="14"
+            y="20"
+            width="792"
+            height="210"
+            rx="22"
+            fill="#efeafb"
+            stroke="#d9cefb"
+            stroke-width="2"
+          />
+          <text
+            x="40"
+            y="52"
+            font-family="Space Grotesk"
+            font-size="15"
+            font-weight="700"
+            fill="#6c4bf0"
+            letter-spacing="1.5"
+          >
+            PI · THE HARNESS
+          </text>
+
+          <!-- model (brain) -->
+          <circle cx="150" cy="135" r="54" fill="url(#gPi)" />
+          <text
+            x="150"
+            y="131"
+            text-anchor="middle"
+            font-family="Space Grotesk"
+            font-size="15"
+            font-weight="700"
+            fill="#fff"
+          >
+            LLM
+          </text>
+          <text
+            x="150"
+            y="150"
+            text-anchor="middle"
+            font-family="Inter"
+            font-size="10.5"
+            fill="rgba(255,255,255,.85)"
+          >
+            the brain
+          </text>
+
+          <!-- tools (hands) -->
+          <g font-family="JetBrains Mono" font-size="12" font-weight="700">
+            <rect
+              x="300"
+              y="92"
+              width="92"
+              height="40"
+              rx="10"
+              fill="#fff"
+              stroke="#0fb9a4"
+              stroke-width="2"
+            />
+            <text x="346" y="117" text-anchor="middle" fill="#0fb9a4">
+              read
+            </text>
+            <rect
+              x="300"
+              y="138"
+              width="92"
+              height="40"
+              rx="10"
+              fill="#fff"
+              stroke="#0fb9a4"
+              stroke-width="2"
+            />
+            <text x="346" y="163" text-anchor="middle" fill="#0fb9a4">
+              write
+            </text>
+            <rect
+              x="402"
+              y="92"
+              width="92"
+              height="40"
+              rx="10"
+              fill="#fff"
+              stroke="#0fb9a4"
+              stroke-width="2"
+            />
+            <text x="448" y="117" text-anchor="middle" fill="#0fb9a4">
+              edit
+            </text>
+            <rect
+              x="402"
+              y="138"
+              width="92"
+              height="40"
+              rx="10"
+              fill="#fff"
+              stroke="#0fb9a4"
+              stroke-width="2"
+            />
+            <text x="448" y="163" text-anchor="middle" fill="#0fb9a4">
+              bash
+            </text>
+          </g>
+          <text
+            x="397"
+            y="78"
+            text-anchor="middle"
+            font-family="Space Grotesk"
+            font-size="12"
+            font-weight="600"
+            fill="#4a4866"
+          >
+            4 TOOLS (the hands)
+          </text>
+
+          <!-- session (memory) -->
+          <rect
+            x="560"
+            y="88"
+            width="150"
+            height="92"
+            rx="14"
+            fill="#fff"
+            stroke="#f59e0b"
+            stroke-width="2"
+          />
+          <text
+            x="635"
+            y="112"
+            text-anchor="middle"
+            font-family="Space Grotesk"
+            font-size="12.5"
+            font-weight="700"
+            fill="#f59e0b"
+          >
+            SESSION
+          </text>
+          <text
+            x="635"
+            y="130"
+            text-anchor="middle"
+            font-family="JetBrains Mono"
+            font-size="10.5"
+            fill="#4a4866"
+          >
+            branching
+          </text>
+          <text
+            x="635"
+            y="146"
+            text-anchor="middle"
+            font-family="JetBrains Mono"
+            font-size="10.5"
+            fill="#4a4866"
+          >
+            JSONL log
+          </text>
+          <text
+            x="635"
+            y="162"
+            text-anchor="middle"
+            font-family="JetBrains Mono"
+            font-size="10.5"
+            fill="#4a4866"
+          >
+            (the memory)
+          </text>
+
+          <!-- connecting flow lines -->
+          <path
+            d="M204 135 C 250 135, 255 135, 296 135"
+            stroke="#6c4bf0"
+            stroke-width="2.5"
+            fill="none"
+            marker-end="url(#arrow)"
+          />
+          <path
+            d="M498 135 C 540 135, 545 135, 556 134"
+            stroke="#6c4bf0"
+            stroke-width="2.5"
+            fill="none"
+            marker-end="url(#arrow)"
+          />
+          <path
+            d="M635 88 C 635 40, 300 40, 150 81"
+            stroke="#6c4bf0"
+            stroke-width="2.5"
+            stroke-dasharray="5 5"
+            fill="none"
+            marker-end="url(#arrow)"
+            opacity=".6"
+          />
+          <defs>
+            <marker
+              id="arrow"
+              markerWidth="9"
+              markerHeight="9"
+              refX="6"
+              refY="3"
+              orient="auto"
+            >
+              <path d="M0,0 L6,3 L0,6 Z" fill="#6c4bf0" />
+            </marker>
+          </defs>
+        </svg>
+      </div>
+      <p class="cite">
+        Source:
+        <a href="https://pi.dev/docs/latest" target="_blank" rel="noopener"
+          >Pi docs — Overview</a
+        >
+        · "By default, pi gives the model four tools:
+        <code class="inline">read</code>, <code class="inline">write</code>,
+        <code class="inline">edit</code>, and <code class="inline">bash</code>."
+      </p>
+
+      <div class="callout key">
+        <p>
+          <strong>The reframe:</strong> Pi is the <em>host</em>. The model is
+          the brain, the four tools are its hands, the session JSONL is its
+          memory. Pi itself owns almost no features on purpose — you bolt those
+          on. Everything "missing" (sub-agents, plan mode, permissions…) is a
+          <em>choice</em>, not an oversight.
+        </p>
+      </div>
+
+      <!-- ===================== 2. THE FOUR TOOLS ===================== -->
+      <h2 class="section"><span class="num">2</span>The four default tools</h2>
+      <p class="kicker">
+        These four are always on. Pi has three more available (<code
+          class="inline"
+          >grep</code
+        >, <code class="inline">find</code>, <code class="inline">ls</code>)
+        that you opt into — but the model's whole world starts here.
+      </p>
+
+      <div class="grid cols-4" style="margin-top: 18px">
+        <div class="card">
+          <div class="badge" style="background: #0fb9a4">R</div>
+          <h4>read</h4>
+          <p>
+            Read a file (text or image). The model's eyes. Truncated to keep
+            context lean.
+          </p>
+          <div class="sig">read(path)</div>
+        </div>
+        <div class="card">
+          <div class="badge" style="background: #6c4bf0">W</div>
+          <h4>write</h4>
+          <p>
+            Create or overwrite a file wholesale. New files or full rewrites.
+          </p>
+          <div class="sig">write(path, content)</div>
+        </div>
+        <div class="card">
+          <div class="badge" style="background: #f59e0b">E</div>
+          <h4>edit</h4>
+          <p>
+            Surgical text replacement — multiple exact swaps in one call. The
+            diff engine.
+          </p>
+          <div class="sig">edit(path, edits[])</div>
+        </div>
+        <div class="card">
+          <div class="badge" style="background: #ef476f">$</div>
+          <h4>bash</h4>
+          <p>
+            Run any shell command. Test, build, grep, git — full system access.
+          </p>
+          <div class="sig">bash(command)</div>
+        </div>
+      </div>
+      <p class="cite">
+        Source:
+        <a href="https://pi.dev/docs/latest" target="_blank" rel="noopener"
+          >Pi CLI Reference</a
+        >
+        · built-in tools:
+        <code class="inline">read bash edit write grep find ls</code> · scope
+        with <code class="inline">--tools</code> /
+        <code class="inline">--exclude-tools</code>.
+      </p>
+
+      <!-- ===================== 3. THE TURN LOOP ===================== -->
+      <h2 class="section"><span class="num">3</span>The turn loop</h2>
+      <p class="kicker">
+        This is the single most important picture in the whole course. A
+        <em>turn</em> is "model reasons → maybe calls tools → sees results →
+        reasons again". The loop repeats until the model stops calling tools and
+        replies.
+      </p>
+
+      <div class="grid cols-2" style="align-items: center; margin-top: 18px">
+        <!-- circular SVG loop -->
+        <div>
+          <svg
+            viewBox="0 0 400 400"
+            width="100%"
+            role="img"
+            aria-label="The turn loop, five steps in a circle"
+          >
+            <defs>
+              <marker
+                id="a2"
+                markerWidth="10"
+                markerHeight="10"
+                refX="7"
+                refY="3"
+                orient="auto"
+              >
+                <path d="M0,0 L7,3 L0,6 Z" fill="#6c4bf0" />
+              </marker>
+            </defs>
+            <!-- ring -->
+            <circle
+              cx="200"
+              cy="200"
+              r="130"
+              fill="none"
+              stroke="#e7e5f0"
+              stroke-width="2"
+              stroke-dasharray="3 6"
+            />
+            <text
+              x="200"
+              y="196"
+              text-anchor="middle"
+              font-family="Space Grotesk"
+              font-size="13"
+              font-weight="700"
+              fill="#6c4bf0"
+            >
+              AGENT
+            </text>
+            <text
+              x="200"
+              y="214"
+              text-anchor="middle"
+              font-family="Space Grotesk"
+              font-size="13"
+              font-weight="700"
+              fill="#6c4bf0"
+            >
+              LOOP
+            </text>
+
+            <!-- arcs between nodes (clockwise) -->
+            <g fill="none" stroke="#6c4bf0" stroke-width="2.5">
+              <path
+                d="M 246 75  A 130 130 0 0 1 325 146"
+                marker-end="url(#a2)"
+              />
+              <path
+                d="M 333 236 A 130 130 0 0 1 259 324"
+                marker-end="url(#a2)"
+              />
+              <path
+                d="M 152 328 A 130 130 0 0 1 67 250"
+                marker-end="url(#a2)"
+              />
+              <path
+                d="M 67 150  A 130 130 0 0 1 144 73"
+                marker-end="url(#a2)"
+              />
+            </g>
+
+            <!-- nodes -->
+            <g font-family="Space Grotesk" font-weight="700" fill="#fff">
+              <circle cx="200" cy="70" r="30" fill="#6c4bf0" />
+              <text x="200" y="76" text-anchor="middle" font-size="17">1</text>
+              <circle cx="324" cy="160" r="30" fill="#6c4bf0" />
+              <text x="324" y="166" text-anchor="middle" font-size="17">2</text>
+              <circle cx="276" cy="305" r="30" fill="#0fb9a4" />
+              <text x="276" y="311" text-anchor="middle" font-size="17">3</text>
+              <circle cx="124" cy="305" r="30" fill="#f59e0b" />
+              <text x="124" y="311" text-anchor="middle" font-size="17">4</text>
+              <circle cx="76" cy="160" r="30" fill="#0fb9a4" />
+              <text x="76" y="166" text-anchor="middle" font-size="17">5</text>
+            </g>
+          </svg>
+        </div>
+
+        <!-- steps detail -->
+        <div>
+          <ol style="margin: 0; padding-left: 22px; line-height: 1.5">
+            <li style="margin-bottom: 10px">
+              <strong>You prompt.</strong> Type a request + optional
+              <code class="inline">@file</code> refs.
+              <span class="kicker"
+                >→ <code class="inline">before_agent_start</code></span
+              >
+            </li>
+            <li style="margin-bottom: 10px">
+              <strong>Model reasons.</strong> It thinks (the collapsible
+              thinking block) and emits a response — either text, or tool
+              <em>calls</em>.
+            </li>
+            <li style="margin-bottom: 10px; color: #0fb9a4">
+              <strong>It calls tools.</strong> e.g.
+              <code class="inline">read</code> three files, then
+              <code class="inline">bash npm test</code>.
+              <span class="kicker"
+                >→ <code class="inline">tool_call</code></span
+              >
+            </li>
+            <li style="margin-bottom: 10px; color: #f59e0b">
+              <strong>Pi runs them.</strong> The harness executes each call and
+              feeds results back — not the model's runtime, <em>Pi's</em>.
+            </li>
+            <li style="color: #0fb9a4">
+              <strong>Results return.</strong> The loop jumps to step 2 with new
+              context. Repeat until the model replies in plain text.
+              <span class="kicker"
+                >→ <code class="inline">turn_end</code> /
+                <code class="inline">agent_settled</code></span
+              >
+            </li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="callout tip">
+        <p>
+          <strong>Power insight:</strong> while the loop runs you are
+          <em>not</em> stuck waiting. Press <span class="kbd">Enter</span> to
+          queue a <strong>steering</strong> message (delivered after the current
+          tool batch) or <span class="kbd">Alt</span>+<span class="kbd"
+            >Enter</span
+          >
+          for a <strong>follow-up</strong> (delivered after all work finishes).
+          You steer a live loop — you don't block it.
+        </p>
+      </div>
+      <p class="cite">
+        Sources:
+        <a href="https://pi.dev/docs/latest" target="_blank" rel="noopener"
+          >Interactive mode · Message Queue</a
+        >
+        · extension event lifecycle in
+        <a
+          href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/extensions.md"
+          target="_blank"
+          rel="noopener"
+          >docs/extensions.md</a
+        >.
+      </p>
+
+      <!-- ===================== 4. ANATOMY ===================== -->
+      <h2 class="section"><span class="num">4</span>Anatomy of one turn</h2>
+      <p class="kicker">
+        A real exchange, annotated. Watch the loop fire twice before the model
+        is done.
+      </p>
+
+      <pre
+        class="block"
+      ><span class="c"># 1 ── you prompt ──────────────────────────────────────────</span>
+&gt; <span class="s">"Add a health check endpoint and make sure tests pass"</span>
+
+<span class="c"># 2 ── turn 1: model reasons, calls tools ──────────────────</span>
+🧠 thinking: <span class="c">(collapsible) I'll look at the existing routes…</span>
+🔧 <span class="k">read</span>  src/server.ts
+🔧 <span class="k">read</span>  src/routes.ts
+🔧 <span class="k">bash</span>  <span class="s">npm test 2&gt;&amp;1 | tail -20</span>
+
+<span class="c"># 4/5 ── Pi runs them, results flow back into context ─────</span>
+✓ server.ts: 142 lines · routes.ts: 88 lines
+✓ tests: <span class="s">47 passed</span>
+
+<span class="c"># 2 ── turn 2: model reasons again with that new context ──</span>
+🧠 thinking: <span class="c">add GET /health, return 200…</span>
+🔧 <span class="k">edit</span>  src/routes.ts   <span class="c">(insert handler)</span>
+🔧 <span class="k">bash</span>  <span class="s">npm test</span>
+✓ tests: <span class="s">48 passed</span>
+
+<span class="c"># loop ends ── model replies in plain text ───────────────</span>
+💬 Done. Added <span class="k">GET /health</span> → <span class="s">200 OK</span>; suite is green (48/48).</pre>
+
+      <div class="callout warn">
+        <p>
+          <strong>The number that matters:</strong> each
+          <span class="kbd">🔧</span> is a round-trip that consumes context +
+          tokens. Long sessions fill the window — that's exactly what
+          <em>compaction</em> (a later lesson) exists to manage. The whole loop
+          is logged to one branching JSONL file you can rewind anytime with
+          <code class="inline">/tree</code>.
+        </p>
+      </div>
+
+      <!-- ===================== 5. PHILOSOPHY / OMISSIONS ===================== -->
+      <h2 class="section">
+        <span class="num">5</span>What Pi deliberately omits
+      </h2>
+      <p class="kicker">
+        Reading this grid is what turns "why doesn't Pi have X?" into "ah, X is
+        a choice I make." Every crossed-out item has an explicit Pi-native
+        alternative.
+      </p>
+
+      <div class="grid cols-2" style="margin-top: 18px">
+        <div class="card" style="border-left: 4px solid #ef476f">
+          <h4>🚫 No MCP servers</h4>
+          <p>
+            Build a CLI tool with a README (a <em>skill</em>), or add MCP via an
+            extension.
+          </p>
+        </div>
+        <div class="card" style="border-left: 4px solid #ef476f">
+          <h4>🚫 No sub-agents</h4>
+          <p>
+            Spawn Pi instances in tmux, build your own with extensions, or
+            install a package.
+          </p>
+        </div>
+        <div class="card" style="border-left: 4px solid #ef476f">
+          <h4>🚫 No permission popups</h4>
+          <p>
+            Run in a container, or build a confirmation flow with an extension.
+          </p>
+        </div>
+        <div class="card" style="border-left: 4px solid #ef476f">
+          <h4>🚫 No plan mode · no to-dos</h4>
+          <p>Write plans/TODOs to a file — or, again, an extension.</p>
+        </div>
+        <div class="card" style="border-left: 4px solid #ef476f">
+          <h4>🚫 No background bash</h4>
+          <p>Use tmux. Full observability, direct interaction, no magic.</p>
+        </div>
+        <div class="card" style="border-left: 4px solid #0fb9a4">
+          <h4>✅ Instead, four primitives</h4>
+          <p>
+            <strong>Skills · Extensions · Prompt Templates · Packages</strong> —
+            the entire power-user surface. That's the rest of this course.
+          </p>
+        </div>
+      </div>
+      <p class="cite">
+        Source:
+        <a
+          href="https://mariozechner.at/posts/2025-11-30-pi-coding-agent/"
+          target="_blank"
+          rel="noopener"
+          >Mario Zechner — "Pi Coding Agent" (design rationale)</a
+        >
+        · also
+        <a
+          href="https://mariozechner.at/posts/2025-11-02-what-if-you-dont-need-mcp/"
+          target="_blank"
+          rel="noopener"
+          >"What if you don't need MCP at all?"</a
+        >
+      </p>
+
+      <!-- ===================== QUIZ ===================== -->
+      <h2 class="section"><span class="num">6</span>Check your model</h2>
+      <p class="kicker">
+        Retrieval beats re-reading. Pick an answer — feedback is instant. (Every
+        option is the same length, on purpose: no layout tells you the answer.)
+      </p>
+
+      <div class="quiz" id="q1">
+        <div class="q">Q1. What is Pi's core design philosophy?</div>
+        <div class="options" data-answer="Extend not fork">
+          <button class="opt">Extend not fork</button>
+          <button class="opt">Batteries included</button>
+          <button class="opt">Many built-ins</button>
+          <button class="opt">Always confirm</button>
+        </div>
+        <div class="verdict"></div>
+      </div>
+
+      <div class="quiz" id="q2">
+        <div class="q">Q2. Who actually executes a tool call?</div>
+        <div class="options" data-answer="Pi harness">
+          <button class="opt">Pi harness</button>
+          <button class="opt">The model</button>
+          <button class="opt">MCP server</button>
+          <button class="opt">Cloud daemon</button>
+        </div>
+        <div class="verdict"></div>
+      </div>
+
+      <div class="quiz" id="q3">
+        <div class="q">Q3. Which is NOT part of Pi by default?</div>
+        <div class="options" data-answer="Permission popups">
+          <button class="opt">Permission popups</button>
+          <button class="opt">Tool execution</button>
+          <button class="opt">Session storage</button>
+          <button class="opt">File editing</button>
+        </div>
+        <div class="verdict"></div>
+      </div>
+
+      <!-- ===================== PRIMARY SOURCE + FOOTER ===================== -->
+      <h2 class="section"><span class="num">7</span>Read this next</h2>
+      <p>
+        <strong>Primary source for this lesson:</strong> the
+        <a href="https://pi.dev/docs/latest" target="_blank" rel="noopener"
+          >Pi Documentation overview</a
+        >. Skim the Quick Start + Interactive Mode sections — you'll notice
+        everything maps onto the loop above.
+      </p>
+
+      <div class="callout key">
+        <p>
+          🗣️ <strong>Ask me anything.</strong> I'm your teacher — if the loop,
+          the tools, or why something is omitted isn't clicking, ask. Common
+          follow-ups: <em>"show me a real session"</em>,
+          <em>"how do I limit which tools the model gets?"</em>,
+          <em>"what's the difference between a skill and an extension?"</em>
+        </p>
+      </div>
+
+      <footer class="lesson-foot">
+        <div class="next-card">
+          <div class="lbl">Next lesson →</div>
+          <div class="t">
+            <a href="./0002-driving-the-tui.html"
+              >Driving the TUI: branches, trees & compaction</a
+            >
+          </div>
+          <p style="margin: 8px 0 0; font-size: 0.85rem">
+            Move from <em>understanding</em> the loop to <em>driving</em> it at
+            full speed.
+          </p>
+        </div>
+        <div style="flex: 0 1 220px">
+          <div
+            class="lbl"
+            style="
+              font: 600 11px &quot;Space Grotesk&quot;;
+              letter-spacing: 0.12em;
+              text-transform: uppercase;
+              color: var(--ink-soft);
+            "
+          >
+            Reference
+          </div>
+          <p style="margin: 6px 0 0">
+            <a href="../reference/pi-glossary.html">Pi glossary</a> ·
+            <a href="../MISSION.md">Mission</a>
+          </p>
+        </div>
+      </footer>
+    </article>
+
+    <script>
+      // tiny quiz wiring — same-length options, instant feedback
+      document.querySelectorAll(".quiz").forEach((quiz) => {
+        const answer = quiz.querySelector(".options").dataset.answer;
+        const verdict = quiz.querySelector(".verdict");
+        quiz.querySelectorAll(".opt").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            quiz
+              .querySelectorAll(".opt")
+              .forEach((b) => b.classList.remove("correct", "wrong"));
+            if (btn.textContent.trim() === answer) {
+              btn.classList.add("correct");
+              verdict.textContent = "✓ Correct.";
+              verdict.className = "verdict ok";
+            } else {
+              btn.classList.add("wrong");
+              verdict.textContent =
+                "✗ Not quite — re-read section " +
+                quiz.id.replace("q", "") +
+                ".";
+              verdict.className = "verdict no";
+            }
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
