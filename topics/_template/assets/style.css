@@ -385,6 +385,11 @@ pre.block .s {
 	color: var(--rose);
 }
 
+/* ---------- utilities ---------- */
+.mono {
+	font-family: "JetBrains Mono", monospace;
+}
+
 /* ---------- footer ---------- */
 footer.lesson-foot {
 	margin-top: 60px;
@@ -408,10 +413,13 @@ footer.lesson-foot a {
 	border-radius: var(--radius);
 	padding: 16px 18px;
 }
-.next-card .lbl {
+footer.lesson-foot .lbl {
 	font: 600 11px "Space Grotesk";
 	letter-spacing: 0.12em;
 	text-transform: uppercase;
+	color: var(--ink-soft);
+}
+.next-card .lbl {
 	color: var(--violet);
 }
 .next-card .t {

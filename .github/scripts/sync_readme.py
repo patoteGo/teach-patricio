@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
-"""Regenerate the 'Completed lessons' table in README.md from lessons/*.html.
+"""Regenerate the topic & lesson catalog in README.md from topics/*/.
 
-Idempotent — run locally or via .github/workflows/sync-lessons.yml.
-A lesson file's existence == "done"; planned lessons live in the README
-Roadmap section, which this script never touches.
+Multi-topic layout: each directory under topics/ is one learning workspace
+(MISSION.md, lessons/, …). This script discovers them, lists their lessons,
+and writes a catalog block between <!-- topics:start --> and <!-- topics:end -->.
+
+Directories starting with `_` or `.` are skipped (e.g. topics/_template).
+Idempotent — safe to run locally or via .github/workflows/sync-lessons.yml.
 """
+
 import re
 import sys
 from html import unescape
@@ -12,75 +16,109 @@ from pathlib import Path
 
 # .github/scripts/sync_readme.py -> repo root
 ROOT = Path(__file__).resolve().parent.parent.parent
-LESSONS = ROOT / "lessons"
+TOPICS = ROOT / "topics"
 README = ROOT / "README.md"
 
-START = "<!-- lessons:start -->"
-END = "<!-- lessons:end -->"
-PREFIX_RE = r"^Pi\s*[·•]\s*Lesson\s*\d+\s*[—–-]\s*"
+START = "<!-- topics:start -->"
+END = "<!-- topics:end -->"
+
+# Strip a leading "<Anything> · Lesson N — " or bare "Lesson N — " prefix.
+PREFIX_RE = re.compile(r"^.*?Lesson\s*\d+\s*[—–-]\s*", re.I)
 
 
-def lesson_rows():
-    files = sorted(LESSONS.glob("*.html"))
-    if not files:
-        sys.exit("no lessons found in lessons/")
+def lesson_title(html: str) -> str:
+    m = re.search(r"<title>(.*?)</title>", html, re.S | re.I)
+    raw = unescape(m.group(1).strip()) if m else ""
+    title = PREFIX_RE.sub("", raw).strip()
+    return title or "Untitled"
+
+
+def topic_name(topic_dir: Path) -> str:
+    """Display name: the H1 of the topic's MISSION.md, else the dir name."""
+    mission = topic_dir / "MISSION.md"
+    if mission.exists():
+        for line in mission.read_text(encoding="utf-8", errors="replace").splitlines():
+            line = line.strip()
+            if line.startswith("# "):
+                # "# Mission: Master Foo" -> "Master Foo"
+                name = line[2:].strip()
+                name = re.sub(r"^(mission|topic):\s*", "", name, flags=re.I).strip()
+                return name or topic_dir.name
+    return topic_dir.name.replace("-", " ").replace("_", " ").title()
+
+
+def lesson_rows(lessons_dir: Path):
     rows = []
-    for f in files:
-        try:  # skip a malformed lesson instead of aborting the whole sync
+    for f in sorted(lessons_dir.glob("*.html")):
+        try:
             html = f.read_text(encoding="utf-8", errors="replace")
-            m = re.search(r"<title>(.*?)</title>", html, re.S | re.I)
-            raw = unescape(m.group(1).strip()) if m else ""
-            title = re.sub(PREFIX_RE, "", raw, flags=re.I).strip()
-            if not title:  # fall back to a prettified filename
-                title = re.sub(r"^\d+-", "", f.stem).replace("-", " ").title()
+            title = lesson_title(html)
             head = f.name.split("-", 1)[0]
             num = int(head) if head.isdigit() else len(rows) + 1
             rows.append((num, title, f.name))
-        except (OSError, ValueError) as e:
-            print(f"skip {f.name}: {e}", file=sys.stderr)
+        except OSError as e:
+            print(f"skip {f}: {e}", file=sys.stderr)
     return rows
 
 
-def build_table(rows):
-    lines = ["| # | Lesson | Status |", "|---|--------|--------|"]
-    for num, title, name in rows:
-        link = f"./lessons/{name}"
-        lines.append(f"| {num:02d} | [{title}]({link}) | ✅ Done |")
+def discover_topics():
+    if not TOPICS.exists():
+        return []
+    topics = []
+    for d in sorted(TOPICS.iterdir()):
+        if not d.is_dir() or d.name.startswith((".", "_")):
+            continue
+        lessons_dir = d / "lessons"
+        if not lessons_dir.exists():
+            continue
+        rows = lesson_rows(lessons_dir)
+        topics.append((d.name, topic_name(d), rows))
+    return topics
+
+
+def build_catalog(topics):
+    if not topics:
+        return ["_(No topics yet — copy `topics/_template/` to start one.)_"]
+    lines = []
+    total = 0
+    for slug, name, rows in topics:
+        total += len(rows)
+        lines.append(f"### {name}")
+        lines.append("")
+        lines.append(f"`topics/{slug}/` · {len(rows)} lesson(s)")
+        lines.append("")
+        if rows:
+            lines += ["| # | Lesson |", "|---|--------|"]
+            for num, title, fname in rows:
+                lines.append(
+                    f"| {num:02d} | [{title}](./topics/{slug}/lessons/{fname}) |"
+                )
+        else:
+            lines.append("_(no lessons yet)_")
+        lines.append("")
+    lines.append(f"**Total: {total} lesson(s) across {len(topics)} topic(s).**")
     return lines
 
 
-def splice(readme, lines):
-    assert START in readme and END in readme, "README lesson markers missing"
-    block = START + "\n" + "\n".join(lines) + "\n" + END
-    return re.sub(
+def main():
+    if not README.exists():
+        sys.exit(f"README.md not found at {README}")
+    topics = discover_topics()
+    catalog = build_catalog(topics)
+    readme = README.read_text(encoding="utf-8")
+    if START not in readme or END not in readme:
+        sys.exit(
+            "README.md is missing the <!-- topics:start --> / <!-- topics:end --> markers"
+        )
+    block = START + "\n" + "\n".join(catalog) + "\n" + END
+    readme = re.sub(
         re.escape(START) + r".*?" + re.escape(END),
         lambda _m: block,
         readme,
         flags=re.S,
     )
-
-
-def sync_badge(readme, count):
-    readme = re.sub(
-        r"lessons-\d+%20%2F%20~07",
-        f"lessons-{count:02d}%20%2F%20~07",
-        readme,
-    )
-    return re.sub(
-        r'alt="lessons-\d+ / ~07"',
-        f'alt="lessons-{count:02d} / ~07"',
-        readme,
-    )
-
-
-def main():
-    rows = lesson_rows()
-    table = build_table(rows)
-    readme = README.read_text(encoding="utf-8")
-    readme = splice(readme, table)
-    readme = sync_badge(readme, len(rows))
     README.write_text(readme, encoding="utf-8")
-    print(f"synced {len(rows)} lesson(s)")
+    print(f"synced {len(topics)} topic(s)")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,677 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pi · Lesson 5 — Skills</title>
+    <link rel="stylesheet" href="../assets/style.css" />
+  </head>
+  <body>
+    <article class="lesson">
+      <!-- ===================== HERO ===================== -->
+      <header class="hero">
+        <span class="eyebrow">⬡ Lesson 05 · The power surface</span>
+        <h1>Skills:<br />capability on demand.</h1>
+        <p class="lead">
+          A skill is a folder of instructions + helper scripts that Pi loads
+          <em>only when relevant</em>. It's the laziest, most portable way to
+          program Pi — no build step, no framework, works in Claude Code and
+          Codex too. This is where the tool becomes yours.
+        </p>
+        <p class="lesson-nav-top">
+          ↑ <a href="../MISSION.md">Mission</a> · prev:
+          <a href="./0004-context-files.html">Lesson 4 · Context files</a> ·
+          ref: <a href="../reference/pi-glossary.html">Glossary</a>
+        </p>
+      </header>
+
+      <!-- ===================== 1. PROGRESSIVE DISCLOSURE ===================== -->
+      <h2 class="section">
+        <span class="num">1</span>The big idea: progressive disclosure
+      </h2>
+      <p class="kicker">
+        You can have <em>dozens</em> of skills without bloating context. At
+        startup Pi loads only each skill's <strong>name + description</strong>.
+        The full <code class="inline">SKILL.md</code> is read on-demand, the
+        moment a task matches. Cheap to keep around; loaded only when earned.
+      </p>
+
+      <div style="margin: 22px 0 8px">
+        <svg
+          viewBox="0 0 820 250"
+          width="100%"
+          role="img"
+          aria-label="Progressive disclosure: many skills, only descriptions always in context, full SKILL.md loads on match"
+        >
+          <!-- skill folders -->
+          <g font-family="JetBrains Mono" font-size="10.5">
+            <rect
+              x="16"
+              y="20"
+              width="150"
+              height="34"
+              rx="8"
+              fill="#fff"
+              stroke="#0fb9a4"
+            />
+            <text x="28" y="41" fill="#0a8a7a" font-weight="700">
+              📁 commit
+            </text>
+            <rect
+              x="16"
+              y="60"
+              width="150"
+              height="34"
+              rx="8"
+              fill="#fff"
+              stroke="#0fb9a4"
+            />
+            <text x="28" y="81" fill="#0a8a7a" font-weight="700">
+              📁 pdf-tools
+            </text>
+            <rect
+              x="16"
+              y="100"
+              width="150"
+              height="34"
+              rx="8"
+              fill="#fff"
+              stroke="#0fb9a4"
+            />
+            <text x="28" y="121" fill="#0a8a7a" font-weight="700">
+              📁 db-snap
+            </text>
+            <rect
+              x="16"
+              y="140"
+              width="150"
+              height="34"
+              rx="8"
+              fill="#fff"
+              stroke="#0fb9a4"
+            />
+            <text x="28" y="161" fill="#0a8a7a" font-weight="700">
+              📁 deploy
+            </text>
+            <rect
+              x="16"
+              y="180"
+              width="150"
+              height="34"
+              rx="8"
+              fill="#fff"
+              stroke="#0fb9a4"
+            />
+            <text x="28" y="201" fill="#0a8a7a" font-weight="700">
+              📁 transcribe
+            </text>
+          </g>
+          <text
+            x="91"
+            y="232"
+            text-anchor="middle"
+            font-family="Space Grotesk"
+            font-size="11"
+            font-weight="700"
+            fill="#64748b"
+          >
+            ~25 skills installed
+          </text>
+
+          <!-- arrows to context -->
+          <g fill="none" stroke="#6c4bf0" stroke-width="2">
+            <path d="M170 37 C 220 37, 235 80, 270 96" marker-end="url(#s1)" />
+            <path
+              d="M170 115 C 220 115, 235 110, 270 110"
+              marker-end="url(#s1)"
+            />
+            <path
+              d="M170 197 C 220 197, 235 130, 270 124"
+              marker-end="url(#s1)"
+            />
+          </g>
+          <defs>
+            <marker
+              id="s1"
+              markerWidth="10"
+              markerHeight="10"
+              refX="7"
+              refY="3"
+              orient="auto"
+            >
+              <path d="M0,0 L7,3 L0,6 Z" fill="#6c4bf0" />
+            </marker>
+          </defs>
+
+          <!-- context box: only descriptions -->
+          <rect
+            x="285"
+            y="70"
+            width="240"
+            height="92"
+            rx="12"
+            fill="#efeafb"
+            stroke="#d9cefb"
+          />
+          <text
+            x="405"
+            y="92"
+            text-anchor="middle"
+            font-family="Space Grotesk"
+            font-size="11.5"
+            font-weight="700"
+            fill="#6c4bf0"
+          >
+            ALWAYS IN CONTEXT
+          </text>
+          <text
+            x="298"
+            y="112"
+            font-family="JetBrains Mono"
+            font-size="9.5"
+            fill="#4a4866"
+          >
+            commit — "draft a Conventional…"
+          </text>
+          <text
+            x="298"
+            y="128"
+            font-family="JetBrains Mono"
+            font-size="9.5"
+            fill="#4a4866"
+          >
+            pdf-tools — "extract text &amp; tables…"
+          </text>
+          <text
+            x="298"
+            y="144"
+            font-family="JetBrains Mono"
+            font-size="9.5"
+            fill="#4a4866"
+          >
+            … one line each. cheap.
+          </text>
+
+          <!-- on match arrow -->
+          <path
+            d="M528 116 C 570 116, 580 116, 612 116"
+            fill="none"
+            stroke="#0fb9a4"
+            stroke-width="3"
+            marker-end="url(#s2)"
+          />
+          <defs>
+            <marker
+              id="s2"
+              markerWidth="11"
+              markerHeight="11"
+              refX="7"
+              refY="3"
+              orient="auto"
+            >
+              <path d="M0,0 L7,3 L0,6 Z" fill="#0fb9a4" />
+            </marker>
+          </defs>
+          <text
+            x="570"
+            y="104"
+            text-anchor="middle"
+            font-family="Inter"
+            font-size="10.5"
+            fill="#0fb9a4"
+            font-weight="700"
+          >
+            on match
+          </text>
+
+          <!-- loaded box -->
+          <rect x="624" y="70" width="180" height="92" rx="12" fill="#0fb9a4" />
+          <text
+            x="714"
+            y="96"
+            text-anchor="middle"
+            font-family="Space Grotesk"
+            font-size="11.5"
+            font-weight="700"
+            fill="#fff"
+          >
+            LOADS ON DEMAND
+          </text>
+          <text
+            x="714"
+            y="118"
+            text-anchor="middle"
+            font-family="JetBrains Mono"
+            font-size="9.5"
+            fill="#fff"
+          >
+            full SKILL.md
+          </text>
+          <text
+            x="714"
+            y="134"
+            text-anchor="middle"
+            font-family="JetBrains Mono"
+            font-size="9.5"
+            fill="#fff"
+          >
+            + scripts via bash
+          </text>
+          <text
+            x="714"
+            y="150"
+            text-anchor="middle"
+            font-family="JetBrains Mono"
+            font-size="9.5"
+            fill="#fff"
+          >
+            + references/
+          </text>
+        </svg>
+      </div>
+      <div class="callout key">
+        <p>
+          <strong>Why this matters:</strong> the
+          <code class="inline">description</code> is the <em>routing key</em>.
+          Pi decides "load this skill?" purely from that one field. Write it
+          like a trigger — <em>what it does and when to use it</em> — and the
+          model finds it automatically. Vague description = a skill that never
+          fires.
+        </p>
+      </div>
+      <p class="cite">
+        Source:
+        <a
+          href="https://pi.dev/docs/latest/skills"
+          target="_blank"
+          rel="noopener"
+          >Pi docs · Skills</a
+        >
+        · follows the
+        <a
+          href="https://agentskills.io/specification"
+          target="_blank"
+          rel="noopener"
+          >Agent Skills standard</a
+        >
+        (portable to Claude Code, Codex, …).
+      </p>
+
+      <!-- ===================== 2. ANATOMY ===================== -->
+      <h2 class="section"><span class="num">2</span>Anatomy of a skill</h2>
+      <p class="kicker">
+        A directory with a <code class="inline">SKILL.md</code>. Everything else
+        is freeform — scripts, references, templates, whatever the task needs.
+      </p>
+
+      <pre class="block"><span class="c">my-skill/</span>
+├── <span style="color:#7ee0c8; font-weight:700">SKILL.md</span>            <span class="c"># required: frontmatter + instructions</span>
+├── scripts/
+│   └── process.sh       <span class="c"># helper the model calls via bash</span>
+├── references/
+│   └── api-reference.md <span class="c"># detailed docs, loaded only if needed</span>
+└── assets/
+    └── template.json    <span class="c"># static files</span></pre>
+
+      <div class="callout tip">
+        <p>
+          <strong>Reference paths are relative to the skill dir.</strong> In
+          <code class="inline">SKILL.md</code> write
+          <code class="inline"
+            >See [the API ref](references/api-reference.md)</code
+          >
+          — Pi resolves it. The model loads deep references <em>lazily</em>,
+          keeping context lean.
+        </p>
+      </div>
+
+      <!-- ===================== 3. SKILL.md FORMAT ===================== -->
+      <h2 class="section"><span class="num">3</span>The SKILL.md format</h2>
+      <p class="kicker">
+        Frontmatter (name + description required) + a Markdown body of
+        instructions. That's the whole contract.
+      </p>
+
+      <div class="grid cols-2" style="margin-top: 18px">
+        <div class="card" style="border-left: 4px solid #0fb9a4">
+          <h4>✅ Good description</h4>
+          <p class="mono" style="font-size: 0.85rem; color: var(--ink)">
+            "Extracts text and tables from PDF files, fills PDF forms, and
+            merges PDFs. Use when working with PDF documents."
+          </p>
+          <p style="color: var(--ink-soft); font-size: 0.85rem">
+            Specific triggers → reliable auto-load.
+          </p>
+        </div>
+        <div class="card" style="border-left: 4px solid #ef476f">
+          <h4>❌ Poor description</h4>
+          <p class="mono" style="font-size: 0.85rem; color: var(--ink)">
+            "Helps with PDFs."
+          </p>
+          <p style="color: var(--ink-soft); font-size: 0.85rem">
+            Too vague → the model never reaches for it.
+          </p>
+        </div>
+      </div>
+
+      <h3>Frontmatter fields</h3>
+      <div class="grid cols-2">
+        <div class="card">
+          <span class="sig"
+            >name <span style="color: #ef476f">·required</span></span
+          >
+          <p>
+            1–64 chars, lowercase <code class="inline">a-z 0-9 -</code>, no
+            leading/trailing or consecutive hyphens. Need not match the folder
+            name.
+          </p>
+        </div>
+        <div class="card">
+          <span class="sig"
+            >description <span style="color: #ef476f">·required</span></span
+          >
+          <p>
+            ≤1024 chars. <strong>The routing key.</strong> Missing it → skill
+            won't load at all.
+          </p>
+        </div>
+        <div class="card">
+          <span class="sig">disable-model-invocation</span>
+          <p>
+            <code class="inline">true</code> hides it from auto-load; users must
+            call <code class="inline">/skill:name</code> explicitly.
+          </p>
+        </div>
+        <div class="card">
+          <span class="sig"
+            >allowed-tools · license · compatibility · metadata</span
+          >
+          <p>
+            Optional. <code class="inline">allowed-tools</code> pre-approves a
+            tool set (experimental).
+          </p>
+        </div>
+      </div>
+      <p class="cite">
+        Validation is lenient: bad names warn but still load;
+        <em>only a missing description silently drops the skill</em>.
+      </p>
+
+      <!-- ===================== 4. WHERE THEY LIVE ===================== -->
+      <h2 class="section"><span class="num">4</span>Where they live</h2>
+      <p class="kicker">
+        Drop a folder in any of these and Pi finds it. Project locations load
+        only after the project is
+        <a href="./0004-context-files.html">trusted</a>.
+      </p>
+
+      <div class="grid cols-2" style="margin-top: 18px">
+        <div class="card" style="border-top: 4px solid #6c4bf0">
+          <h4>🌍 Global (every project)</h4>
+          <p>
+            <code class="inline">~/.pi/agent/skills/</code><br /><code
+              class="inline"
+              >~/.agents/skills/</code
+            >
+          </p>
+          <p style="color: var(--ink-soft); font-size: 0.85rem">
+            Your personal toolkit, always available.
+          </p>
+        </div>
+        <div class="card" style="border-top: 4px solid #f59e0b">
+          <h4>📦 Project (per-repo)</h4>
+          <p>
+            <code class="inline">.pi/skills/</code><br /><code class="inline"
+              >.agents/skills/</code
+            >
+            (cwd + ancestors → git root)
+          </p>
+          <p style="color: var(--ink-soft); font-size: 0.85rem">
+            Commit with the repo → shared with the team.
+          </p>
+        </div>
+        <div class="card" style="border-top: 4px solid #0fb9a4">
+          <h4>🔧 Other sources</h4>
+          <p>
+            <strong>Packages</strong> (<code class="inline">skills/</code> or
+            <code class="inline">pi.skills</code>), the settings
+            <code class="inline">skills</code> array, and
+            <code class="inline">--skill &lt;path&gt;</code> (repeatable, works
+            even with <code class="inline">--no-skills</code>).
+          </p>
+        </div>
+        <div class="card" style="border-top: 4px solid #3b82f6">
+          <h4>🔀 Other harnesses</h4>
+          <p>Reuse Claude Code / Codex skills directly:</p>
+          <p class="mono" style="font-size: 0.8rem">
+            "skills": ["~/.claude/skills", "~/.codex/skills"]
+          </p>
+        </div>
+      </div>
+      <div class="callout warn">
+        <p>
+          <strong>Discovery quirk:</strong> in
+          <code class="inline">~/.pi/agent/skills/</code> &amp;
+          <code class="inline">.pi/skills/</code>, a bare root
+          <code class="inline">.md</code> counts as a skill too; in
+          <code class="inline">~/.agents/skills/</code> &amp; project
+          <code class="inline">.agents/skills/</code>, root
+          <code class="inline">.md</code> files are ignored — use a
+          <code class="inline">SKILL.md</code> folder.
+        </p>
+      </div>
+
+      <!-- ===================== 5. INVOCATION ===================== -->
+      <h2 class="section"><span class="num">5</span>How to fire one</h2>
+      <p class="kicker">
+        Two ways. Let the model decide (default), or force it.
+      </p>
+
+      <div class="grid cols-2" style="margin-top: 18px">
+        <div class="card" style="border-left: 4px solid #0fb9a4">
+          <h4>Automatic</h4>
+          <p>
+            You just ask normally. The model matches your request against skill
+            descriptions and <code class="inline">read</code>s the right
+            <code class="inline">SKILL.md</code>. Invisible to you.
+          </p>
+        </div>
+        <div class="card" style="border-left: 4px solid #6c4bf0">
+          <h4>Forced — <code class="inline">/skill:name</code></h4>
+          <p>
+            <code class="inline">/skill:commit</code> loads &amp; runs it. Pass
+            args:
+            <code class="inline">/skill:pdf-tools extract invoice.pdf</code>
+            (appended as <code class="inline">User: …</code>). Toggle these
+            commands via <code class="inline">enableSkillCommands</code>.
+          </p>
+        </div>
+      </div>
+
+      <!-- ===================== 6. WORKED EXAMPLE ===================== -->
+      <h2 class="section">
+        <span class="num">6</span>A real skill, end to end
+      </h2>
+      <p class="kicker">
+        Drop this in <code class="inline">~/.pi/agent/skills/commit/</code> and
+        you've extended Pi. It drafts a Conventional Commit from staged changes.
+      </p>
+
+      <pre class="block"><span class="c">commit/SKILL.md</span>
+---
+name: commit
+description: Draft and create a Conventional Commit from staged changes. Use when the user says "commit", "commit this", or wants to save staged work with a clear message.
+---
+
+# Commit
+
+## Convention
+`type(scope): summary` — type ∈ feat | fix | refactor | docs | test | chore.
+Summary ≤ 72 chars. Body explains the <em>why</em>, not the what.
+
+## Steps
+1. Run `./scripts/diff-stat.sh` to see what's staged.
+2. `read` the staged diff if you need detail.
+3. Draft summary + short body.
+4. Show the message; on approval run `git commit`.
+5. Never commit secrets, .env, or node_modules.</pre>
+
+      <pre class="block"><span class="c">commit/scripts/diff-stat.sh</span>
+<span class="c">#!/usr/bin/env bash</span>
+git diff --cached --stat</pre>
+
+      <div class="grid cols-2" style="margin-top: 14px">
+        <div class="callout tip" style="margin: 0">
+          <p>
+            <strong>That's it.</strong> No build, no compile, no package step.
+            Restart Pi (or <code class="inline">/reload</code>) and say "commit
+            this" — the skill loads and the model follows your steps.
+          </p>
+        </div>
+        <div class="callout key" style="margin: 0">
+          <p>
+            <strong>Cheate-code:</strong> just
+            <em>ask Pi to build the skill.</em> "Make me a skill that…" — Pi
+            writes the <code class="inline">SKILL.md</code> and scripts for you,
+            then <code class="inline">/reload</code>.
+          </p>
+        </div>
+      </div>
+      <p class="cite">
+        Mine real patterns:
+        <a
+          href="https://github.com/anthropics/skills"
+          target="_blank"
+          rel="noopener"
+          >anthropics/skills</a
+        >
+        ·
+        <a
+          href="https://github.com/badlogic/pi-skills"
+          target="_blank"
+          rel="noopener"
+          >badlogic/pi-skills</a
+        >.
+      </p>
+
+      <!-- ===================== QUIZ ===================== -->
+      <h2 class="section"><span class="num">7</span>Check your skills</h2>
+
+      <div class="quiz" id="q1">
+        <div class="q">
+          Q1. At startup, what from each skill sits in the model's context?
+        </div>
+        <div class="options" data-answer="Just description">
+          <button class="opt">Just description</button>
+          <button class="opt">Full SKILL.md</button>
+          <button class="opt">All the scripts</button>
+          <button class="opt">Name plus body</button>
+        </div>
+        <div class="verdict"></div>
+      </div>
+
+      <div class="quiz" id="q2">
+        <div class="q">
+          Q2. Which field decides WHEN the agent auto-loads a skill?
+        </div>
+        <div class="options" data-answer="description">
+          <button class="opt">description</button>
+          <button class="opt">metadata</button>
+          <button class="opt">license</button>
+          <button class="opt">compatibility</button>
+        </div>
+        <div class="verdict"></div>
+      </div>
+
+      <div class="quiz" id="q3">
+        <div class="q">Q3. The skill name "PDF-Processing" is…</div>
+        <div class="options" data-answer="Invalid name">
+          <button class="opt">Invalid name</button>
+          <button class="opt">Valid name</button>
+          <button class="opt">Almost valid</button>
+          <button class="opt">Preferable style</button>
+        </div>
+        <div class="verdict"></div>
+      </div>
+
+      <!-- ===================== PRIMARY SOURCE + FOOTER ===================== -->
+      <h2 class="section"><span class="num">8</span>Read &amp; do this next</h2>
+      <p>
+        <strong>Primary source:</strong>
+        <a
+          href="https://pi.dev/docs/latest/skills"
+          target="_blank"
+          rel="noopener"
+          >Pi docs · Skills</a
+        >
+        + the
+        <a
+          href="https://agentskills.io/specification"
+          target="_blank"
+          rel="noopener"
+          >Agent Skills spec</a
+        >.
+      </p>
+      <p>
+        <strong>Do it now:</strong> create
+        <code class="inline">~/.pi/agent/skills/commit/SKILL.md</code> from §6,
+        <code class="inline">/reload</code>, stage a change, and say "commit
+        this." Watch the skill load and run — your first custom capability.
+      </p>
+
+      <div class="callout key">
+        <p>
+          🗣️ <strong>Ask me anything.</strong> Common follow-ups:
+          <em>"skill vs extension — when which?"</em>,
+          <em>"how do I share skills via a package?"</em>,
+          <em>"can a skill call an MCP server?"</em> (no — but it can call a
+          CLI).
+        </p>
+      </div>
+
+      <footer class="lesson-foot">
+        <div class="next-card">
+          <div class="lbl">Next lesson →</div>
+          <div class="t">
+            <a href="./0006-extensions.html">Extensions: programming Pi</a>
+          </div>
+          <p style="margin: 8px 0 0; font-size: 0.85rem">
+            When instructions aren't enough — TypeScript that adds tools,
+            commands, events, and UI.
+          </p>
+        </div>
+        <div style="flex: 0 1 220px">
+          <div class="lbl">Reference</div>
+          <p style="margin: 6px 0 0">
+            <a href="../reference/pi-glossary.html">Pi glossary</a> ·
+            <a href="../MISSION.md">Mission</a>
+          </p>
+        </div>
+      </footer>
+    </article>
+
+    <script>
+      document.querySelectorAll(".quiz").forEach((quiz) => {
+        const answer = quiz.querySelector(".options").dataset.answer;
+        const verdict = quiz.querySelector(".verdict");
+        quiz.querySelectorAll(".opt").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            quiz
+              .querySelectorAll(".opt")
+              .forEach((b) => b.classList.remove("correct", "wrong"));
+            if (btn.textContent.trim() === answer) {
+              btn.classList.add("correct");
+              verdict.textContent = "✓ Correct.";
+              verdict.className = "verdict ok";
+            } else {
+              btn.classList.add("wrong");
+              verdict.textContent =
+                "✗ Re-read section " + quiz.id.replace("q", "") + ".";
+              verdict.className = "verdict no";
+            }
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

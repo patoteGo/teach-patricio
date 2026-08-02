@@ -1,0 +1,714 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pi · Lesson 4 — Context Files</title>
+    <link rel="stylesheet" href="../assets/style.css" />
+  </head>
+  <body>
+    <article class="lesson">
+      <!-- ===================== HERO ===================== -->
+      <header class="hero">
+        <span class="eyebrow">⬡ Lesson 04 · Configuration</span>
+        <h1>Teach Pi<br />your codebase.</h1>
+        <p class="lead">
+          Out of the box Pi knows nothing about your project — no stack, no
+          conventions, no commands. Three plain files fix that. This is the
+          cheapest, highest-leverage customization in all of Pi: write Markdown,
+          change behavior.
+        </p>
+        <p class="lesson-nav-top">
+          ↑ <a href="../MISSION.md">Mission</a> · prev:
+          <a href="./0003-sessions-branching-compaction.html"
+            >Lesson 3 · Sessions</a
+          >
+          · ref: <a href="../reference/pi-glossary.html">Glossary</a>
+        </p>
+      </header>
+
+      <!-- ===================== 1. THREE LEVERS ===================== -->
+      <h2 class="section"><span class="num">1</span>The three levers</h2>
+      <p class="kicker">
+        Each shapes Pi's behavior at a different layer. Know which lever does
+        what and you stop fighting the tool.
+      </p>
+
+      <div class="grid cols-3" style="margin-top: 18px">
+        <div class="card" style="border-top: 4px solid #0fb9a4">
+          <div class="badge" style="background: #0fb9a4">📄</div>
+          <h4>AGENTS.md</h4>
+          <p>
+            <strong>Context.</strong> Instructions, conventions, commands the
+            model <em>reads</em>. Concatenated from global → parents → current.
+          </p>
+          <div class="sig">most-used lever</div>
+        </div>
+        <div class="card" style="border-top: 4px solid #6c4bf0">
+          <div class="badge" style="background: #6c4bf0">🧠</div>
+          <h4>SYSTEM.md</h4>
+          <p>
+            <strong>Prompt.</strong> Replace (<code class="inline"
+              >SYSTEM.md</code
+            >) or extend (<code class="inline">APPEND_SYSTEM.md</code>) the base
+            system prompt.
+          </p>
+          <div class="sig">rarely needed</div>
+        </div>
+        <div class="card" style="border-top: 4px solid #f59e0b">
+          <div class="badge" style="background: #f59e0b">⚙️</div>
+          <h4>settings.json</h4>
+          <p>
+            <strong>Knobs.</strong> Default model, thinking, compaction, themes,
+            resource paths. Project overrides global.
+          </p>
+          <div class="sig">behavior config</div>
+        </div>
+      </div>
+      <div class="callout key">
+        <p>
+          <strong
+            >90% of the value is <code class="inline">AGENTS.md</code>.</strong
+          >
+          Before reaching for a skill or extension, ask: "could a paragraph of
+          context fix this?" Usually, yes.
+        </p>
+      </div>
+
+      <!-- ===================== 2. AGENTS.md ===================== -->
+      <h2 class="section">
+        <span class="num">2</span>AGENTS.md — the primary lever
+      </h2>
+      <p class="kicker">
+        Pi loads <code class="inline">AGENTS.md</code> (or
+        <code class="inline">CLAUDE.md</code>) at startup from
+        <strong>three places</strong> — and <em>concatenates</em> every match
+        into the system prompt.
+      </p>
+
+      <div style="margin: 22px 0 8px">
+        <svg
+          viewBox="0 0 820 230"
+          width="100%"
+          role="img"
+          aria-label="AGENTS.md files from global, parent dirs, and current dir concatenate into the system prompt"
+        >
+          <!-- three source files -->
+          <g font-family="JetBrains Mono" font-size="11">
+            <rect
+              x="20"
+              y="24"
+              width="250"
+              height="44"
+              rx="10"
+              fill="#fff"
+              stroke="#0fb9a4"
+              stroke-width="2"
+            />
+            <text x="34" y="44" fill="#0a8a7a" font-weight="700">
+              ~/.pi/agent/AGENTS.md
+            </text>
+            <text x="34" y="60" fill="#9a96b3" font-size="9.5">
+              global — your cross-project style
+            </text>
+            <rect
+              x="20"
+              y="92"
+              width="250"
+              height="44"
+              rx="10"
+              fill="#fff"
+              stroke="#6c4bf0"
+              stroke-width="2"
+            />
+            <text x="34" y="112" fill="#6c4bf0" font-weight="700">
+              …/parent/AGENTS.md
+            </text>
+            <text x="34" y="128" fill="#9a96b3" font-size="9.5">
+              walked up from cwd → repo root
+            </text>
+            <rect
+              x="20"
+              y="160"
+              width="250"
+              height="44"
+              rx="10"
+              fill="#fff"
+              stroke="#f59e0b"
+              stroke-width="2"
+            />
+            <text x="34" y="180" fill="#b9791a" font-weight="700">
+              ./AGENTS.md
+            </text>
+            <text x="34" y="196" fill="#9a96b3" font-size="9.5">
+              current dir — project-specific
+            </text>
+          </g>
+
+          <!-- concat arrows -->
+          <g fill="none" stroke="#6c4bf0" stroke-width="2.5">
+            <path d="M275 46 C 340 46, 360 70, 410 100" marker-end="url(#b1)" />
+            <path
+              d="M275 114 C 340 114, 360 116, 410 116"
+              marker-end="url(#b1)"
+            />
+            <path
+              d="M275 182 C 340 182, 360 160, 410 132"
+              marker-end="url(#b1)"
+            />
+          </g>
+          <defs>
+            <marker
+              id="b1"
+              markerWidth="10"
+              markerHeight="10"
+              refX="7"
+              refY="3"
+              orient="auto"
+            >
+              <path d="M0,0 L7,3 L0,6 Z" fill="#6c4bf0" />
+            </marker>
+          </defs>
+          <text
+            x="345"
+            y="40"
+            font-family="Inter"
+            font-size="11"
+            fill="#6c4bf0"
+            font-weight="600"
+          >
+            concatenate
+          </text>
+
+          <!-- result: system prompt -->
+          <rect x="430" y="70" width="370" height="92" rx="14" fill="#14132b" />
+          <text
+            x="615"
+            y="96"
+            text-anchor="middle"
+            font-family="Space Grotesk"
+            font-size="13"
+            font-weight="700"
+            fill="#fff"
+          >
+            SYSTEM PROMPT
+          </text>
+          <rect
+            x="450"
+            y="108"
+            width="330"
+            height="18"
+            rx="5"
+            fill="#0fb9a4"
+            opacity=".85"
+          />
+          <text
+            x="460"
+            y="121"
+            font-family="JetBrains Mono"
+            font-size="9"
+            fill="#fff"
+          >
+            global context…
+          </text>
+          <rect
+            x="450"
+            y="128"
+            width="330"
+            height="18"
+            rx="5"
+            fill="#6c4bf0"
+            opacity=".85"
+          />
+          <text
+            x="460"
+            y="141"
+            font-family="JetBrains Mono"
+            font-size="9"
+            fill="#fff"
+          >
+            + parent context…
+          </text>
+        </svg>
+      </div>
+
+      <div class="callout warn">
+        <p>
+          <strong>Concatenate, not override.</strong> Unlike settings, multiple
+          <code class="inline">AGENTS.md</code> files <em>stack</em>. Put shared
+          style globally, repo conventions at the repo root, and module quirks
+          in subdirs — all compose. Disable everything with
+          <code class="inline">--no-context-files</code> (<code class="inline"
+            >-nc</code
+          >).
+        </p>
+      </div>
+
+      <h3>What to actually put in it</h3>
+      <pre
+        class="block"
+      ><span class="c"># AGENTS.md  — commit this to your repo</span>
+
+## Stack
+TypeScript · Node 20 · Hono · Postgres (Drizzle ORM)
+
+## Commands
+- <span class="k">npm test</span>           <span class="c"># run after every change</span>
+- <span class="k">npm run lint</span>      <span class="c"># biome</span>
+- <span class="k">npm run db:migrate</span>
+
+## Conventions
+- Never edit <span class="s">src/generated/</span> — auto-generated.
+- Prefer early returns; avoid nested ternaries.
+- API responses use snake_case.
+
+## Gotchas
+- Tests need <span class="s">docker compose up -d postgres</span> first.</pre>
+      <p class="cite">
+        Source:
+        <a href="https://pi.dev/docs/latest" target="_blank" rel="noopener"
+          >Pi docs · Context Files</a
+        >.
+      </p>
+
+      <!-- ===================== 3. SYSTEM PROMPT ===================== -->
+      <h2 class="section">
+        <span class="num">3</span>The system prompt — replace vs append
+      </h2>
+      <p class="kicker">
+        For when AGENTS.md isn't enough and you need to change <em>how</em> Pi
+        instructs the model, not just add context.
+      </p>
+
+      <div class="grid cols-2" style="margin-top: 18px">
+        <div class="card" style="border-left: 4px solid #ef476f">
+          <h4>🔴 SYSTEM.md — replace</h4>
+          <p>
+            <code class="inline">.pi/SYSTEM.md</code> (project) or
+            <code class="inline">~/.pi/agent/SYSTEM.md</code> (global).
+            <strong>Throws away</strong> Pi's default system prompt. Context
+            files + skills are still appended.
+          </p>
+          <p style="color: var(--ink-soft); font-size: 0.88rem">
+            Use only if you genuinely need a custom persona or strict
+            guardrails.
+          </p>
+        </div>
+        <div class="card" style="border-left: 4px solid #0fb9a4">
+          <h4>🟢 APPEND_SYSTEM.md — extend</h4>
+          <p>
+            <code class="inline">APPEND_SYSTEM.md</code> adds to the default
+            prompt <strong>without</strong> replacing it. The safe default for
+            extra rules.
+          </p>
+          <p style="color: var(--ink-soft); font-size: 0.88rem">
+            CLI equivalents: <code class="inline">--system-prompt "…"</code> /
+            <code class="inline">--append-system-prompt "…"</code>.
+          </p>
+        </div>
+      </div>
+      <div class="callout tip">
+        <p>
+          <strong>Default to append.</strong> Replacing the system prompt
+          discards Pi's careful defaults — reach for it only when you have a
+          specific reason. Nine times out of ten,
+          <code class="inline">AGENTS.md</code> +
+          <code class="inline">APPEND_SYSTEM.md</code> is the right pair.
+        </p>
+      </div>
+
+      <!-- ===================== 4. SETTINGS ===================== -->
+      <h2 class="section">
+        <span class="num">4</span>settings.json — project overrides global
+      </h2>
+      <p class="kicker">
+        Where AGENTS.md is <em>content</em> for the model, settings are
+        <em>behavior</em> for Pi. Two files, one rule: project wins, nested
+        objects merge.
+      </p>
+
+      <div style="margin: 18px 0 8px">
+        <svg
+          viewBox="0 0 820 150"
+          width="100%"
+          role="img"
+          aria-label="Global and project settings merge; project overrides on conflict"
+        >
+          <g font-family="JetBrains Mono" font-size="10.5">
+            <rect
+              x="20"
+              y="30"
+              width="250"
+              height="90"
+              rx="12"
+              fill="#fff"
+              stroke="#64748b"
+              stroke-width="2"
+            />
+            <text x="34" y="50" fill="#14132b" font-weight="700">
+              ~/.pi/agent/settings.json
+            </text>
+            <text x="34" y="70" fill="#9a96b3" font-size="9">
+              global · all projects
+            </text>
+            <text x="34" y="92" fill="#64748b">theme: dark</text>
+            <text x="34" y="108" fill="#64748b">compaction.reserve: 16384</text>
+
+            <rect
+              x="300"
+              y="30"
+              width="250"
+              height="90"
+              rx="12"
+              fill="#fff"
+              stroke="#f59e0b"
+              stroke-width="2"
+            />
+            <text x="314" y="50" fill="#14132b" font-weight="700">
+              .pi/settings.json
+            </text>
+            <text x="314" y="70" fill="#9a96b3" font-size="9">
+              project · this repo
+            </text>
+            <text x="314" y="92" fill="#f59e0b">compaction.reserve: 8192</text>
+            <text x="314" y="108" fill="#f59e0b">
+              treeFilterMode: labeled-only
+            </text>
+          </g>
+
+          <text
+            x="285"
+            y="78"
+            text-anchor="middle"
+            font-family="Inter"
+            font-size="20"
+            fill="#6c4bf0"
+            font-weight="700"
+          >
+            +
+          </text>
+
+          <!-- merged -->
+          <path
+            d="M555 75 L585 75"
+            stroke="#6c4bf0"
+            stroke-width="2.5"
+            fill="none"
+            marker-end="url(#b2)"
+          />
+          <defs>
+            <marker
+              id="b2"
+              markerWidth="10"
+              markerHeight="10"
+              refX="7"
+              refY="3"
+              orient="auto"
+            >
+              <path d="M0,0 L7,3 L0,6 Z" fill="#6c4bf0" />
+            </marker>
+          </defs>
+          <rect x="595" y="30" width="205" height="90" rx="12" fill="#14132b" />
+          <text
+            x="697"
+            y="52"
+            text-anchor="middle"
+            font-family="Space Grotesk"
+            font-size="11"
+            font-weight="700"
+            fill="#fff"
+          >
+            MERGED
+          </text>
+          <text
+            x="610"
+            y="74"
+            font-family="JetBrains Mono"
+            font-size="9.5"
+            fill="#c9c6dd"
+          >
+            theme: dark
+          </text>
+          <text
+            x="610"
+            y="90"
+            font-family="JetBrains Mono"
+            font-size="9.5"
+            fill="#7ee0c8"
+          >
+            reserve: 8192 ✓
+          </text>
+          <text
+            x="610"
+            y="106"
+            font-family="JetBrains Mono"
+            font-size="9.5"
+            fill="#7ee0c8"
+          >
+            filter: labeled-only ✓
+          </text>
+        </svg>
+      </div>
+
+      <h3>The handful worth knowing</h3>
+      <div class="grid cols-2">
+        <div class="card">
+          <span class="sig"
+            >defaultProvider · defaultModel · defaultThinkingLevel</span
+          >
+          <p>
+            Pin your everyday model + reasoning depth so every session starts
+            right.
+          </p>
+        </div>
+        <div class="card">
+          <span class="sig">enabledModels</span>
+          <p>
+            Glob patterns for <span class="kbd">Ctrl</span>+<span class="kbd"
+              >P</span
+            >
+            cycling: <code class="inline">["claude-*", "gpt-4o"]</code>.
+          </p>
+        </div>
+        <div class="card">
+          <span class="sig">treeFilterMode · doubleEscapeAction</span>
+          <p>
+            Default <code class="inline">/tree</code> filter; what
+            <span class="kbd">Esc</span> <span class="kbd">Esc</span> opens
+            (<code class="inline">tree</code>/<code class="inline">fork</code>).
+          </p>
+        </div>
+        <div class="card">
+          <span class="sig">compaction · branchSummary</span>
+          <p>Tune context survival (Lesson 3).</p>
+        </div>
+        <div class="card">
+          <span class="sig">externalEditor</span>
+          <p>
+            e.g. <code class="inline">"code --wait"</code> for VS Code on
+            <span class="kbd">Ctrl</span>+<span class="kbd">G</span>.
+          </p>
+        </div>
+        <div class="card">
+          <span class="sig"
+            >packages · extensions · skills · prompts · themes</span
+          >
+          <p>
+            Resource discovery paths (globs,
+            <code class="inline">!</code> exclude). Feeds Lesson 5+.
+          </p>
+        </div>
+      </div>
+      <p class="cite">
+        Source:
+        <a
+          href="https://pi.dev/docs/latest/settings"
+          target="_blank"
+          rel="noopener"
+          >Pi docs · Settings</a
+        >
+        · edit directly or via <code class="inline">/settings</code>.
+      </p>
+
+      <!-- ===================== 5. TRUST ===================== -->
+      <h2 class="section">
+        <span class="num">5</span>Trust — the security boundary
+      </h2>
+      <p class="kicker">
+        Anything in <code class="inline">.pi/</code> can
+        <strong>run code</strong> (extensions execute; skills can instruct the
+        model to do anything). So Pi gates project-local resources behind a
+        trust decision.
+      </p>
+
+      <div class="grid cols-2" style="margin-top: 18px">
+        <div class="card" style="border-top: 4px solid #6c4bf0">
+          <h4>Interactive</h4>
+          <p>
+            On startup, Pi <strong>asks</strong> before loading
+            <code class="inline">.pi/</code> for a folder with no saved
+            decision. Save your answer with <code class="inline">/trust</code> →
+            writes <code class="inline">~/.pi/agent/trust.json</code> (restart
+            to apply).
+          </p>
+        </div>
+        <div class="card" style="border-top: 4px solid #f59e0b">
+          <h4>Non-interactive</h4>
+          <p>
+            <code class="inline">-p</code> /
+            <code class="inline">--mode json</code> /
+            <code class="inline">rpc</code> can't prompt, so they fall back to
+            <code class="inline">defaultProjectTrust</code>:
+            <code class="inline">"ask"</code> (default) ·
+            <code class="inline">"always"</code> ·
+            <code class="inline">"never"</code>. Override one run with
+            <code class="inline">-a</code> / <code class="inline">-na</code>.
+          </p>
+        </div>
+      </div>
+      <div class="callout warn">
+        <p>
+          <strong>Why it matters:</strong>
+          <code class="inline">.pi/extensions/*.ts</code> and installed packages
+          run with <em>your full permissions</em>. The trust prompt is the one
+          gate between "I cloned a repo" and "arbitrary code just ran." Review
+          project-local extensions before trusting — same hygiene as
+          <code class="inline">npm install</code>.
+        </p>
+      </div>
+      <p class="cite">
+        Source:
+        <a
+          href="https://pi.dev/docs/latest/settings"
+          target="_blank"
+          rel="noopener"
+          >Pi docs · Project Trust</a
+        >.
+      </p>
+
+      <!-- ===================== 6. STARTER PACK ===================== -->
+      <h2 class="section"><span class="num">6</span>Copy-paste starter</h2>
+      <p class="kicker">
+        Drop these two files in a repo and Pi immediately behaves better — no
+        extensions, no packages.
+      </p>
+      <pre class="block"><span class="c"># .pi/settings.json</span>
+{
+  <span class="s">"defaultThinkingLevel"</span>: <span class="s">"medium"</span>,
+  <span class="s">"enabledModels"</span>: [<span class="s">"claude-sonnet-*"</span>, <span class="s">"gpt-4o"</span>],
+  <span class="s">"treeFilterMode"</span>: <span class="s">"labeled-only"</span>,
+  <span class="s">"doubleEscapeAction"</span>: <span class="s">"tree"</span>,
+  <span class="s">"compaction"</span>: { <span class="s">"keepRecentTokens"</span>: <span class="k">24000</span> }
+}
+<span class="c"># + an AGENTS.md at the repo root (see §2 template)</span></pre>
+      <div class="callout tip">
+        <p>
+          <strong>Commit both.</strong> <code class="inline">AGENTS.md</code> +
+          <code class="inline">.pi/settings.json</code> in the repo means
+          <em>every teammate's Pi</em> (and yours on another machine) starts
+          identical. That's configuration-as-documentation.
+        </p>
+      </div>
+
+      <!-- ===================== QUIZ ===================== -->
+      <h2 class="section">
+        <span class="num">7</span>Check your config instincts
+      </h2>
+
+      <div class="quiz" id="q1">
+        <div class="q">
+          Q1. You have a global AND a project AGENTS.md. What happens?
+        </div>
+        <div class="options" data-answer="Both concatenate">
+          <button class="opt">Both concatenate</button>
+          <button class="opt">Project wins</button>
+          <button class="opt">Global wins</button>
+          <button class="opt">They conflict</button>
+        </div>
+        <div class="verdict"></div>
+      </div>
+
+      <div class="quiz" id="q2">
+        <div class="q">
+          Q2. Which file APPENDS to the system prompt instead of replacing it?
+        </div>
+        <div class="options" data-answer="APPEND_SYSTEM.md">
+          <button class="opt">APPEND_SYSTEM.md</button>
+          <button class="opt">SYSTEM.md</button>
+          <button class="opt">AGENTS.md</button>
+          <button class="opt">settings.json</button>
+        </div>
+        <div class="verdict"></div>
+      </div>
+
+      <div class="quiz" id="q3">
+        <div class="q">
+          Q3. A project's .pi/extensions can run code. What gates them?
+        </div>
+        <div class="options" data-answer="Project trust">
+          <button class="opt">Project trust</button>
+          <button class="opt">Git remote</button>
+          <button class="opt">API key</button>
+          <button class="opt">Auto compact</button>
+        </div>
+        <div class="verdict"></div>
+      </div>
+
+      <!-- ===================== PRIMARY SOURCE + FOOTER ===================== -->
+      <h2 class="section"><span class="num">8</span>Read &amp; do this next</h2>
+      <p>
+        <strong>Primary sources:</strong>
+        <a href="https://pi.dev/docs/latest" target="_blank" rel="noopener"
+          >Context Files</a
+        >
+        +
+        <a
+          href="https://pi.dev/docs/latest/settings"
+          target="_blank"
+          rel="noopener"
+          >Settings</a
+        >
+        docs.
+      </p>
+      <p>
+        <strong>Do it now:</strong> write an
+        <code class="inline">AGENTS.md</code> for a real project — stack,
+        commands, conventions, one gotcha. Restart Pi in that folder and feel it
+        instantly "know" your codebase.
+      </p>
+
+      <div class="callout key">
+        <p>
+          🗣️ <strong>Ask me anything.</strong> Common follow-ups:
+          <em>"should AGENTS.md go in the repo root or a subdir?"</em>,
+          <em>"how do I share one AGENTS.md across all my projects?"</em>
+          (global), <em>"what's the full settings list?"</em>
+        </p>
+      </div>
+
+      <footer class="lesson-foot">
+        <div class="next-card">
+          <div class="lbl">Next lesson →</div>
+          <div class="t">
+            <a href="./0005-skills.html">Skills: packaging capability</a>
+          </div>
+          <p style="margin: 8px 0 0; font-size: 0.85rem">
+            From configuring Pi with Markdown to <em>programming</em> it — the
+            on-demand capability system.
+          </p>
+        </div>
+        <div style="flex: 0 1 220px">
+          <div class="lbl">Reference</div>
+          <p style="margin: 6px 0 0">
+            <a href="../reference/pi-glossary.html">Pi glossary</a> ·
+            <a href="../MISSION.md">Mission</a>
+          </p>
+        </div>
+      </footer>
+    </article>
+
+    <script>
+      document.querySelectorAll(".quiz").forEach((quiz) => {
+        const answer = quiz.querySelector(".options").dataset.answer;
+        const verdict = quiz.querySelector(".verdict");
+        quiz.querySelectorAll(".opt").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            quiz
+              .querySelectorAll(".opt")
+              .forEach((b) => b.classList.remove("correct", "wrong"));
+            if (btn.textContent.trim() === answer) {
+              btn.classList.add("correct");
+              verdict.textContent = "✓ Correct.";
+              verdict.className = "verdict ok";
+            } else {
+              btn.classList.add("wrong");
+              verdict.textContent =
+                "✗ Re-read section " + quiz.id.replace("q", "") + ".";
+              verdict.className = "verdict no";
+            }
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -2,6 +2,10 @@
 .DS_Store
 Thumbs.db
 
+# Python / ruff cache (from running the sync script locally)
+.ruff_cache/
+**/.ruff_cache/
+
 # Editor / IDE cruft
 .vscode/
 .idea/

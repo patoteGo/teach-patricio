@@ -1,12 +1,12 @@
 name: Sync lesson index
 
-# Auto-regenerates the "Completed lessons" table in README.md from whatever
-# HTML files live in lessons/. Fires whenever a lesson is added or changed.
+# Auto-regenerates the topic & lesson catalog in README.md from whatever
+# HTML files live under topics/*/. Fires whenever a topic or lesson changes.
 on:
   push:
     branches: [main]
     paths:
-      - 'lessons/**'
+      - "topics/**"
   workflow_dispatch: # manual run from the Actions tab
 
 permissions:

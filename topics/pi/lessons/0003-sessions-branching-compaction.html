@@ -1,0 +1,864 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pi · Lesson 3 — Sessions, Branching & Compaction</title>
+    <link rel="stylesheet" href="../assets/style.css" />
+  </head>
+  <body>
+    <article class="lesson">
+      <!-- ===================== HERO ===================== -->
+      <header class="hero">
+        <span class="eyebrow">⬡ Lesson 03 · Sessions</span>
+        <h1>One file,<br />many branches,<br />nothing lost.</h1>
+        <p class="lead">
+          A Pi session isn't a linear chat log — it's a <em>tree</em> in a
+          single JSONL file. Master branching and compaction and long sessions
+          stop being scary: you can rewind, fork, and shrink context without
+          ever deleting your work.
+        </p>
+        <p class="lesson-nav-top">
+          ↑ <a href="../MISSION.md">Mission</a> · prev:
+          <a href="./0002-driving-the-tui.html">Lesson 2 · Driving the TUI</a> ·
+          ref: <a href="../reference/pi-glossary.html">Glossary</a>
+        </p>
+      </header>
+
+      <!-- ===================== 1. THE REFRAME ===================== -->
+      <h2 class="section">
+        <span class="num">1</span>A session is a tree, not a log
+      </h2>
+      <p class="kicker">
+        Every entry has an <code class="inline">id</code> and a
+        <code class="inline">parentId</code>. Your current position is the
+        <strong>active leaf</strong>. There's no "undo" — there's only
+        <em>navigate</em>. One file holds every branch you ever explored.
+      </p>
+
+      <div style="margin: 22px 0 8px">
+        <svg
+          viewBox="0 0 820 320"
+          width="100%"
+          role="img"
+          aria-label="A session tree with two branches in one JSONL file; the active path is highlighted"
+        >
+          <!-- connectors -->
+          <g fill="none" stroke-width="3">
+            <path d="M120 170 C 160 170, 165 170, 200 170" stroke="#6c4bf0" />
+            <path d="M300 160 C 330 130, 335 110, 360 100" stroke="#0fb9a4" />
+            <path d="M460 96  C 490 96, 495 96, 530 96" stroke="#0fb9a4" />
+            <path d="M630 96  C 660 96, 665 96, 700 96" stroke="#0fb9a4" />
+            <path
+              d="M300 180 C 330 215, 335 245, 360 252"
+              stroke="#c9c6dd"
+              stroke-dasharray="5 5"
+            />
+            <path
+              d="M460 256 C 490 256, 495 256, 530 256"
+              stroke="#c9c6dd"
+              stroke-dasharray="5 5"
+            />
+          </g>
+
+          <!-- nodes -->
+          <g font-family="JetBrains Mono" font-size="11" font-weight="700">
+            <!-- A root -->
+            <rect x="60" y="150" width="60" height="40" rx="9" fill="#6c4bf0" />
+            <text x="90" y="174" text-anchor="middle" fill="#fff">A·usr</text>
+            <!-- B -->
+            <rect
+              x="200"
+              y="150"
+              width="100"
+              height="40"
+              rx="9"
+              fill="#6c4bf0"
+            />
+            <text x="250" y="174" text-anchor="middle" fill="#fff">
+              B·assistant
+            </text>
+            <!-- active branch -->
+            <rect
+              x="360"
+              y="76"
+              width="100"
+              height="40"
+              rx="9"
+              fill="#0fb9a4"
+            />
+            <text x="410" y="100" text-anchor="middle" fill="#fff">
+              C·"plan A"
+            </text>
+            <rect
+              x="530"
+              y="76"
+              width="100"
+              height="40"
+              rx="9"
+              fill="#0fb9a4"
+            />
+            <text x="580" y="100" text-anchor="middle" fill="#fff">
+              D·assistant
+            </text>
+            <rect
+              x="700"
+              y="70"
+              width="104"
+              height="52"
+              rx="9"
+              fill="#fff"
+              stroke="#0fb9a4"
+              stroke-width="3"
+            />
+            <text x="752" y="94" text-anchor="middle" fill="#0fb9a4">
+              E·"worked!"
+            </text>
+            <text
+              x="752"
+              y="110"
+              text-anchor="middle"
+              font-size="9"
+              fill="#0fb9a4"
+            >
+              ★ ACTIVE
+            </text>
+            <!-- abandoned branch -->
+            <rect
+              x="360"
+              y="232"
+              width="100"
+              height="40"
+              rx="9"
+              fill="#fff"
+              stroke="#c9c6dd"
+              stroke-width="2"
+            />
+            <text x="410" y="256" text-anchor="middle" fill="#9a96b3">
+              F·"plan B"
+            </text>
+            <rect
+              x="530"
+              y="232"
+              width="100"
+              height="40"
+              rx="9"
+              fill="#fff"
+              stroke="#c9c6dd"
+              stroke-width="2"
+            />
+            <text x="580" y="256" text-anchor="middle" fill="#9a96b3">
+              G·assistant
+            </text>
+          </g>
+
+          <!-- annotations -->
+          <text
+            x="752"
+            y="58"
+            text-anchor="middle"
+            font-family="Inter"
+            font-size="11"
+            fill="#0fb9a4"
+            font-weight="600"
+          >
+            you are here
+          </text>
+          <text
+            x="580"
+            y="300"
+            text-anchor="middle"
+            font-family="Inter"
+            font-size="11"
+            fill="#9a96b3"
+          >
+            abandoned branch — still in the file
+          </text>
+          <text
+            x="410"
+            y="40"
+            text-anchor="middle"
+            font-family="Space Grotesk"
+            font-size="11"
+            fill="#0fb9a4"
+            font-weight="700"
+          >
+            ACTIVE PATH (in context)
+          </text>
+        </svg>
+      </div>
+      <div class="callout key">
+        <p>
+          <strong>The reframe:</strong> "go back and try something else" doesn't
+          discard anything — it grows a new branch. The old path stays in the
+          same JSONL forever. You're not editing history; you're
+          <em>navigating</em> a tree.
+        </p>
+      </div>
+      <p class="cite">
+        Source:
+        <a
+          href="https://pi.dev/docs/latest/sessions"
+          target="_blank"
+          rel="noopener"
+          >Pi docs · Sessions</a
+        >
+        · file format in
+        <a
+          href="https://pi.dev/docs/latest/session-format"
+          target="_blank"
+          rel="noopener"
+          >session-format</a
+        >.
+      </p>
+
+      <!-- ===================== 2. /tree ===================== -->
+      <h2 class="section">
+        <span class="num">2</span><code>/tree</code> — navigate in place
+      </h2>
+      <p class="kicker">
+        Open it with <span class="kbd">Esc</span> <span class="kbd">Esc</span>.
+        Jump to any earlier point and continue — same file, new branch.
+        <em>What you select decides what happens next.</em>
+      </p>
+
+      <div class="grid cols-3" style="margin-top: 18px">
+        <div class="card" style="border-top: 4px solid #0fb9a4">
+          <h4>Select a <em>user</em> msg</h4>
+          <p>
+            Leaf → its <strong>parent</strong>; the message text drops into the
+            editor. Edit &amp; resubmit → spawns a <strong>new branch</strong>.
+          </p>
+        </div>
+        <div class="card" style="border-top: 4px solid #6c4bf0">
+          <h4>Select an <em>assistant/tool</em> msg</h4>
+          <p>
+            Leaf → that entry; editor stays empty. You simply
+            <strong>continue</strong> from that point in history.
+          </p>
+        </div>
+        <div class="card" style="border-top: 4px solid #f59e0b">
+          <h4>Select the <em>root</em></h4>
+          <p>
+            Resets to an empty conversation; the original prompt returns to the
+            editor. A clean restart, same file.
+          </p>
+        </div>
+      </div>
+
+      <h3 style="margin-top: 24px">Tree controls</h3>
+      <div class="grid cols-2">
+        <div class="card">
+          <p>
+            <span class="kbd">↑</span><span class="kbd">↓</span> move ·
+            <span class="kbd">←</span><span class="kbd">→</span> page ·
+            <span class="kbd">Enter</span> select ·
+            <span class="kbd">Esc</span> cancel
+          </p>
+        </div>
+        <div class="card">
+          <p>
+            <span class="kbd">Ctrl</span>+<span class="kbd">←/→</span> (or
+            <span class="kbd">Alt</span>) fold/unfold &amp; jump between branch
+            segments
+          </p>
+        </div>
+        <div class="card">
+          <p>
+            <span class="kbd">Shift</span>+<span class="kbd">L</span> set/clear
+            a bookmark label · <span class="kbd">Shift</span>+<span class="kbd"
+              >T</span
+            >
+            toggle timestamps
+          </p>
+        </div>
+        <div class="card">
+          <p>
+            <span class="kbd">Ctrl</span>+<span class="kbd">O</span> cycle
+            filter: default → no-tools → user-only → labeled-only → all
+          </p>
+        </div>
+      </div>
+      <p class="cite">
+        Tip: bookmark turning points with <span class="kbd">Shift</span>+<span
+          class="kbd"
+          >L</span
+        >, then filter to <em>labeled-only</em> to fly through long sessions.
+        Set the default filter via <code class="inline">treeFilterMode</code> in
+        settings.
+      </p>
+
+      <!-- ===================== 3. tree vs fork vs clone ===================== -->
+      <h2 class="section">
+        <span class="num">3</span><code>/tree</code> vs <code>/fork</code> vs
+        <code>/clone</code>
+      </h2>
+      <p class="kicker">
+        Three ways to "go back." The difference is simple:
+        <strong>same file or new file?</strong>
+      </p>
+
+      <div class="grid cols-3" style="margin-top: 18px">
+        <div
+          class="card"
+          style="text-align: center; border-top: 4px solid #0fb9a4"
+        >
+          <div class="badge" style="background: #0fb9a4; margin: 0 auto 10px">
+            🌳
+          </div>
+          <h4 style="text-align: center">/tree</h4>
+          <p style="text-align: center; font-size: 0.85rem">
+            <strong>Same</strong> file
+          </p>
+          <p style="text-align: center; font-size: 0.85rem">Full tree view</p>
+          <p style="text-align: center; font-size: 0.85rem">
+            Explore alternatives <em>in place</em>
+          </p>
+          <p
+            style="
+              text-align: center;
+              font-size: 0.85rem;
+              color: var(--ink-soft);
+            "
+          >
+            Optional branch summary
+          </p>
+        </div>
+        <div
+          class="card"
+          style="text-align: center; border-top: 4px solid #6c4bf0"
+        >
+          <div class="badge" style="background: #6c4bf0; margin: 0 auto 10px">
+            ⑂
+          </div>
+          <h4 style="text-align: center">/fork</h4>
+          <p style="text-align: center; font-size: 0.85rem">
+            <strong>New</strong> file
+          </p>
+          <p style="text-align: center; font-size: 0.85rem">
+            Picks a past user message
+          </p>
+          <p style="text-align: center; font-size: 0.85rem">
+            "What if I'd asked differently?"
+          </p>
+          <p
+            style="
+              text-align: center;
+              font-size: 0.85rem;
+              color: var(--ink-soft);
+            "
+          >
+            No summary
+          </p>
+        </div>
+        <div
+          class="card"
+          style="text-align: center; border-top: 4px solid #f59e0b"
+        >
+          <div class="badge" style="background: #f59e0b; margin: 0 auto 10px">
+            ⧉
+          </div>
+          <h4 style="text-align: center">/clone</h4>
+          <p style="text-align: center; font-size: 0.85rem">
+            <strong>New</strong> file
+          </p>
+          <p style="text-align: center; font-size: 0.85rem">
+            Duplicates active branch
+          </p>
+          <p style="text-align: center; font-size: 0.85rem">
+            Snapshot before a risky change
+          </p>
+          <p
+            style="
+              text-align: center;
+              font-size: 0.85rem;
+              color: var(--ink-soft);
+            "
+          >
+            No summary
+          </p>
+        </div>
+      </div>
+      <div class="callout tip">
+        <p>
+          <strong>Rule of thumb:</strong>
+          <code class="inline">/tree</code> keeps alternatives
+          <em>together</em>; <code class="inline">/fork</code> &amp;
+          <code class="inline">/clone</code> split them into
+          <em>separate files</em>. Use <code class="inline">/clone</code> as a
+          cheap "save point" before letting Pi do something destructive.
+        </p>
+      </div>
+
+      <!-- ===================== 4. CLI session control ===================== -->
+      <h2 class="section">
+        <span class="num">4</span>Session control from the shell
+      </h2>
+      <p class="kicker">
+        You don't have to be inside Pi to manage sessions. These flags run at
+        startup.
+      </p>
+
+      <pre class="block"><span class="c"># resume / pick</span>
+pi -c                      <span class="c"># continue most recent session</span>
+pi -r                      <span class="c"># browse &amp; select (same as /resume)</span>
+pi --session &lt;path|id&gt;     <span class="c"># jump to a specific file or partial UUID</span>
+pi --fork &lt;path|id&gt;        <span class="c"># fork an existing session into a new file</span>
+
+<span class="c"># name &amp; ephemeral</span>
+pi --name <span class="s">"Refactor auth"</span>   <span class="c"># named = findable later (also /name)</span>
+pi --no-session            <span class="c"># ephemeral: don't save anything</span></pre>
+
+      <div class="card" style="margin-top: 14px">
+        <h4>Inside the <code class="inline">/resume</code> picker</h4>
+        <p>
+          <span class="kbd">Ctrl</span>+<span class="kbd">P</span> toggle path ·
+          <span class="kbd">Ctrl</span>+<span class="kbd">S</span> sort mode ·
+          <span class="kbd">Ctrl</span>+<span class="kbd">N</span> named-only
+          filter · <span class="kbd">Ctrl</span>+<span class="kbd">R</span>
+          rename · <span class="kbd">Ctrl</span>+<span class="kbd">D</span>
+          delete (uses the <code class="inline">trash</code> CLI if available —
+          recoverable).
+        </p>
+      </div>
+      <p class="cite">
+        Source:
+        <a
+          href="https://pi.dev/docs/latest/sessions"
+          target="_blank"
+          rel="noopener"
+          >Pi docs · Sessions</a
+        >.
+      </p>
+
+      <!-- ===================== 5. COMPACTION ===================== -->
+      <h2 class="section">
+        <span class="num">5</span>Compaction — when the window fills up
+      </h2>
+      <p class="kicker">
+        Long sessions exhaust the context window. Compaction
+        <em>summarizes</em> older messages and keeps recent ones. It's lossy —
+        but the full history is <strong>never deleted</strong>; it lives on in
+        the JSONL.
+      </p>
+
+      <div class="callout warn" style="margin-top: 14px">
+        <p><strong>When it fires (auto, on by default):</strong></p>
+      </div>
+      <div style="display: flex; justify-content: center; margin: 6px 0 18px">
+        <svg
+          viewBox="0 0 540 70"
+          width="100%"
+          style="max-width: 540px"
+          role="img"
+          aria-label="compaction trigger formula"
+        >
+          <rect
+            x="0"
+            y="10"
+            width="540"
+            height="50"
+            rx="12"
+            fill="#fef3e0"
+            stroke="#fde2b0"
+          />
+          <text
+            x="270"
+            y="42"
+            text-anchor="middle"
+            font-family="JetBrains Mono"
+            font-size="15"
+            fill="#14132b"
+          >
+            contextTokens
+            <tspan fill="#ef476f" font-weight="700">&gt;</tspan>
+            contextWindow
+            <tspan fill="#ef476f" font-weight="700">−</tspan>
+            reserveTokens
+          </text>
+        </svg>
+      </div>
+      <p class="kicker" style="text-align: center; margin-top: -6px">
+        reserve defaults to <strong>16,384</strong> tokens (room for the reply).
+        It keeps <strong>20,000</strong> recent tokens (<code class="inline"
+          >keepRecentTokens</code
+        >), summarizes the rest.
+      </p>
+
+      <!-- before/after diagram -->
+      <div style="margin: 18px 0 8px">
+        <svg
+          viewBox="0 0 820 300"
+          width="100%"
+          role="img"
+          aria-label="Compaction before and after: old messages summarized, recent kept, full history preserved in the file"
+        >
+          <!-- BEFORE label -->
+          <text
+            x="20"
+            y="30"
+            font-family="Space Grotesk"
+            font-size="13"
+            font-weight="700"
+            fill="#64748b"
+          >
+            BEFORE — full session in file
+          </text>
+          <!-- before bar -->
+          <rect x="20" y="44" width="780" height="34" rx="8" fill="#efeafb" />
+          <rect x="20" y="44" width="430" height="34" rx="8" fill="#c9c6dd" />
+          <rect x="450" y="44" width="350" height="34" rx="8" fill="#0fb9a4" />
+          <text
+            x="235"
+            y="66"
+            text-anchor="middle"
+            font-family="Inter"
+            font-size="12"
+            fill="#5a5778"
+            font-weight="600"
+          >
+            older turns → summarized
+          </text>
+          <text
+            x="625"
+            y="66"
+            text-anchor="middle"
+            font-family="Inter"
+            font-size="12"
+            fill="#fff"
+            font-weight="600"
+          >
+            keep recent (20k)
+          </text>
+          <!-- cut marker -->
+          <text
+            x="450"
+            y="96"
+            text-anchor="middle"
+            font-family="JetBrains Mono"
+            font-size="10"
+            fill="#ef476f"
+          >
+            ✂ cut = firstKeptEntryId
+          </text>
+          <line
+            x1="450"
+            y1="78"
+            x2="450"
+            y2="92"
+            stroke="#ef476f"
+            stroke-width="2"
+          />
+
+          <!-- arrow -->
+          <path
+            d="M410 120 L410 150"
+            stroke="#6c4bf0"
+            stroke-width="3"
+            fill="none"
+            marker-end="url(#a3)"
+          />
+          <defs>
+            <marker
+              id="a3"
+              markerWidth="10"
+              markerHeight="10"
+              refX="5"
+              refY="5"
+              orient="auto"
+            >
+              <path d="M0,0 L10,5 L0,10 Z" fill="#6c4bf0" />
+            </marker>
+          </defs>
+          <text
+            x="425"
+            y="140"
+            font-family="Inter"
+            font-size="11"
+            fill="#6c4bf0"
+            font-weight="600"
+          >
+            /compact
+          </text>
+
+          <!-- AFTER -->
+          <text
+            x="20"
+            y="172"
+            font-family="Space Grotesk"
+            font-size="13"
+            font-weight="700"
+            fill="#64748b"
+          >
+            AFTER — what the LLM sees
+          </text>
+          <g font-family="JetBrains Mono" font-size="10.5" font-weight="700">
+            <rect
+              x="20"
+              y="186"
+              width="110"
+              height="34"
+              rx="8"
+              fill="#14132b"
+            />
+            <text x="75" y="208" text-anchor="middle" fill="#e8e6ff">
+              system
+            </text>
+            <rect
+              x="140"
+              y="186"
+              width="120"
+              height="34"
+              rx="8"
+              fill="#6c4bf0"
+            />
+            <text x="200" y="202" text-anchor="middle" fill="#fff">
+              ★ summary
+            </text>
+            <text
+              x="200"
+              y="215"
+              text-anchor="middle"
+              font-size="8.5"
+              fill="#fff"
+              font-weight="400"
+            >
+              goal·progress·files
+            </text>
+            <rect
+              x="270"
+              y="186"
+              width="530"
+              height="34"
+              rx="8"
+              fill="#0fb9a4"
+            />
+            <text x="535" y="208" text-anchor="middle" fill="#fff">
+              kept recent messages…
+            </text>
+          </g>
+
+          <!-- preserved note -->
+          <rect
+            x="20"
+            y="244"
+            width="780"
+            height="44"
+            rx="10"
+            fill="#e4f8f5"
+            stroke="#bff0e8"
+          />
+          <text
+            x="410"
+            y="264"
+            text-anchor="middle"
+            font-family="Inter"
+            font-size="12"
+            fill="#0a8a7a"
+            font-weight="600"
+          >
+            ✓ The summarized part is NOT deleted
+          </text>
+          <text
+            x="410"
+            y="280"
+            text-anchor="middle"
+            font-family="Inter"
+            font-size="11"
+            fill="#0a8a7a"
+          >
+            it stays in the JSONL — revisit any time with /tree
+          </text>
+        </svg>
+      </div>
+
+      <div class="grid cols-2" style="margin-top: 14px">
+        <div class="callout tip" style="margin: 0">
+          <p>
+            <strong>Manual control:</strong>
+            <code class="inline">/compact</code> now, or
+            <code class="inline">/compact focus on the auth refactor</code> to
+            steer the summary. Auto fires on overflow (recovers + retries) or
+            near the limit (proactive).
+          </p>
+        </div>
+        <div class="callout warn" style="margin: 0">
+          <p>
+            <strong>It never cuts at a tool result</strong> — results stay glued
+            to their tool call. One giant turn over budget? Pi makes a "split
+            turn" with two merged summaries.
+          </p>
+        </div>
+      </div>
+      <p class="cite">
+        Source:
+        <a
+          href="https://pi.dev/docs/latest/compaction"
+          target="_blank"
+          rel="noopener"
+          >Pi docs · Compaction</a
+        >
+        · tune via
+        <code class="inline"
+          >compaction.{enabled, reserveTokens, keepRecentTokens}</code
+        >.
+      </p>
+
+      <!-- ===================== 6. BRANCH SUMMARIES + SETTINGS ===================== -->
+      <h2 class="section">
+        <span class="num">6</span>Branch summaries &amp; the knobs
+      </h2>
+      <p class="kicker">
+        When you <code class="inline">/tree</code> <em>away</em> from a branch,
+        Pi offers to summarize the path you're leaving and inject it at the new
+        spot — so context survives the jump. Same engine as compaction; tracks
+        files cumulatively.
+      </p>
+
+      <pre
+        class="block"
+      ><span class="c">// ~/.pi/agent/settings.json  (or .pi/settings.json)</span>
+{
+  <span class="s">"compaction"</span>: {
+    <span class="s">"enabled"</span>: true,            <span class="c">// auto-compaction on/off</span>
+    <span class="s">"reserveTokens"</span>: 16384,     <span class="c">// room left for the reply</span>
+    <span class="s">"keepRecentTokens"</span>: 20000   <span class="c">// how much recent context survives</span>
+  },
+  <span class="s">"treeFilterMode"</span>: <span class="s">"labeled-only"</span>  <span class="c">// your default /tree filter</span>
+}</pre>
+      <div class="callout key">
+        <p>
+          <strong>Power move:</strong> set
+          <code class="inline">treeFilterMode: "labeled-only"</code> and label
+          your turning points (<span class="kbd">Shift</span>+<span class="kbd"
+            >L</span
+          >). Long sessions become a handful of bookmarks you can fly between —
+          no scrolling through tool spam.
+        </p>
+      </div>
+
+      <!-- ===================== QUIZ ===================== -->
+      <h2 class="section"><span class="num">7</span>Check your grasp</h2>
+      <p class="kicker">Same-length options, instant feedback.</p>
+
+      <div class="quiz" id="q1">
+        <div class="q">
+          Q1. You want two approaches kept in ONE session file. Which?
+        </div>
+        <div class="options" data-answer="Just /tree">
+          <button class="opt">Just /tree</button>
+          <button class="opt">Run /fork</button>
+          <button class="opt">Run /clone</button>
+          <button class="opt">Make /new</button>
+        </div>
+        <div class="verdict"></div>
+      </div>
+
+      <div class="quiz" id="q2">
+        <div class="q">
+          Q2. After compaction, is anything permanently deleted?
+        </div>
+        <div class="options" data-answer="Nothing lost">
+          <button class="opt">Nothing lost</button>
+          <button class="opt">Old turns</button>
+          <button class="opt">Tool output</button>
+          <button class="opt">The summary</button>
+        </div>
+        <div class="verdict"></div>
+      </div>
+
+      <div class="quiz" id="q3">
+        <div class="q">Q3. Auto-compaction triggers when tokens exceed…</div>
+        <div class="options" data-answer="Window minus reserve">
+          <button class="opt">Window minus reserve</button>
+          <button class="opt">Window plus reserve</button>
+          <button class="opt">The reserve alone</button>
+          <button class="opt">Twenty thousand tokens</button>
+        </div>
+        <div class="verdict"></div>
+      </div>
+
+      <!-- ===================== PRIMARY SOURCE + FOOTER ===================== -->
+      <h2 class="section"><span class="num">8</span>Read &amp; do this next</h2>
+      <p>
+        <strong>Primary sources:</strong>
+        <a
+          href="https://pi.dev/docs/latest/sessions"
+          target="_blank"
+          rel="noopener"
+          >Sessions</a
+        >
+        +
+        <a
+          href="https://pi.dev/docs/latest/compaction"
+          target="_blank"
+          rel="noopener"
+          >Compaction</a
+        >
+        docs.
+      </p>
+      <p>
+        <strong>Do it now:</strong> in a real session, make a couple of branches
+        with <code class="inline">/tree</code>, label one with
+        <span class="kbd">Shift</span>+<span class="kbd">L</span>, then run
+        <code class="inline">/compact</code> with a focus instruction and watch
+        the footer context % drop. Feel history survive.
+      </p>
+
+      <div class="callout key">
+        <p>
+          🗣️ <strong>Ask me anything.</strong> Common follow-ups:
+          <em>"how do I find a session from last week?"</em>,
+          <em>"can I write my own compaction summary format?"</em> (yes —
+          extensions), <em>"what's actually inside a JSONL entry?"</em>
+        </p>
+      </div>
+
+      <footer class="lesson-foot">
+        <div class="next-card">
+          <div class="lbl">Next lesson →</div>
+          <div class="t">
+            <a href="./0004-context-files.html"
+              >Context files: making Pi behave</a
+            >
+          </div>
+          <p style="margin: 8px 0 0; font-size: 0.85rem">
+            <code>AGENTS.md</code>, system prompts, and project settings — how
+            to make Pi consistent across a whole codebase.
+          </p>
+        </div>
+        <div style="flex: 0 1 220px">
+          <div class="lbl">Reference</div>
+          <p style="margin: 6px 0 0">
+            <a href="../reference/pi-glossary.html">Pi glossary</a> ·
+            <a href="../MISSION.md">Mission</a>
+          </p>
+        </div>
+      </footer>
+    </article>
+
+    <script>
+      document.querySelectorAll(".quiz").forEach((quiz) => {
+        const answer = quiz.querySelector(".options").dataset.answer;
+        const verdict = quiz.querySelector(".verdict");
+        quiz.querySelectorAll(".opt").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            quiz
+              .querySelectorAll(".opt")
+              .forEach((b) => b.classList.remove("correct", "wrong"));
+            if (btn.textContent.trim() === answer) {
+              btn.classList.add("correct");
+              verdict.textContent = "✓ Correct.";
+              verdict.className = "verdict ok";
+            } else {
+              btn.classList.add("wrong");
+              verdict.textContent =
+                "✗ Re-read section " + quiz.id.replace("q", "") + ".";
+              verdict.className = "verdict no";
+            }
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

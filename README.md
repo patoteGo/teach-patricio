@@ -1,124 +1,123 @@
 <div align="center">
 
-# ⬡ Pi Power-User
+# ⬡ Learning Hub
 
-**A personal, portable course for bending the [Pi coding harness](https://github.com/earendil-works/pi) into a power tool — not a chat box.**
+**A personal, portable knowledge base for learning *anything* — one self-contained topic folder per subject, maximally graphical HTML lessons, fully git-portable.**
 
-<img src="https://img.shields.io/badge/Pi-v0.83-6c4bf0?style=flat-square" alt="Pi v0.83">
-<img src="https://img.shields.io/badge/status-active%20learning-0fb9a4?style=flat-square">
-<img src="https://img.shields.io/badge/lessons-01%20%2F%20~07-f59e0b?style=flat-square">
 <img src="https://img.shields.io/badge/format-graphical%20HTML-14132b?style=flat-square">
+<img src="https://img.shields.io/badge/portable-static%20files-0fb9a4?style=flat-square">
+<img src="https://img.shields.io/badge/CI-auto--syncs%20catalog-6c4bf0?style=flat-square">
 
 </div>
 
 ---
 
-## Why this exists
+## What this is
 
-I'm an experienced developer who adopted **Pi** and wants to wield it like a
-power tool: spend less time on mechanical coding, bend Pi to my workflow
-(skills, extensions, packages), and stop fighting the tool.
+A multi-topic learning repo. Each **topic** is an isolated workspace under
+[`topics/`](./topics) — its own mission, resources, notes, lessons, and
+reference docs. Start at [`index.html`](./index.html) (graphical hub) or read
+the auto-generated catalog below.
 
-This repo is the **living knowledge base** for that journey — one tight win
-per lesson, maximally graphical, fully portable so I can pick it up on any
-machine.
+> One topic per folder keeps subjects from bleeding together. A topic is fully
+> self-contained — you can lift a single folder out and it still works.
 
-> 📌 The full charter, success criteria, and constraints live in **[MISSION.md](./MISSION.md)**.
+## 📚 Topics & lessons
 
-## 📘 Lessons
+The catalog below is **auto-generated** from `topics/*/lessons/` by a GitHub
+Action on every push, so it never drifts. (See
+[`.github/workflows/sync-lessons.yml`](./.github/workflows/sync-lessons.yml).)
 
-Each lesson is a self-contained, graphical HTML file — open it in any browser,
-no build step. The **Completed** table below is auto-generated from the
-`lessons/` folder by a GitHub Action on every push, so it never drifts.
+<!-- topics:start -->
+### Master the Pi Coding Harness as a Power Tool
 
-<!-- lessons:start -->
-| # | Lesson | Status |
-|---|--------|--------|
-| 01 | [The Core Loop](./lessons/0001-the-core-loop.html) | ✅ Done |
-<!-- lessons:end -->
+`topics/pi/` · 7 lesson(s)
 
-> ➕ Drop a new `lessons/NNNN-*.html` and push — the table updates itself on
-> the next push (see `.github/workflows/sync-lessons.yml`).
+| # | Lesson |
+|---|--------|
+| 01 | [The Core Loop](./topics/pi/lessons/0001-the-core-loop.html) |
+| 02 | [Driving the TUI](./topics/pi/lessons/0002-driving-the-tui.html) |
+| 03 | [Sessions, Branching & Compaction](./topics/pi/lessons/0003-sessions-branching-compaction.html) |
+| 04 | [Context Files](./topics/pi/lessons/0004-context-files.html) |
+| 05 | [Skills](./topics/pi/lessons/0005-skills.html) |
+| 06 | [Extensions](./topics/pi/lessons/0006-extensions.html) |
+| 07 | [Pi Packages](./topics/pi/lessons/0007-packages.html) |
 
-### 🚧 Roadmap
-
-The planned sequence (delete each line as it ships):
-
-- **02** — Driving the TUI: steering, branching, compaction
-- **03** — Sessions, `/tree`, and context compaction
-- **04** — Project context: `AGENTS.md` & `.pi/settings.json`
-- **05** — Writing your first **skill**
-- **06** — Extensions: extending Pi without forking it
-- **07** — Packages & the trust/security model
+**Total: 7 lesson(s) across 1 topic(s).**
+<!-- topics:end -->
 
 ## 🗂 Repo map
 
 ```
 teach-patricio/
-├── MISSION.md            # Course charter: why, success criteria, scope
-├── RESOURCES.md          # Curated, high-trust sources (docs, posts, communities)
-├── NOTES.md              # Teaching notes & session log (internal)
-├── README.md             # You are here
-├── .github/              # CI: auto-syncs the lesson table below
-├── lessons/              # Graphical, self-contained HTML lessons
-│   └── 0001-the-core-loop.html
-├── learning-records/     # One short markdown note per learning session
-│   └── 0001-prior-knowledge-and-mission.md
-├── assets/
-│   └── style.css         # Shared stylesheet — one consistent look across lessons
-└── reference/            # Dumped reference snippets (empty for now)
+├── index.html            # Graphical hub — start here in a browser
+├── README.md             # You are here (catalog is auto-synced)
+├── topics/               # ONE FOLDER PER TOPIC
+│   ├── pi/               #   the Pi power-user course (7 lessons + glossary)
+│   └── _template/        #   copy-and-go skeleton for a new topic (CI skips it)
+└── .github/              # CI: regenerates the catalog above from topics/*/
 ```
+
+Each topic folder is a standard teaching workspace:
+
+```
+topics/<your-topic>/
+├── MISSION.md            # WHY you're learning this (grounds every lesson)
+├── RESOURCES.md          # curated, high-trust sources
+├── NOTES.md              # teaching notes & session log
+├── assets/style.css      # the topic's shared stylesheet (lessons link it)
+├── lessons/              # NNNN-dash-name.html — graphical, self-contained
+├── reference/            # cheat sheets, glossaries, syntax (revisited often)
+└── learning-records/     # decision-grade notes on what's truly learned
+```
+
+## ➕ Add a new topic
+
+It's a one-liner:
+
+```bash
+cp -r topics/_template topics/<your-topic>
+cd topics/<your-topic
+# 1) edit MISSION.md with your "why"
+# 2) drop graphical lessons into lessons/  (NNNN-name.html)
+# 3) commit & push — the README catalog updates itself
+```
+
+Then add a card for it in [`index.html`](./index.html). Ask the Pi teach agent
+to scaffold the first lesson — it'll follow the same graphical, self-citing
+style as the Pi course.
 
 ## 💻 Use it on another machine
 
-Clone it wherever you keep your dotfiles/projects:
-
 ```bash
-git clone https://github.com/patoteGo/teach-patricio.git
+git clone <your-repo-url> teach-patricio
 cd teach-patricio
-open lessons/0001-the-core-loop.html   # macOS  →  xdg-open on Linux, start on Windows
+open index.html                       # macOS  →  xdg-open on Linux
+# or jump straight into a topic:
+open topics/pi/lessons/0001-the-core-loop.html
 ```
 
-That's it. Lessons are static HTML + one CSS file — no dependencies, no
-install, no internet required to read (the shared stylesheet loads fonts from
-a CDN but degrades gracefully offline).
+Static HTML + CSS per topic. No dependencies, no build step, no internet
+required to read (stylesheets load fonts from a CDN but degrade gracefully).
 
-**Keep learning across machines:** open a session, read the latest
-[`learning-records/`](./learning-records) note to see where you left off,
-and keep going.
+## 🧭 How lessons are taught
 
-## 🧭 How this course is taught
-
-- **Graphical first.** Every lesson leads with diagrams, SVG, and visual
-  hierarchy — never walls of text.
-- **Self-citing.** Claims trace back to the canonical sources in
-  [RESOURCES.md](./RESOURCES.md), not parametric guesses.
-- **Portable.** Nothing depends on a specific machine — no absolute local
-  paths baked into lessons.
-- **Lazy/power path.** Pi's whole philosophy is a minimal core you *extend*,
-  not fork. The lessons teach that same sensibility.
-
-## 📚 Source material
-
-Everything here is grounded in the official docs and the design rationale
-behind Pi. See **[RESOURCES.md](./RESOURCES.md)** for the full, curated list,
-notably:
-
-- [Pi Documentation](https://pi.dev/docs/latest) · [Pi on GitHub](https://github.com/earendil-works/pi)
-- [Mario Zechner — "Pi Coding Agent" design rationale](https://mariozechner.at/posts/2025-11-30-pi-coding-agent/)
-- [Agent Skills Specification](https://agentskills.io/specification)
+- **Graphical first** — diagrams, SVG, visual hierarchy; never walls of text.
+- **Self-citing** — claims trace to the curated sources in each topic's
+  `RESOURCES.md`, not parametric guesses.
+- **One tight win per lesson** — short, completable, in your zone of proximal
+  development.
+- **Portable** — no absolute local paths baked into any artifact.
 
 ## 📝 License
 
-Personal learning notes. The lesson *content* is free to read and learn from;
-the [Pi](https://github.com/earendil-works/pi) project itself is owned by its
-authors. No rights claimed on third-party material cited in
-[RESOURCES.md](./RESOURCES.md).
+Personal learning notes. Lesson *content* is free to read and learn from; no
+rights claimed on third-party material cited in any topic's `RESOURCES.md`.
 
 ---
 
 <div align="center">
 
-<sub>Built one tight win at a time. ⬡</sub>
+<sub>One folder per topic. One tight win per lesson. ⬡</sub>
 
 </div>
