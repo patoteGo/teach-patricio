@@ -171,6 +171,12 @@ p {
 .grid.cols-4 {
 	grid-template-columns: repeat(4, 1fr);
 }
+.grid > * {
+	min-width: 0;
+}
+.grid .span-2 {
+	grid-column: span 2;
+}
 @media (max-width: 720px) {
 	.grid.cols-2,
 	.grid.cols-4 {
@@ -181,6 +187,9 @@ p {
 	.grid.cols-2,
 	.grid.cols-4 {
 		grid-template-columns: 1fr;
+	}
+	.grid .span-2 {
+		grid-column: auto;
 	}
 }
 
