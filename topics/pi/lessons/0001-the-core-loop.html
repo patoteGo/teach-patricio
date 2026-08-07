@@ -1,61 +1,112 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pi · Lesson 1 — The Core Loop</title>
+    <title
+      data-pt="Pi · Lição 1 — O Core Loop"
+      data-en="Pi · Lesson 1 — The Core Loop"
+    >
+      Pi · Lição 1 — O Core Loop
+    </title>
     <link rel="stylesheet" href="../assets/style.css" />
+    <link rel="stylesheet" href="../assets/dark.css" />
+    <link rel="stylesheet" href="../assets/i18n.css" />
+    <script src="../assets/i18n.js" defer></script>
+    <script src="../assets/nav.js" defer></script>
   </head>
-  <body>
+  <body class="lang-pt">
     <article class="lesson">
       <!-- ===================== HERO ===================== -->
       <header class="hero">
-        <span class="eyebrow">⬡ Lesson 01 · Foundations</span>
-        <h1>Pi is a loop,<br />not a chat box.</h1>
+        <span class="eyebrow"
+          ><span data-lang="pt">⬡ Lição 01 · Fundamentos</span
+          ><span data-lang="en">⬡ Lesson 01 · Foundations</span></span
+        >
+        <h1>
+          <span data-lang="pt">Pi é um loop,<br />não um chat.</span
+          ><span data-lang="en">Pi is a loop,<br />not a chat box.</span>
+        </h1>
         <p class="lead">
-          Before any power move, lock in the one mental model that makes every
-          feature click: what Pi actually <em>is</em>, the four tools it hands
-          the model, and the turn that repeats until your job is done.
+          <span data-lang="pt"
+            >Antes de qualquer jogada de poder, fixe o único modelo mental que
+            faz todo recurso encaixar: o que o Pi realmente <em>é</em>, as
+            quatro ferramentas que ele dá ao modelo, e o turno que se repete até
+            o trabalho estar pronto.</span
+          ><span data-lang="en"
+            >Before any power move, lock in the one mental model that makes
+            every feature click: what Pi actually <em>is</em>, the four tools it
+            hands the model, and the turn that repeats until your job is
+            done.</span
+          >
         </p>
         <p class="lesson-nav-top">
-          ↑ Part of the <a href="../MISSION.md">Pi Power-User</a> course · next:
-          <a href="./0002-driving-the-tui.html">Driving the TUI</a>
+          ↑ <span data-lang="pt">Parte do curso</span
+          ><span data-lang="en">Part of the</span>
+          <a href="../MISSION.md">Pi Power-User</a> ·
+          <span data-lang="pt">próxima</span><span data-lang="en">next</span>:
+          <a href="./0002-driving-the-tui.html"
+            ><span data-lang="pt">Dirigindo o TUI</span
+            ><span data-lang="en">Driving the TUI</span></a
+          >
         </p>
       </header>
 
       <!-- ===================== 1. WHAT PI IS ===================== -->
-      <h2 class="section"><span class="num">1</span>What Pi actually is</h2>
+      <h2 class="section">
+        <span class="num">1</span
+        ><span data-lang="pt">O que o Pi realmente é</span
+        ><span data-lang="en">What Pi actually is</span>
+      </h2>
       <p class="kicker">
-        One sentence to anchor everything: Pi is a
-        <strong>minimal terminal harness</strong> that loops a model over a
-        handful of file-and-shell tools. It is deliberately not an IDE, not an
-        agent framework, not a chat app.
+        <span data-lang="pt"
+          >Uma frase para ancorar tudo: Pi é um
+          <strong>harness minimalista de terminal</strong> que faz um loop de um
+          modelo sobre um punhado de ferramentas de arquivo e shell. Não é, de
+          propósito, uma IDE, nem um framework de agentes, nem um app de
+          chat.</span
+        ><span data-lang="en"
+          >One sentence to anchor everything: Pi is a
+          <strong>minimal terminal harness</strong> that loops a model over a
+          handful of file-and-shell tools. It is deliberately not an IDE, not an
+          agent framework, not a chat app.</span
+        >
       </p>
 
-      <!-- SVG: the minimal core -->
       <div style="margin: 24px 0 8px">
-        <svg
-          viewBox="0 0 820 250"
-          width="100%"
-          role="img"
-          aria-label="Pi minimal core: harness hosting a model, four tools, and a session log"
-        >
+        <svg viewBox="0 0 820 250" width="100%" role="img" aria-labelledby="t1">
+          <title
+            id="t1"
+            data-pt="Núcleo mínimo do Pi: harness hospedando modelo, quatro ferramentas e um log de sessão"
+            data-en="Pi minimal core: harness hosting a model, four tools, and a session log"
+          >
+            Núcleo mínimo do Pi
+          </title>
           <defs>
             <linearGradient id="gPi" x1="0" y1="0" x2="1" y2="1">
               <stop offset="0" stop-color="#6c4bf0" />
               <stop offset="1" stop-color="#0fb9a4" />
             </linearGradient>
+            <marker
+              id="arrow"
+              markerWidth="9"
+              markerHeight="9"
+              refX="6"
+              refY="3"
+              orient="auto"
+            >
+              <path d="M0,0 L6,3 L0,6 Z" fill="#6c4bf0" />
+            </marker>
           </defs>
-
-          <!-- the harness shell -->
+          <!-- harness shell -->
           <rect
             x="14"
             y="20"
             width="792"
             height="210"
             rx="22"
-            fill="#efeafb"
-            stroke="#d9cefb"
+            fill="#211d33"
+            stroke="#6c4bf0"
             stroke-width="2"
           />
           <text
@@ -64,13 +115,14 @@
             font-family="Space Grotesk"
             font-size="15"
             font-weight="700"
-            fill="#6c4bf0"
+            fill="#8b6ff7"
             letter-spacing="1.5"
+            data-pt="PI · O HARNESS"
+            data-en="PI · THE HARNESS"
           >
-            PI · THE HARNESS
+            PI · O HARNESS
           </text>
-
-          <!-- model (brain) -->
+          <!-- model -->
           <circle cx="150" cy="135" r="54" fill="url(#gPi)" />
           <text
             x="150"
@@ -90,11 +142,12 @@
             font-family="Inter"
             font-size="10.5"
             fill="rgba(255,255,255,.85)"
+            data-pt="o cérebro"
+            data-en="the brain"
           >
-            the brain
+            o cérebro
           </text>
-
-          <!-- tools (hands) -->
+          <!-- tools -->
           <g font-family="JetBrains Mono" font-size="12" font-weight="700">
             <rect
               x="300"
@@ -102,11 +155,11 @@
               width="92"
               height="40"
               rx="10"
-              fill="#fff"
-              stroke="#0fb9a4"
+              fill="#181a26"
+              stroke="#2dd4bf"
               stroke-width="2"
             />
-            <text x="346" y="117" text-anchor="middle" fill="#0fb9a4">
+            <text x="346" y="117" text-anchor="middle" fill="#2dd4bf">
               read
             </text>
             <rect
@@ -115,11 +168,11 @@
               width="92"
               height="40"
               rx="10"
-              fill="#fff"
-              stroke="#0fb9a4"
+              fill="#181a26"
+              stroke="#2dd4bf"
               stroke-width="2"
             />
-            <text x="346" y="163" text-anchor="middle" fill="#0fb9a4">
+            <text x="346" y="163" text-anchor="middle" fill="#2dd4bf">
               write
             </text>
             <rect
@@ -128,11 +181,11 @@
               width="92"
               height="40"
               rx="10"
-              fill="#fff"
-              stroke="#0fb9a4"
+              fill="#181a26"
+              stroke="#2dd4bf"
               stroke-width="2"
             />
-            <text x="448" y="117" text-anchor="middle" fill="#0fb9a4">
+            <text x="448" y="117" text-anchor="middle" fill="#2dd4bf">
               edit
             </text>
             <rect
@@ -141,11 +194,11 @@
               width="92"
               height="40"
               rx="10"
-              fill="#fff"
-              stroke="#0fb9a4"
+              fill="#181a26"
+              stroke="#2dd4bf"
               stroke-width="2"
             />
-            <text x="448" y="163" text-anchor="middle" fill="#0fb9a4">
+            <text x="448" y="163" text-anchor="middle" fill="#2dd4bf">
               bash
             </text>
           </g>
@@ -156,19 +209,20 @@
             font-family="Space Grotesk"
             font-size="12"
             font-weight="600"
-            fill="#4a4866"
+            fill="#9ea2b8"
+            data-pt="4 FERRAMENTAS (as mãos)"
+            data-en="4 TOOLS (the hands)"
           >
-            4 TOOLS (the hands)
+            4 FERRAMENTAS (as mãos)
           </text>
-
-          <!-- session (memory) -->
+          <!-- session -->
           <rect
             x="560"
             y="88"
             width="150"
             height="92"
             rx="14"
-            fill="#fff"
+            fill="#181a26"
             stroke="#f59e0b"
             stroke-width="2"
           />
@@ -179,9 +233,11 @@
             font-family="Space Grotesk"
             font-size="12.5"
             font-weight="700"
-            fill="#f59e0b"
+            fill="#fbbf24"
+            data-pt="SESSÃO"
+            data-en="SESSION"
           >
-            SESSION
+            SESSÃO
           </text>
           <text
             x="635"
@@ -189,9 +245,11 @@
             text-anchor="middle"
             font-family="JetBrains Mono"
             font-size="10.5"
-            fill="#4a4866"
+            fill="#9ea2b8"
+            data-pt="ramificação"
+            data-en="branching"
           >
-            branching
+            ramificação
           </text>
           <text
             x="635"
@@ -199,9 +257,11 @@
             text-anchor="middle"
             font-family="JetBrains Mono"
             font-size="10.5"
-            fill="#4a4866"
+            fill="#9ea2b8"
+            data-pt="log JSONL"
+            data-en="JSONL log"
           >
-            JSONL log
+            log JSONL
           </text>
           <text
             x="635"
@@ -209,144 +269,210 @@
             text-anchor="middle"
             font-family="JetBrains Mono"
             font-size="10.5"
-            fill="#4a4866"
+            fill="#9ea2b8"
+            data-pt="(a memória)"
+            data-en="(the memory)"
           >
-            (the memory)
+            (a memória)
           </text>
-
-          <!-- connecting flow lines -->
+          <!-- arrows -->
           <path
             d="M204 135 C 250 135, 255 135, 296 135"
-            stroke="#6c4bf0"
+            stroke="#8b6ff7"
             stroke-width="2.5"
             fill="none"
             marker-end="url(#arrow)"
           />
           <path
             d="M498 135 C 540 135, 545 135, 556 134"
-            stroke="#6c4bf0"
+            stroke="#8b6ff7"
             stroke-width="2.5"
             fill="none"
             marker-end="url(#arrow)"
           />
           <path
             d="M635 88 C 635 40, 300 40, 150 81"
-            stroke="#6c4bf0"
+            stroke="#8b6ff7"
             stroke-width="2.5"
             stroke-dasharray="5 5"
             fill="none"
             marker-end="url(#arrow)"
             opacity=".6"
           />
-          <defs>
-            <marker
-              id="arrow"
-              markerWidth="9"
-              markerHeight="9"
-              refX="6"
-              refY="3"
-              orient="auto"
-            >
-              <path d="M0,0 L6,3 L0,6 Z" fill="#6c4bf0" />
-            </marker>
-          </defs>
         </svg>
       </div>
       <p class="cite">
-        Source:
+        <span data-lang="pt">Fonte:</span><span data-lang="en">Source:</span>
         <a href="https://pi.dev/docs/latest" target="_blank" rel="noopener"
-          >Pi docs — Overview</a
+          ><span data-lang="pt">documentos do Pi — Visão geral</span
+          ><span data-lang="en">Pi docs — Overview</span></a
         >
-        · "By default, pi gives the model four tools:
-        <code class="inline">read</code>, <code class="inline">write</code>,
-        <code class="inline">edit</code>, and <code class="inline">bash</code>."
+        ·
+        <span data-lang="pt"
+          >“Por padrão, o pi dá ao modelo quatro ferramentas:
+          <code class="inline">read</code>, <code class="inline">write</code>,
+          <code class="inline">edit</code> e
+          <code class="inline">bash</code>.”</span
+        ><span data-lang="en"
+          >“By default, pi gives the model four tools:
+          <code class="inline">read</code>, <code class="inline">write</code>,
+          <code class="inline">edit</code>, and
+          <code class="inline">bash</code>.”</span
+        >
       </p>
 
       <div class="callout key">
         <p>
-          <strong>The reframe:</strong> Pi is the <em>host</em>. The model is
-          the brain, the four tools are its hands, the session JSONL is its
-          memory. Pi itself owns almost no features on purpose — you bolt those
-          on. Everything "missing" (sub-agents, plan mode, permissions…) is a
-          <em>choice</em>, not an oversight.
+          <span data-lang="pt"
+            ><strong>A mudança de enquadramento:</strong> o Pi é o
+            <em>host</em>. O modelo é o cérebro, as quatro ferramentas são suas
+            mãos, o JSONL da sessão é sua memória. O Pi em si quase não tem
+            recursos de propósito — você os parafusa. Tudo o que “falta”
+            (sub-agentes, plan mode, permissões…) é uma <em>escolha</em>, não um
+            esquecimento.</span
+          ><span data-lang="en"
+            ><strong>The reframe:</strong> Pi is the <em>host</em>. The model is
+            the brain, the four tools are its hands, the session JSONL is its
+            memory. Pi itself owns almost no features on purpose — you bolt
+            those on. Everything “missing” (sub-agents, plan mode, permissions…)
+            is a <em>choice</em>, not an oversight.</span
+          >
         </p>
       </div>
 
       <!-- ===================== 2. THE FOUR TOOLS ===================== -->
-      <h2 class="section"><span class="num">2</span>The four default tools</h2>
+      <h2 class="section">
+        <span class="num">2</span
+        ><span data-lang="pt">As quatro ferramentas padrão</span
+        ><span data-lang="en">The four default tools</span>
+      </h2>
       <p class="kicker">
-        These four are always on. Pi has three more available (<code
-          class="inline"
-          >grep</code
-        >, <code class="inline">find</code>, <code class="inline">ls</code>)
-        that you opt into — but the model's whole world starts here.
+        <span data-lang="pt"
+          >Essas quatro estão sempre ativas. O Pi tem mais três disponíveis
+          (<code class="inline">grep</code>, <code class="inline">find</code>,
+          <code class="inline">ls</code>) que você ativa — mas o mundo inteiro
+          do modelo começa aqui.</span
+        ><span data-lang="en"
+          >These four are always on. Pi has three more available (<code
+            class="inline"
+            >grep</code
+          >, <code class="inline">find</code>, <code class="inline">ls</code>)
+          that you opt into — but the model's whole world starts here.</span
+        >
       </p>
 
       <div class="grid cols-4" style="margin-top: 18px">
         <div class="card">
-          <div class="badge" style="background: #0fb9a4">R</div>
+          <div class="badge" style="background: #2dd4bf">R</div>
           <h4>read</h4>
           <p>
-            Read a file (text or image). The model's eyes. Truncated to keep
-            context lean.
+            <span data-lang="pt"
+              >Lê um arquivo (texto ou imagem). Os olhos do modelo. Truncado
+              para manter o contexto enxuto.</span
+            ><span data-lang="en"
+              >Read a file (text or image). The model's eyes. Truncated to keep
+              context lean.</span
+            >
           </p>
           <div class="sig">read(path)</div>
         </div>
         <div class="card">
-          <div class="badge" style="background: #6c4bf0">W</div>
+          <div class="badge" style="background: #8b6ff7">W</div>
           <h4>write</h4>
           <p>
-            Create or overwrite a file wholesale. New files or full rewrites.
+            <span data-lang="pt"
+              >Cria ou sobrescreve um arquivo inteiro. Arquivos novos ou
+              reescritas completas.</span
+            ><span data-lang="en"
+              >Create or overwrite a file wholesale. New files or full
+              rewrites.</span
+            >
           </p>
           <div class="sig">write(path, content)</div>
         </div>
         <div class="card">
-          <div class="badge" style="background: #f59e0b">E</div>
+          <div class="badge" style="background: #fbbf24">E</div>
           <h4>edit</h4>
           <p>
-            Surgical text replacement — multiple exact swaps in one call. The
-            diff engine.
+            <span data-lang="pt"
+              >Substituição cirúrgica de texto — várias trocas exatas numa
+              chamada. O motor de diff.</span
+            ><span data-lang="en"
+              >Surgical text replacement — multiple exact swaps in one call. The
+              diff engine.</span
+            >
           </p>
           <div class="sig">edit(path, edits[])</div>
         </div>
         <div class="card">
-          <div class="badge" style="background: #ef476f">$</div>
+          <div class="badge" style="background: #fb7185">$</div>
           <h4>bash</h4>
           <p>
-            Run any shell command. Test, build, grep, git — full system access.
+            <span data-lang="pt"
+              >Roda qualquer comando shell. Testar, buildar, grep, git — acesso
+              total ao sistema.</span
+            ><span data-lang="en"
+              >Run any shell command. Test, build, grep, git — full system
+              access.</span
+            >
           </p>
           <div class="sig">bash(command)</div>
         </div>
       </div>
       <p class="cite">
-        Source:
+        <span data-lang="pt">Fonte:</span><span data-lang="en">Source:</span>
         <a href="https://pi.dev/docs/latest" target="_blank" rel="noopener"
-          >Pi CLI Reference</a
+          ><span data-lang="pt">Referência da CLI do Pi</span
+          ><span data-lang="en">Pi CLI Reference</span></a
         >
-        · built-in tools:
-        <code class="inline">read bash edit write grep find ls</code> · scope
-        with <code class="inline">--tools</code> /
-        <code class="inline">--exclude-tools</code>.
+        ·
+        <span data-lang="pt"
+          >ferramentas nativas:
+          <code class="inline">read bash edit write grep find ls</code> ·
+          restrinja com <code class="inline">--tools</code> /
+          <code class="inline">--exclude-tools</code>.</span
+        ><span data-lang="en"
+          >built-in tools:
+          <code class="inline">read bash edit write grep find ls</code> · scope
+          with <code class="inline">--tools</code> /
+          <code class="inline">--exclude-tools</code>.</span
+        >
       </p>
 
       <!-- ===================== 3. THE TURN LOOP ===================== -->
-      <h2 class="section"><span class="num">3</span>The turn loop</h2>
+      <h2 class="section">
+        <span class="num">3</span><span data-lang="pt">O loop de turno</span
+        ><span data-lang="en">The turn loop</span>
+      </h2>
       <p class="kicker">
-        This is the single most important picture in the whole course. A
-        <em>turn</em> is "model reasons → maybe calls tools → sees results →
-        reasons again". The loop repeats until the model stops calling tools and
-        replies.
+        <span data-lang="pt"
+          >Esta é a figura mais importante de todo o curso. Um <em>turno</em> é
+          “modelo raciocina → talvez chame ferramentas → vê resultados →
+          raciocina de novo”. O loop se repete até o modelo parar de chamar
+          ferramentas e responder.</span
+        ><span data-lang="en"
+          >This is the single most important picture in the whole course. A
+          <em>turn</em> is “model reasons → maybe calls tools → sees results →
+          reasons again”. The loop repeats until the model stops calling tools
+          and replies.</span
+        >
       </p>
 
       <div class="grid cols-2" style="align-items: center; margin-top: 18px">
-        <!-- circular SVG loop -->
         <div>
           <svg
             viewBox="0 0 400 400"
             width="100%"
             role="img"
-            aria-label="The turn loop, five steps in a circle"
+            aria-labelledby="t2"
           >
+            <title
+              id="t2"
+              data-pt="O loop de turno, cinco passos em círculo"
+              data-en="The turn loop, five steps in a circle"
+            >
+              O loop de turno
+            </title>
             <defs>
               <marker
                 id="a2"
@@ -356,16 +482,15 @@
                 refY="3"
                 orient="auto"
               >
-                <path d="M0,0 L7,3 L0,6 Z" fill="#6c4bf0" />
+                <path d="M0,0 L7,3 L0,6 Z" fill="#8b6ff7" />
               </marker>
             </defs>
-            <!-- ring -->
             <circle
               cx="200"
               cy="200"
               r="130"
               fill="none"
-              stroke="#e7e5f0"
+              stroke="#3a3f55"
               stroke-width="2"
               stroke-dasharray="3 6"
             />
@@ -376,9 +501,11 @@
               font-family="Space Grotesk"
               font-size="13"
               font-weight="700"
-              fill="#6c4bf0"
+              fill="#8b6ff7"
+              data-pt="AGENTE"
+              data-en="AGENT"
             >
-              AGENT
+              AGENTE
             </text>
             <text
               x="200"
@@ -387,13 +514,13 @@
               font-family="Space Grotesk"
               font-size="13"
               font-weight="700"
-              fill="#6c4bf0"
+              fill="#8b6ff7"
+              data-pt="LOOP"
+              data-en="LOOP"
             >
               LOOP
             </text>
-
-            <!-- arcs between nodes (clockwise) -->
-            <g fill="none" stroke="#6c4bf0" stroke-width="2.5">
+            <g fill="none" stroke="#8b6ff7" stroke-width="2.5">
               <path
                 d="M 246 75  A 130 130 0 0 1 325 146"
                 marker-end="url(#a2)"
@@ -411,8 +538,6 @@
                 marker-end="url(#a2)"
               />
             </g>
-
-            <!-- nodes -->
             <g font-family="Space Grotesk" font-weight="700" fill="#fff">
               <circle cx="200" cy="70" r="30" fill="#6c4bf0" />
               <text x="200" y="76" text-anchor="middle" font-size="17">1</text>
@@ -427,37 +552,65 @@
             </g>
           </svg>
         </div>
-
-        <!-- steps detail -->
         <div>
           <ol style="margin: 0; padding-left: 22px; line-height: 1.5">
             <li style="margin-bottom: 10px">
-              <strong>You prompt.</strong> Type a request + optional
-              <code class="inline">@file</code> refs.
+              <span data-lang="pt"
+                ><strong>Você envia o prompt.</strong> Digite um pedido +
+                referências <code class="inline">@file</code> opcionais.</span
+              ><span data-lang="en"
+                ><strong>You prompt.</strong> Type a request + optional
+                <code class="inline">@file</code> refs.</span
+              >
               <span class="kicker"
                 >→ <code class="inline">before_agent_start</code></span
               >
             </li>
             <li style="margin-bottom: 10px">
-              <strong>Model reasons.</strong> It thinks (the collapsible
-              thinking block) and emits a response — either text, or tool
-              <em>calls</em>.
+              <span data-lang="pt"
+                ><strong>O modelo raciocina.</strong> Ele pensa (o bloco de
+                thinking recolhível) e emite uma resposta — texto, ou
+                <em>chamadas</em> de ferramenta.</span
+              ><span data-lang="en"
+                ><strong>Model reasons.</strong> It thinks (the collapsible
+                thinking block) and emits a response — either text, or tool
+                <em>calls</em>.</span
+              >
             </li>
-            <li style="margin-bottom: 10px; color: #0fb9a4">
-              <strong>It calls tools.</strong> e.g.
-              <code class="inline">read</code> three files, then
-              <code class="inline">bash npm test</code>.
+            <li style="margin-bottom: 10px; color: #2dd4bf">
+              <span data-lang="pt"
+                ><strong>Ele chama ferramentas.</strong> p.ex.
+                <code class="inline">read</code> em três arquivos, depois
+                <code class="inline">bash npm test</code>.</span
+              ><span data-lang="en"
+                ><strong>It calls tools.</strong> e.g.
+                <code class="inline">read</code> three files, then
+                <code class="inline">bash npm test</code>.</span
+              >
               <span class="kicker"
                 >→ <code class="inline">tool_call</code></span
               >
             </li>
-            <li style="margin-bottom: 10px; color: #f59e0b">
-              <strong>Pi runs them.</strong> The harness executes each call and
-              feeds results back — not the model's runtime, <em>Pi's</em>.
+            <li style="margin-bottom: 10px; color: #fbbf24">
+              <span data-lang="pt"
+                ><strong>O Pi as executa.</strong> O harness roda cada chamada e
+                devolve os resultados — não o runtime do modelo, o do
+                <em>Pi</em>.</span
+              ><span data-lang="en"
+                ><strong>Pi runs them.</strong> The harness executes each call
+                and feeds results back — not the model's runtime,
+                <em>Pi's</em>.</span
+              >
             </li>
-            <li style="color: #0fb9a4">
-              <strong>Results return.</strong> The loop jumps to step 2 with new
-              context. Repeat until the model replies in plain text.
+            <li style="color: #2dd4bf">
+              <span data-lang="pt"
+                ><strong>Os resultados voltam.</strong> O loop salta ao passo 2
+                com novo contexto. Repita até o modelo responder em texto
+                puro.</span
+              ><span data-lang="en"
+                ><strong>Results return.</strong> The loop jumps to step 2 with
+                new context. Repeat until the model replies in plain text.</span
+              >
               <span class="kicker"
                 >→ <code class="inline">turn_end</code> /
                 <code class="inline">agent_settled</code></span
@@ -469,22 +622,37 @@
 
       <div class="callout tip">
         <p>
-          <strong>Power insight:</strong> while the loop runs you are
-          <em>not</em> stuck waiting. Press <span class="kbd">Enter</span> to
-          queue a <strong>steering</strong> message (delivered after the current
-          tool batch) or <span class="kbd">Alt</span>+<span class="kbd"
-            >Enter</span
+          <span data-lang="pt"
+            ><strong>Insight de poder:</strong> enquanto o loop roda, você
+            <em>não</em> fica preso esperando. Pressione
+            <span class="kbd">Enter</span> para enfileirar uma mensagem de
+            <strong>steering</strong> (entregue após o lote de ferramentas
+            atual) ou <span class="kbd">Alt</span>+<span class="kbd"
+              >Enter</span
+            >
+            para um <strong>follow-up</strong> (entregue após todo o trabalho
+            terminar). Você dirige um loop vivo — não o bloqueia.</span
+          ><span data-lang="en"
+            ><strong>Power insight:</strong> while the loop runs you are
+            <em>not</em> stuck waiting. Press <span class="kbd">Enter</span> to
+            queue a <strong>steering</strong> message (delivered after the
+            current tool batch) or <span class="kbd">Alt</span>+<span
+              class="kbd"
+              >Enter</span
+            >
+            for a <strong>follow-up</strong> (delivered after all work
+            finishes). You steer a live loop — you don't block it.</span
           >
-          for a <strong>follow-up</strong> (delivered after all work finishes).
-          You steer a live loop — you don't block it.
         </p>
       </div>
       <p class="cite">
-        Sources:
+        <span data-lang="pt">Fontes:</span><span data-lang="en">Sources:</span>
         <a href="https://pi.dev/docs/latest" target="_blank" rel="noopener"
-          >Interactive mode · Message Queue</a
+          ><span data-lang="pt">Modo interativo · Fila de mensagens</span
+          ><span data-lang="en">Interactive mode · Message Queue</span></a
         >
-        · extension event lifecycle in
+        · <span data-lang="pt">ciclo de eventos de extensão em</span
+        ><span data-lang="en">extension event lifecycle in</span>
         <a
           href="https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/extensions.md"
           target="_blank"
@@ -494,218 +662,493 @@
       </p>
 
       <!-- ===================== 4. ANATOMY ===================== -->
-      <h2 class="section"><span class="num">4</span>Anatomy of one turn</h2>
+      <h2 class="section">
+        <span class="num">4</span
+        ><span data-lang="pt">Anatomia de um turno</span
+        ><span data-lang="en">Anatomy of one turn</span>
+      </h2>
       <p class="kicker">
-        A real exchange, annotated. Watch the loop fire twice before the model
-        is done.
+        <span data-lang="pt"
+          >Uma troca real, anotada. Veja o loop disparar duas vezes antes de o
+          modelo terminar.</span
+        ><span data-lang="en"
+          >A real exchange, annotated. Watch the loop fire twice before the
+          model is done.</span
+        >
       </p>
 
       <pre
         class="block"
-      ><span class="c"># 1 ── you prompt ──────────────────────────────────────────</span>
+      ><span class="c"><span data-lang="pt"># 1 ── você envia o prompt ─────────────────────────────────</span><span data-lang="en"># 1 ── you prompt ──────────────────────────────────────────</span></span>
 &gt; <span class="s">"Add a health check endpoint and make sure tests pass"</span>
 
-<span class="c"># 2 ── turn 1: model reasons, calls tools ──────────────────</span>
-🧠 thinking: <span class="c">(collapsible) I'll look at the existing routes…</span>
+<span class="c"><span data-lang="pt"># 2 ── turno 1: modelo raciocina, chama ferramentas ────────</span><span data-lang="en"># 2 ── turn 1: model reasons, calls tools ──────────────────</span></span>
+🧠 <span class="c"><span data-lang="pt">thinking: (recolhível) vou olhar as rotas existentes…</span><span data-lang="en">thinking: (collapsible) I'll look at the existing routes…</span></span>
 🔧 <span class="k">read</span>  src/server.ts
 🔧 <span class="k">read</span>  src/routes.ts
 🔧 <span class="k">bash</span>  <span class="s">npm test 2&gt;&amp;1 | tail -20</span>
 
-<span class="c"># 4/5 ── Pi runs them, results flow back into context ─────</span>
+<span class="c"><span data-lang="pt"># 4/5 ── o Pi as executa, resultados voltam ao contexto ────</span><span data-lang="en"># 4/5 ── Pi runs them, results flow back into context ─────</span></span>
 ✓ server.ts: 142 lines · routes.ts: 88 lines
-✓ tests: <span class="s">47 passed</span>
+✓ <span class="s"><span data-lang="pt">testes: 47 passed</span><span data-lang="en">tests: 47 passed</span></span>
 
-<span class="c"># 2 ── turn 2: model reasons again with that new context ──</span>
-🧠 thinking: <span class="c">add GET /health, return 200…</span>
-🔧 <span class="k">edit</span>  src/routes.ts   <span class="c">(insert handler)</span>
+<span class="c"><span data-lang="pt"># 2 ── turno 2: modelo raciocina de novo com esse contexto ─</span><span data-lang="en"># 2 ── turn 2: model reasons again with that new context ──</span></span>
+🧠 <span class="c"><span data-lang="pt">thinking: adicionar GET /health, retornar 200…</span><span data-lang="en">thinking: add GET /health, return 200…</span></span>
+🔧 <span class="k">edit</span>  src/routes.ts   <span class="c"><span data-lang="pt">(inserir handler)</span><span data-lang="en">(insert handler)</span></span>
 🔧 <span class="k">bash</span>  <span class="s">npm test</span>
-✓ tests: <span class="s">48 passed</span>
+✓ <span class="s"><span data-lang="pt">testes: 48 passed</span><span data-lang="en">tests: 48 passed</span></span>
 
-<span class="c"># loop ends ── model replies in plain text ───────────────</span>
-💬 Done. Added <span class="k">GET /health</span> → <span class="s">200 OK</span>; suite is green (48/48).</pre>
+<span class="c"><span data-lang="pt"># fim do loop ── modelo responde em texto puro ────────────</span><span data-lang="en"># loop ends ── model replies in plain text ───────────────</span></span>
+💬 <span data-lang="pt">Pronto. Adicionei <span class="k">GET /health</span> → <span class="s">200 OK</span>; suite verde (48/48).</span><span data-lang="en">Done. Added <span class="k">GET /health</span> → <span class="s">200 OK</span>; suite is green (48/48).</span></pre>
 
       <div class="callout warn">
         <p>
-          <strong>The number that matters:</strong> each
-          <span class="kbd">🔧</span> is a round-trip that consumes context +
-          tokens. Long sessions fill the window — that's exactly what
-          <em>compaction</em> (a later lesson) exists to manage. The whole loop
-          is logged to one branching JSONL file you can rewind anytime with
-          <code class="inline">/tree</code>.
+          <span data-lang="pt"
+            ><strong>O número que importa:</strong> cada
+            <span class="kbd">🔧</span> é uma viagem de ida e volta que consome
+            contexto + tokens. Sessões longas enchem a janela — é exatamente o
+            que a <em>compaction</em> (uma lição posterior) existe para
+            gerenciar. O loop inteiro é registrado num arquivo JSONL ramificado
+            que você pode rebobinar a qualquer hora com
+            <code class="inline">/tree</code>.</span
+          ><span data-lang="en"
+            ><strong>The number that matters:</strong> each
+            <span class="kbd">🔧</span> is a round-trip that consumes context +
+            tokens. Long sessions fill the window — that's exactly what
+            <em>compaction</em> (a later lesson) exists to manage. The whole
+            loop is logged to one branching JSONL file you can rewind anytime
+            with <code class="inline">/tree</code>.</span
+          >
         </p>
       </div>
 
       <!-- ===================== 5. PHILOSOPHY / OMISSIONS ===================== -->
       <h2 class="section">
-        <span class="num">5</span>What Pi deliberately omits
+        <span class="num">5</span
+        ><span data-lang="pt">O que o Pi omite de propósito</span
+        ><span data-lang="en">What Pi deliberately omits</span>
       </h2>
       <p class="kicker">
-        Reading this grid is what turns "why doesn't Pi have X?" into "ah, X is
-        a choice I make." Every crossed-out item has an explicit Pi-native
-        alternative.
+        <span data-lang="pt"
+          >Ler esta grade é o que transforma “por que o Pi não tem X?” em “ah, X
+          é uma escolha que eu faço.” Cada item riscado tem uma alternativa
+          Pi-nativa explícita.</span
+        ><span data-lang="en"
+          >Reading this grid is what turns “why doesn't Pi have X?” into “ah, X
+          is a choice I make.” Every crossed-out item has an explicit Pi-native
+          alternative.</span
+        >
       </p>
 
       <div class="grid cols-2" style="margin-top: 18px">
-        <div class="card" style="border-left: 4px solid #ef476f">
-          <h4>🚫 No MCP servers</h4>
+        <div class="card" style="border-left: 4px solid #fb7185">
+          <h4>
+            <span data-lang="pt">🚫 Sem servidores MCP</span
+            ><span data-lang="en">🚫 No MCP servers</span>
+          </h4>
           <p>
-            Build a CLI tool with a README (a <em>skill</em>), or add MCP via an
-            extension.
+            <span data-lang="pt"
+              >Construa uma ferramenta CLI com um README (uma <em>skill</em>),
+              ou adicione MCP via extensão.</span
+            ><span data-lang="en"
+              >Build a CLI tool with a README (a <em>skill</em>), or add MCP via
+              an extension.</span
+            >
           </p>
         </div>
-        <div class="card" style="border-left: 4px solid #ef476f">
-          <h4>🚫 No sub-agents</h4>
+        <div class="card" style="border-left: 4px solid #fb7185">
+          <h4>
+            <span data-lang="pt">🚫 Sem sub-agentes</span
+            ><span data-lang="en">🚫 No sub-agents</span>
+          </h4>
           <p>
-            Spawn Pi instances in tmux, build your own with extensions, or
-            install a package.
+            <span data-lang="pt"
+              >Spawne instâncias do Pi no tmux, construa as suas com extensões,
+              ou instale um package.</span
+            ><span data-lang="en"
+              >Spawn Pi instances in tmux, build your own with extensions, or
+              install a package.</span
+            >
           </p>
         </div>
-        <div class="card" style="border-left: 4px solid #ef476f">
-          <h4>🚫 No permission popups</h4>
+        <div class="card" style="border-left: 4px solid #fb7185">
+          <h4>
+            <span data-lang="pt">🚫 Sem popups de permissão</span
+            ><span data-lang="en">🚫 No permission popups</span>
+          </h4>
           <p>
-            Run in a container, or build a confirmation flow with an extension.
+            <span data-lang="pt"
+              >Rode num container, ou construa um fluxo de confirmação com uma
+              extensão.</span
+            ><span data-lang="en"
+              >Run in a container, or build a confirmation flow with an
+              extension.</span
+            >
           </p>
         </div>
-        <div class="card" style="border-left: 4px solid #ef476f">
-          <h4>🚫 No plan mode · no to-dos</h4>
-          <p>Write plans/TODOs to a file — or, again, an extension.</p>
-        </div>
-        <div class="card" style="border-left: 4px solid #ef476f">
-          <h4>🚫 No background bash</h4>
-          <p>Use tmux. Full observability, direct interaction, no magic.</p>
-        </div>
-        <div class="card" style="border-left: 4px solid #0fb9a4">
-          <h4>✅ Instead, four primitives</h4>
+        <div class="card" style="border-left: 4px solid #fb7185">
+          <h4>
+            <span data-lang="pt">🚫 Sem plan mode · sem to-dos</span
+            ><span data-lang="en">🚫 No plan mode · no to-dos</span>
+          </h4>
           <p>
-            <strong>Skills · Extensions · Prompt Templates · Packages</strong> —
-            the entire power-user surface. That's the rest of this course.
+            <span data-lang="pt"
+              >Escreva planos/TODOs num arquivo — ou, de novo, uma
+              extensão.</span
+            ><span data-lang="en"
+              >Write plans/TODOs to a file — or, again, an extension.</span
+            >
+          </p>
+        </div>
+        <div class="card" style="border-left: 4px solid #fb7185">
+          <h4>
+            <span data-lang="pt">🚫 Sem bash em segundo plano</span
+            ><span data-lang="en">🚫 No background bash</span>
+          </h4>
+          <p>
+            <span data-lang="pt"
+              >Use tmux. Observabilidade total, interação direta, sem
+              mágica.</span
+            ><span data-lang="en"
+              >Use tmux. Full observability, direct interaction, no magic.</span
+            >
+          </p>
+        </div>
+        <div class="card" style="border-left: 4px solid #2dd4bf">
+          <h4>
+            <span data-lang="pt">✅ Em vez disso, quatro primitivos</span
+            ><span data-lang="en">✅ Instead, four primitives</span>
+          </h4>
+          <p>
+            <span data-lang="pt"
+              ><strong>Skills · Extensões · Prompt Templates · Packages</strong>
+              — toda a superfície de power-user. Esse é o resto do curso.</span
+            ><span data-lang="en"
+              ><strong
+                >Skills · Extensions · Prompt Templates · Packages</strong
+              >
+              — the entire power-user surface. That's the rest of this
+              course.</span
+            >
           </p>
         </div>
       </div>
       <p class="cite">
-        Source:
+        <span data-lang="pt">Fonte:</span><span data-lang="en">Source:</span>
         <a
           href="https://mariozechner.at/posts/2025-11-30-pi-coding-agent/"
           target="_blank"
           rel="noopener"
-          >Mario Zechner — "Pi Coding Agent" (design rationale)</a
+          ><span data-lang="pt"
+            >Mario Zechner — “Pi Coding Agent” (racional de design)</span
+          ><span data-lang="en"
+            >Mario Zechner — “Pi Coding Agent” (design rationale)</span
+          ></a
         >
-        · also
+        · <span data-lang="pt">também</span><span data-lang="en">also</span>
         <a
           href="https://mariozechner.at/posts/2025-11-02-what-if-you-dont-need-mcp/"
           target="_blank"
           rel="noopener"
-          >"What if you don't need MCP at all?"</a
+          ><span data-lang="pt">“E se você não precisar de MCP?”</span
+          ><span data-lang="en">“What if you don't need MCP at all?”</span></a
         >
       </p>
 
       <!-- ===================== QUIZ ===================== -->
-      <h2 class="section"><span class="num">6</span>Check your model</h2>
+      <h2 class="section">
+        <span class="num">6</span><span data-lang="pt">Confira seu modelo</span
+        ><span data-lang="en">Check your model</span>
+      </h2>
       <p class="kicker">
-        Retrieval beats re-reading. Pick an answer — feedback is instant. (Every
-        option is the same length, on purpose: no layout tells you the answer.)
+        <span data-lang="pt"
+          >Recordar bate reler. Escolha uma resposta — feedback instantâneo.
+          (Todas as opções têm o mesmo tamanho, de propósito: nenhum layout
+          entrega a resposta.)</span
+        ><span data-lang="en"
+          >Retrieval beats re-reading. Pick an answer — feedback is instant.
+          (Every option is the same length, on purpose: no layout tells you the
+          answer.)</span
+        >
       </p>
 
-      <div class="quiz" id="q1">
-        <div class="q">Q1. What is Pi's core design philosophy?</div>
-        <div class="options" data-answer="Extend not fork">
-          <button class="opt">Extend not fork</button>
-          <button class="opt">Batteries included</button>
-          <button class="opt">Many built-ins</button>
-          <button class="opt">Always confirm</button>
+      <div class="quiz" id="q1" role="group" aria-labelledby="q1l">
+        <div class="q" id="q1l">
+          <span data-lang="pt"
+            >Q1. Qual é a filosofia central de design do Pi?</span
+          ><span data-lang="en">Q1. What is Pi's core design philosophy?</span>
         </div>
-        <div class="verdict"></div>
+        <div class="options">
+          <button
+            class="opt"
+            data-correct="true"
+            data-fb-pt="Exato: estenda, não bifurque."
+            data-fb-en="Exact: extend, don't fork."
+          >
+            <span data-lang="pt">Estender não bifurcar</span
+            ><span data-lang="en">Extend not fork</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — o Pi é minimalista de propósito."
+            data-fb-en="No — Pi is minimal by design."
+          >
+            <span data-lang="pt">Baterias inclusas</span
+            ><span data-lang="en">Batteries included</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — poucos recursos nativos."
+            data-fb-en="No — few built-ins."
+          >
+            <span data-lang="pt">Muitos nativos</span
+            ><span data-lang="en">Many built-ins</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — ele roda em YOLO por padrão."
+            data-fb-en="No — it runs YOLO by default."
+          >
+            <span data-lang="pt">Sempre confirmar</span
+            ><span data-lang="en">Always confirm</span>
+          </button>
+        </div>
+        <div class="verdict" aria-live="polite"></div>
       </div>
 
-      <div class="quiz" id="q2">
-        <div class="q">Q2. Who actually executes a tool call?</div>
-        <div class="options" data-answer="Pi harness">
-          <button class="opt">Pi harness</button>
-          <button class="opt">The model</button>
-          <button class="opt">MCP server</button>
-          <button class="opt">Cloud daemon</button>
+      <div class="quiz" id="q2" role="group" aria-labelledby="q2l">
+        <div class="q" id="q2l">
+          <span data-lang="pt"
+            >Q2. Quem realmente executa uma chamada de ferramenta?</span
+          ><span data-lang="en">Q2. Who actually executes a tool call?</span>
         </div>
-        <div class="verdict"></div>
+        <div class="options">
+          <button
+            class="opt"
+            data-correct="true"
+            data-fb-pt="Exato: o harness executa; o modelo apenas pede."
+            data-fb-en="Exact: the harness runs it; the model only asks."
+          >
+            <span data-lang="pt">O harness do Pi</span
+            ><span data-lang="en">Pi harness</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — o modelo propõe; não tem shell próprio."
+            data-fb-en="No — the model proposes; it has no shell."
+          >
+            <span data-lang="pt">O modelo</span
+            ><span data-lang="en">The model</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — MCP não está no núcleo do Pi."
+            data-fb-en="No — MCP isn't in Pi's core."
+          >
+            <span data-lang="pt">Servidor MCP</span
+            ><span data-lang="en">MCP server</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — não há daemon na nuvem."
+            data-fb-en="No — there's no cloud daemon."
+          >
+            <span data-lang="pt">Daemon na nuvem</span
+            ><span data-lang="en">Cloud daemon</span>
+          </button>
+        </div>
+        <div class="verdict" aria-live="polite"></div>
       </div>
 
-      <div class="quiz" id="q3">
-        <div class="q">Q3. Which is NOT part of Pi by default?</div>
-        <div class="options" data-answer="Permission popups">
-          <button class="opt">Permission popups</button>
-          <button class="opt">Tool execution</button>
-          <button class="opt">Session storage</button>
-          <button class="opt">File editing</button>
+      <div class="quiz" id="q3" role="group" aria-labelledby="q3l">
+        <div class="q" id="q3l">
+          <span data-lang="pt">Q3. O que NÃO faz parte do Pi por padrão?</span
+          ><span data-lang="en">Q3. Which is NOT part of Pi by default?</span>
         </div>
-        <div class="verdict"></div>
+        <div class="options">
+          <button
+            class="opt"
+            data-correct="true"
+            data-fb-pt="Exato: não há popups de permissão."
+            data-fb-en="Exact: no permission popups."
+          >
+            <span data-lang="pt">Popups de permissão</span
+            ><span data-lang="en">Permission popups</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — executar ferramentas é padrão."
+            data-fb-en="No — tool execution is default."
+          >
+            <span data-lang="pt">Execução de ferramenta</span
+            ><span data-lang="en">Tool execution</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — sessões são padrão."
+            data-fb-en="No — sessions are default."
+          >
+            <span data-lang="pt">Armazenar sessão</span
+            ><span data-lang="en">Session storage</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — editar arquivos é padrão."
+            data-fb-en="No — file editing is default."
+          >
+            <span data-lang="pt">Edição de arquivo</span
+            ><span data-lang="en">File editing</span>
+          </button>
+        </div>
+        <div class="verdict" aria-live="polite"></div>
       </div>
 
       <!-- ===================== PRIMARY SOURCE + FOOTER ===================== -->
-      <h2 class="section"><span class="num">7</span>Read this next</h2>
+      <h2 class="section">
+        <span class="num">7</span><span data-lang="pt">Leia isto a seguir</span
+        ><span data-lang="en">Read this next</span>
+      </h2>
       <p>
-        <strong>Primary source for this lesson:</strong> the
-        <a href="https://pi.dev/docs/latest" target="_blank" rel="noopener"
-          >Pi Documentation overview</a
-        >. Skim the Quick Start + Interactive Mode sections — you'll notice
-        everything maps onto the loop above.
+        <span data-lang="pt"
+          ><strong>Fonte primária desta lição:</strong> a
+          <a href="https://pi.dev/docs/latest" target="_blank" rel="noopener"
+            >visão geral da documentação do Pi</a
+          >. Dê uma olhada em Quick Start + Interactive Mode — você vai notar
+          que tudo se mapeia no loop acima.</span
+        ><span data-lang="en"
+          ><strong>Primary source for this lesson:</strong> the
+          <a href="https://pi.dev/docs/latest" target="_blank" rel="noopener"
+            >Pi Documentation overview</a
+          >. Skim the Quick Start + Interactive Mode sections — you'll notice
+          everything maps onto the loop above.</span
+        >
       </p>
 
       <div class="callout key">
         <p>
-          🗣️ <strong>Ask me anything.</strong> I'm your teacher — if the loop,
-          the tools, or why something is omitted isn't clicking, ask. Common
-          follow-ups: <em>"show me a real session"</em>,
-          <em>"how do I limit which tools the model gets?"</em>,
-          <em>"what's the difference between a skill and an extension?"</em>
+          🗣️
+          <strong
+            ><span data-lang="pt">Pergunte-me qualquer coisa.</span
+            ><span data-lang="en">Ask me anything.</span></strong
+          >
+          <span data-lang="pt"
+            >Sou seu professor — se o loop, as ferramentas, ou o porquê de algo
+            ter sido omitido não estiver claro, pergunte. Continuações comuns:
+            <em>“mostre uma sessão real”</em>,
+            <em>“como limito quais ferramentas o modelo recebe?”</em>,
+            <em>“qual a diferença entre skill e extensão?”</em></span
+          ><span data-lang="en"
+            >I'm your teacher — if the loop, the tools, or why something is
+            omitted isn't clicking, ask. Common follow-ups:
+            <em>“show me a real session”</em>,
+            <em>“how do I limit which tools the model gets?”</em>,
+            <em
+              >“what's the difference between a skill and an extension?”</em
+            ></span
+          >
         </p>
       </div>
 
       <footer class="lesson-foot">
         <div class="next-card">
-          <div class="lbl">Next lesson →</div>
+          <div class="lbl">
+            <span data-lang="pt">Próxima lição →</span
+            ><span data-lang="en">Next lesson →</span>
+          </div>
           <div class="t">
             <a href="./0002-driving-the-tui.html"
-              >Driving the TUI: keys, commands & steering</a
+              ><span data-lang="pt"
+                >Dirigindo o TUI: teclas, comandos e steering</span
+              ><span data-lang="en"
+                >Driving the TUI: keys, commands & steering</span
+              ></a
             >
           </div>
           <p style="margin: 8px 0 0; font-size: 0.85rem">
-            The cockpit view: keys, commands, and steering a live loop.
+            <span data-lang="pt"
+              >A visão da cabine: teclas, comandos, e dirigir um loop
+              vivo.</span
+            ><span data-lang="en"
+              >The cockpit view: keys, commands, and steering a live loop.</span
+            >
           </p>
         </div>
         <div style="flex: 0 1 220px">
-          <div class="lbl">Reference</div>
+          <div class="lbl">
+            <span data-lang="pt">Referência</span
+            ><span data-lang="en">Reference</span>
+          </div>
           <p style="margin: 6px 0 0">
-            <a href="../reference/pi-glossary.html">Pi glossary</a> ·
-            <a href="../MISSION.md">Mission</a>
+            <a href="../reference/pi-glossary.html"
+              ><span data-lang="pt">Glossário do Pi</span
+              ><span data-lang="en">Pi glossary</span></a
+            >
+            ·
+            <a href="../MISSION.md"
+              ><span data-lang="pt">Missão</span
+              ><span data-lang="en">Mission</span></a
+            >
           </p>
         </div>
       </footer>
     </article>
 
     <script>
-      // tiny quiz wiring — same-length options, instant feedback
+      // bilingual quiz wiring — data-correct + per-lang feedback
+      function verdictFor(btn, quiz) {
+        const correct = btn.dataset.correct === "true";
+        const fb = btn.getAttribute(
+          PiI18n.lang === "en" ? "data-fb-en" : "data-fb-pt",
+        );
+        const sec = quiz.id.replace("q", "");
+        const fallback =
+          PiI18n.lang === "en"
+            ? "✗ Not quite — re-read section " + sec + "."
+            : "✗ Quase — releia a seção " + sec + ".";
+        return {
+          ok: correct,
+          text: (correct ? "✓ " : "✗ ") + (fb || fallback),
+        };
+      }
+      function resetQuiz(quiz) {
+        quiz.querySelectorAll(".opt").forEach((b) => {
+          b.classList.remove("correct", "wrong");
+          b.setAttribute("aria-pressed", "false");
+        });
+        const v = quiz.querySelector(".verdict");
+        v.textContent = "";
+        v.className = "verdict";
+      }
       document.querySelectorAll(".quiz").forEach((quiz) => {
-        const answer = quiz.querySelector(".options").dataset.answer;
-        const verdict = quiz.querySelector(".verdict");
         quiz.querySelectorAll(".opt").forEach((btn) => {
+          btn.setAttribute("aria-pressed", "false");
           btn.addEventListener("click", () => {
-            quiz
-              .querySelectorAll(".opt")
-              .forEach((b) => b.classList.remove("correct", "wrong"));
-            if (btn.textContent.trim() === answer) {
-              btn.classList.add("correct");
-              verdict.textContent = "✓ Correct.";
-              verdict.className = "verdict ok";
-            } else {
-              btn.classList.add("wrong");
-              verdict.textContent =
-                "✗ Not quite — re-read section " +
-                quiz.id.replace("q", "") +
-                ".";
-              verdict.className = "verdict no";
-            }
+            quiz.querySelectorAll(".opt").forEach((b) => {
+              b.classList.remove("correct", "wrong");
+              b.setAttribute("aria-pressed", "false");
+            });
+            const v = verdictFor(btn, quiz);
+            btn.classList.add(v.ok ? "correct" : "wrong");
+            btn.setAttribute("aria-pressed", "true");
+            const verdict = quiz.querySelector(".verdict");
+            verdict.textContent = v.text;
+            verdict.className = "verdict " + (v.ok ? "ok" : "no");
           });
         });
       });
+      // re-render in the new language on switch (i18n.js is deferred, so hook DOMContentLoaded)
+      document.addEventListener("DOMContentLoaded", () =>
+        PiI18n.on(() => document.querySelectorAll(".quiz").forEach(resetQuiz)),
+      );
     </script>
   </body>
 </html>

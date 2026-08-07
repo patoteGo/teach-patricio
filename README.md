@@ -29,9 +29,29 @@ Action on every push, so it never drifts. (See
 [`.github/workflows/sync-lessons.yml`](./.github/workflows/sync-lessons.yml).)
 
 <!-- topics:start -->
+### Ace the Senior Fullstack Behavioral Interview
+
+`topics/behavioral-interview/` · 4 lesson(s)
+
+| # | Lesson |
+|---|--------|
+| 01 | [BLUF + STAR](./topics/behavioral-interview/lessons/0001-bluf-star.html) |
+| 02 | [The Dojo](./topics/behavioral-interview/lessons/0002-the-dojo.html) |
+| 03 | [The Pitch](./topics/behavioral-interview/lessons/0003-the-pitch.html) |
+| 04 | [Follow-ups](./topics/behavioral-interview/lessons/0004-follow-ups.html) |
+
+### Ace the ClearOne Advantage Senior Full-Stack interview (tomorrow)
+
+`topics/clearone-interview/` · 2 lesson(s)
+
+| # | Lesson |
+|---|--------|
+| 01 | [ClearOne Advantage — your playbook for tomorrow](./topics/clearone-interview/lessons/0001-clearone-playbook.html) |
+| 02 | [ClearOne — stack quick reminders](./topics/clearone-interview/lessons/0002-stack-cheatsheet.html) |
+
 ### Master the Pi Coding Harness as a Power Tool
 
-`topics/pi/` · 7 lesson(s)
+`topics/pi/` · 9 lesson(s)
 
 | # | Lesson |
 |---|--------|
@@ -42,8 +62,21 @@ Action on every push, so it never drifts. (See
 | 05 | [Skills](./topics/pi/lessons/0005-skills.html) |
 | 06 | [Extensions](./topics/pi/lessons/0006-extensions.html) |
 | 07 | [Pi Packages](./topics/pi/lessons/0007-packages.html) |
+| 08 | [The map: LLM, agent, harness, tools, skills and MCP](./topics/pi/lessons/0008-o-mapa-dos-agentes.html) |
+| 09 | [Manager-workers topology](./topics/pi/lessons/0009-orquestra-de-agentes.html) |
 
-**Total: 7 lesson(s) across 1 topic(s).**
+### System Design (backend · infra · frontend)
+
+`topics/system-design/` · 4 lesson(s)
+
+| # | Lesson |
+|---|--------|
+| 01 | [The Design Loop](./topics/system-design/lessons/0001-the-design-loop.html) |
+| 02 | [The Four Forces](./topics/system-design/lessons/0002-the-four-forces.html) |
+| 03 | [Scale & Estimation](./topics/system-design/lessons/0003-scale-and-estimation.html) |
+| 04 | [State, coupling & deep modules](./topics/system-design/lessons/0004-state-and-boundaries.html) |
+
+**Total: 19 lesson(s) across 4 topic(s).**
 <!-- topics:end -->
 
 ## 🗂 Repo map
@@ -53,7 +86,7 @@ teach-patricio/
 ├── index.html            # Graphical hub — start here in a browser
 ├── README.md             # You are here (catalog is auto-synced)
 ├── topics/               # ONE FOLDER PER TOPIC
-│   ├── pi/               #   the Pi power-user course (7 lessons + glossary)
+│   ├── pi/               #   the Pi power-user course (9 lessons + glossary)
 │   └── _template/        #   copy-and-go skeleton for a new topic (CI skips it)
 └── .github/              # CI: regenerates the catalog above from topics/*/
 ```

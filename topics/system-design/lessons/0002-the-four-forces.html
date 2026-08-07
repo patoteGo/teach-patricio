@@ -1,0 +1,777 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title
+      data-pt="System Design · Lição 2 — As quatro forças"
+      data-en="System Design · Lesson 2 — The Four Forces"
+    >
+      System Design · Lição 2 — As quatro forças
+    </title>
+    <link rel="stylesheet" href="../assets/style.css" />
+    <link rel="stylesheet" href="../assets/dark.css" />
+    <link rel="stylesheet" href="../assets/i18n.css" />
+    <script src="../assets/i18n.js" defer></script>
+    <script src="../assets/nav.js" defer></script>
+    <link rel="stylesheet" href="../assets/exercises.css" />
+    <script src="../assets/exercises.js" defer></script>
+  </head>
+  <body class="lang-pt">
+    <article class="lesson">
+      <header class="hero">
+        <span class="eyebrow"
+          ><span data-lang="pt">⬡ System Design · Fundamentos</span
+          ><span data-lang="en">⬡ System Design · Fundamentals</span></span
+        >
+        <h1>
+          <span data-lang="pt">Quatro forças governam todo sistema.</span
+          ><span data-lang="en">Four forces govern every system.</span>
+        </h1>
+        <p class="lead">
+          <span data-lang="pt"
+            >Todo requisito não-funcional é, no fim, uma tensão entre
+            <strong>latência, throughput, disponibilidade e consistência</strong
+            >. Domine essas quatro e você raciocina sobre qualquer sistema — e
+            negocia SLOs com números.</span
+          ><span data-lang="en"
+            >Every non-functional requirement is, at root, a tension among
+            <strong>latency, throughput, availability, and consistency</strong>.
+            Master these four and you can reason about any system — and
+            negotiate SLOs with numbers.</span
+          >
+        </p>
+        <p class="lesson-nav-top">
+          ↑ <a href="../MISSION.md">System Design</a> ·
+          <span data-lang="pt">anterior</span><span data-lang="en">prev</span>:
+          <a href="./0001-the-design-loop.html"
+            ><span data-lang="pt">O loop de design</span
+            ><span data-lang="en">The design loop</span></a
+          >
+          · <span data-lang="pt">próxima</span><span data-lang="en">next</span>:
+          <em
+            ><span data-lang="pt">Escala e estimativa</span
+            ><span data-lang="en">Scale & estimation</span></em
+          >
+        </p>
+      </header>
+
+      <!-- ============ 1. THE FOUR FORCES ============ -->
+      <h2 class="section">
+        <span class="num">1</span
+        ><span data-lang="pt">As quatro, e como elas se opõem</span
+        ><span data-lang="en">The four, and how they oppose each other</span>
+      </h2>
+      <p class="kicker">
+        <span data-lang="pt"
+          >Cada força puxa contra outra. Não existe “tudo máximo”; existe
+          <em>escolher qual lado da balança</em>.</span
+        ><span data-lang="en"
+          >Each force pulls against another. There's no “everything maxed”;
+          there's <em>picking which side of the seesaw</em>.</span
+        >
+      </p>
+
+      <div style="margin: 22px 0 8px">
+        <svg
+          viewBox="0 0 520 320"
+          width="100%"
+          role="img"
+          aria-labelledby="ff2"
+        >
+          <title
+            id="ff2"
+            data-pt="Quatro forças em dois eixos de tensão"
+            data-en="Four forces on two tension axes"
+          >
+            As quatro forças
+          </title>
+          <defs>
+            <marker
+              id="m2"
+              markerWidth="10"
+              markerHeight="10"
+              refX="7"
+              refY="3"
+              orient="auto"
+            >
+              <path d="M0,0 L7,3 L0,6 Z" fill="#8b6ff7" />
+            </marker>
+          </defs>
+          <!-- axis 1: Latency <-> Throughput (horizontal) -->
+          <line
+            x1="60"
+            y1="90"
+            x2="460"
+            y2="90"
+            stroke="#3a3f55"
+            stroke-width="2"
+          />
+          <g font-family="Space Grotesk" font-size="13" font-weight="700">
+            <rect
+              x="40"
+              y="68"
+              width="120"
+              height="34"
+              rx="17"
+              fill="#0c2a27"
+              stroke="#2dd4bf"
+            />
+            <text
+              x="100"
+              y="90"
+              text-anchor="middle"
+              fill="#2dd4bf"
+              data-pt="Latência"
+              data-en="Latency"
+            >
+              Latência
+            </text>
+            <rect
+              x="360"
+              y="68"
+              width="120"
+              height="34"
+              rx="17"
+              fill="#2b2110"
+              stroke="#fbbf24"
+            />
+            <text
+              x="420"
+              y="90"
+              text-anchor="middle"
+              fill="#fbbf24"
+              data-pt="Throughput"
+              data-en="Throughput"
+            >
+              Throughput
+            </text>
+          </g>
+          <text
+            x="260"
+            y="60"
+            text-anchor="middle"
+            font-family="Inter"
+            font-size="11"
+            fill="#9ea2b8"
+            data-pt="bufferiza ↔ responde já"
+            data-en="batch ↔ answer now"
+          >
+            bufferiza ↔ responde já
+          </text>
+          <!-- axis 2: Consistency <-> Availability (horizontal, lower) -->
+          <line
+            x1="60"
+            y1="230"
+            x2="460"
+            y2="230"
+            stroke="#3a3f55"
+            stroke-width="2"
+          />
+          <g font-family="Space Grotesk" font-size="13" font-weight="700">
+            <rect
+              x="40"
+              y="208"
+              width="120"
+              height="34"
+              rx="17"
+              fill="#2c1622"
+              stroke="#fb7185"
+            />
+            <text
+              x="100"
+              y="230"
+              text-anchor="middle"
+              fill="#fb7185"
+              data-pt="Consistência"
+              data-en="Consistency"
+            >
+              Consistência
+            </text>
+            <rect
+              x="360"
+              y="208"
+              width="120"
+              height="34"
+              rx="17"
+              fill="#221a3d"
+              stroke="#8b6ff7"
+            />
+            <text
+              x="420"
+              y="230"
+              text-anchor="middle"
+              fill="#8b6ff7"
+              data-pt="Disponibilidade"
+              data-en="Availability"
+            >
+              Disponibilidade
+            </text>
+          </g>
+          <text
+            x="260"
+            y="280"
+            text-anchor="middle"
+            font-family="Inter"
+            font-size="11"
+            fill="#9ea2b8"
+            data-pt="sob partição (CAP), escolha um"
+            data-en="under partition (CAP), pick one"
+          >
+            sob partição (CAP), escolha um
+          </text>
+          <!-- the CAP tension arc -->
+          <path
+            d="M 100 242 C 100 300, 420 300, 420 242"
+            fill="none"
+            stroke="#fb7185"
+            stroke-width="1.8"
+            stroke-dasharray="5 5"
+            marker-end="url(#m2)"
+            opacity=".7"
+          />
+          <path
+            d="M 420 242 C 420 300, 100 300, 100 242"
+            fill="none"
+            stroke="#8b6ff7"
+            stroke-width="1.8"
+            stroke-dasharray="5 5"
+            marker-end="url(#m2)"
+            opacity=".7"
+          />
+        </svg>
+      </div>
+
+      <div class="grid cols-2">
+        <div class="card" style="border-left: 4px solid #2dd4bf">
+          <h4>
+            <span data-lang="pt">Latência</span
+            ><span data-lang="en">Latency</span>
+          </h4>
+          <p>
+            <span data-lang="pt"
+              >Tempo por operação. Meça com
+              <strong>percentis</strong> (p50/p95/p99) — médias escondem a
+              cauda.</span
+            ><span data-lang="en"
+              >Time per operation. Measure with
+              <strong>percentiles</strong> (p50/p95/p99) — averages hide the
+              tail.</span
+            >
+          </p>
+        </div>
+        <div class="card" style="border-left: 4px solid #fbbf24">
+          <h4>Throughput</h4>
+          <p>
+            <span data-lang="pt"
+              >Operações por unidade de tempo. Vem de
+              <strong>paralelismo e batching</strong>.
+              <em>Little: L = λ·W</em>.</span
+            ><span data-lang="en"
+              >Operations per unit time. Comes from
+              <strong>parallelism and batching</strong>.
+              <em>Little: L = λ·W</em>.</span
+            >
+          </p>
+        </div>
+        <div class="card" style="border-left: 4px solid #8b6ff7">
+          <h4>
+            <span data-lang="pt">Disponibilidade</span
+            ><span data-lang="en">Availability</span>
+          </h4>
+          <p>
+            <span data-lang="pt"
+              >Fração do tempo ativo, em “noves” (99,9% ≈ 8,8 h/ano de queda).
+              Melhora com <strong>redundância</strong>.</span
+            ><span data-lang="en"
+              >Fraction of time up, in “nines” (99.9% ≈ 8.8 h/yr down). Raised
+              by <strong>redundancy</strong>.</span
+            >
+          </p>
+        </div>
+        <div class="card" style="border-left: 4px solid #fb7185">
+          <h4>
+            <span data-lang="pt">Consistência</span
+            ><span data-lang="en">Consistency</span>
+          </h4>
+          <p>
+            <span data-lang="pt"
+              >Quão “atual” a leitura está: forte, eventual, linearizável. Custa
+              <strong>round-trips de consenso</strong>.</span
+            ><span data-lang="en"
+              >How “current” a read is: strong, eventual, linearizable. Costs
+              <strong>consensus round-trips</strong>.</span
+            >
+          </p>
+        </div>
+      </div>
+
+      <!-- ============ 2. AVAILABILITY NINES ============ -->
+      <h2 class="section">
+        <span class="num">2</span
+        ><span data-lang="pt">Disponibilidade: a tabela dos “noves”</span
+        ><span data-lang="en">Availability: the “nines” table</span>
+      </h2>
+      <p class="kicker">
+        <span data-lang="pt"
+          >Cada “nove” a mais custa ~10× mais. Por isso você
+          <em>define o SLO antes</em> de projetar — não depois.</span
+        ><span data-lang="en"
+          >Each extra “nine” costs ~10× more. That's why you
+          <em>set the SLO before</em> designing — not after.</span
+        >
+      </p>
+
+      <div
+        class="table-wrap"
+        style="
+          margin: 18px 0;
+          overflow-x: auto;
+          border: 1px solid var(--line);
+          border-radius: var(--radius);
+          background: var(--paper-2);
+          box-shadow: var(--shadow);
+        "
+      >
+        <table
+          class="compare-table"
+          style="
+            width: 100%;
+            min-width: 480px;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+          "
+        >
+          <thead>
+            <tr>
+              <th
+                style="
+                  padding: 12px;
+                  text-align: left;
+                  background: var(--violet-50);
+                "
+              >
+                <span data-lang="pt">SLO</span><span data-lang="en">SLO</span>
+              </th>
+              <th
+                style="
+                  padding: 12px;
+                  text-align: left;
+                  background: var(--violet-50);
+                "
+              >
+                <span data-lang="pt">Downtime / ano</span
+                ><span data-lang="en">Downtime / year</span>
+              </th>
+              <th
+                style="
+                  padding: 12px;
+                  text-align: left;
+                  background: var(--violet-50);
+                "
+              >
+                <span data-lang="pt">Downtime / mês</span
+                ><span data-lang="en">Downtime / month</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody style="color: var(--ink-soft)">
+            <tr>
+              <td style="padding: 10px 12px">99%</td>
+              <td style="padding: 10px 12px">3,65 dias</td>
+              <td style="padding: 10px 12px">7,3 h</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px 12px">
+                99,9% <span data-lang="pt">(três noves)</span
+                ><span data-lang="en">(three nines)</span>
+              </td>
+              <td style="padding: 10px 12px">8,8 h</td>
+              <td style="padding: 10px 12px">43 min</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px 12px">
+                99,99% <span data-lang="pt">(quatro)</span
+                ><span data-lang="en">(four)</span>
+              </td>
+              <td style="padding: 10px 12px">52 min</td>
+              <td style="padding: 10px 12px">4,3 min</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px 12px">
+                99,999% <span data-lang="pt">(cinco)</span
+                ><span data-lang="en">(five)</span>
+              </td>
+              <td style="padding: 10px 12px">5 min</td>
+              <td style="padding: 10px 12px">26 s</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="cite">
+        <span data-lang="pt">Fonte:</span><span data-lang="en">Source:</span>
+        <a href="https://sre.google/workbook/" target="_blank" rel="noopener"
+          >Google SRE Workbook</a
+        >
+        —
+        <span data-lang="pt"
+          >SLOs, orçamentos de erro e a matemática dos noves.</span
+        ><span data-lang="en">SLOs, error budgets, and the math of nines.</span>
+      </p>
+
+      <!-- ============ 3. SLO / ERROR BUDGET ============ -->
+      <h2 class="section">
+        <span class="num">3</span
+        ><span data-lang="pt"
+          >SLO + orçamento de erro = alavanca de produto</span
+        ><span data-lang="en">SLO + error budget = a product lever</span>
+      </h2>
+      <p class="kicker">
+        <span data-lang="pt"
+          >O SLO é a meta; o <strong>orçamento de erro</strong> é 1 − SLO.
+          Gaste-o em velocidade (lançar features) ou em confiabilidade
+          (estabilizar). É a conversa que transforma “mais um 9” em decisão de
+          negócio.</span
+        ><span data-lang="en"
+          >The SLO is the target; the <strong>error budget</strong> is 1 − SLO.
+          Spend it on velocity (ship features) or on reliability (stabilize).
+          It's the conversation that turns “one more nine” into a business
+          decision.</span
+        >
+      </p>
+
+      <div class="callout tip">
+        <p>
+          <span data-lang="pt"
+            ><strong>Exemplo:</strong> SLO de 99,9% numa API de leitura →
+            orçamento de erro 0,1%. Se o tráfego é 100M req/mês, você pode
+            falhar ~100 mil vezes antes de “quebrar” o SLO. Acima disso, congele
+            features e conserte a confiabilidade.</span
+          ><span data-lang="en"
+            ><strong>Example:</strong> a 99.9% SLO on a read API → error budget
+            0.1%. At 100M req/month, you may fail ~100k times before “breaking”
+            the SLO. Past that, freeze features and fix reliability.</span
+          >
+        </p>
+      </div>
+
+      <!-- ============ 4. QUIZ ============ -->
+            <h2 class="section"><span class="num">★</span><span data-lang="pt">🧠 Calculadora: noves e orçamento de erro</span><span data-lang="en">🧠 Calculator: nines & error budget</span></h2>
+      <div class="ex calc" id="ex-nines">
+        <div class="calc-grid">
+          <label><span data-lang="pt">Disponibilidade alvo (%)</span><span data-lang="en">Target availability (%)</span> <input type="number" id="n-av" value="99.9" step="0.01" /></label>
+          <label><span data-lang="pt">Requisições / mês</span><span data-lang="en">Requests / month</span> <input type="number" id="n-req" value="100000000" /></label>
+        </div>
+        <div class="calc-out">
+          <div><span data-lang="pt">Downtime / ano:</span><span data-lang="en">Downtime / year:</span> <b id="o-dy"></b></div>
+          <div><span data-lang="pt">Downtime / mês:</span><span data-lang="en">Downtime / month:</span> <b id="o-dm"></b></div>
+          <div><span data-lang="pt">Falhas permitidas / mês:</span><span data-lang="en">Allowed failures / month:</span> <b id="o-af"></b></div>
+          <div class="calc-warn" id="o-note"></div>
+        </div>
+      </div>
+      <script>
+        (function () {
+          const av = document.getElementById("n-av"), req = document.getElementById("n-req");
+          const dy = document.getElementById("o-dy"), dm = document.getElementById("o-dm"),
+            af = document.getElementById("o-af"), note = document.getElementById("o-note");
+          const dur = (s) => { s = Math.round(s); if (s < 60) return s + " s"; if (s < 3600) return Math.round(s / 60) + " min"; if (s < 86400) return (s / 3600).toFixed(1) + " h"; return (s / 86400).toFixed(1) + " d"; };
+          const cnt = (n) => (n >= 1e9 ? (n / 1e9).toFixed(2) + "B" : n >= 1e6 ? (n / 1e6).toFixed(2) + "M" : n >= 1e3 ? (n / 1e3).toFixed(1) + "k" : String(Math.round(n)));
+          function compute() {
+            const avl = parseFloat(av.value) || 0, r = parseFloat(req.value) || 0;
+            const budget = Math.max(0, 1 - avl / 100), y = budget * 365 * 86400;
+            dy.textContent = dur(y); dm.textContent = dur(y / 12); af.textContent = cnt(budget * r);
+            const en = window.PiI18n && PiI18n.lang === "en";
+            note.textContent = avl < 99 ? (en ? "⚠ Below 99% is rarely acceptable in production." : "⚠ Abaixo de 99% raramente é aceitável em produção.") : "";
+          }
+          av.addEventListener("input", compute); req.addEventListener("input", compute);
+          compute();
+          document.addEventListener("DOMContentLoaded", () => { if (window.PiI18n) PiI18n.on(compute); });
+        })();
+      </script>
+
+<h2 class="section">
+        <span class="num">4</span
+        ><span data-lang="pt">Confira o modelo mental</span
+        ><span data-lang="en">Check the mental model</span>
+      </h2>
+
+      <div class="quiz" id="q1" role="group" aria-labelledby="q1l">
+        <div class="q" id="q1l">
+          <span data-lang="pt"
+            >Q1. Você mede latência com qual estatística?</span
+          ><span data-lang="en"
+            >Q1. You measure latency with which statistic?</span
+          >
+        </div>
+        <div class="options">
+          <button
+            class="opt"
+            data-correct="true"
+            data-fb-pt="Exato: percentis (p50/p95/p99) revelam a cauda."
+            data-fb-en="Exact: percentiles (p50/p95/p99) reveal the tail."
+          >
+            <span data-lang="pt">Percentis p95 p99</span
+            ><span data-lang="en">Percentiles p95 p99</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Média esconde a cauda — perigosíssimo."
+            data-fb-en="The average hides the tail — dangerous."
+          >
+            <span data-lang="pt">A média simples</span
+            ><span data-lang="en">The simple average</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Mínimo não diz nada sobre experiência típica."
+            data-fb-en="Minimum says nothing about typical experience."
+          >
+            <span data-lang="pt">O valor mínimo</span
+            ><span data-lang="en">The minimum value</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Mediana sozinha ignora a cauda."
+            data-fb-en="Median alone ignores the tail."
+          >
+            <span data-lang="pt">A mediana apenas</span
+            ><span data-lang="en">The median only</span>
+          </button>
+        </div>
+        <div class="verdict" aria-live="polite"></div>
+      </div>
+
+      <div class="quiz" id="q2" role="group" aria-labelledby="q2l">
+        <div class="q" id="q2l">
+          <span data-lang="pt"
+            >Q2. 99,9% de disponibilidade permite, por ano, ~:</span
+          ><span data-lang="en"
+            >Q2. 99.9% availability allows, per year, ~:</span
+          >
+        </div>
+        <div class="options">
+          <button
+            class="opt"
+            data-correct="true"
+            data-fb-pt="Exato: ~8,8 horas de downtime por ano."
+            data-fb-en="Exact: ~8.8 hours of downtime per year."
+          >
+            <span data-lang="pt">Cerca de nove horas</span
+            ><span data-lang="en">Around nine hours</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="3,65 dias é 99%, não 99,9%."
+            data-fb-en="3.65 days is 99%, not 99.9%."
+          >
+            <span data-lang="pt">Cerca de quatro dias</span
+            ><span data-lang="en">Around four days</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="52 min é 99,99% (quatro noves)."
+            data-fb-en="52 min is 99.99% (four nines)."
+          >
+            <span data-lang="pt">Cerca de uma hora</span
+            ><span data-lang="en">Around one hour</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="5 min é 99,999% (cinco noves)."
+            data-fb-en="5 min is 99.999% (five nines)."
+          >
+            <span data-lang="pt">Cerca de cinco minutos</span
+            ><span data-lang="en">Around five minutes</span>
+          </button>
+        </div>
+        <div class="verdict" aria-live="polite"></div>
+      </div>
+
+      <div class="quiz" id="q3" role="group" aria-labelledby="q3l">
+        <div class="q" id="q3l">
+          <span data-lang="pt"
+            >Q3. Sob partição de rede, o teorema CAP obriga a abrir mão
+            de:</span
+          ><span data-lang="en"
+            >Q3. Under network partition, the CAP theorem forces you to give
+            up:</span
+          >
+        </div>
+        <div class="options">
+          <button
+            class="opt"
+            data-correct="true"
+            data-fb-pt="Exato: ou consistência ou disponibilidade — não ambos."
+            data-fb-en="Exact: either consistency or availability — not both."
+          >
+            <span data-lang="pt">Ou C ou A</span
+            ><span data-lang="en">Either C or A</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Partição (P) é a premissa, não a opção."
+            data-fb-en="Partition (P) is the premise, not the choice."
+          >
+            <span data-lang="pt">A partição P</span
+            ><span data-lang="en">The partition P</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Latência não é o eixo do CAP."
+            data-fb-en="Latency isn't the CAP axis."
+          >
+            <span data-lang="pt">A latência sempre</span
+            ><span data-lang="en">Latency always</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Throughput não é o eixo do CAP."
+            data-fb-en="Throughput isn't the CAP axis."
+          >
+            <span data-lang="pt">O throughput total</span
+            ><span data-lang="en">Total throughput</span>
+          </button>
+        </div>
+        <div class="verdict" aria-live="polite"></div>
+      </div>
+
+      <!-- ============ 5. SOURCE ============ -->
+      <h2 class="section">
+        <span class="num">5</span><span data-lang="pt">Leia isto a seguir</span
+        ><span data-lang="en">Read this next</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          ><strong>Fontes primárias:</strong>
+          <a href="https://sre.google/workbook/" target="_blank" rel="noopener"
+            >Google SRE Workbook</a
+          >
+          (SLOs e orçamentos de erro) e
+          <a href="https://dataintensive.net" target="_blank" rel="noopener"
+            >DDIA cap. 5</a
+          >
+          (modelos de consistência em replicação). Juntos, eles transformam
+          “mais confiável” num número.</span
+        ><span data-lang="en"
+          ><strong>Primary sources:</strong>
+          <a href="https://sre.google/workbook/" target="_blank" rel="noopener"
+            >Google SRE Workbook</a
+          >
+          (SLOs and error budgets) and
+          <a href="https://dataintensive.net" target="_blank" rel="noopener"
+            >DDIA ch. 5</a
+          >
+          (consistency models in replication). Together they turn “more
+          reliable” into a number.</span
+        >
+      </p>
+
+      <div class="callout key">
+        <p>
+          🗣️
+          <strong
+            ><span data-lang="pt">Pergunte ao seu professor.</span
+            ><span data-lang="en">Ask your teacher.</span></strong
+          >
+          <span data-lang="pt"
+            >Boas perguntas: <em>“qual SLO faço para minha API?”</em>,
+            <em>“p95 vs p99 — quando importa?”</em>,
+            <em>“consistência eventual quebra o quê?”</em></span
+          >
+          <span data-lang="en"
+            >Good questions: <em>“what SLO for my API?”</em>,
+            <em>“p95 vs p99 — when does it matter?”</em>,
+            <em>“what does eventual consistency break?”</em></span
+          >
+        </p>
+      </div>
+
+      <footer class="lesson-foot">
+        <div class="next-card">
+          <div class="lbl">
+            <span data-lang="pt">Próxima lição →</span
+            ><span data-lang="en">Next lesson →</span>
+          </div>
+          <div class="t">
+            <span data-lang="pt"
+              >Escala e estimativa: ordens de grandeza e back-of-envelope</span
+            ><span data-lang="en"
+              >Scale & estimation: orders of magnitude and
+              back-of-envelope</span
+            >
+          </div>
+        </div>
+        <div style="flex: 0 1 240px">
+          <div class="lbl">
+            <span data-lang="pt">Revisar</span
+            ><span data-lang="en">Review</span>
+          </div>
+          <p style="margin: 6px 0 0">
+            <a href="./0001-the-design-loop.html"
+              ><span data-lang="pt">Lição 1 · O loop</span
+              ><span data-lang="en">Lesson 1 · The loop</span></a
+            >
+            ·
+            <a href="../RESOURCES.md"
+              ><span data-lang="pt">Recursos</span
+              ><span data-lang="en">Resources</span></a
+            >
+          </p>
+        </div>
+      </footer>
+    </article>
+
+    <script>
+      function verdictFor(btn, quiz) {
+        const correct = btn.dataset.correct === "true";
+        const fb = btn.getAttribute(
+          PiI18n.lang === "en" ? "data-fb-en" : "data-fb-pt",
+        );
+        const fallback =
+          PiI18n.lang === "en" ? "Re-read this section." : "Releia esta seção.";
+        return {
+          ok: correct,
+          text: (correct ? "✓ " : "✗ ") + (fb || fallback),
+        };
+      }
+      function resetQuiz(quiz) {
+        quiz.querySelectorAll(".opt").forEach((b) => {
+          b.classList.remove("correct", "wrong");
+          b.setAttribute("aria-pressed", "false");
+        });
+        const v = quiz.querySelector(".verdict");
+        v.textContent = "";
+        v.className = "verdict";
+      }
+      document.querySelectorAll(".quiz").forEach((quiz) => {
+        quiz.querySelectorAll(".opt").forEach((btn) => {
+          btn.setAttribute("aria-pressed", "false");
+          btn.addEventListener("click", () => {
+            quiz.querySelectorAll(".opt").forEach((b) => {
+              b.classList.remove("correct", "wrong");
+              b.setAttribute("aria-pressed", "false");
+            });
+            const v = verdictFor(btn, quiz);
+            btn.classList.add(v.ok ? "correct" : "wrong");
+            btn.setAttribute("aria-pressed", "true");
+            const verdict = quiz.querySelector(".verdict");
+            verdict.textContent = v.text;
+            verdict.className = "verdict " + (v.ok ? "ok" : "no");
+          });
+        });
+      });
+      document.addEventListener("DOMContentLoaded", () =>
+        PiI18n.on(() => document.querySelectorAll(".quiz").forEach(resetQuiz)),
+      );
+    </script>
+  </body>
+</html>

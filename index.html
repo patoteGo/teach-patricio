@@ -1,9 +1,13 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>⬡ Learning Hub</title>
+    <title data-pt="⬡ Central de Aprendizado" data-en="⬡ Learning Hub">
+      ⬡ Central de Aprendizado
+    </title>
+    <link rel="stylesheet" href="./topics/pi/assets/i18n.css" />
+    <script src="./topics/pi/assets/i18n.js" defer></script>
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;600&display=swap");
       * {
@@ -13,8 +17,14 @@
       }
       body {
         font-family: Inter, system-ui, sans-serif;
-        background: #fbfbf8;
-        color: #14132b;
+        background:
+          radial-gradient(
+            120% 80% at 50% -10%,
+            rgba(108, 75, 240, 0.14),
+            transparent 60%
+          ),
+          #0e0f17;
+        color: #eceef6;
         line-height: 1.6;
       }
       .wrap {
@@ -39,7 +49,7 @@
             transparent 50%
           ),
           linear-gradient(120deg, #6c4bf0 0%, #8b5cf6 40%, #0fb9a4 130%);
-        box-shadow: 0 18px 50px -18px rgba(20, 19, 43, 0.3);
+        box-shadow: 0 18px 50px -18px rgba(0, 0, 0, 0.6);
         position: relative;
         overflow: hidden;
       }
@@ -52,6 +62,7 @@
           linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
         background-size: 26px 26px;
         mask-image: linear-gradient(180deg, #000, transparent 80%);
+        pointer-events: none;
       }
       .eyebrow {
         display: inline-flex;
@@ -91,11 +102,11 @@
         border-radius: 10px;
         font-size: 0.95rem;
         color: #fff;
-        background: #6c4bf0;
-        box-shadow: 0 6px 24px -10px rgba(20, 19, 43, 0.22);
+        background: #8b6ff7;
+        box-shadow: 0 6px 24px -10px rgba(0, 0, 0, 0.5);
       }
       .k {
-        color: #4a4866;
+        color: #9ea2b8;
         font-size: 0.95rem;
       }
       .cards {
@@ -110,42 +121,45 @@
         }
       }
       .card {
-        background: #fff;
-        border: 1px solid #e7e5f0;
+        background: #181a26;
+        border: 1px solid #292d40;
         border-radius: 14px;
         padding: 20px;
-        box-shadow: 0 6px 24px -10px rgba(20, 19, 43, 0.22);
+        box-shadow: 0 8px 30px -14px rgba(0, 0, 0, 0.6);
         text-decoration: none;
         color: inherit;
         position: relative;
         overflow: hidden;
         transition:
           transform 0.14s,
-          box-shadow 0.14s;
+          box-shadow 0.14s,
+          border-color 0.14s;
       }
       .card:hover {
         transform: translateY(-3px);
-        box-shadow: 0 14px 40px -14px rgba(20, 19, 43, 0.3);
+        box-shadow: 0 16px 44px -16px rgba(0, 0, 0, 0.75);
+        border-color: #8b6ff7;
       }
       .card .tag {
         font: 600 11px "Space Grotesk";
         letter-spacing: 0.1em;
         text-transform: uppercase;
-        color: #0fb9a4;
+        color: #2dd4bf;
       }
       .card h3 {
         font-family: "Space Grotesk";
         font-size: 1.2rem;
         margin: 6px 0 4px;
+        color: #eceef6;
       }
       .card p {
         font-size: 0.9rem;
-        color: #4a4866;
+        color: #9ea2b8;
       }
       .card .meta {
         margin-top: 14px;
         font: 600 0.8rem "JetBrains Mono";
-        color: #6c4bf0;
+        color: #8b6ff7;
         display: flex;
         gap: 10px;
         flex-wrap: wrap;
@@ -155,23 +169,28 @@
         right: 18px;
         bottom: 16px;
         font-weight: 700;
-        color: #6c4bf0;
+        color: #8b6ff7;
       }
       .add {
-        border: 2px dashed #c9c6dd;
+        border: 2px dashed #3a3f55;
         background: transparent;
         text-align: center;
         display: flex;
         align-items: center;
         justify-content: center;
         min-height: 140px;
-        color: #9a96b3;
+        color: #64748b;
         font-weight: 600;
       }
+      .add code {
+        font-family: "JetBrains Mono";
+        color: #8b6ff7;
+      }
       pre {
-        background: #14132b;
+        background: #0b0c14;
         color: #e8e6ff;
         padding: 18px 20px;
+        border: 1px solid #292d40;
         border-radius: 14px;
         overflow-x: auto;
         font-family: "JetBrains Mono";
@@ -188,13 +207,13 @@
         color: #c4b5ff;
       }
       a {
-        color: #6c4bf0;
+        color: #8b6ff7;
       }
       .foot {
         margin-top: 54px;
         padding-top: 24px;
-        border-top: 1px solid #e7e5f0;
-        color: #4a4866;
+        border-top: 1px solid #292d40;
+        color: #9ea2b8;
         font-size: 0.9rem;
         display: flex;
         justify-content: space-between;
@@ -204,107 +223,321 @@
       .tree {
         font-family: "JetBrains Mono";
         font-size: 0.82rem;
-        background: #fff;
-        border: 1px solid #e7e5f0;
+        background: #181a26;
+        border: 1px solid #292d40;
         border-radius: 14px;
         padding: 18px 20px;
         line-height: 1.7;
-        color: #4a4866;
-        box-shadow: 0 6px 24px -10px rgba(20, 19, 43, 0.22);
+        color: #9ea2b8;
+        box-shadow: 0 8px 30px -14px rgba(0, 0, 0, 0.6);
+        white-space: pre-wrap;
       }
       .tree b {
-        color: #14132b;
+        color: #eceef6;
+      }
+      .tree .cm {
+        color: #64748b;
+      }
+      code.inl {
+        background: rgba(255, 255, 255, 0.12);
+        padding: 1px 6px;
+        border-radius: 5px;
       }
     </style>
   </head>
-  <body>
+  <body class="lang-pt">
     <div class="wrap">
       <header class="hero">
-        <span class="eyebrow">⬡ Learning Hub</span>
-        <h1>Learn anything,<br />one topic at a time.</h1>
+        <span class="eyebrow"
+          ><span data-lang="pt">⬡ Central de Aprendizado</span
+          ><span data-lang="en">⬡ Learning Hub</span></span
+        >
+        <h1>
+          <span data-lang="pt"
+            >Aprenda qualquer coisa,<br />um tópico por vez.</span
+          ><span data-lang="en">Learn anything,<br />one topic at a time.</span>
+        </h1>
         <p>
-          A portable knowledge base — each subject lives in its own folder under
-          <code
-            style="
-              background: rgba(255, 255, 255, 0.18);
-              padding: 1px 6px;
-              border-radius: 5px;
-            "
-            >topics/</code
-          >, with graphical, self-citing HTML lessons. Pick a topic and dive in.
+          <span data-lang="pt"
+            >Uma base de conhecimento portátil — cada assunto vive na sua
+            própria pasta sob <code class="inl">topics/</code>, com lições em
+            HTML gráficas e auto-citadas. Escolha um tópico e mergulhe.</span
+          ><span data-lang="en"
+            >A portable knowledge base — each subject lives in its own folder
+            under <code class="inl">topics/</code>, with graphical, self-citing
+            HTML lessons. Pick a topic and dive in.</span
+          >
         </p>
       </header>
 
-      <h2><span class="n">1</span>Topics</h2>
+      <h2>
+        <span class="n">1</span><span data-lang="pt">Tópicos</span
+        ><span data-lang="en">Topics</span>
+      </h2>
       <p class="k">
-        Each card is a self-contained course. Click to start at lesson 1.
+        <span data-lang="pt"
+          >Cada cartão é um curso autossuficiente. Clique para começar na lição
+          1.</span
+        ><span data-lang="en"
+          >Each card is a self-contained course. Click to start at lesson
+          1.</span
+        >
       </p>
       <div class="cards">
         <a class="card" href="./topics/pi/lessons/0001-the-core-loop.html">
-          <div class="tag">📁 7 lessons · active</div>
+          <div class="tag">
+            <span data-lang="pt">📁 9 lições · ativo</span
+            ><span data-lang="en">📁 9 lessons · active</span>
+          </div>
           <h3>Pi Power-User</h3>
           <p>
-            Bend the Pi coding harness into a power tool — the core loop, the
-            TUI, sessions, context, skills, extensions &amp; packages.
+            <span data-lang="pt"
+              >Transforme o Pi (harness de coding) numa ferramenta de poder — o
+              core loop, o TUI, sessões, contexto, skills, extensões e
+              packages.</span
+            ><span data-lang="en"
+              >Bend the Pi coding harness into a power tool — the core loop, the
+              TUI, sessions, context, skills, extensions &amp; packages.</span
+            >
           </p>
-          <div class="meta"><span>glossary</span><span>7 lessons</span></div>
-          <div class="enter">Enter →</div>
+          <div class="meta">
+            <span data-lang="pt">glossário</span
+            ><span data-lang="en">glossary</span><span>9 lessons</span>
+          </div>
+          <div class="enter">→</div>
+        </a>
+
+        <a
+          class="card"
+          href="./topics/behavioral-interview/lessons/0001-bluf-star.html"
+        >
+          <div class="tag" style="color: #fb7185">
+            <span data-lang="pt">⚡ entrevista amanhã</span
+            ><span data-lang="en">⚡ interview tomorrow</span>
+          </div>
+          <h3>
+            <span data-lang="pt">Entrevista Behavioral</span
+            ><span data-lang="en">Behavioral Interview</span>
+          </h3>
+          <p>
+            <span data-lang="pt"
+              >Prep behavioral para sênior fullstack — responda com BLUF + STAR
+              e soe natural, não ensaiado. Inclui um Dojo de prática
+              interativa.</span
+            ><span data-lang="en"
+              >Senior fullstack behavioral prep — answer with BLUF + STAR and
+              sound natural, not scripted. Includes an interactive practice
+              Dojo.</span
+            >
+          </p>
+          <div class="meta">
+            <span>4 lessons</span><span data-lang="pt">banco de perguntas</span
+            ><span data-lang="en">question bank</span><span>dojo</span>
+          </div>
+          <div class="enter">→</div>
+        </a>
+
+        <a
+          class="card"
+          href="./topics/system-design/lessons/0001-the-design-loop.html"
+        >
+          <div class="tag" style="color: #2dd4bf">🏗️ system design</div>
+          <h3>System Design</h3>
+          <p>
+            <span data-lang="pt"
+              >Projete sistemas que escalam e sobrevivem a falhas — backend,
+              infra e frontend. Pronto para entrevista + mundo real, fundamentos
+              primeiro.</span
+            ><span data-lang="en"
+              >Design systems that scale and hold up under failure — backend,
+              infra &amp; frontend. Interview-ready + real-world,
+              fundamentals-first.</span
+            >
+          </p>
+          <div class="meta">
+            <span>4 lessons</span
+            ><span data-lang="pt">prep para entrevista</span
+            ><span data-lang="en">interview prep</span
+            ><span data-lang="pt">full-stack</span
+            ><span data-lang="en">full-stack</span>
+          </div>
+          <div class="enter">→</div>
+        </a>
+
+        <a
+          class="card"
+          href="./topics/clearone-interview/lessons/0001-clearone-playbook.html"
+        >
+          <div class="tag" style="color: #fbbf24">⚡ interview tomorrow</div>
+          <h3>
+            <span data-lang="pt">ClearOne Advantage</span
+            ><span data-lang="en">ClearOne Advantage</span>
+          </h3>
+          <p>
+            <span data-lang="pt"
+              >Playbook sob medida para sua entrevista comportamental: missão,
+              pitch, mapa de histórias e como tratar os gaps do stack com
+              honestidade sênior.</span
+            >
+            <span data-lang="en"
+              >Tailored playbook for your behavioral interview: mission, pitch,
+              story map, and how to handle the stack gaps with senior
+              honesty.</span
+            >
+          </p>
+          <div class="meta">
+            <span>1 lesson</span><span data-lang="pt">comportamental</span
+            ><span data-lang="en">behavioral</span>
+          </div>
+          <div class="enter">→</div>
+        </a>
+
+        <a
+          class="card"
+          href="./topics/software-company/lessons/0001-antes-do-codigo.html"
+        >
+          <div class="tag" style="color: #34d399">
+            <span data-lang="pt">🚀 nossa empresa · BR</span
+            ><span data-lang="en">🚀 our company · BR</span>
+          </div>
+          <h3>EP Software</h3>
+          <p>
+            <span data-lang="pt"
+              >Do júnior (C#) ao primeiro cliente pagante — construir, publicar,
+              vender e usar IA. Stack TS + Next.js + Supabase. Foco Brasil,
+              rampa de ~3h/dia.</span
+            ><span data-lang="en"
+              >From junior (C#) to first paying client — build, ship, sell and
+              use AI. TS + Next.js + Supabase stack. Brazil focus, ~3h/day
+              ramp.</span
+            >
+          </p>
+          <div class="meta">
+            <span data-lang="pt">em curso</span
+            ><span data-lang="en">in progress</span><span>1 lesson</span>
+          </div>
+          <div class="enter">→</div>
         </a>
 
         <div class="card add">
           <span
-            >+ Add a topic &nbsp;·&nbsp;
-            <code>cp -r topics/_template topics/&lt;name&gt;</code></span
+            ><span data-lang="pt">+ Adicionar um tópico &nbsp;·&nbsp; </span
+            ><span data-lang="en">+ Add a topic &nbsp;·&nbsp; </span
+            ><code>cp -r topics/_template topics/&lt;name&gt;</code></span
           >
         </div>
       </div>
       <p class="k" style="margin-top: 10px">
-        The full, auto-synced list lives in the
-        <a href="./README.md">README catalog</a> (regenerated by CI on every
-        push).
+        <span data-lang="pt">A lista completa e auto-sincronizada está no </span
+        ><span data-lang="en">The full, auto-synced list lives in the </span
+        ><a href="./README.md"
+          ><span data-lang="pt">catálogo do README</span
+          ><span data-lang="en">README catalog</span></a
+        ><span data-lang="pt"> (regenerado pela CI a cada push).</span
+        ><span data-lang="en"> (regenerated by CI on every push).</span>
       </p>
 
-      <h2><span class="n">2</span>How it's organized</h2>
+      <h2>
+        <span class="n">2</span><span data-lang="pt">Como é organizado</span
+        ><span data-lang="en">How it's organized</span>
+      </h2>
       <p class="k">
-        One folder per topic. Each topic is a standard teaching workspace —
-        fully portable on its own.
+        <span data-lang="pt"
+          >Uma pasta por tópico. Cada tópico é um workspace de ensino padrão —
+          totalmente portátil por si só.</span
+        ><span data-lang="en"
+          >One folder per topic. Each topic is a standard teaching workspace —
+          fully portable on its own.</span
+        >
       </p>
       <div class="tree">
-        <b>teach-patricio/</b>
-        ├── <b>index.html</b>
-        <span style="color: #9a96b3"># you are here — graphical hub</span> ├──
-        <b>README.md</b>
-        <span style="color: #9a96b3"># catalog auto-synced from topics/*/</span>
+        <b>teach-patricio/</b> ├── <b>index.html</b>
+        <span class="cm"
+          ><span data-lang="pt"># você está aqui — hub gráfico</span
+          ><span data-lang="en"># you are here — graphical hub</span></span
+        >
+        ├── <b>README.md</b>
+        <span class="cm"
+          ><span data-lang="pt"># catálogo auto-sincronizado de topics/*/</span
+          ><span data-lang="en"
+            ># catalog auto-synced from topics/*/</span
+          ></span
+        >
         └── <b>topics/</b>
-        <span style="color: #9a96b3"># ONE FOLDER PER TOPIC</span> ├──
-        <b>pi/</b>
-        <span style="color: #9a96b3"># the Pi power-user course</span> │ ├──
-        MISSION.md RESOURCES.md NOTES.md │ ├── assets/style.css │ ├── lessons/
-        reference/ learning-records/ └── <b>_template/</b>
-        <span style="color: #9a96b3"># copy-and-go skeleton (CI skips it)</span>
+        <span class="cm"
+          ><span data-lang="pt"># UMA PASTA POR TÓPICO</span
+          ><span data-lang="en"># ONE FOLDER PER TOPIC</span></span
+        >
+        ├── <b>pi/</b>
+        <span class="cm"
+          ><span data-lang="pt"># o curso power-user do Pi</span
+          ><span data-lang="en"># the Pi power-user course</span></span
+        >
+        │ ├── MISSION.md RESOURCES.md NOTES.md │ ├── assets/style.css │ └──
+        lessons/ reference/ learning-records/ ├── <b>system-design/</b>
+        <span class="cm"
+          ><span data-lang="pt"># system design (backend·infra·frontend)</span
+          ><span data-lang="en"
+            ># system design (backend·infra·frontend)</span
+          ></span
+        >
+        └── <b>_template/</b>
+        <span class="cm"
+          ><span data-lang="pt"># esqueleto copy-and-go (CI ignora)</span
+          ><span data-lang="en"
+            ># copy-and-go skeleton (CI skips it)</span
+          ></span
+        >
       </div>
 
-      <h2><span class="n">3</span>Add a new topic</h2>
+      <h2>
+        <span class="n">3</span
+        ><span data-lang="pt">Adicionar um novo tópico</span
+        ><span data-lang="en">Add a new topic</span>
+      </h2>
       <p class="k">
-        One command, then edit the mission and drop in graphical lessons.
+        <span data-lang="pt"
+          >Um comando, depois edite a missão e solte lições gráficas.</span
+        ><span data-lang="en"
+          >One command, then edit the mission and drop in graphical
+          lessons.</span
+        >
       </p>
-      <pre><span class="c"># 1 — copy the skeleton</span>
+      <pre><span class="c"><span data-lang="pt"># 1 — copie o esqueleto</span><span data-lang="en"># 1 — copy the skeleton</span></span>
 cp -r topics/_template topics/<span class="k">rust</span>
-<span class="c"># 2 — say WHY you're learning it</span>
+<span class="c"><span data-lang="pt"># 2 — diga POR QUE você está aprendendo</span><span data-lang="en"># 2 — say WHY you're learning it</span></span>
 $EDITOR topics/<span class="k">rust</span>/MISSION.md
-<span class="c"># 3 — add graphical lessons (NNNN-name.html)</span>
-<span class="c"># 4 — commit &amp; push; the README catalog updates itself</span></pre>
+<span class="c"><span data-lang="pt"># 3 — adicione lições gráficas (NNNN-name.html)</span><span data-lang="en"># 3 — add graphical lessons (NNNN-name.html)</span></span>
+<span class="c"><span data-lang="pt"># 4 — commit &amp; push; o catálogo do README se atualiza</span><span data-lang="en"># 4 — commit &amp; push; the README catalog updates itself</span></span></pre>
       <p class="k">
-        Ask the Pi teach agent to scaffold the first lesson — it'll match the
-        graphical, self-citing style of the Pi course.
+        <span data-lang="pt"
+          >Peça ao agente Pi teach para montar a primeira lição — ele seguirá o
+          estilo gráfico e auto-citado do curso.</span
+        ><span data-lang="en"
+          >Ask the Pi teach agent to scaffold the first lesson — it'll match the
+          graphical, self-citing style of the course.</span
+        >
       </p>
 
       <div class="foot">
-        <span>⬡ One folder per topic · one tight win per lesson.</span>
+        <span
+          ><span data-lang="pt"
+            >⬡ Uma pasta por tópico · uma vitória objetiva por lição.</span
+          ><span data-lang="en"
+            >⬡ One folder per topic · one tight win per lesson.</span
+          ></span
+        >
         <span
           ><a href="./README.md">README</a> ·
-          <a href="./topics/pi/lessons/0001-the-core-loop.html">Pi course</a> ·
-          <a href="./topics/_template/MISSION.md">Topic template</a></span
+          <a href="./topics/pi/lessons/0001-the-core-loop.html"
+            ><span data-lang="pt">Curso Pi</span
+            ><span data-lang="en">Pi course</span></a
+          >
+          ·
+          <a href="./topics/_template/MISSION.md"
+            ><span data-lang="pt">Modelo de tópico</span
+            ><span data-lang="en">Topic template</span></a
+          ></span
         >
       </div>
     </div>

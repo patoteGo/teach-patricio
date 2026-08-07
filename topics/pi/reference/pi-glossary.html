@@ -1,10 +1,16 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pi · Glossary</title>
+    <title data-pt="Pi · Glossário" data-en="Pi · Glossary">
+      Pi · Glossário
+    </title>
     <link rel="stylesheet" href="../assets/style.css" />
+    <link rel="stylesheet" href="../assets/dark.css" />
+    <link rel="stylesheet" href="../assets/i18n.css" />
+    <script src="../assets/i18n.js" defer></script>
+    <script src="../assets/nav.js" defer></script>
     <style>
       /* glossary-specific (promote to assets/ if a 2nd reference doc needs them) */
       .filterbar {
@@ -16,7 +22,7 @@
         gap: 8px;
         margin: 0 -22px 18px;
         padding: 14px 22px;
-        background: rgba(251, 251, 248, 0.92);
+        background: rgba(14, 15, 23, 0.92);
         backdrop-filter: blur(8px);
         border-bottom: 1px solid var(--line);
       }
@@ -29,7 +35,7 @@
         padding: 7px 13px;
         border-radius: 999px;
         border: 1.5px solid var(--line);
-        background: #fff;
+        background: var(--paper-2);
         color: var(--ink-soft);
         transition: all 0.14s ease;
         display: inline-flex;
@@ -70,6 +76,7 @@
       }
       .chip[data-filter="all"].active {
         background: var(--ink);
+        color: var(--paper);
       }
 
       .terms {
@@ -135,43 +142,73 @@
       }
     </style>
   </head>
-  <body>
+  <body class="lang-pt">
     <article class="lesson">
       <header class="hero">
-        <span class="eyebrow">📖 Reference · Glossary</span>
-        <h1>The Pi glossary</h1>
+        <span class="eyebrow"
+          ><span data-lang="pt">📖 Referência · Glossário</span
+          ><span data-lang="en">📖 Reference · Glossary</span></span
+        >
+        <h1>
+          <span data-lang="pt">O glossário do Pi</span
+          ><span data-lang="en">The Pi glossary</span>
+        </h1>
         <p class="lead">
-          Every Pi-specific term in one place, color-coded by category. This is
-          the doc you'll revisit — lessons come and go, the glossary stays.
-          Filter by category, or just Ctrl-F.
+          <span data-lang="pt"
+            >Cada termo específico do Pi num só lugar, codificado por cor
+            conforme a categoria. Este é o documento que você vai revisitar —
+            lições vão e vêm, o glossário fica. Filtre por categoria, ou
+            simplesmente Ctrl-F.</span
+          ><span data-lang="en"
+            >Every Pi-specific term in one place, color-coded by category. This
+            is the doc you'll revisit — lessons come and go, the glossary stays.
+            Filter by category, or just Ctrl-F.</span
+          >
         </p>
         <p class="lesson-nav-top">
-          ↑ <a href="../MISSION.md">Mission</a> · back to
-          <a href="../lessons/0001-the-core-loop.html">Lesson 1</a>
+          ↑ <span data-lang="pt">voltar para a</span
+          ><span data-lang="en">back to</span>
+          <a href="../lessons/0001-the-core-loop.html"
+            ><span data-lang="pt">Lição 1</span
+            ><span data-lang="en">Lesson 1</span></a
+          >
+          ·
+          <a href="../MISSION.md"
+            ><span data-lang="pt">Missão</span
+            ><span data-lang="en">Mission</span></a
+          >
         </p>
       </header>
 
       <div class="filterbar">
         <span class="chip active" data-filter="all"
-          ><span class="dot"></span>All</span
+          ><span class="dot"></span><span data-lang="pt">Todos</span
+          ><span data-lang="en">All</span></span
         >
         <span class="chip" data-filter="core" style="color: #6c4bf0"
-          ><span class="dot"></span>Core</span
+          ><span class="dot"></span><span data-lang="pt">Núcleo</span
+          ><span data-lang="en">Core</span></span
         >
         <span class="chip" data-filter="interactive" style="color: #ef476f"
-          ><span class="dot"></span>Interactive</span
+          ><span class="dot"></span><span data-lang="pt">Interativo</span
+          ><span data-lang="en">Interactive</span></span
         >
         <span class="chip" data-filter="sessions" style="color: #f59e0b"
-          ><span class="dot"></span>Sessions</span
+          ><span class="dot"></span><span data-lang="pt">Sessões</span
+          ><span data-lang="en">Sessions</span></span
         >
         <span class="chip" data-filter="customization" style="color: #0fb9a4"
-          ><span class="dot"></span>Customization</span
+          ><span class="dot"></span><span data-lang="pt">Personalização</span
+          ><span data-lang="en">Customization</span></span
         >
         <span class="chip" data-filter="models" style="color: #3b82f6"
-          ><span class="dot"></span>Models</span
+          ><span class="dot"></span><span data-lang="pt">Modelos</span
+          ><span data-lang="en">Models</span></span
         >
         <span class="chip" data-filter="modes" style="color: #64748b"
-          ><span class="dot"></span>Modes &amp; Trust</span
+          ><span class="dot"></span
+          ><span data-lang="pt">Modos &amp; Confiança</span
+          ><span data-lang="en">Modes &amp; Trust</span></span
         >
       </div>
 
@@ -181,79 +218,163 @@
         <!-- ===== CORE ===== -->
         <div class="term" data-cat="core" style="border-left-color: #6c4bf0">
           <div class="head">
-            <h3>Pi</h3>
-            <span class="pill" style="background: #6c4bf0">Core</span>
+            <h3>
+              <span data-lang="pt">Pi</span><span data-lang="en">Pi</span>
+            </h3>
+            <span class="pill" style="background: #6c4bf0"
+              ><span data-lang="pt">Núcleo</span
+              ><span data-lang="en">Core</span></span
+            >
           </div>
           <p>
-            The minimal terminal coding harness itself — the host program that
-            loops a model over a handful of file/shell tools. Not an IDE, not an
-            agent framework.
+            <span data-lang="pt"
+              >O próprio harness minimalista de codificação no terminal — o
+              programa hospedeiro que faz um loop de um modelo sobre um punhado
+              de ferramentas de arquivo e shell. Não é uma IDE, não é um
+              framework de agentes.</span
+            ><span data-lang="en"
+              >The minimal terminal coding harness itself — the host program
+              that loops a model over a handful of file/shell tools. Not an IDE,
+              not an agent framework.</span
+            >
           </p>
         </div>
         <div class="term" data-cat="core" style="border-left-color: #6c4bf0">
           <div class="head">
-            <h3>Harness</h3>
-            <span class="pill" style="background: #6c4bf0">Core</span>
+            <h3>
+              <span data-lang="pt">Harness</span
+              ><span data-lang="en">Harness</span>
+            </h3>
+            <span class="pill" style="background: #6c4bf0"
+              ><span data-lang="pt">Núcleo</span
+              ><span data-lang="en">Core</span></span
+            >
           </div>
           <p>
-            The layer that orchestrates the model↔tool loop and stores the
-            session. Pi's defining identity: a thin host you extend, rather than
-            a fat app you configure.
+            <span data-lang="pt"
+              >A camada que orquestra o loop modelo↔ferramenta e armazena a
+              sessão. A identidade definidora do Pi: um hospedeiro enxuto que
+              você estende, em vez de um app pesado que você configura.</span
+            ><span data-lang="en"
+              >The layer that orchestrates the model↔tool loop and stores the
+              session. Pi's defining identity: a thin host you extend, rather
+              than a fat app you configure.</span
+            >
           </p>
         </div>
         <div class="term" data-cat="core" style="border-left-color: #6c4bf0">
           <div class="head">
-            <h3>Turn</h3>
-            <span class="pill" style="background: #6c4bf0">Core</span>
+            <h3>
+              <span data-lang="pt">Turno</span><span data-lang="en">Turn</span>
+            </h3>
+            <span class="pill" style="background: #6c4bf0"
+              ><span data-lang="pt">Núcleo</span
+              ><span data-lang="en">Core</span></span
+            >
           </div>
           <p>
-            One model response plus any tool calls it makes — the body of the
-            agent loop. Turns repeat until the model replies in plain text and
-            stops calling tools.
+            <span data-lang="pt"
+              >Uma resposta do modelo mais quaisquer chamadas de ferramenta que
+              ela faça — o corpo do loop do agente. Os turnos se repetem até o
+              modelo responder em texto puro e parar de chamar
+              ferramentas.</span
+            ><span data-lang="en"
+              >One model response plus any tool calls it makes — the body of the
+              agent loop. Turns repeat until the model replies in plain text and
+              stops calling tools.</span
+            >
           </p>
           <div class="ref">
-            see
+            <span data-lang="pt">veja</span><span data-lang="en">see</span>
             <a href="../lessons/0001-the-core-loop.html"
-              >Lesson 1 · The Core Loop</a
+              ><span data-lang="pt">Lição 1 · O Core Loop</span
+              ><span data-lang="en">Lesson 1 · The Core Loop</span></a
             >
           </div>
         </div>
         <div class="term" data-cat="core" style="border-left-color: #6c4bf0">
           <div class="head">
-            <h3>Agent loop</h3>
-            <span class="pill" style="background: #6c4bf0">Core</span>
+            <h3>
+              <span data-lang="pt">Loop de agente</span
+              ><span data-lang="en">Agent loop</span>
+            </h3>
+            <span class="pill" style="background: #6c4bf0"
+              ><span data-lang="pt">Núcleo</span
+              ><span data-lang="en">Core</span></span
+            >
           </div>
           <p>
-            The reasoning cycle: <code class="inline">agent_start</code> → turns
-            → <code class="inline">agent_end</code> →
-            <code class="inline">agent_settled</code>. "Settled" means no
-            auto-retry, compaction, or follow-up remains.
+            <span data-lang="pt"
+              >O ciclo de raciocínio: <code class="inline">agent_start</code> →
+              turnos → <code class="inline">agent_end</code> →
+              <code class="inline">agent_settled</code>. "Settled" significa que
+              não resta nova tentativa automática, compaction nem
+              follow-up.</span
+            ><span data-lang="en"
+              >The reasoning cycle: <code class="inline">agent_start</code> →
+              turns → <code class="inline">agent_end</code> →
+              <code class="inline">agent_settled</code>. "Settled" means no
+              auto-retry, compaction, or follow-up remains.</span
+            >
           </p>
         </div>
         <div class="term" data-cat="core" style="border-left-color: #6c4bf0">
           <div class="head">
-            <h3>Tool</h3>
-            <span class="pill" style="background: #6c4bf0">Core</span>
+            <h3>
+              <span data-lang="pt">Ferramenta</span
+              ><span data-lang="en">Tool</span>
+            </h3>
+            <span class="pill" style="background: #6c4bf0"
+              ><span data-lang="pt">Núcleo</span
+              ><span data-lang="en">Core</span></span
+            >
           </div>
           <p>
-            A capability the model can call. Built-ins plus any registered by
-            extensions. The model decides <em>when</em> to call them; Pi decides
-            <em>how</em> they run.
+            <span data-lang="pt"
+              >Uma capacidade que o modelo pode chamar. Nativas mais quaisquer
+              registradas por extensões. O modelo decide
+              <em>quando</em> chamá-las; o Pi decide <em>como</em> as
+              executar.</span
+            ><span data-lang="en"
+              >A capability the model can call. Built-ins plus any registered by
+              extensions. The model decides <em>when</em> to call them; Pi
+              decides <em>how</em> they run.</span
+            >
           </p>
         </div>
         <div class="term" data-cat="core" style="border-left-color: #6c4bf0">
           <div class="head">
-            <h3>Built-in tools</h3>
-            <span class="pill" style="background: #6c4bf0">Core</span>
+            <h3>
+              <span data-lang="pt">Ferramentas nativas</span
+              ><span data-lang="en">Built-in tools</span>
+            </h3>
+            <span class="pill" style="background: #6c4bf0"
+              ><span data-lang="pt">Núcleo</span
+              ><span data-lang="en">Core</span></span
+            >
           </div>
           <p>
-            <code class="inline">read</code>, <code class="inline">bash</code>,
-            <code class="inline">edit</code>,
-            <code class="inline">write</code> (on by default) +
-            <code class="inline">grep</code>, <code class="inline">find</code>,
-            <code class="inline">ls</code> (opt-in). Scope the set with
-            <code class="inline">--tools</code> /
-            <code class="inline">--exclude-tools</code>.
+            <span data-lang="pt"
+              ><code class="inline">read</code>,
+              <code class="inline">bash</code>,
+              <code class="inline">edit</code>,
+              <code class="inline">write</code> (ativas por padrão) +
+              <code class="inline">grep</code>,
+              <code class="inline">find</code>,
+              <code class="inline">ls</code> (opcionais). Restrinja o conjunto
+              com <code class="inline">--tools</code> /
+              <code class="inline">--exclude-tools</code>.</span
+            ><span data-lang="en"
+              ><code class="inline">read</code>,
+              <code class="inline">bash</code>,
+              <code class="inline">edit</code>,
+              <code class="inline">write</code> (on by default) +
+              <code class="inline">grep</code>,
+              <code class="inline">find</code>,
+              <code class="inline">ls</code> (opt-in). Scope the set with
+              <code class="inline">--tools</code> /
+              <code class="inline">--exclude-tools</code>.</span
+            >
           </p>
         </div>
 
@@ -264,13 +385,26 @@
           style="border-left-color: #ef476f"
         >
           <div class="head">
-            <h3>Steering message</h3>
-            <span class="pill" style="background: #ef476f">Interactive</span>
+            <h3>
+              <span data-lang="pt">Mensagem de steering</span
+              ><span data-lang="en">Steering message</span>
+            </h3>
+            <span class="pill" style="background: #ef476f"
+              ><span data-lang="pt">Interativo</span
+              ><span data-lang="en">Interactive</span></span
+            >
           </div>
           <p>
-            Queued with <span class="kbd">Enter</span> while the agent works.
-            Delivered after the current assistant turn finishes its tool calls —
-            lets you redirect a live loop without blocking it.
+            <span data-lang="pt"
+              >Enfileirada com <span class="kbd">Enter</span> enquanto o agente
+              trabalha. Entregue após o turno atual do assistente terminar suas
+              chamadas de ferramenta — permite redirecionar um loop vivo sem
+              bloqueá-lo.</span
+            ><span data-lang="en"
+              >Queued with <span class="kbd">Enter</span> while the agent works.
+              Delivered after the current assistant turn finishes its tool calls
+              — lets you redirect a live loop without blocking it.</span
+            >
           </p>
         </div>
         <div
@@ -279,14 +413,28 @@
           style="border-left-color: #ef476f"
         >
           <div class="head">
-            <h3>Follow-up message</h3>
-            <span class="pill" style="background: #ef476f">Interactive</span>
+            <h3>
+              <span data-lang="pt">Mensagem de follow-up</span
+              ><span data-lang="en">Follow-up message</span>
+            </h3>
+            <span class="pill" style="background: #ef476f"
+              ><span data-lang="pt">Interativo</span
+              ><span data-lang="en">Interactive</span></span
+            >
           </div>
           <p>
-            Queued with <span class="kbd">Alt</span>+<span class="kbd"
-              >Enter</span
-            >. Delivered only after the agent finishes
-            <strong>all</strong> work. Use for "and then also do X."
+            <span data-lang="pt"
+              >Enfileirada com <span class="kbd">Alt</span>+<span class="kbd"
+                >Enter</span
+              >. Entregue somente depois que o agente termina
+              <strong>todo</strong> o trabalho. Use para "e depois faça também
+              X".</span
+            ><span data-lang="en"
+              >Queued with <span class="kbd">Alt</span>+<span class="kbd"
+                >Enter</span
+              >. Delivered only after the agent finishes
+              <strong>all</strong> work. Use for "and then also do X."</span
+            >
           </p>
         </div>
         <div
@@ -295,15 +443,30 @@
           style="border-left-color: #ef476f"
         >
           <div class="head">
-            <h3>Thinking level</h3>
-            <span class="pill" style="background: #ef476f">Interactive</span>
+            <h3>
+              <span data-lang="pt">Nível de pensamento</span
+              ><span data-lang="en">Thinking level</span>
+            </h3>
+            <span class="pill" style="background: #ef476f"
+              ><span data-lang="pt">Interativo</span
+              ><span data-lang="en">Interactive</span></span
+            >
           </div>
           <p>
-            Model reasoning depth:
-            <code class="inline"
-              >off · minimal · low · medium · high · xhigh · max</code
-            >. <span class="kbd">Shift</span>+<span class="kbd">Tab</span>
-            cycles it. Editor border color reflects the current level.
+            <span data-lang="pt"
+              >Profundidade de raciocínio do modelo:
+              <code class="inline"
+                >off · minimal · low · medium · high · xhigh · max</code
+              >. <span class="kbd">Shift</span>+<span class="kbd">Tab</span>
+              alterna entre elas. A cor da borda do editor reflete o nível
+              atual.</span
+            ><span data-lang="en"
+              >Model reasoning depth:
+              <code class="inline"
+                >off · minimal · low · medium · high · xhigh · max</code
+              >. <span class="kbd">Shift</span>+<span class="kbd">Tab</span>
+              cycles it. Editor border color reflects the current level.</span
+            >
           </p>
         </div>
         <div
@@ -312,13 +475,25 @@
           style="border-left-color: #ef476f"
         >
           <div class="head">
-            <h3>/reload</h3>
-            <span class="pill" style="background: #ef476f">Interactive</span>
+            <h3>
+              <span data-lang="pt">/reload</span
+              ><span data-lang="en">/reload</span>
+            </h3>
+            <span class="pill" style="background: #ef476f"
+              ><span data-lang="pt">Interativo</span
+              ><span data-lang="en">Interactive</span></span
+            >
           </div>
           <p>
-            Reload extensions, skills, prompts, themes, and context files
-            without restarting the session. Your feedback loop while authoring
-            customizations.
+            <span data-lang="pt"
+              >Recarrega extensões, skills, prompts, temas e arquivos de
+              contexto sem reiniciar a sessão. Seu loop de feedback ao criar
+              personalizações.</span
+            ><span data-lang="en"
+              >Reload extensions, skills, prompts, themes, and context files
+              without restarting the session. Your feedback loop while authoring
+              customizations.</span
+            >
           </p>
         </div>
         <div
@@ -327,13 +502,25 @@
           style="border-left-color: #ef476f"
         >
           <div class="head">
-            <h3>Inline bash</h3>
-            <span class="pill" style="background: #ef476f">Interactive</span>
+            <h3>
+              <span data-lang="pt">Bash inline</span
+              ><span data-lang="en">Inline bash</span>
+            </h3>
+            <span class="pill" style="background: #ef476f"
+              ><span data-lang="pt">Interativo</span
+              ><span data-lang="en">Interactive</span></span
+            >
           </div>
           <p>
-            <code class="inline">!command</code> runs and sends output to the
-            model; <code class="inline">!!command</code> runs without sending.
-            Your shell, inline, anytime.
+            <span data-lang="pt"
+              ><code class="inline">!command</code> executa e envia a saída ao
+              modelo; <code class="inline">!!command</code> executa sem enviar.
+              Seu shell, inline, a qualquer momento.</span
+            ><span data-lang="en"
+              ><code class="inline">!command</code> runs and sends output to the
+              model; <code class="inline">!!command</code> runs without sending.
+              Your shell, inline, anytime.</span
+            >
           </p>
         </div>
         <div
@@ -342,13 +529,24 @@
           style="border-left-color: #ef476f"
         >
           <div class="head">
-            <h3>@file</h3>
-            <span class="pill" style="background: #ef476f">Interactive</span>
+            <h3>
+              <span data-lang="pt">@file</span><span data-lang="en">@file</span>
+            </h3>
+            <span class="pill" style="background: #ef476f"
+              ><span data-lang="pt">Interativo</span
+              ><span data-lang="en">Interactive</span></span
+            >
           </div>
           <p>
-            Type <code class="inline">@</code> in the editor to fuzzy-search and
-            attach project files. CLI equivalent:
-            <code class="inline">pi @file.md "…"</code>.
+            <span data-lang="pt"
+              >Digite <code class="inline">@</code> no editor para fazer busca
+              fuzzy e anexar arquivos do projeto. Equivalente na CLI:
+              <code class="inline">pi @file.md "…"</code>.</span
+            ><span data-lang="en"
+              >Type <code class="inline">@</code> in the editor to fuzzy-search
+              and attach project files. CLI equivalent:
+              <code class="inline">pi @file.md "…"</code>.</span
+            >
           </p>
         </div>
         <div
@@ -357,15 +555,29 @@
           style="border-left-color: #ef476f"
         >
           <div class="head">
-            <h3>External editor</h3>
-            <span class="pill" style="background: #ef476f">Interactive</span>
+            <h3>
+              <span data-lang="pt">Editor externo</span
+              ><span data-lang="en">External editor</span>
+            </h3>
+            <span class="pill" style="background: #ef476f"
+              ><span data-lang="pt">Interativo</span
+              ><span data-lang="en">Interactive</span></span
+            >
           </div>
           <p>
-            <span class="kbd">Ctrl</span>+<span class="kbd">G</span> opens
-            <code class="inline">externalEditor</code> /
-            <code class="inline">$VISUAL</code> /
-            <code class="inline">$EDITOR</code> (or
-            <code class="inline">nano</code>) for long prompts.
+            <span data-lang="pt"
+              ><span class="kbd">Ctrl</span>+<span class="kbd">G</span> abre
+              <code class="inline">externalEditor</code> /
+              <code class="inline">$VISUAL</code> /
+              <code class="inline">$EDITOR</code> (ou
+              <code class="inline">nano</code>) para prompts longos.</span
+            ><span data-lang="en"
+              ><span class="kbd">Ctrl</span>+<span class="kbd">G</span> opens
+              <code class="inline">externalEditor</code> /
+              <code class="inline">$VISUAL</code> /
+              <code class="inline">$EDITOR</code> (or
+              <code class="inline">nano</code>) for long prompts.</span
+            >
           </p>
         </div>
 
@@ -376,15 +588,29 @@
           style="border-left-color: #f59e0b"
         >
           <div class="head">
-            <h3>Session</h3>
-            <span class="pill" style="background: #f59e0b">Sessions</span>
+            <h3>
+              <span data-lang="pt">Sessão</span
+              ><span data-lang="en">Session</span>
+            </h3>
+            <span class="pill" style="background: #f59e0b"
+              ><span data-lang="pt">Sessões</span
+              ><span data-lang="en">Sessions</span></span
+            >
           </div>
           <p>
-            The conversation as a JSONL file with a tree structure (each entry
-            has <code class="inline">id</code> +
-            <code class="inline">parentId</code>). Auto-saved under
-            <code class="inline">~/.pi/agent/sessions/</code> by working
-            directory.
+            <span data-lang="pt"
+              >A conversa como um arquivo JSONL com estrutura de árvore (cada
+              entrada tem <code class="inline">id</code> +
+              <code class="inline">parentId</code>). Salvo automaticamente em
+              <code class="inline">~/.pi/agent/sessions/</code> por diretório de
+              trabalho.</span
+            ><span data-lang="en"
+              >The conversation as a JSONL file with a tree structure (each
+              entry has <code class="inline">id</code> +
+              <code class="inline">parentId</code>). Auto-saved under
+              <code class="inline">~/.pi/agent/sessions/</code> by working
+              directory.</span
+            >
           </p>
         </div>
         <div
@@ -393,12 +619,25 @@
           style="border-left-color: #f59e0b"
         >
           <div class="head">
-            <h3>Branching</h3>
-            <span class="pill" style="background: #f59e0b">Sessions</span>
+            <h3>
+              <span data-lang="pt">Ramificação</span
+              ><span data-lang="en">Branching</span>
+            </h3>
+            <span class="pill" style="background: #f59e0b"
+              ><span data-lang="pt">Sessões</span
+              ><span data-lang="en">Sessions</span></span
+            >
           </div>
           <p>
-            In-place session forks via the tree structure — one file holds every
-            branch. No "undo", just navigate to any earlier point and continue.
+            <span data-lang="pt"
+              >Bifurcações de sessão in-place via a estrutura de árvore — um
+              único arquivo contém todos os ramos. Sem "undo", apenas navegue
+              até qualquer ponto anterior e continue.</span
+            ><span data-lang="en"
+              >In-place session forks via the tree structure — one file holds
+              every branch. No "undo", just navigate to any earlier point and
+              continue.</span
+            >
           </p>
         </div>
         <div
@@ -407,16 +646,26 @@
           style="border-left-color: #f59e0b"
         >
           <div class="head">
-            <h3>/tree</h3>
-            <span class="pill" style="background: #f59e0b">Sessions</span>
+            <h3>
+              <span data-lang="pt">/tree</span><span data-lang="en">/tree</span>
+            </h3>
+            <span class="pill" style="background: #f59e0b"
+              ><span data-lang="pt">Sessões</span
+              ><span data-lang="en">Sessions</span></span
+            >
           </div>
           <p>
-            Navigate the session tree; jump to any point and keep working. Open
-            fast with <span class="kbd">Esc</span> <span class="kbd">Esc</span>.
-            Label bookmarks with <span class="kbd">Shift</span>+<span
-              class="kbd"
-              >L</span
-            >.
+            <span data-lang="pt"
+              >Navega a árvore da sessão; pule para qualquer ponto e continue
+              trabalhando. Abra rápido com <span class="kbd">Esc</span>
+              <span class="kbd">Esc</span>. Marque favoritos com
+              <span class="kbd">Shift</span>+<span class="kbd">L</span>.</span
+            ><span data-lang="en"
+              >Navigate the session tree; jump to any point and keep working.
+              Open fast with <span class="kbd">Esc</span>
+              <span class="kbd">Esc</span>. Label bookmarks with
+              <span class="kbd">Shift</span>+<span class="kbd">L</span>.</span
+            >
           </p>
         </div>
         <div
@@ -425,12 +674,24 @@
           style="border-left-color: #f59e0b"
         >
           <div class="head">
-            <h3>/fork</h3>
-            <span class="pill" style="background: #f59e0b">Sessions</span>
+            <h3>
+              <span data-lang="pt">/fork</span><span data-lang="en">/fork</span>
+            </h3>
+            <span class="pill" style="background: #f59e0b"
+              ><span data-lang="pt">Sessões</span
+              ><span data-lang="en">Sessions</span></span
+            >
           </div>
           <p>
-            Create a new session <em>file</em> from a previous user message on
-            the active branch. Good for "what if I'd asked it differently".
+            <span data-lang="pt"
+              >Cria um novo <em>arquivo</em> de sessão a partir de uma mensagem
+              anterior do usuário no ramo ativo. Útil para "e se eu tivesse
+              perguntado de outro jeito".</span
+            ><span data-lang="en"
+              >Create a new session <em>file</em> from a previous user message
+              on the active branch. Good for "what if I'd asked it
+              differently".</span
+            >
           </p>
         </div>
         <div
@@ -439,12 +700,23 @@
           style="border-left-color: #f59e0b"
         >
           <div class="head">
-            <h3>/clone</h3>
-            <span class="pill" style="background: #f59e0b">Sessions</span>
+            <h3>
+              <span data-lang="pt">/clone</span
+              ><span data-lang="en">/clone</span>
+            </h3>
+            <span class="pill" style="background: #f59e0b"
+              ><span data-lang="pt">Sessões</span
+              ><span data-lang="en">Sessions</span></span
+            >
           </div>
           <p>
-            Duplicate the current active branch into a new session file at the
-            current position, keeping full history.
+            <span data-lang="pt"
+              >Duplica o ramo ativo atual num novo arquivo de sessão na posição
+              atual, mantendo o histórico completo.</span
+            ><span data-lang="en"
+              >Duplicate the current active branch into a new session file at
+              the current position, keeping full history.</span
+            >
           </p>
         </div>
         <div
@@ -453,13 +725,25 @@
           style="border-left-color: #f59e0b"
         >
           <div class="head">
-            <h3>Compaction</h3>
-            <span class="pill" style="background: #f59e0b">Sessions</span>
+            <h3>
+              <span data-lang="pt">Compaction</span
+              ><span data-lang="en">Compaction</span>
+            </h3>
+            <span class="pill" style="background: #f59e0b"
+              ><span data-lang="pt">Sessões</span
+              ><span data-lang="en">Sessions</span></span
+            >
           </div>
           <p>
-            Lossy summarization of older messages to free context. Full history
-            is never lost — it stays in the JSONL; revisit via
-            <code class="inline">/tree</code>.
+            <span data-lang="pt"
+              >Sumarização com perda das mensagens antigas para liberar
+              contexto. O histórico completo nunca se perde — ele permanece no
+              JSONL; revisite via <code class="inline">/tree</code>.</span
+            ><span data-lang="en"
+              >Lossy summarization of older messages to free context. Full
+              history is never lost — it stays in the JSONL; revisit via
+              <code class="inline">/tree</code>.</span
+            >
           </p>
         </div>
         <div
@@ -468,13 +752,26 @@
           style="border-left-color: #f59e0b"
         >
           <div class="head">
-            <h3>/compact</h3>
-            <span class="pill" style="background: #f59e0b">Sessions</span>
+            <h3>
+              <span data-lang="pt">/compact</span
+              ><span data-lang="en">/compact</span>
+            </h3>
+            <span class="pill" style="background: #f59e0b"
+              ><span data-lang="pt">Sessões</span
+              ><span data-lang="en">Sessions</span></span
+            >
           </div>
           <p>
-            Trigger compaction manually, with optional custom instructions
-            (<code class="inline">/compact focus on recent changes</code>).
-            Auto-compaction is on by default.
+            <span data-lang="pt"
+              >Dispara a compaction manualmente, com instruções personalizadas
+              opcionais (<code class="inline"
+                >/compact focus on recent changes</code
+              >). A auto-compaction está ativa por padrão.</span
+            ><span data-lang="en"
+              >Trigger compaction manually, with optional custom instructions
+              (<code class="inline">/compact focus on recent changes</code>).
+              Auto-compaction is on by default.</span
+            >
           </p>
         </div>
 
@@ -485,13 +782,26 @@
           style="border-left-color: #0fb9a4"
         >
           <div class="head">
-            <h3>Extension</h3>
-            <span class="pill" style="background: #0fb9a4">Customization</span>
+            <h3>
+              <span data-lang="pt">Extensão</span
+              ><span data-lang="en">Extension</span>
+            </h3>
+            <span class="pill" style="background: #0fb9a4"
+              ><span data-lang="pt">Personalização</span
+              ><span data-lang="en">Customization</span></span
+            >
           </div>
           <p>
-            TypeScript module extending Pi: custom tools, commands, event
-            handlers, UI. Loaded via <em>jiti</em> — no compile step. The
-            deepest power surface.
+            <span data-lang="pt"
+              >Módulo TypeScript que estende o Pi: ferramentas, comandos,
+              manipuladores de eventos e UI personalizados. Carregado via
+              <em>jiti</em> — sem passo de compilação. A superfície de poder
+              mais profunda.</span
+            ><span data-lang="en"
+              >TypeScript module extending Pi: custom tools, commands, event
+              handlers, UI. Loaded via <em>jiti</em> — no compile step. The
+              deepest power surface.</span
+            >
           </p>
         </div>
         <div
@@ -500,19 +810,38 @@
           style="border-left-color: #0fb9a4"
         >
           <div class="head">
-            <h3>Skill</h3>
-            <span class="pill" style="background: #0fb9a4">Customization</span>
+            <h3>
+              <span data-lang="pt">Skill</span><span data-lang="en">Skill</span>
+            </h3>
+            <span class="pill" style="background: #0fb9a4"
+              ><span data-lang="pt">Personalização</span
+              ><span data-lang="en">Customization</span></span
+            >
           </div>
           <p>
-            On-demand capability package (<code class="inline">SKILL.md</code>)
-            following the
-            <a
-              href="https://agentskills.io/specification"
-              target="_blank"
-              rel="noopener"
-              >Agent Skills standard</a
-            >. Only the description is always in context — full instructions
-            load on demand (<em>progressive disclosure</em>).
+            <span data-lang="pt"
+              >Pacote de capacidade sob demanda (<code class="inline"
+                >SKILL.md</code
+              >) seguindo o
+              <a
+                href="https://agentskills.io/specification"
+                target="_blank"
+                rel="noopener"
+                >padrão Agent Skills</a
+              >. Apenas a descrição está sempre no contexto — as instruções
+              completas carregam sob demanda (<em>progressive disclosure</em
+              >).</span
+            ><span data-lang="en"
+              >On-demand capability package (<code class="inline">SKILL.md</code
+              >) following the
+              <a
+                href="https://agentskills.io/specification"
+                target="_blank"
+                rel="noopener"
+                >Agent Skills standard</a
+              >. Only the description is always in context — full instructions
+              load on demand (<em>progressive disclosure</em>).</span
+            >
           </p>
         </div>
         <div
@@ -521,13 +850,26 @@
           style="border-left-color: #0fb9a4"
         >
           <div class="head">
-            <h3>Prompt Template</h3>
-            <span class="pill" style="background: #0fb9a4">Customization</span>
+            <h3>
+              <span data-lang="pt">Template de prompt</span
+              ><span data-lang="en">Prompt Template</span>
+            </h3>
+            <span class="pill" style="background: #0fb9a4"
+              ><span data-lang="pt">Personalização</span
+              ><span data-lang="en">Customization</span></span
+            >
           </div>
           <p>
-            Reusable prompt as a <code class="inline">.md</code> file; expand
-            with <code class="inline">/name</code>. Supports
-            <code class="inline">{{placeholder}}</code> interpolation.
+            <span data-lang="pt"
+              >Prompt reutilizável como um arquivo
+              <code class="inline">.md</code>; expanda com
+              <code class="inline">/name</code>. Suporta interpolação de
+              <code class="inline">{{placeholder}}</code>.</span
+            ><span data-lang="en"
+              >Reusable prompt as a <code class="inline">.md</code> file; expand
+              with <code class="inline">/name</code>. Supports
+              <code class="inline">{{placeholder}}</code> interpolation.</span
+            >
           </p>
         </div>
         <div
@@ -536,13 +878,24 @@
           style="border-left-color: #0fb9a4"
         >
           <div class="head">
-            <h3>Theme</h3>
-            <span class="pill" style="background: #0fb9a4">Customization</span>
+            <h3>
+              <span data-lang="pt">Tema</span><span data-lang="en">Theme</span>
+            </h3>
+            <span class="pill" style="background: #0fb9a4"
+              ><span data-lang="pt">Personalização</span
+              ><span data-lang="en">Customization</span></span
+            >
           </div>
           <p>
-            Visual theme (<code class="inline">dark</code> /
-            <code class="inline">light</code> built in). Hot-reloads: edit the
-            file, changes apply instantly.
+            <span data-lang="pt"
+              >Tema visual (<code class="inline">dark</code> /
+              <code class="inline">light</code> nativos). Hot-reload: edite o
+              arquivo e as mudanças se aplicam instantaneamente.</span
+            ><span data-lang="en"
+              >Visual theme (<code class="inline">dark</code> /
+              <code class="inline">light</code> built in). Hot-reloads: edit the
+              file, changes apply instantly.</span
+            >
           </p>
         </div>
         <div
@@ -551,13 +904,26 @@
           style="border-left-color: #0fb9a4"
         >
           <div class="head">
-            <h3>Pi Package</h3>
-            <span class="pill" style="background: #0fb9a4">Customization</span>
+            <h3>
+              <span data-lang="pt">Pacote Pi</span
+              ><span data-lang="en">Pi Package</span>
+            </h3>
+            <span class="pill" style="background: #0fb9a4"
+              ><span data-lang="pt">Personalização</span
+              ><span data-lang="en">Customization</span></span
+            >
           </div>
           <p>
-            Bundle of extensions/skills/prompts/themes shared via npm or git.
-            Install with <code class="inline">pi install npm:@foo/bar</code>.
-            Runs with full system access — review first.
+            <span data-lang="pt"
+              >Pacote de extensões/skills/prompts/temas compartilhado via npm ou
+              git. Instale com
+              <code class="inline">pi install npm:@foo/bar</code>. Roda com
+              acesso total ao sistema — revise antes.</span
+            ><span data-lang="en"
+              >Bundle of extensions/skills/prompts/themes shared via npm or git.
+              Install with <code class="inline">pi install npm:@foo/bar</code>.
+              Runs with full system access — review first.</span
+            >
           </p>
         </div>
         <div
@@ -566,13 +932,26 @@
           style="border-left-color: #0fb9a4"
         >
           <div class="head">
-            <h3>Context files</h3>
-            <span class="pill" style="background: #0fb9a4">Customization</span>
+            <h3>
+              <span data-lang="pt">Arquivos de contexto</span
+              ><span data-lang="en">Context files</span>
+            </h3>
+            <span class="pill" style="background: #0fb9a4"
+              ><span data-lang="pt">Personalização</span
+              ><span data-lang="en">Customization</span></span
+            >
           </div>
           <p>
-            <code class="inline">AGENTS.md</code> (or
-            <code class="inline">CLAUDE.md</code>) auto-loaded at startup from
-            global, parent, and current directories and concatenated.
+            <span data-lang="pt"
+              ><code class="inline">AGENTS.md</code> (ou
+              <code class="inline">CLAUDE.md</code>) carregado automaticamente
+              na inicialização a partir dos diretórios global, pai e atual, e
+              concatenado.</span
+            ><span data-lang="en"
+              ><code class="inline">AGENTS.md</code> (or
+              <code class="inline">CLAUDE.md</code>) auto-loaded at startup from
+              global, parent, and current directories and concatenated.</span
+            >
           </p>
         </div>
         <div
@@ -581,13 +960,25 @@
           style="border-left-color: #0fb9a4"
         >
           <div class="head">
-            <h3>System prompt</h3>
-            <span class="pill" style="background: #0fb9a4">Customization</span>
+            <h3>
+              <span data-lang="pt">Prompt de sistema</span
+              ><span data-lang="en">System prompt</span>
+            </h3>
+            <span class="pill" style="background: #0fb9a4"
+              ><span data-lang="pt">Personalização</span
+              ><span data-lang="en">Customization</span></span
+            >
           </div>
           <p>
-            Base model instructions. Replace via
-            <code class="inline">.pi/SYSTEM.md</code>; append (don't replace)
-            via <code class="inline">APPEND_SYSTEM.md</code>.
+            <span data-lang="pt"
+              >Instruções base do modelo. Substitua via
+              <code class="inline">.pi/SYSTEM.md</code>; anexe (não substitua)
+              via <code class="inline">APPEND_SYSTEM.md</code>.</span
+            ><span data-lang="en"
+              >Base model instructions. Replace via
+              <code class="inline">.pi/SYSTEM.md</code>; append (don't replace)
+              via <code class="inline">APPEND_SYSTEM.md</code>.</span
+            >
           </p>
         </div>
         <div
@@ -596,20 +987,32 @@
           style="border-left-color: #0fb9a4"
         >
           <div class="head">
-            <h3>MCP</h3>
-            <span class="pill" style="background: #0fb9a4">Customization</span>
+            <h3>
+              <span data-lang="pt">MCP</span><span data-lang="en">MCP</span>
+            </h3>
+            <span class="pill" style="background: #0fb9a4"
+              ><span data-lang="pt">Personalização</span
+              ><span data-lang="en">Customization</span></span
+            >
           </div>
           <p>
-            Model Context Protocol — the standard Pi
-            <strong>deliberately does not use</strong>. Build a CLI + skill
-            instead, or add MCP via an extension.
+            <span data-lang="pt"
+              >Model Context Protocol — o padrão que o Pi
+              <strong>deliberadamente não usa</strong>. Em vez disso, construa
+              uma CLI + skill, ou adicione MCP via uma extensão.</span
+            ><span data-lang="en"
+              >Model Context Protocol — the standard Pi
+              <strong>deliberately does not use</strong>. Build a CLI + skill
+              instead, or add MCP via an extension.</span
+            >
           </p>
           <div class="ref">
             <a
               href="https://mariozechner.at/posts/2025-11-02-what-if-you-dont-need-mcp/"
               target="_blank"
               rel="noopener"
-              >why?</a
+              ><span data-lang="pt">por quê?</span
+              ><span data-lang="en">why?</span></a
             >
           </div>
         </div>
@@ -617,190 +1020,372 @@
         <!-- ===== MODELS ===== -->
         <div class="term" data-cat="models" style="border-left-color: #3b82f6">
           <div class="head">
-            <h3>Provider</h3>
-            <span class="pill" style="background: #3b82f6">Models</span>
-          </div>
-          <p>
-            The LLM backend: Anthropic, OpenAI, Google, OpenRouter, etc.
-            Authenticate via subscription (<code class="inline">/login</code>)
-            or API key.
-          </p>
-        </div>
-        <div class="term" data-cat="models" style="border-left-color: #3b82f6">
-          <div class="head">
-            <h3>Model</h3>
-            <span class="pill" style="background: #3b82f6">Models</span>
-          </div>
-          <p>
-            The specific LLM selected (e.g.
-            <code class="inline">claude-sonnet-4</code>).
-            <span class="kbd">Ctrl</span>+<span class="kbd">L</span> opens the
-            selector; <span class="kbd">--model provider/id</span> on the CLI.
-          </p>
-        </div>
-        <div class="term" data-cat="models" style="border-left-color: #3b82f6">
-          <div class="head">
-            <h3>Scoped models</h3>
-            <span class="pill" style="background: #3b82f6">Models</span>
-          </div>
-          <p>
-            The subset enabled for <span class="kbd">Ctrl</span>+<span
-              class="kbd"
-              >P</span
+            <h3>
+              <span data-lang="pt">Provedor</span
+              ><span data-lang="en">Provider</span>
+            </h3>
+            <span class="pill" style="background: #3b82f6"
+              ><span data-lang="pt">Modelos</span
+              ><span data-lang="en">Models</span></span
             >
-            cycling. Set via <code class="inline">/scoped-models</code> or the
-            <code class="inline">--models</code> flag.
+          </div>
+          <p>
+            <span data-lang="pt"
+              >O backend de LLM: Anthropic, OpenAI, Google, OpenRouter, etc.
+              Autentique via assinatura (<code class="inline">/login</code>) ou
+              chave de API.</span
+            ><span data-lang="en"
+              >The LLM backend: Anthropic, OpenAI, Google, OpenRouter, etc.
+              Authenticate via subscription (<code class="inline">/login</code>)
+              or API key.</span
+            >
           </p>
         </div>
         <div class="term" data-cat="models" style="border-left-color: #3b82f6">
           <div class="head">
-            <h3>/login</h3>
-            <span class="pill" style="background: #3b82f6">Models</span>
+            <h3>
+              <span data-lang="pt">Modelo</span
+              ><span data-lang="en">Model</span>
+            </h3>
+            <span class="pill" style="background: #3b82f6"
+              ><span data-lang="pt">Modelos</span
+              ><span data-lang="en">Models</span></span
+            >
           </div>
           <p>
-            Manage provider credentials — pick a subscription (Claude Pro/Max,
-            ChatGPT Plus/Pro, Copilot) or paste an API key.
-            <code class="inline">/logout</code> clears them.
+            <span data-lang="pt"
+              >O LLM específico selecionado (p.ex.
+              <code class="inline">claude-sonnet-4</code>).
+              <span class="kbd">Ctrl</span>+<span class="kbd">L</span> abre o
+              seletor; <span class="kbd">--model provider/id</span> na
+              CLI.</span
+            ><span data-lang="en"
+              >The specific LLM selected (e.g.
+              <code class="inline">claude-sonnet-4</code>).
+              <span class="kbd">Ctrl</span>+<span class="kbd">L</span> opens the
+              selector; <span class="kbd">--model provider/id</span> on the
+              CLI.</span
+            >
+          </p>
+        </div>
+        <div class="term" data-cat="models" style="border-left-color: #3b82f6">
+          <div class="head">
+            <h3>
+              <span data-lang="pt">Modelos com escopo</span
+              ><span data-lang="en">Scoped models</span>
+            </h3>
+            <span class="pill" style="background: #3b82f6"
+              ><span data-lang="pt">Modelos</span
+              ><span data-lang="en">Models</span></span
+            >
+          </div>
+          <p>
+            <span data-lang="pt"
+              >O subconjunto habilitado para alternar com
+              <span class="kbd">Ctrl</span>+<span class="kbd">P</span>. Defina
+              via <code class="inline">/scoped-models</code> ou a flag
+              <code class="inline">--models</code>.</span
+            ><span data-lang="en"
+              >The subset enabled for <span class="kbd">Ctrl</span>+<span
+                class="kbd"
+                >P</span
+              >
+              cycling. Set via <code class="inline">/scoped-models</code> or the
+              <code class="inline">--models</code> flag.</span
+            >
+          </p>
+        </div>
+        <div class="term" data-cat="models" style="border-left-color: #3b82f6">
+          <div class="head">
+            <h3>
+              <span data-lang="pt">/login</span
+              ><span data-lang="en">/login</span>
+            </h3>
+            <span class="pill" style="background: #3b82f6"
+              ><span data-lang="pt">Modelos</span
+              ><span data-lang="en">Models</span></span
+            >
+          </div>
+          <p>
+            <span data-lang="pt"
+              >Gerencia credenciais do provedor — escolha uma assinatura (Claude
+              Pro/Max, ChatGPT Plus/Pro, Copilot) ou cole uma chave de API.
+              <code class="inline">/logout</code> as limpa.</span
+            ><span data-lang="en"
+              >Manage provider credentials — pick a subscription (Claude
+              Pro/Max, ChatGPT Plus/Pro, Copilot) or paste an API key.
+              <code class="inline">/logout</code> clears them.</span
+            >
           </p>
         </div>
 
         <!-- ===== MODES & TRUST ===== -->
         <div class="term" data-cat="modes" style="border-left-color: #64748b">
           <div class="head">
-            <h3>Interactive mode</h3>
-            <span class="pill" style="background: #64748b">Modes</span>
+            <h3>
+              <span data-lang="pt">Modo interativo</span
+              ><span data-lang="en">Interactive mode</span>
+            </h3>
+            <span class="pill" style="background: #64748b"
+              ><span data-lang="pt">Modos</span
+              ><span data-lang="en">Modes</span></span
+            >
           </div>
           <p>
-            Default TUI mode — you converse with Pi in the terminal. Everything
-            in this glossary's "Interactive" category assumes this mode.
+            <span data-lang="pt"
+              >Modo TUI padrão — você conversa com o Pi no terminal. Tudo na
+              categoria "Interativo" deste glossário assume este modo.</span
+            ><span data-lang="en"
+              >Default TUI mode — you converse with Pi in the terminal.
+              Everything in this glossary's "Interactive" category assumes this
+              mode.</span
+            >
           </p>
         </div>
         <div class="term" data-cat="modes" style="border-left-color: #64748b">
           <div class="head">
-            <h3>Print mode</h3>
-            <span class="pill" style="background: #64748b">Modes</span>
+            <h3>
+              <span data-lang="pt">Modo print</span
+              ><span data-lang="en">Print mode</span>
+            </h3>
+            <span class="pill" style="background: #64748b"
+              ><span data-lang="pt">Modos</span
+              ><span data-lang="en">Modes</span></span
+            >
           </div>
           <p>
-            <code class="inline">pi -p "…"</code> — one-shot: print the response
-            and exit. Reads piped stdin:
-            <code class="inline">cat file | pi -p "summarize"</code>.
+            <span data-lang="pt"
+              ><code class="inline">pi -p "…"</code> — one-shot: imprime a
+              resposta e sai. Lê stdin via pipe:
+              <code class="inline">cat file | pi -p "summarize"</code>.</span
+            ><span data-lang="en"
+              ><code class="inline">pi -p "…"</code> — one-shot: print the
+              response and exit. Reads piped stdin:
+              <code class="inline">cat file | pi -p "summarize"</code>.</span
+            >
           </p>
         </div>
         <div class="term" data-cat="modes" style="border-left-color: #64748b">
           <div class="head">
-            <h3>JSON mode</h3>
-            <span class="pill" style="background: #64748b">Modes</span>
+            <h3>
+              <span data-lang="pt">Modo JSON</span
+              ><span data-lang="en">JSON mode</span>
+            </h3>
+            <span class="pill" style="background: #64748b"
+              ><span data-lang="pt">Modos</span
+              ><span data-lang="en">Modes</span></span
+            >
           </div>
           <p>
-            <code class="inline">pi --mode json</code> — emit every event as a
-            JSON line. For building pipelines and observability on top of Pi.
+            <span data-lang="pt"
+              ><code class="inline">pi --mode json</code> — emite cada evento
+              como uma linha JSON. Para construir pipelines e observabilidade
+              sobre o Pi.</span
+            ><span data-lang="en"
+              ><code class="inline">pi --mode json</code> — emit every event as
+              a JSON line. For building pipelines and observability on top of
+              Pi.</span
+            >
           </p>
         </div>
         <div class="term" data-cat="modes" style="border-left-color: #64748b">
           <div class="head">
-            <h3>RPC mode</h3>
-            <span class="pill" style="background: #64748b">Modes</span>
+            <h3>
+              <span data-lang="pt">Modo RPC</span
+              ><span data-lang="en">RPC mode</span>
+            </h3>
+            <span class="pill" style="background: #64748b"
+              ><span data-lang="pt">Modos</span
+              ><span data-lang="en">Modes</span></span
+            >
           </div>
           <p>
-            <code class="inline">pi --mode rpc</code> — strict LF-delimited
-            JSONL over stdin/stdout, for non-Node.js process integration.
+            <span data-lang="pt"
+              ><code class="inline">pi --mode rpc</code> — JSONL estrito
+              delimitado por LF sobre stdin/stdout, para integração com
+              processos não-Node.js.</span
+            ><span data-lang="en"
+              ><code class="inline">pi --mode rpc</code> — strict LF-delimited
+              JSONL over stdin/stdout, for non-Node.js process
+              integration.</span
+            >
           </p>
         </div>
         <div class="term" data-cat="modes" style="border-left-color: #64748b">
           <div class="head">
-            <h3>SDK</h3>
-            <span class="pill" style="background: #64748b">Modes</span>
+            <h3>
+              <span data-lang="pt">SDK</span><span data-lang="en">SDK</span>
+            </h3>
+            <span class="pill" style="background: #64748b"
+              ><span data-lang="pt">Modos</span
+              ><span data-lang="en">Modes</span></span
+            >
           </div>
           <p>
-            Embed Pi in your own app:
-            <code class="inline">createAgentSession()</code>. Out of current
-            scope — revisit after interactive mastery.
+            <span data-lang="pt"
+              >Embarque o Pi no seu próprio app:
+              <code class="inline">createAgentSession()</code>. Fora do escopo
+              atual — revisite depois de dominar o modo interativo.</span
+            ><span data-lang="en"
+              >Embed Pi in your own app:
+              <code class="inline">createAgentSession()</code>. Out of current
+              scope — revisit after interactive mastery.</span
+            >
           </p>
         </div>
         <div class="term" data-cat="modes" style="border-left-color: #64748b">
           <div class="head">
-            <h3>Project trust</h3>
-            <span class="pill" style="background: #64748b">Modes</span>
+            <h3>
+              <span data-lang="pt">Confiança de projeto</span
+              ><span data-lang="en">Project trust</span>
+            </h3>
+            <span class="pill" style="background: #64748b"
+              ><span data-lang="pt">Modos</span
+              ><span data-lang="en">Modes</span></span
+            >
           </div>
           <p>
-            Decision to load a project's
-            <code class="inline">.pi</code> resources (settings, extensions,
-            skills). Saved in
-            <code class="inline">~/.pi/agent/trust.json</code> via
-            <code class="inline">/trust</code>. Security boundary.
+            <span data-lang="pt"
+              >Decisão de carregar os recursos
+              <code class="inline">.pi</code> de um projeto (configurações,
+              extensões, skills). Salva em
+              <code class="inline">~/.pi/agent/trust.json</code> via
+              <code class="inline">/trust</code>. Fronteira de segurança.</span
+            ><span data-lang="en"
+              >Decision to load a project's <code class="inline">.pi</code>
+              resources (settings, extensions, skills). Saved in
+              <code class="inline">~/.pi/agent/trust.json</code> via
+              <code class="inline">/trust</code>. Security boundary.</span
+            >
           </p>
         </div>
         <div class="term" data-cat="modes" style="border-left-color: #64748b">
           <div class="head">
-            <h3>pi install</h3>
-            <span class="pill" style="background: #64748b">Modes</span>
+            <h3>
+              <span data-lang="pt">pi install</span
+              ><span data-lang="en">pi install</span>
+            </h3>
+            <span class="pill" style="background: #64748b"
+              ><span data-lang="pt">Modos</span
+              ><span data-lang="en">Modes</span></span
+            >
           </div>
           <p>
-            Install a package (<code class="inline">npm:</code> or
-            <code class="inline">git:</code> source).
-            <code class="inline">-l</code> for project-local. Manage with
-            <code class="inline">pi list</code>,
-            <code class="inline">pi config</code>,
-            <code class="inline">pi update</code>.
+            <span data-lang="pt"
+              >Instala um pacote (fonte <code class="inline">npm:</code> ou
+              <code class="inline">git:</code>).
+              <code class="inline">-l</code> para o escopo do projeto. Gerencie
+              com <code class="inline">pi list</code>,
+              <code class="inline">pi config</code>,
+              <code class="inline">pi update</code>.</span
+            ><span data-lang="en"
+              >Install a package (<code class="inline">npm:</code> or
+              <code class="inline">git:</code> source).
+              <code class="inline">-l</code> for project-local. Manage with
+              <code class="inline">pi list</code>,
+              <code class="inline">pi config</code>,
+              <code class="inline">pi update</code>.</span
+            >
           </p>
         </div>
         <div class="term" data-cat="modes" style="border-left-color: #64748b">
           <div class="head">
-            <h3>pi.dev</h3>
-            <span class="pill" style="background: #64748b">Modes</span>
+            <h3>
+              <span data-lang="pt">pi.dev</span
+              ><span data-lang="en">pi.dev</span>
+            </h3>
+            <span class="pill" style="background: #64748b"
+              ><span data-lang="pt">Modos</span
+              ><span data-lang="en">Modes</span></span
+            >
           </div>
           <p>
-            Canonical docs site —
-            <a href="https://pi.dev/docs/latest" target="_blank" rel="noopener"
-              >pi.dev/docs/latest</a
-            >. The source of truth this glossary mirrors.
+            <span data-lang="pt"
+              >Site de documentação canônico —
+              <a
+                href="https://pi.dev/docs/latest"
+                target="_blank"
+                rel="noopener"
+                >pi.dev/docs/latest</a
+              >. A fonte da verdade que este glossário espelha.</span
+            ><span data-lang="en"
+              >Canonical docs site —
+              <a
+                href="https://pi.dev/docs/latest"
+                target="_blank"
+                rel="noopener"
+                >pi.dev/docs/latest</a
+              >. The source of truth this glossary mirrors.</span
+            >
           </p>
         </div>
       </div>
 
       <footer class="lesson-foot">
         <div class="next-card">
-          <div class="lbl">Keep learning →</div>
+          <div class="lbl">
+            <span data-lang="pt">Continue aprendendo →</span
+            ><span data-lang="en">Keep learning →</span>
+          </div>
           <div class="t">
             <a href="../lessons/0002-driving-the-tui.html"
-              >Lesson 2 · Driving the TUI</a
+              ><span data-lang="pt">Lição 2 · Dirigindo o TUI</span
+              ><span data-lang="en">Lesson 2 · Driving the TUI</span></a
             >
           </div>
         </div>
         <div>
-          <div class="lbl">Course</div>
+          <div class="lbl">
+            <span data-lang="pt">Curso</span><span data-lang="en">Course</span>
+          </div>
           <p style="margin: 6px 0 0">
             <a href="../lessons/0001-the-core-loop.html"
-              >Lesson 1 · Core loop</a
+              ><span data-lang="pt">Lição 1 · Core loop</span
+              ><span data-lang="en">Lesson 1 · Core loop</span></a
             >
-            · <a href="../MISSION.md">Mission</a> ·
-            <a href="../RESOURCES.md">Resources</a>
+            ·
+            <a href="../MISSION.md"
+              ><span data-lang="pt">Missão</span
+              ><span data-lang="en">Mission</span></a
+            >
+            ·
+            <a href="../RESOURCES.md"
+              ><span data-lang="pt">Recursos</span
+              ><span data-lang="en">Resources</span></a
+            >
           </p>
         </div>
       </footer>
     </article>
 
     <script>
-      const chips = document.querySelectorAll(".chip");
-      const terms = document.querySelectorAll(".term");
-      const count = document.getElementById("count");
-      function update(n) {
-        count.textContent = n + (n === 1 ? " term" : " terms");
-      }
-      update(terms.length);
-      chips.forEach((chip) => {
-        chip.addEventListener("click", () => {
-          chips.forEach((c) => c.classList.remove("active"));
-          chip.classList.add("active");
-          const f = chip.dataset.filter;
-          let shown = 0;
-          terms.forEach((t) => {
-            const match = f === "all" || t.dataset.cat === f;
-            t.classList.toggle("hide", !match);
-            if (match) shown++;
+      document.addEventListener("DOMContentLoaded", () => {
+        const chips = document.querySelectorAll(".chip");
+        const terms = document.querySelectorAll(".term");
+        const count = document.getElementById("count");
+        let shown = terms.length;
+        function render() {
+          const pt = shown + (shown === 1 ? " termo" : " termos");
+          const en = shown + (shown === 1 ? " term" : " terms");
+          count.textContent = PiI18n.lang === "en" ? en : pt;
+        }
+        render();
+        chips.forEach((chip) => {
+          chip.addEventListener("click", () => {
+            chips.forEach((c) => c.classList.remove("active"));
+            chip.classList.add("active");
+            const f = chip.dataset.filter;
+            let n = 0;
+            terms.forEach((t) => {
+              const match = f === "all" || t.dataset.cat === f;
+              t.classList.toggle("hide", !match);
+              if (match) n++;
+            });
+            shown = n;
+            render();
           });
-          update(shown);
         });
+        PiI18n.on(render);
       });
     </script>
   </body>

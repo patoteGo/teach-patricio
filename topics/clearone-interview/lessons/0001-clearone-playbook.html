@@ -1,0 +1,1123 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title
+      data-pt="ClearOne Advantage — seu playbook para amanhã"
+      data-en="ClearOne Advantage — your playbook for tomorrow"
+    >
+      ClearOne Advantage — seu playbook
+    </title>
+    <link rel="stylesheet" href="../assets/style.css" />
+    <link rel="stylesheet" href="../assets/dark.css" />
+    <link rel="stylesheet" href="../assets/i18n.css" />
+    <script src="../assets/i18n.js" defer></script>
+    <script src="../assets/nav.js" defer></script>
+    <style>
+      .brief-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-top: 14px;
+      }
+      .brief-grid .card h4 {
+        margin: 0 0 4px;
+        color: var(--violet);
+        font-family: "Space Grotesk";
+      }
+      .brief-grid .card p {
+        margin: 0;
+        color: var(--ink-soft);
+        font-size: 0.88rem;
+      }
+      .pitch {
+        background: linear-gradient(120deg, var(--violet-50), var(--teal-50));
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 16px 18px;
+        margin: 14px 0;
+      }
+      .pitch .lbl {
+        font: 700 0.62rem "Space Grotesk";
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--violet);
+      }
+      .pitch blockquote {
+        margin: 6px 0 0;
+        padding: 0;
+        border: 0;
+        color: var(--ink);
+        font-size: 0.96rem;
+        line-height: 1.6;
+      }
+      .pitch blockquote::before {
+        content: "“";
+        color: var(--violet);
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin-right: 2px;
+      }
+      .pitch blockquote::after {
+        content: "”";
+        color: var(--violet);
+      }
+      .gap {
+        background: var(--amber-50);
+        border: 1px solid #5a4416;
+        border-radius: 10px;
+        padding: 12px 14px;
+        margin: 10px 0;
+      }
+      .gap b {
+        color: var(--amber);
+      }
+      .gap p {
+        margin: 4px 0 0;
+        color: var(--ink-soft);
+        font-size: 0.9rem;
+      }
+      details.qa {
+        background: var(--paper-2);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 13px 16px;
+        margin: 10px 0;
+        box-shadow: var(--shadow);
+      }
+      details.qa summary {
+        cursor: pointer;
+        font-weight: 700;
+        color: var(--ink);
+      }
+      details.qa summary::-webkit-details-marker {
+        display: none;
+      }
+      details.qa summary::before {
+        content: "▶ ";
+        color: var(--violet);
+        display: inline-block;
+        transition: transform 0.15s;
+      }
+      details.qa[open] summary::before {
+        transform: rotate(90deg);
+      }
+      details.qa .ans {
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid var(--line);
+        color: var(--ink-soft);
+        font-size: 0.92rem;
+      }
+      details.qa .ans .story {
+        color: var(--teal);
+        font-weight: 700;
+      }
+      details.qa .ans .hook {
+        display: block;
+        margin-top: 6px;
+        color: var(--ink);
+      }
+      .checklist {
+        list-style: none;
+        padding: 0;
+        margin: 14px 0;
+        display: grid;
+        gap: 8px;
+      }
+      .checklist li {
+        padding-left: 28px;
+        position: relative;
+        color: var(--ink-soft);
+      }
+      .checklist li::before {
+        content: "☐";
+        position: absolute;
+        left: 0;
+        color: var(--violet);
+        font-weight: 700;
+      }
+      @media (max-width: 640px) {
+        .brief-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      @media print {
+        details.qa {
+          break-inside: avoid;
+        }
+        details.qa .ans {
+          display: block;
+        }
+      }
+    </style>
+  </head>
+  <body class="lang-pt">
+    <article class="lesson">
+      <header class="hero">
+        <span class="eyebrow"
+          ><span data-lang="pt"
+            >⬡ ClearOne Advantage · Sr Full-Stack · amanhã</span
+          ><span data-lang="en"
+            >⬡ ClearOne Advantage · Sr Full-Stack · tomorrow</span
+          ></span
+        >
+        <h1>
+          <span data-lang="pt">Seu playbook para amanhã.</span
+          ><span data-lang="en">Your playbook for tomorrow.</span>
+        </h1>
+        <p class="lead">
+          <span data-lang="pt"
+            >Foco comportamental, sob medida para a ClearOne. Missão, pitch,
+            qual história usar para cada tema — e como tratar os gaps do stack
+            com honestidade sênior. Use o botão EN para ensaiar as respostas em
+            inglês.</span
+          ><span data-lang="en"
+            >Behavioral focus, tailored to ClearOne. Mission, pitch, which story
+            to use for each theme — and how to handle the stack gaps with senior
+            honesty. Rehearse these answers out loud tonight.</span
+          >
+        </p>
+        <p class="lesson-nav-top">
+          ↑
+          <a href="../MISSION.md"
+            ><span data-lang="pt">Missão</span
+            ><span data-lang="en">Mission</span></a
+          >
+          · <span data-lang="pt">seus stories:</span
+          ><span data-lang="en">your stories:</span>
+          <a href="../../behavioral-interview/my-stories.md">my-stories.md</a> ·
+          <a href="../../behavioral-interview/lessons/0002-the-dojo.html"
+            ><span data-lang="pt">Dojo (ensaio)</span
+            ><span data-lang="en">Dojo (rehearse)</span></a
+          >
+        </p>
+      </header>
+
+      <!-- 🆕 LATEST INTEL (post-mock + drill) -->
+      <div class="callout key" style="margin-top: 18px">
+        <p>
+          <span data-lang="pt"
+            >🆕
+            <strong
+              >Atualizado depois do mock + drill. Leia isto primeiro.</strong
+            ></span
+          ><span data-lang="en"
+            >🆕
+            <strong
+              >Updated after the mock + drill. Read this first.</strong
+            ></span
+          >
+        </p>
+        <p style="margin-top: 8px">
+          <span data-lang="pt"
+            ><strong>Melhor história por tema (atualizado):</strong></span
+          ><span data-lang="en"
+            ><strong>Best story by theme (refreshed):</strong></span
+          >
+        </p>
+        <ul
+          style="
+            margin: 4px 0 10px;
+            padding-left: 20px;
+            color: var(--ink-soft);
+            font-size: 0.9rem;
+          "
+        >
+          <li>
+            <span data-lang="pt"
+              ><strong>“Simplificar vs construir para escala”</strong> (o bullet
+              exato da vaga) → <strong>história do CRM</strong> (4→2 papéis de
+              aprovação, admin sobrecarregado, feature flags). Punchline:
+              <em
+                >“desbloqueie primeiro, escale depois — nesta ordem.”</em
+              ></span
+            ><span data-lang="en"
+              ><strong>“Simplify vs build for scale”</strong> (the JD's exact
+              bullet) → <strong>the CRM story</strong> (4→2 approval roles,
+              overwhelmed admin, feature flags). Punchline:
+              <em
+                >“unblock first, then make it scalable — in that order.”</em
+              ></span
+            >
+          </li>
+          <li>
+            <span data-lang="pt"
+              >AI-first / Next.js / cross-funcional →
+              <strong>Story #5 MyBetterAI</strong> (construiu um SaaS de IA em
+              Next.js App Router + RSC, com designer + founder).</span
+            ><span data-lang="en"
+              >AI-first / Next.js / cross-functional →
+              <strong>Story #5 MyBetterAI</strong> (built an AI SaaS on Next.js
+              App Router + RSC, with the designer + founder).</span
+            >
+          </li>
+          <li>
+            <span data-lang="pt"
+              >Mentoria → #2 (Cencosud) <strong>ou Textus</strong> (júnior:
+              “ensine a fazer as perguntas certas, não dê a resposta”).</span
+            ><span data-lang="en"
+              >Mentorship → #2 (Cencosud) <strong>or Textus</strong> (junior:
+              “teach them to ask the right questions, don't hand the
+              answer”).</span
+            >
+          </li>
+          <li>
+            <span data-lang="pt"
+              >Desacordo → <strong>CRM</strong> ou
+              <strong>refatoração de code-style</strong> (“entendi o raciocínio
+              dele, argumentei pelo contexto, fiz ser a decisão do time”).</span
+            ><span data-lang="en"
+              >Disagreement → <strong>CRM</strong> or
+              <strong>code-style refactor</strong> (“engaged his reasoning,
+              argued from context, made it the team's call”).</span
+            >
+          </li>
+        </ul>
+        <p style="margin: 6px 0">
+          <span data-lang="pt"
+            ><strong>Toda resposta termina num takeaway:</strong>
+            <em>“A regra que eu sigo agora é…”</em> — cheat-sheet completo em
+            <a href="../../behavioral-interview/my-stories.md">my-stories.md</a
+            >.</span
+          ><span data-lang="en"
+            ><strong>Every answer ends on a takeaway:</strong>
+            <em>“The rule I now follow is…”</em> — full cheat-sheet in
+            <a href="../../behavioral-interview/my-stories.md">my-stories.md</a
+            >.</span
+          >
+        </p>
+        <p style="margin: 6px 0">
+          <span data-lang="pt"
+            ><strong>“Por que está saindo?”:</strong>
+            <em
+              >“Consultoria; meu último engajamento terminou numa redução por
+              necessidade de negócio — bem avaliado, não performance. Estou indo
+              para CLT para ter ownership de plataformas a longo prazo —
+              mission-driven, AI-first — por isso a ClearOne.”</em
+            ></span
+          ><span data-lang="en"
+            ><strong>“Why leaving?”:</strong>
+            <em
+              >“Consulting; my last engagement ended in a business-driven
+              reduction — rated highly, not performance. I'm moving to full-time
+              to own platforms long-term — mission-driven, AI-first — which is
+              why ClearOne.”</em
+            ></span
+          >
+        </p>
+        <p style="margin: 6px 0 0">
+          <span data-lang="pt"
+            ><strong>Stack quick-ref:</strong>
+            <a href="./0002-stack-cheatsheet.html">lição 2</a> — React / Node /
+            TypeScript / Next.js (RSC + os dois routers).</span
+          ><span data-lang="en"
+            ><strong>Stack quick-ref:</strong>
+            <a href="./0002-stack-cheatsheet.html">lesson 2</a> — React / Node /
+            TypeScript / Next.js (RSC + the two routers).</span
+          >
+        </p>
+      </div>
+
+      <!-- §1 BRIEFING -->
+      <h2 class="section">
+        <span class="num">1</span
+        ><span data-lang="pt">A empresa em 30 segundos</span
+        ><span data-lang="en">The company in 30 seconds</span>
+      </h2>
+      <p class="kicker">
+        <span data-lang="pt"
+          >Fintech <strong>mission-driven</strong> de alívio de dívidas. Eles
+          vão querer ver fit com a missão — então saiba disto de cor.</span
+        ><span data-lang="en"
+          >A <strong>mission-driven</strong> debt-relief fintech. They'll want
+          to see mission fit — so know this cold.</span
+        >
+      </p>
+      <div class="brief-grid">
+        <div class="card">
+          <h4>
+            <span data-lang="pt">O que fazem</span
+            ><span data-lang="en">What they do</span>
+          </h4>
+          <p>
+            <span data-lang="pt"
+              >Renegociam dívidas de cartão/desseguradas com credores para o
+              cliente pagar <strong>menos</strong>,
+              <strong>sem falência pessoal</strong>,
+              <strong>sem taxa antecipada</strong>.</span
+            ><span data-lang="en"
+              >Negotiate card/unsecured debt with creditors so clients pay
+              <strong>less</strong>,
+              <strong>without personal bankruptcy</strong>,
+              <strong>no upfront fees</strong>.</span
+            >
+          </p>
+        </div>
+        <div class="card">
+          <h4>
+            <span data-lang="pt">Missão</span
+            ><span data-lang="en">Mission</span>
+          </h4>
+          <p>
+            “<span data-lang="pt"
+              >Ajudar pessoas endividadas a encontrar um caminho claro para a
+              estabilidade financeira.</span
+            ><span data-lang="en"
+              >Help people in debt find a clear path to financial
+              stability.</span
+            >”
+          </p>
+        </div>
+        <div class="card">
+          <h4>
+            <span data-lang="pt">Fatos</span><span data-lang="en">Facts</span>
+          </h4>
+          <p>
+            <span data-lang="pt"
+              >Fundada 2008 · sede Baltimore · 500+ funcionários · remote-first
+              · aporte da Comvest Partners (fev/2024).</span
+            ><span data-lang="en"
+              >Founded 2008 · HQ Baltimore · 500+ employees · remote-first ·
+              Comvest Partners growth capital (Feb 2024).</span
+            >
+          </p>
+        </div>
+        <div class="card">
+          <h4>
+            <span data-lang="pt">Stack (vaga)</span
+            ><span data-lang="en">Stack (JD)</span>
+          </h4>
+          <p>
+            React · Node · AWS serverless (Lambda, API Gateway, S3, CloudWatch)
+            · TypeScript · Next.js · Postgres/NoSQL · <strong>AI-first</strong>.
+          </p>
+        </div>
+      </div>
+      <p class="cite">
+        <span data-lang="pt">Fontes:</span><span data-lang="en">Sources:</span>
+        <a
+          href="https://www.clearoneadvantage.com/about-us"
+          target="_blank"
+          rel="noopener"
+          >clearoneadvantage.com/about-us</a
+        >
+        ·
+        <a
+          href="https://www.clearoneadvantage.com/how-it-works"
+          target="_blank"
+          rel="noopener"
+          >/how-it-works</a
+        >
+      </p>
+
+      <!-- §2 PITCH -->
+      <h2 class="section">
+        <span class="num">2</span
+        ><span data-lang="pt">Seu pitch (diga isto)</span
+        ><span data-lang="en">Your pitch (say this)</span>
+      </h2>
+      <div class="pitch">
+        <div class="lbl">
+          <span data-lang="pt">“Conte sobre você” — BLUF (~30s)</span
+          ><span data-lang="en">“Tell me about yourself” — BLUF (~30s)</span>
+        </div>
+        <blockquote>
+          <span data-lang="pt"
+            >Sou engenheiro full-stack sênior — React, Node, TypeScript — e
+            tenho ownership de plataformas de alto volume ponta a ponta. Na
+            Cencosud construí um serviço Node que ingeria milhões de eventos de
+            entrega por dia, e liderei a reescrita de uma UI React com um time
+            pequeno. A ClearOne me atrai pela missão real — tirar pessoas de
+            dívida sem falência — e pelo desafio de plataforma
+            (marketing/onboarding/servicing em escala, com mindset
+            AI-first).</span
+          ><span data-lang="en"
+            >I'm a senior full-stack engineer — React, Node, TypeScript — who's
+            owned high-volume platforms end to end. At Cencosud I built a Node
+            service ingesting millions of delivery events a day, and I led a
+            React rebuild with a small team. ClearOne draws me because the
+            mission is real — getting people out of debt without bankruptcy —
+            and the platform work (marketing/onboarding/servicing at scale,
+            AI-first) is exactly what I want to own.</span
+          >
+        </blockquote>
+      </div>
+      <div class="pitch">
+        <div class="lbl">
+          <span data-lang="pt">“Por que a ClearOne?”</span
+          ><span data-lang="en">“Why ClearOne?”</span>
+        </div>
+        <blockquote>
+          <span data-lang="pt"
+            >Missão + desafio de engenharia: iterar em plataformas que tocam
+            clientes em dificuldade financeira, em escala, com AI-first. É onde
+            meu background de alto volume + liderança técnica se cruza com um
+            trabalho que importa.</span
+          ><span data-lang="en"
+            >Mission + engineering challenge: iterating on platforms that serve
+            clients in financial hardship, at scale, AI-first. That's where my
+            high-volume background + technical leadership meets work that
+            matters.</span
+          >
+        </blockquote>
+      </div>
+
+      <!-- §3 STORY MAP -->
+      <h2 class="section">
+        <span class="num">3</span
+        ><span data-lang="pt">O mapa: tema → sua história</span
+        ><span data-lang="en">The map: theme → your story</span>
+      </h2>
+      <div
+        class="table-wrap"
+        style="
+          margin: 14px 0;
+          overflow-x: auto;
+          border: 1px solid var(--line);
+          border-radius: var(--radius);
+          background: var(--paper-2);
+          box-shadow: var(--shadow);
+        "
+      >
+        <table
+          class="compare-table"
+          style="
+            width: 100%;
+            min-width: 620px;
+            border-collapse: collapse;
+            font-size: 0.86rem;
+          "
+        >
+          <thead>
+            <tr>
+              <th
+                style="
+                  padding: 10px;
+                  text-align: left;
+                  background: var(--violet-50);
+                "
+              >
+                <span data-lang="pt">Eles vão perguntar…</span
+                ><span data-lang="en">They'll ask…</span>
+              </th>
+              <th style="padding: 10px; background: var(--violet-50)">
+                <span data-lang="pt">Use</span><span data-lang="en">Use</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody style="color: var(--ink-soft)">
+            <tr>
+              <td style="padding: 9px 10px">
+                <span data-lang="pt"
+                  >Projeto do qual se orgulha / ponta a ponta</span
+                ><span data-lang="en">Proudest project / end-to-end</span>
+              </td>
+              <td style="padding: 9px 10px">
+                <b style="color: var(--teal)">#1 Ingest</b>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 9px 10px">
+                <span data-lang="pt">Escalou um sistema / lidou com pico</span
+                ><span data-lang="en">Scaled a system / handled a spike</span>
+              </td>
+              <td style="padding: 9px 10px">
+                <b style="color: var(--teal)">#1</b>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 9px 10px">
+                <span data-lang="pt">Simplificar vs. construir para escala</span
+                ><span data-lang="en">Simplify vs. build for scale</span>
+              </td>
+              <td style="padding: 9px 10px">
+                <b style="color: var(--teal)">CRM story</b>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 9px 10px">
+                <span data-lang="pt">Mentoria / liderança de pares</span
+                ><span data-lang="en">Mentorship / peer leadership</span>
+              </td>
+              <td style="padding: 9px 10px">
+                <b style="color: var(--teal)">#2</b>
+                <span data-lang="pt">ou</span><span data-lang="en">or</span>
+                <b style="color: var(--teal)">Textus</b>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 9px 10px">
+                <span data-lang="pt">Cross-funcional (Product/Design)</span
+                ><span data-lang="en">Cross-functional (Product/Design)</span>
+              </td>
+              <td style="padding: 9px 10px">
+                <b style="color: var(--teal)">#5 MyBetterAI</b>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 9px 10px">
+                <span data-lang="pt">Mindset AI-first</span
+                ><span data-lang="en">AI-first mindset</span>
+              </td>
+              <td style="padding: 9px 10px">
+                <b style="color: var(--teal)">#5</b>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 9px 10px">
+                <span data-lang="pt">Next.js / SSR</span
+                ><span data-lang="en">Next.js / SSR</span>
+              </td>
+              <td style="padding: 9px 10px">
+                <b style="color: var(--teal)">#5 MyBetterAI</b>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 9px 10px">
+                <span data-lang="pt">Maior fraqueza</span
+                ><span data-lang="en">Greatest weakness</span>
+              </td>
+              <td style="padding: 9px 10px">
+                <b style="color: var(--teal)">#3</b>
+                <span data-lang="pt">ou</span><span data-lang="en">or</span>
+                <b style="color: var(--teal)">#4</b>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 9px 10px">
+                <span data-lang="pt">Falha / erro</span
+                ><span data-lang="en">Failure / mistake</span>
+              </td>
+              <td style="padding: 9px 10px">
+                <b style="color: var(--teal)">#4 MV3</b>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 9px 10px">
+                <span data-lang="pt">Empurrou de volta / discordou</span
+                ><span data-lang="en">Pushed back / disagreed</span>
+              </td>
+              <td style="padding: 9px 10px">
+                <b style="color: var(--teal)">CRM</b>
+                <span data-lang="pt">ou</span><span data-lang="en">or</span>
+                <b style="color: var(--teal)">code-style</b>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 9px 10px">
+                <span data-lang="pt">Decisão técnica justificada</span
+                ><span data-lang="en">Tech decision justified</span>
+              </td>
+              <td style="padding: 9px 10px">
+                <b style="color: var(--teal)">#1</b>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 9px 10px">
+                <span data-lang="pt">Por que está saindo?</span
+                ><span data-lang="en">Why leaving?</span>
+              </td>
+              <td style="padding: 9px 10px">
+                <b style="color: var(--teal)"
+                  ><span data-lang="pt">redução → CLT</span
+                  ><span data-lang="en">reduction → full-time</span></b
+                >
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="kicker" style="margin-top: 8px">
+        <span data-lang="pt"
+          >Stories detalhados (BLUF + S/T/A/R + probes) em </span
+        ><span data-lang="en">Full stories (BLUF + S/T/A/R + probes) in </span
+        ><a href="../../behavioral-interview/my-stories.md">my-stories.md</a>.
+      </p>
+
+      <!-- §4 TECH-JUDGMENT -->
+      <h2 class="section">
+        <span class="num">4</span
+        ><span data-lang="pt">Juízo técnico (falado como comportamental)</span
+        ><span data-lang="en">Technical judgment (as behavioral)</span>
+      </h2>
+      <div class="callout key">
+        <p>
+          <strong
+            >“<span data-lang="pt"
+              >Quando simplificar vs. construir para escala?</span
+            ><span data-lang="en"
+              >When do you simplify vs. build for scale?</span
+            >”</strong
+          >
+          <span data-lang="pt"
+            >Direito-tamanho para o time e a carga — Node sobre Java para ingest
+            I/O-heavy (#1); e aprendi o oposto: no MV3 (#4) eu otimizei para uma
+            data, não para qualidade. Regra: não construir para escala que você
+            ainda não tem.</span
+          >
+          <span data-lang="en"
+            >Right-size to the team and the load — Node over Java for I/O-heavy
+            ingest (#1); and I learned the inverse: in MV3 (#4) I optimized for
+            a date, not for quality. Rule: don't build for scale you don't have
+            yet.</span
+          >
+        </p>
+      </div>
+      <div class="callout key">
+        <p>
+          <strong
+            >“<span data-lang="pt">Como você usa assistentes de IA?</span
+            ><span data-lang="en">How do you use AI coding assistants?</span
+            >”</strong
+          >
+          <span data-lang="pt"
+            >Rampo em codebases desconhecidos: mapeio, peço para explicar
+            idiomas, gero testes para validar meu entendimento. AI-first =
+            alavancar velocidade sem perder ownership.</span
+          >
+          <span data-lang="en"
+            >I ramp on unfamiliar codebases with AI: I map it, ask it to explain
+            idioms, generate tests to validate my understanding. AI-first =
+            lifting leverage without losing ownership.</span
+          >
+        </p>
+      </div>
+      <div class="callout key">
+        <p>
+          <strong
+            >“<span data-lang="pt"
+              >Como você mantém uma API Node resiliente?</span
+            ><span data-lang="en">How do you keep a Node API resilient?</span
+            >”</strong
+          >
+          <span data-lang="pt"
+            >Idempotência, DLQ, retries com backoff, observabilidade (p95 /
+            queue lag) e batch para proteger o DB — exatamente o que fiz no
+            ingest.</span
+          >
+          <span data-lang="en"
+            >Idempotency, DLQ, retries with backoff, observability (p95 / queue
+            lag), and batching to protect the DB — exactly what I did on the
+            ingest service.</span
+          >
+        </p>
+      </div>
+
+      <!-- §5 GAPS -->
+      <h2 class="section">
+        <span class="num">5</span
+        ><span data-lang="pt">Gaps — hones­to, sem blefe</span
+        ><span data-lang="en">Gaps — honest, no bluff</span>
+      </h2>
+      <div class="gap">
+        <b>AWS Lambda / API Gateway:</b>
+        <p>
+          <span data-lang="pt"
+            >“Meu serverless é forte em SQS; Lambda/API Gateway estou rampando.
+            Meu serviço de ingest é essencialmente Lambda-shaped — workers I/O
+            stateless pequenos — então o modelo mental transfere rápido.”</span
+          ><span data-lang="en"
+            >“My serverless hands-on is SQS-heavy; Lambda/API Gateway I'm
+            ramping. My ingest service is essentially Lambda-shaped — small
+            stateless I/O workers — so the mental model transfers fast.”</span
+          >
+        </p>
+      </div>
+      <div class="callout tip">
+        <p>
+          <span data-lang="pt"
+            ><strong>Next.js / SSR — agora é força, não gap:</strong> você
+            construiu um SaaS de IA na MyBetterAI com Next.js App Router + React
+            Server Components (Story #5). Cite isso quando perguntarem sobre
+            Next.js/SSR — é um dos bônus da vaga coberto.</span
+          ><span data-lang="en"
+            ><strong>Next.js / SSR — now a strength, not a gap:</strong> you
+            built an AI SaaS at MyBetterAI on Next.js App Router + React Server
+            Components (Story #5). Lead with it when asked about Next.js/SSR —
+            it covers one of the role's bonus requirements.</span
+          >
+        </p>
+      </div>
+      <div class="gap">
+        <b>A/B testing / HubSpot / GA:</b>
+        <p>
+          <span data-lang="pt"
+            >“Não chefei uma plataforma de experimentação, mas integrei
+            analytics de terceiros e entendo funil + guardrail metrics —
+            aprenderia seu stack (Statsig/HubSpot) rápido.”</span
+          ><span data-lang="en"
+            >“I haven't owned an experimentation platform, but I've integrated
+            third-party analytics and I understand funnels + guardrail metrics —
+            I'd learn your stack (Statsig/HubSpot) fast.”</span
+          >
+        </p>
+      </div>
+      <div class="callout warn">
+        <p>
+          <span data-lang="pt"
+            ><strong>Regra de ouro:</strong> vire gap em
+            <em>plano de rampa</em>, nunca em invenção. Entrevista sênior cava
+            fundo — blefe desmorona no follow-up.</span
+          ><span data-lang="en"
+            ><strong>Golden rule:</strong> turn a gap into a <em>ramp plan</em>,
+            never a bluff. Senior interviews probe — a bluff collapses on
+            follow-up.</span
+          >
+        </p>
+      </div>
+
+      <!-- §6 QUESTIONS TO ASK -->
+      <div class="callout key">
+        <p>
+          🆕 <strong>Story #5 — MyBetterAI</strong>
+          <span data-lang="pt"
+            >fecha 3 coisas: <strong>AI-first</strong> (você *construiu* um
+            produto de IA com LangChain/multi-provider/RAG),
+            <strong>cross-funcional</strong> (designer + founder) e
+            <strong>Next.js/RSC/SSR</strong>. Provavelmente sua história mais
+            forte para a ClearOne — use para qualquer AI-first ou colaboração.
+            Detalhes em </span
+          ><span data-lang="en"
+            >closes 3 things: <strong>AI-first</strong> (you *built* an AI
+            product with LangChain/multi-provider/RAG),
+            <strong>cross-functional</strong> (designer + founder), and
+            <strong>Next.js/RSC/SSR</strong>. Probably your strongest story for
+            ClearOne — use it for any AI-first or collaboration question.
+            Details in </span
+          ><a href="../../behavioral-interview/my-stories.md">my-stories.md</a>.
+        </p>
+      </div>
+      <h2 class="section">
+        <span class="num">6</span
+        ><span data-lang="pt">Perguntas para fazer a eles</span
+        ><span data-lang="en">Questions to ask them</span>
+      </h2>
+      <ul class="checklist">
+        <li>
+          <span data-lang="pt"
+            >Como é uma vitória dos primeiros 90 dias neste papel?</span
+          ><span data-lang="en"
+            >What does a first 90-days win look like for this role?</span
+          >
+        </li>
+        <li>
+          <span data-lang="pt"
+            >Qual plataforma (marketing/onboarding/servicing) é o maior lift
+            hoje, e por quê?</span
+          ><span data-lang="en"
+            >Which platform (marketing/onboarding/servicing) is the biggest lift
+            right now, and why?</span
+          >
+        </li>
+        <li>
+          <span data-lang="pt"
+            >Como o time decide entre simplificar vs. construir para escala — um
+            exemplo recente?</span
+          ><span data-lang="en"
+            >How does the team decide simplify vs. build for scale — a recent
+            example?</span
+          >
+        </li>
+        <li>
+          <span data-lang="pt"
+            >Como o “AI-first” é praticado no dia a dia — ferramentas,
+            guardrails, review?</span
+          ><span data-lang="en"
+            >How is “AI-first” practiced day-to-day — tools, guardrails,
+            review?</span
+          >
+        </li>
+        <li>
+          <span data-lang="pt"
+            >Como está o stack de observabilidade, e qual é a realidade do
+            on-call?</span
+          ><span data-lang="en"
+            >What's the observability stack like, and what's the on-call
+            reality?</span
+          >
+        </li>
+        <li>
+          <span data-lang="pt"
+            >Como engenharia parceira com Marketing em experimentação?</span
+          ><span data-lang="en"
+            >How does engineering partner with Marketing on
+            experimentation?</span
+          >
+        </li>
+      </ul>
+
+      <!-- §7 INTERACTIVE REVEAL -->
+      <h2 class="section">
+        <span class="num">7</span
+        ><span data-lang="pt">Ensaio: toque a pergunta → sua história</span
+        ><span data-lang="en">Rehearse: tap a question → your story</span>
+      </h2>
+      <p class="kicker">
+        <span data-lang="pt"
+          >Clique para abrir. Diga o BLUF em voz alta antes de ler o hook.</span
+        ><span data-lang="en"
+          >Click to open. Say the BLUF out loud before reading the hook.</span
+        >
+      </p>
+
+      <details class="qa">
+        <summary>
+          <span data-lang="pt"
+            >“Conte sobre o projeto do qual você mais se orgulha.”</span
+          ><span data-lang="en"
+            >“Tell me about the project you're proudest of.”</span
+          >
+        </summary>
+        <div class="ans">
+          <span class="story">#1 — Cencosud ingest.</span>
+          <span class="hook"
+            ><span data-lang="pt"
+              >“Construí e fui dono de um serviço Node que ingeria milhões de
+              eventos de entrega/dia de vários parceiros e normalizava numa
+              fonte de verdade única.”</span
+            ><span data-lang="en"
+              >“I built and owned a Node service that ingested millions of
+              delivery events/day from many partners into one normalized source
+              of truth.”</span
+            ></span
+          >
+        </div>
+      </details>
+      <details class="qa">
+        <summary>
+          <span data-lang="pt"
+            >“Descreva uma vez que você escalou um sistema.”</span
+          ><span data-lang="en">“Describe a time you scaled a system.”</span>
+        </summary>
+        <div class="ans">
+          <span class="story">#1 — spikes de Black Friday.</span>
+          <span class="hook"
+            ><span data-lang="pt"
+              >SQS + batch inserts + autoscalar em queue lag absorveu picos
+              ~3×/ano sem a visão de tracking ficar stale.</span
+            ><span data-lang="en"
+              >SQS + batch inserts + autoscaling on queue lag absorbed ~3×/year
+              spikes without the tracking view going stale.</span
+            ></span
+          >
+        </div>
+      </details>
+      <details class="qa">
+        <summary>
+          <span data-lang="pt"
+            >“Quando você simplifica vs. constrói para escala?”</span
+          ><span data-lang="en"
+            >“When do you simplify vs. build for scale?”</span
+          >
+        </summary>
+        <div class="ans">
+          <span class="story">#1 + #4.</span>
+          <span class="hook"
+            ><span data-lang="pt"
+              >Direito-tamanho: Node para ingest I/O (#1); o oposto no MV3, onde
+              otimizei para data, não qualidade (#4).</span
+            ><span data-lang="en"
+              >Right-size: Node for I/O ingest (#1); the inverse in MV3, where I
+              optimized for a date, not quality (#4).</span
+            ></span
+          >
+        </div>
+      </details>
+      <details class="qa">
+        <summary>
+          <span data-lang="pt">“Fale sobre mentoria/liderança.”</span
+          ><span data-lang="en">“Tell me about mentorship/leadership.”</span>
+        </summary>
+        <div class="ans">
+          <span class="story">#2 — UI rebuild.</span>
+          <span class="hook"
+            ><span data-lang="pt"
+              >Liderei 3 devs front-end; direito-tamanho a arquitetura ao time;
+              dei workshop de TS no nosso próprio código.</span
+            ><span data-lang="en"
+              >Led 3 frontend devs; right-sized the architecture to the team;
+              ran a TS workshop on our own codebase.</span
+            ></span
+          >
+        </div>
+      </details>
+      <details class="qa">
+        <summary>
+          <span data-lang="pt">“Como você usa IA no seu trabalho?”</span
+          ><span data-lang="en">“How do you use AI in your work?”</span>
+        </summary>
+        <div class="ans">
+          <span class="story">#3 — AI-first.</span>
+          <span class="hook"
+            ><span data-lang="pt"
+              >Rampo em codebases desconhecidos: mapeio, explico idiomas, gero
+              testes. AI = alavancar sem perder ownership.</span
+            ><span data-lang="en"
+              >I ramp on unfamiliar codebases with AI: map, explain idioms,
+              generate tests. AI = leverage without losing ownership.</span
+            ></span
+          >
+        </div>
+      </details>
+      <details class="qa">
+        <summary>
+          <span data-lang="pt">“Qual é sua maior fraqueza?”</span
+          ><span data-lang="en">“What's your greatest weakness?”</span>
+        </summary>
+        <div class="ans">
+          <span class="story">#3 (T-shaped) ou #4 (over-commit).</span>
+          <span class="hook"
+            ><span data-lang="pt"
+              >T-shaped: profundo em JS/TS, ampliado via IA. Ou: over-committing
+              de prazos — e a lição do MV3.</span
+            ><span data-lang="en"
+              >T-shaped: deep in JS/TS, broadening via AI. Or: over-committing
+              timelines — and the MV3 lesson.</span
+            ></span
+          >
+        </div>
+      </details>
+      <details class="qa">
+        <summary>
+          <span data-lang="pt">“Conte sobre um erro/falha.”</span
+          ><span data-lang="en">“Tell me about a mistake/failure.”</span>
+        </summary>
+        <div class="ans">
+          <span class="story">#4 — MV3.</span>
+          <span class="hook"
+            ><span data-lang="pt"
+              >Shipei MV3 sob pressão sem teste em ambiente prod-like → quebrou
+              → rollback em ~2h → assumi, agora embedo teste na
+              estimativa.</span
+            ><span data-lang="en"
+              >Shipped MV3 under pressure w/o prod-like testing → broke → rolled
+              back in ~2h → owned it, now bake testing into the estimate.</span
+            ></span
+          >
+        </div>
+      </details>
+      <details class="qa">
+        <summary>
+          <span data-lang="pt">“Uma decisão técnica que você justificou.”</span
+          ><span data-lang="en">“A technical decision you justified.”</span>
+        </summary>
+        <div class="ans">
+          <span class="story">#1 — Node over Java.</span>
+          <span class="hook"
+            ><span data-lang="pt"
+              >Ingest I/O-heavy → Node no lugar do Java default do time; SQS
+              para desacoplar picos; batch inserts para o Postgres
+              aguentar.</span
+            ><span data-lang="en"
+              >I/O-heavy ingest → Node over the team's Java default; SQS to
+              decouple spikes; batch inserts so Postgres kept up.</span
+            ></span
+          >
+        </div>
+      </details>
+
+      <!-- §8 TONIGHT -->
+      <h2 class="section">
+        <span class="num">8</span
+        ><span data-lang="pt">Checklist de hoje à noite</span
+        ><span data-lang="en">Tonight's checklist</span>
+      </h2>
+      <ul class="checklist">
+        <li>
+          <span data-lang="pt"
+            >Ensaiar o pitch + “por que ClearOne” em voz alta (EN), ~30s
+            cada.</span
+          ><span data-lang="en"
+            >Rehearse the pitch + “why ClearOne” out loud (EN), ~30s each.</span
+          >
+        </li>
+        <li>
+          <span data-lang="pt"
+            >Dizer o BLUF das 6 histórias principais em voz alta (60–90s
+            cada).</span
+          ><span data-lang="en"
+            >Say the BLUF of the top 6 stories out loud (60–90s each).</span
+          >
+        </li>
+        <li>
+          <span data-lang="pt"
+            >Preparar a resposta honesta para Lambda/APIGW (não blefar).</span
+          ><span data-lang="en"
+            >Nail the honest Lambda/APIGW answer (no bluff).</span
+          >
+        </li>
+        <li>
+          <span data-lang="pt">Decorar 3 fatos da empresa + a missão.</span
+          ><span data-lang="en">Memorize 3 company facts + the mission.</span>
+        </li>
+        <li>
+          <span data-lang="pt"
+            >Ter 4–5 perguntas prontas para fazer a eles.</span
+          ><span data-lang="en">Have 4–5 questions ready to ask them.</span>
+        </li>
+        <li>
+          <span data-lang="pt">Dormir cedo. BLUF primeiro, sempre.</span
+          ><span data-lang="en">Sleep early. BLUF first, always.</span>
+        </li>
+      </ul>
+
+      <div class="callout key">
+        <p>
+          🗣️
+          <strong
+            ><span data-lang="pt">Ensue comigo.</span
+            ><span data-lang="en">Rehearse with me.</span></strong
+          >
+          <span data-lang="pt"
+            >Posso simular a entrevista: me diga “mock” e eu faço perguntas
+            comportamentais da ClearOne e dou feedback. Ou abra o </span
+          ><span data-lang="en"
+            >I can mock-interview you: say “mock” and I'll ask ClearOne
+            behavioral questions and give feedback. Or open the </span
+          ><a href="../../behavioral-interview/lessons/0002-the-dojo.html"
+            ><span data-lang="pt">Dojo</span><span data-lang="en">Dojo</span></a
+          >.
+        </p>
+      </div>
+
+      <footer class="lesson-foot">
+        <div class="next-card">
+          <div class="lbl">
+            <span data-lang="pt">Próximo passo →</span
+            ><span data-lang="en">Next step →</span>
+          </div>
+          <div class="t">
+            <span data-lang="pt">Ensaiar no Dojo</span
+            ><span data-lang="en">Rehearse in the Dojo</span>
+          </div>
+          <p style="margin: 8px 0 0; font-size: 0.85rem">
+            <span data-lang="pt"
+              >Treino cronometrado com feedback. Diga “mock” aqui também.</span
+            ><span data-lang="en"
+              >Timed practice with feedback. Say “mock” here too.</span
+            >
+          </p>
+        </div>
+        <div style="flex: 0 1 240px">
+          <div class="lbl">
+            <span data-lang="pt">Referência</span
+            ><span data-lang="en">Reference</span>
+          </div>
+          <p style="margin: 6px 0 0">
+            <a href="../../behavioral-interview/my-stories.md"
+              ><span data-lang="pt">Suas histórias</span
+              ><span data-lang="en">Your stories</span></a
+            >
+            ·
+            <a href="../NOTES.md"
+              ><span data-lang="pt">Notas/pesquisa</span
+              ><span data-lang="en">Notes/research</span></a
+            >
+          </p>
+        </div>
+      </footer>
+    </article>
+  </body>
+</html>

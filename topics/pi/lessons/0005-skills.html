@@ -1,39 +1,77 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pi · Lesson 5 — Skills</title>
+    <title data-pt="Pi · Lição 5 — Skills" data-en="Pi · Lesson 5 — Skills">
+      Pi · Lição 5 — Skills
+    </title>
     <link rel="stylesheet" href="../assets/style.css" />
+    <link rel="stylesheet" href="../assets/dark.css" />
+    <link rel="stylesheet" href="../assets/i18n.css" />
+    <script src="../assets/i18n.js" defer></script>
+    <script src="../assets/nav.js" defer></script>
   </head>
-  <body>
+  <body class="lang-pt">
     <article class="lesson">
       <!-- ===================== HERO ===================== -->
       <header class="hero">
-        <span class="eyebrow">⬡ Lesson 05 · The power surface</span>
-        <h1>Skills:<br />capability on demand.</h1>
+        <span class="eyebrow"
+          ><span data-lang="pt">⬡ Lição 05 · A superfície de poder</span
+          ><span data-lang="en">⬡ Lesson 05 · The power surface</span></span
+        >
+        <h1>
+          <span data-lang="pt">Skills:<br />capacidade sob demanda.</span
+          ><span data-lang="en">Skills:<br />capability on demand.</span>
+        </h1>
         <p class="lead">
-          A skill is a folder of instructions + helper scripts that Pi loads
-          <em>only when relevant</em>. It's the laziest, most portable way to
-          program Pi — no build step, no framework, works in Claude Code and
-          Codex too. This is where the tool becomes yours.
+          <span data-lang="pt"
+            >Uma skill é uma pasta de instruções + scripts auxiliares que o Pi
+            carrega <em>apenas quando relevante</em>. É a forma mais preguiçosa
+            e portátil de programar o Pi — sem passo de build, sem framework,
+            funciona no Claude Code e no Codex também. É aqui que a ferramenta
+            vira sua.</span
+          ><span data-lang="en"
+            >A skill is a folder of instructions + helper scripts that Pi loads
+            <em>only when relevant</em>. It's the laziest, most portable way to
+            program Pi — no build step, no framework, works in Claude Code and
+            Codex too. This is where the tool becomes yours.</span
+          >
         </p>
         <p class="lesson-nav-top">
-          ↑ <a href="../MISSION.md">Mission</a> · prev:
-          <a href="./0004-context-files.html">Lesson 4 · Context files</a> ·
-          ref: <a href="../reference/pi-glossary.html">Glossary</a>
+          <span data-lang="pt"
+            >↑ <a href="../MISSION.md">Missão</a> · anterior:
+            <a href="./0004-context-files.html">Lição 4 · Context files</a> ·
+            ref: <a href="../reference/pi-glossary.html">Glossário</a></span
+          ><span data-lang="en"
+            >↑ <a href="../MISSION.md">Mission</a> · prev:
+            <a href="./0004-context-files.html">Lesson 4 · Context files</a> ·
+            ref: <a href="../reference/pi-glossary.html">Glossary</a></span
+          >
         </p>
       </header>
 
       <!-- ===================== 1. PROGRESSIVE DISCLOSURE ===================== -->
       <h2 class="section">
-        <span class="num">1</span>The big idea: progressive disclosure
+        <span class="num">1</span
+        ><span data-lang="pt">A grande ideia: revelação progressiva</span
+        ><span data-lang="en">The big idea: progressive disclosure</span>
       </h2>
       <p class="kicker">
-        You can have <em>dozens</em> of skills without bloating context. At
-        startup Pi loads only each skill's <strong>name + description</strong>.
-        The full <code class="inline">SKILL.md</code> is read on-demand, the
-        moment a task matches. Cheap to keep around; loaded only when earned.
+        <span data-lang="pt"
+          >Você pode ter <em>dezenas</em> de skills sem inchar o contexto. Na
+          inicialização o Pi carrega apenas o
+          <strong>nome + descrição</strong> de cada skill. O
+          <code class="inline">SKILL.md</code> completo é lido sob demanda, no
+          momento em que uma tarefa corresponde. Barato de manter por perto;
+          carregado só quando merecido.</span
+        ><span data-lang="en"
+          >You can have <em>dozens</em> of skills without bloating context. At
+          startup Pi loads only each skill's
+          <strong>name + description</strong>. The full
+          <code class="inline">SKILL.md</code> is read on-demand, the moment a
+          task matches. Cheap to keep around; loaded only when earned.</span
+        >
       </p>
 
       <div style="margin: 22px 0 8px">
@@ -41,8 +79,15 @@
           viewBox="0 0 820 250"
           width="100%"
           role="img"
-          aria-label="Progressive disclosure: many skills, only descriptions always in context, full SKILL.md loads on match"
+          aria-labelledby="s0t"
         >
+          <title
+            id="s0t"
+            data-pt="Revelação progressiva: muitas skills, só as descrições sempre no contexto, SKILL.md completo carrega ao corresponder"
+            data-en="Progressive disclosure: many skills, only descriptions always in context, full SKILL.md loads on match"
+          >
+            Revelação progressiva
+          </title>
           <!-- skill folders -->
           <g font-family="JetBrains Mono" font-size="10.5">
             <rect
@@ -51,10 +96,17 @@
               width="150"
               height="34"
               rx="8"
-              fill="#fff"
-              stroke="#0fb9a4"
+              fill="#181a26"
+              stroke="#2dd4bf"
             />
-            <text x="28" y="41" fill="#0a8a7a" font-weight="700">
+            <text
+              x="28"
+              y="41"
+              fill="#2dd4bf"
+              font-weight="700"
+              data-pt="📁 commit"
+              data-en="📁 commit"
+            >
               📁 commit
             </text>
             <rect
@@ -63,10 +115,17 @@
               width="150"
               height="34"
               rx="8"
-              fill="#fff"
-              stroke="#0fb9a4"
+              fill="#181a26"
+              stroke="#2dd4bf"
             />
-            <text x="28" y="81" fill="#0a8a7a" font-weight="700">
+            <text
+              x="28"
+              y="81"
+              fill="#2dd4bf"
+              font-weight="700"
+              data-pt="📁 pdf-tools"
+              data-en="📁 pdf-tools"
+            >
               📁 pdf-tools
             </text>
             <rect
@@ -75,10 +134,17 @@
               width="150"
               height="34"
               rx="8"
-              fill="#fff"
-              stroke="#0fb9a4"
+              fill="#181a26"
+              stroke="#2dd4bf"
             />
-            <text x="28" y="121" fill="#0a8a7a" font-weight="700">
+            <text
+              x="28"
+              y="121"
+              fill="#2dd4bf"
+              font-weight="700"
+              data-pt="📁 db-snap"
+              data-en="📁 db-snap"
+            >
               📁 db-snap
             </text>
             <rect
@@ -87,10 +153,17 @@
               width="150"
               height="34"
               rx="8"
-              fill="#fff"
-              stroke="#0fb9a4"
+              fill="#181a26"
+              stroke="#2dd4bf"
             />
-            <text x="28" y="161" fill="#0a8a7a" font-weight="700">
+            <text
+              x="28"
+              y="161"
+              fill="#2dd4bf"
+              font-weight="700"
+              data-pt="📁 deploy"
+              data-en="📁 deploy"
+            >
               📁 deploy
             </text>
             <rect
@@ -99,10 +172,17 @@
               width="150"
               height="34"
               rx="8"
-              fill="#fff"
-              stroke="#0fb9a4"
+              fill="#181a26"
+              stroke="#2dd4bf"
             />
-            <text x="28" y="201" fill="#0a8a7a" font-weight="700">
+            <text
+              x="28"
+              y="201"
+              fill="#2dd4bf"
+              font-weight="700"
+              data-pt="📁 transcribe"
+              data-en="📁 transcribe"
+            >
               📁 transcribe
             </text>
           </g>
@@ -113,13 +193,15 @@
             font-family="Space Grotesk"
             font-size="11"
             font-weight="700"
-            fill="#64748b"
+            fill="#9ea2b8"
+            data-pt="~25 skills instaladas"
+            data-en="~25 skills installed"
           >
-            ~25 skills installed
+            ~25 skills instaladas
           </text>
 
           <!-- arrows to context -->
-          <g fill="none" stroke="#6c4bf0" stroke-width="2">
+          <g fill="none" stroke="#8b6ff7" stroke-width="2">
             <path d="M170 37 C 220 37, 235 80, 270 96" marker-end="url(#s1)" />
             <path
               d="M170 115 C 220 115, 235 110, 270 110"
@@ -139,7 +221,7 @@
               refY="3"
               orient="auto"
             >
-              <path d="M0,0 L7,3 L0,6 Z" fill="#6c4bf0" />
+              <path d="M0,0 L7,3 L0,6 Z" fill="#8b6ff7" />
             </marker>
           </defs>
 
@@ -150,8 +232,8 @@
             width="240"
             height="92"
             rx="12"
-            fill="#efeafb"
-            stroke="#d9cefb"
+            fill="#211d33"
+            stroke="#6c4bf0"
           />
           <text
             x="405"
@@ -160,43 +242,51 @@
             font-family="Space Grotesk"
             font-size="11.5"
             font-weight="700"
-            fill="#6c4bf0"
+            fill="#8b6ff7"
+            data-pt="SEMPRE NO CONTEXTO"
+            data-en="ALWAYS IN CONTEXT"
           >
-            ALWAYS IN CONTEXT
+            SEMPRE NO CONTEXTO
           </text>
           <text
             x="298"
             y="112"
             font-family="JetBrains Mono"
             font-size="9.5"
-            fill="#4a4866"
+            fill="#9ea2b8"
+            data-pt='commit — "rascunha um Conventional…"'
+            data-en='commit — "draft a Conventional…"'
           >
-            commit — "draft a Conventional…"
+            commit — "rascunha um Conventional…"
           </text>
           <text
             x="298"
             y="128"
             font-family="JetBrains Mono"
             font-size="9.5"
-            fill="#4a4866"
+            fill="#9ea2b8"
+            data-pt='pdf-tools — "extrai texto &amp; tabelas…"'
+            data-en='pdf-tools — "extract text &amp; tables…"'
           >
-            pdf-tools — "extract text &amp; tables…"
+            pdf-tools — "extrai texto &amp; tabelas…"
           </text>
           <text
             x="298"
             y="144"
             font-family="JetBrains Mono"
             font-size="9.5"
-            fill="#4a4866"
+            fill="#9ea2b8"
+            data-pt="… uma linha cada. barato."
+            data-en="… one line each. cheap."
           >
-            … one line each. cheap.
+            … uma linha cada. barato.
           </text>
 
           <!-- on match arrow -->
           <path
             d="M528 116 C 570 116, 580 116, 612 116"
             fill="none"
-            stroke="#0fb9a4"
+            stroke="#2dd4bf"
             stroke-width="3"
             marker-end="url(#s2)"
           />
@@ -209,7 +299,7 @@
               refY="3"
               orient="auto"
             >
-              <path d="M0,0 L7,3 L0,6 Z" fill="#0fb9a4" />
+              <path d="M0,0 L7,3 L0,6 Z" fill="#2dd4bf" />
             </marker>
           </defs>
           <text
@@ -218,14 +308,16 @@
             text-anchor="middle"
             font-family="Inter"
             font-size="10.5"
-            fill="#0fb9a4"
+            fill="#2dd4bf"
             font-weight="700"
+            data-pt="ao corresponder"
+            data-en="on match"
           >
-            on match
+            ao corresponder
           </text>
 
           <!-- loaded box -->
-          <rect x="624" y="70" width="180" height="92" rx="12" fill="#0fb9a4" />
+          <rect x="624" y="70" width="180" height="92" rx="12" fill="#2dd4bf" />
           <text
             x="714"
             y="96"
@@ -234,8 +326,10 @@
             font-size="11.5"
             font-weight="700"
             fill="#fff"
+            data-pt="CARREGA SOB DEMANDA"
+            data-en="LOADS ON DEMAND"
           >
-            LOADS ON DEMAND
+            CARREGA SOB DEMANDA
           </text>
           <text
             x="714"
@@ -244,8 +338,10 @@
             font-family="JetBrains Mono"
             font-size="9.5"
             fill="#fff"
+            data-pt="SKILL.md completo"
+            data-en="full SKILL.md"
           >
-            full SKILL.md
+            SKILL.md completo
           </text>
           <text
             x="714"
@@ -254,6 +350,8 @@
             font-family="JetBrains Mono"
             font-size="9.5"
             fill="#fff"
+            data-pt="+ scripts via bash"
+            data-en="+ scripts via bash"
           >
             + scripts via bash
           </text>
@@ -264,6 +362,8 @@
             font-family="JetBrains Mono"
             font-size="9.5"
             fill="#fff"
+            data-pt="+ references/"
+            data-en="+ references/"
           >
             + references/
           </text>
@@ -271,115 +371,218 @@
       </div>
       <div class="callout key">
         <p>
-          <strong>Why this matters:</strong> the
-          <code class="inline">description</code> is the <em>routing key</em>.
-          Pi decides "load this skill?" purely from that one field. Write it
-          like a trigger — <em>what it does and when to use it</em> — and the
-          model finds it automatically. Vague description = a skill that never
-          fires.
+          <span data-lang="pt"
+            ><strong>Por que isso importa:</strong> a
+            <code class="inline">description</code> é o
+            <em>sinal de roteamento</em>. O Pi expõe o nome + a descrição de
+            cada skill; o modelo decide se lê o
+            <code class="inline">SKILL.md</code> completo. Escreva a descrição
+            como um gatilho — <em>o que faz e quando usar</em> — porque
+            metadados vagos tornam o auto-carregamento não confiável.</span
+          ><span data-lang="en"
+            ><strong>Why this matters:</strong> the
+            <code class="inline">description</code> is the
+            <em>routing signal</em>. Pi exposes each skill's name + description;
+            the model decides whether to read the full
+            <code class="inline">SKILL.md</code>. Write the description like a
+            trigger — <em>what it does and when to use it</em> — because vague
+            metadata makes auto-loading unreliable.</span
+          >
         </p>
       </div>
       <p class="cite">
-        Source:
+        <span data-lang="pt">Fonte:</span><span data-lang="en">Source:</span>
         <a
           href="https://pi.dev/docs/latest/skills"
           target="_blank"
           rel="noopener"
           >Pi docs · Skills</a
         >
-        · follows the
-        <a
-          href="https://agentskills.io/specification"
-          target="_blank"
-          rel="noopener"
-          >Agent Skills standard</a
+        <span data-lang="pt"
+          >· segue o padrão
+          <a
+            href="https://agentskills.io/specification"
+            target="_blank"
+            rel="noopener"
+            >Agent Skills</a
+          >
+          (portável para Claude Code, Codex, …).</span
+        ><span data-lang="en"
+          >· follows the
+          <a
+            href="https://agentskills.io/specification"
+            target="_blank"
+            rel="noopener"
+            >Agent Skills</a
+          >
+          standard (portable to Claude Code, Codex, …).</span
         >
-        (portable to Claude Code, Codex, …).
       </p>
 
       <!-- ===================== 2. ANATOMY ===================== -->
-      <h2 class="section"><span class="num">2</span>Anatomy of a skill</h2>
+      <h2 class="section">
+        <span class="num">2</span
+        ><span data-lang="pt">Anatomia de uma skill</span
+        ><span data-lang="en">Anatomy of a skill</span>
+      </h2>
       <p class="kicker">
-        A directory with a <code class="inline">SKILL.md</code>. Everything else
-        is freeform — scripts, references, templates, whatever the task needs.
+        <span data-lang="pt"
+          >Um diretório com um <code class="inline">SKILL.md</code>. Todo o
+          resto é livre — scripts, referências, templates, o que a tarefa
+          precisar.</span
+        ><span data-lang="en"
+          >A directory with a <code class="inline">SKILL.md</code>. Everything
+          else is freeform — scripts, references, templates, whatever the task
+          needs.</span
+        >
       </p>
 
       <pre class="block"><span class="c">my-skill/</span>
-├── <span style="color:#7ee0c8; font-weight:700">SKILL.md</span>            <span class="c"># required: frontmatter + instructions</span>
+├── <span style="color:#7ee0c8; font-weight:700">SKILL.md</span>            <span class="c"><span data-lang="pt"># obrigatório: frontmatter + instruções</span><span data-lang="en"># required: frontmatter + instructions</span></span>
 ├── scripts/
-│   └── process.sh       <span class="c"># helper the model calls via bash</span>
+│   └── process.sh       <span class="c"><span data-lang="pt"># helper que o modelo chama via bash</span><span data-lang="en"># helper the model calls via bash</span></span>
 ├── references/
-│   └── api-reference.md <span class="c"># detailed docs, loaded only if needed</span>
+│   └── api-reference.md <span class="c"><span data-lang="pt"># docs detalhadas, carregadas só se preciso</span><span data-lang="en"># detailed docs, loaded only if needed</span></span>
 └── assets/
-    └── template.json    <span class="c"># static files</span></pre>
+    └── template.json    <span class="c"><span data-lang="pt"># arquivos estáticos</span><span data-lang="en"># static files</span></span></pre>
 
       <div class="callout tip">
         <p>
-          <strong>Reference paths are relative to the skill dir.</strong> In
-          <code class="inline">SKILL.md</code> write
-          <code class="inline"
-            >See [the API ref](references/api-reference.md)</code
+          <span data-lang="pt"
+            ><strong
+              >Caminhos de referência são relativos ao diretório da
+              skill.</strong
+            >
+            No <code class="inline">SKILL.md</code> escreva
+            <code class="inline"
+              >See [the API ref](references/api-reference.md)</code
+            >
+            — o Pi resolve. O modelo carrega referências profundas
+            <em>preguiçosamente</em>, mantendo o contexto enxuto.</span
+          ><span data-lang="en"
+            ><strong>Reference paths are relative to the skill dir.</strong> In
+            <code class="inline">SKILL.md</code> write
+            <code class="inline"
+              >See [the API ref](references/api-reference.md)</code
+            >
+            — Pi resolves it. The model loads deep references <em>lazily</em>,
+            keeping context lean.</span
           >
-          — Pi resolves it. The model loads deep references <em>lazily</em>,
-          keeping context lean.
         </p>
       </div>
 
       <!-- ===================== 3. SKILL.md FORMAT ===================== -->
-      <h2 class="section"><span class="num">3</span>The SKILL.md format</h2>
+      <h2 class="section">
+        <span class="num">3</span
+        ><span data-lang="pt">O formato do SKILL.md</span
+        ><span data-lang="en">The SKILL.md format</span>
+      </h2>
       <p class="kicker">
-        Frontmatter (name + description required) + a Markdown body of
-        instructions. That's the whole contract.
+        <span data-lang="pt"
+          >Frontmatter (<code class="inline">name</code> +
+          <code class="inline">description</code> obrigatórios) + um corpo
+          Markdown de instruções. Esse é o contrato inteiro.</span
+        ><span data-lang="en"
+          >Frontmatter (name + description required) + a Markdown body of
+          instructions. That's the whole contract.</span
+        >
       </p>
 
       <div class="grid cols-2" style="margin-top: 18px">
-        <div class="card" style="border-left: 4px solid #0fb9a4">
-          <h4>✅ Good description</h4>
+        <div class="card" style="border-left: 4px solid #2dd4bf">
+          <h4>
+            <span data-lang="pt">✅ Boa descrição</span
+            ><span data-lang="en">✅ Good description</span>
+          </h4>
           <p class="mono" style="font-size: 0.85rem; color: var(--ink)">
-            "Extracts text and tables from PDF files, fills PDF forms, and
-            merges PDFs. Use when working with PDF documents."
+            <span data-lang="pt"
+              >"Extrai texto e tabelas de arquivos PDF, preenche formulários PDF
+              e mescla PDFs. Use ao trabalhar com documentos PDF."</span
+            ><span data-lang="en"
+              >"Extracts text and tables from PDF files, fills PDF forms, and
+              merges PDFs. Use when working with PDF documents."</span
+            >
           </p>
           <p style="color: var(--ink-soft); font-size: 0.85rem">
-            Specific triggers → reliable auto-load.
+            <span data-lang="pt"
+              >Gatilhos específicos → auto-carregamento confiável.</span
+            ><span data-lang="en">Specific triggers → reliable auto-load.</span>
           </p>
         </div>
-        <div class="card" style="border-left: 4px solid #ef476f">
-          <h4>❌ Poor description</h4>
+        <div class="card" style="border-left: 4px solid #fb7185">
+          <h4>
+            <span data-lang="pt">❌ Descrição fraca</span
+            ><span data-lang="en">❌ Poor description</span>
+          </h4>
           <p class="mono" style="font-size: 0.85rem; color: var(--ink)">
-            "Helps with PDFs."
+            <span data-lang="pt">"Ajuda com PDFs."</span
+            ><span data-lang="en">"Helps with PDFs."</span>
           </p>
           <p style="color: var(--ink-soft); font-size: 0.85rem">
-            Too vague → the model never reaches for it.
+            <span data-lang="pt">Muito vaga → o modelo nunca a procura.</span
+            ><span data-lang="en"
+              >Too vague → the model never reaches for it.</span
+            >
           </p>
         </div>
       </div>
 
-      <h3>Frontmatter fields</h3>
+      <h3>
+        <span data-lang="pt">Campos do frontmatter</span
+        ><span data-lang="en">Frontmatter fields</span>
+      </h3>
       <div class="grid cols-2">
         <div class="card">
           <span class="sig"
-            >name <span style="color: #ef476f">·required</span></span
+            >name
+            <span style="color: #fb7185"
+              ><span data-lang="pt">·obrigatório</span
+              ><span data-lang="en">·required</span></span
+            ></span
           >
           <p>
-            1–64 chars, lowercase <code class="inline">a-z 0-9 -</code>, no
-            leading/trailing or consecutive hyphens. Need not match the folder
-            name.
+            <span data-lang="pt"
+              >1–64 caracteres,
+              <code class="inline">a-z 0-9 -</code> minúsculos, sem hífens
+              iniciais/finais ou consecutivos. Não precisa coincidir com o nome
+              da pasta.</span
+            ><span data-lang="en"
+              >1–64 chars, lowercase <code class="inline">a-z 0-9 -</code>, no
+              leading/trailing or consecutive hyphens. Need not match the folder
+              name.</span
+            >
           </p>
         </div>
         <div class="card">
           <span class="sig"
-            >description <span style="color: #ef476f">·required</span></span
+            >description
+            <span style="color: #fb7185"
+              ><span data-lang="pt">·obrigatório</span
+              ><span data-lang="en">·required</span></span
+            ></span
           >
           <p>
-            ≤1024 chars. <strong>The routing key.</strong> Missing it → skill
-            won't load at all.
+            <span data-lang="pt"
+              >≤1024 caracteres. <strong>A chave de roteamento.</strong> Sem ela
+              → a skill não carrega de jeito nenhum.</span
+            ><span data-lang="en"
+              >≤1024 chars. <strong>The routing key.</strong> Missing it → skill
+              won't load at all.</span
+            >
           </p>
         </div>
         <div class="card">
           <span class="sig">disable-model-invocation</span>
           <p>
-            <code class="inline">true</code> hides it from auto-load; users must
-            call <code class="inline">/skill:name</code> explicitly.
+            <span data-lang="pt"
+              ><code class="inline">true</code> a esconde do auto-carregamento;
+              usuários devem chamar
+              <code class="inline">/skill:name</code> explicitamente.</span
+            ><span data-lang="en"
+              ><code class="inline">true</code> hides it from auto-load; users
+              must call
+              <code class="inline">/skill:name</code> explicitly.</span
+            >
           </p>
         </div>
         <div class="card">
@@ -387,27 +590,50 @@
             >allowed-tools · license · compatibility · metadata</span
           >
           <p>
-            Optional. <code class="inline">allowed-tools</code> pre-approves a
-            tool set (experimental).
+            <span data-lang="pt"
+              >Opcional. <code class="inline">allowed-tools</code> pré-aprova um
+              conjunto de ferramentas (experimental).</span
+            ><span data-lang="en"
+              >Optional. <code class="inline">allowed-tools</code> pre-approves
+              a tool set (experimental).</span
+            >
           </p>
         </div>
       </div>
       <p class="cite">
-        Validation is lenient: bad names warn but still load;
-        <em>only a missing description silently drops the skill</em>.
+        <span data-lang="pt"
+          >A validação é branda: nomes ruins avisam mas ainda carregam;
+          <em>apenas uma descrição ausente descarta a skill silenciosamente</em
+          >.</span
+        ><span data-lang="en"
+          >Validation is lenient: bad names warn but still load;
+          <em>only a missing description silently drops the skill</em>.</span
+        >
       </p>
 
       <!-- ===================== 4. WHERE THEY LIVE ===================== -->
-      <h2 class="section"><span class="num">4</span>Where they live</h2>
+      <h2 class="section">
+        <span class="num">4</span><span data-lang="pt">Onde elas moram</span
+        ><span data-lang="en">Where they live</span>
+      </h2>
       <p class="kicker">
-        Drop a folder in any of these and Pi finds it. Project locations load
-        only after the project is
-        <a href="./0004-context-files.html">trusted</a>.
+        <span data-lang="pt"
+          >Solte uma pasta em qualquer um destes e o Pi a encontra. Locais de
+          projeto carregam só depois que o projeto é
+          <a href="./0004-context-files.html">marcado como confiável</a>.</span
+        ><span data-lang="en"
+          >Drop a folder in any of these and Pi finds it. Project locations load
+          only after the project is
+          <a href="./0004-context-files.html">trusted</a>.</span
+        >
       </p>
 
       <div class="grid cols-2" style="margin-top: 18px">
-        <div class="card" style="border-top: 4px solid #6c4bf0">
-          <h4>🌍 Global (every project)</h4>
+        <div class="card" style="border-top: 4px solid #8b6ff7">
+          <h4>
+            <span data-lang="pt">🌍 Global (todo projeto)</span
+            ><span data-lang="en">🌍 Global (every project)</span>
+          </h4>
           <p>
             <code class="inline">~/.pi/agent/skills/</code><br /><code
               class="inline"
@@ -415,34 +641,72 @@
             >
           </p>
           <p style="color: var(--ink-soft); font-size: 0.85rem">
-            Your personal toolkit, always available.
+            <span data-lang="pt"
+              >Seu kit de ferramentas pessoal, sempre disponível.</span
+            ><span data-lang="en"
+              >Your personal toolkit, always available.</span
+            >
           </p>
         </div>
-        <div class="card" style="border-top: 4px solid #f59e0b">
-          <h4>📦 Project (per-repo)</h4>
+        <div class="card" style="border-top: 4px solid #fbbf24">
+          <h4>
+            <span data-lang="pt">📦 Projeto (por repositório)</span
+            ><span data-lang="en">📦 Project (per-repo)</span>
+          </h4>
           <p>
-            <code class="inline">.pi/skills/</code><br /><code class="inline"
-              >.agents/skills/</code
+            <span data-lang="pt"
+              ><code class="inline">.pi/skills/</code><br /><code class="inline"
+                >.agents/skills/</code
+              >
+              (cwd + ancestrais → raiz do git)</span
+            ><span data-lang="en"
+              ><code class="inline">.pi/skills/</code><br /><code class="inline"
+                >.agents/skills/</code
+              >
+              (cwd + ancestors → git root)</span
             >
-            (cwd + ancestors → git root)
           </p>
           <p style="color: var(--ink-soft); font-size: 0.85rem">
-            Commit with the repo → shared with the team.
+            <span data-lang="pt"
+              >Commite com o repositório → compartilhado com o time.</span
+            ><span data-lang="en"
+              >Commit with the repo → shared with the team.</span
+            >
           </p>
         </div>
-        <div class="card" style="border-top: 4px solid #0fb9a4">
-          <h4>🔧 Other sources</h4>
+        <div class="card" style="border-top: 4px solid #2dd4bf">
+          <h4>
+            <span data-lang="pt">🔧 Outras fontes</span
+            ><span data-lang="en">🔧 Other sources</span>
+          </h4>
           <p>
-            <strong>Packages</strong> (<code class="inline">skills/</code> or
-            <code class="inline">pi.skills</code>), the settings
-            <code class="inline">skills</code> array, and
-            <code class="inline">--skill &lt;path&gt;</code> (repeatable, works
-            even with <code class="inline">--no-skills</code>).
+            <span data-lang="pt"
+              ><strong>Packages</strong> (<code class="inline">skills/</code> ou
+              <code class="inline">pi.skills</code>), o array
+              <code class="inline">skills</code> das settings, e
+              <code class="inline">--skill &lt;path&gt;</code> (repetível,
+              funciona mesmo com <code class="inline">--no-skills</code>).</span
+            ><span data-lang="en"
+              ><strong>Packages</strong> (<code class="inline">skills/</code> or
+              <code class="inline">pi.skills</code>), the settings
+              <code class="inline">skills</code> array, and
+              <code class="inline">--skill &lt;path&gt;</code> (repeatable,
+              works even with <code class="inline">--no-skills</code>).</span
+            >
           </p>
         </div>
-        <div class="card" style="border-top: 4px solid #3b82f6">
-          <h4>🔀 Other harnesses</h4>
-          <p>Reuse Claude Code / Codex skills directly:</p>
+        <div class="card" style="border-top: 4px solid #60a5fa">
+          <h4>
+            <span data-lang="pt">🔀 Outros harnesses</span
+            ><span data-lang="en">🔀 Other harnesses</span>
+          </h4>
+          <p>
+            <span data-lang="pt"
+              >Reúse skills do Claude Code / Codex diretamente:</span
+            ><span data-lang="en"
+              >Reuse Claude Code / Codex skills directly:</span
+            >
+          </p>
           <p class="mono" style="font-size: 0.8rem">
             "skills": ["~/.claude/skills", "~/.codex/skills"]
           </p>
@@ -450,71 +714,126 @@
       </div>
       <div class="callout warn">
         <p>
-          <strong>Discovery quirk:</strong> in
-          <code class="inline">~/.pi/agent/skills/</code> &amp;
-          <code class="inline">.pi/skills/</code>, a bare root
-          <code class="inline">.md</code> counts as a skill too; in
-          <code class="inline">~/.agents/skills/</code> &amp; project
-          <code class="inline">.agents/skills/</code>, root
-          <code class="inline">.md</code> files are ignored — use a
-          <code class="inline">SKILL.md</code> folder.
+          <span data-lang="pt"
+            ><strong>Pegadinha de descoberta:</strong> em
+            <code class="inline">~/.pi/agent/skills/</code> &amp;
+            <code class="inline">.pi/skills/</code>, um
+            <code class="inline">.md</code> raiz solto também conta como skill;
+            em <code class="inline">~/.agents/skills/</code> &amp;
+            <code class="inline">.agents/skills/</code> de projeto, arquivos
+            <code class="inline">.md</code> raiz são ignorados — use uma pasta
+            <code class="inline">SKILL.md</code>.</span
+          ><span data-lang="en"
+            ><strong>Discovery quirk:</strong> in
+            <code class="inline">~/.pi/agent/skills/</code> &amp;
+            <code class="inline">.pi/skills/</code>, a bare root
+            <code class="inline">.md</code> counts as a skill too; in
+            <code class="inline">~/.agents/skills/</code> &amp; project
+            <code class="inline">.agents/skills/</code>, root
+            <code class="inline">.md</code> files are ignored — use a
+            <code class="inline">SKILL.md</code> folder.</span
+          >
         </p>
       </div>
 
       <!-- ===================== 5. INVOCATION ===================== -->
-      <h2 class="section"><span class="num">5</span>How to fire one</h2>
+      <h2 class="section">
+        <span class="num">5</span><span data-lang="pt">Como disparar uma</span
+        ><span data-lang="en">How to fire one</span>
+      </h2>
       <p class="kicker">
-        Two ways. Let the model decide (default), or force it.
+        <span data-lang="pt"
+          >Duas formas. Deixe o modelo decidir (padrão), ou force.</span
+        ><span data-lang="en"
+          >Two ways. Let the model decide (default), or force it.</span
+        >
       </p>
 
       <div class="grid cols-2" style="margin-top: 18px">
-        <div class="card" style="border-left: 4px solid #0fb9a4">
-          <h4>Automatic</h4>
+        <div class="card" style="border-left: 4px solid #2dd4bf">
+          <h4>
+            <span data-lang="pt">Automática</span
+            ><span data-lang="en">Automatic</span>
+          </h4>
           <p>
-            You just ask normally. The model matches your request against skill
-            descriptions and <code class="inline">read</code>s the right
-            <code class="inline">SKILL.md</code>. Invisible to you.
+            <span data-lang="pt"
+              >Você só pede normalmente. O modelo casa seu pedido com as
+              descrições das skills e dá <code class="inline">read</code> no
+              <code class="inline">SKILL.md</code> certo. Invisível para
+              você.</span
+            ><span data-lang="en"
+              >You just ask normally. The model matches your request against
+              skill descriptions and <code class="inline">read</code>s the right
+              <code class="inline">SKILL.md</code>. Invisible to you.</span
+            >
           </p>
         </div>
-        <div class="card" style="border-left: 4px solid #6c4bf0">
-          <h4>Forced — <code class="inline">/skill:name</code></h4>
+        <div class="card" style="border-left: 4px solid #8b6ff7">
+          <h4>
+            <span data-lang="pt"
+              >Forçada — <code class="inline">/skill:name</code></span
+            ><span data-lang="en"
+              >Forced — <code class="inline">/skill:name</code></span
+            >
+          </h4>
           <p>
-            <code class="inline">/skill:commit</code> loads &amp; runs it. Pass
-            args:
-            <code class="inline">/skill:pdf-tools extract invoice.pdf</code>
-            (appended as <code class="inline">User: …</code>). Toggle these
-            commands via <code class="inline">enableSkillCommands</code>.
+            <span data-lang="pt"
+              ><code class="inline">/skill:commit</code> carrega &amp; executa.
+              Passe args:
+              <code class="inline">/skill:pdf-tools extract invoice.pdf</code>
+              (anexado como <code class="inline">User: …</code>). Alterne esses
+              comandos via
+              <code class="inline">enableSkillCommands</code>.</span
+            ><span data-lang="en"
+              ><code class="inline">/skill:commit</code> loads &amp; runs it.
+              Pass args:
+              <code class="inline">/skill:pdf-tools extract invoice.pdf</code>
+              (appended as <code class="inline">User: …</code>). Toggle these
+              commands via
+              <code class="inline">enableSkillCommands</code>.</span
+            >
           </p>
         </div>
       </div>
 
       <!-- ===================== 6. WORKED EXAMPLE ===================== -->
       <h2 class="section">
-        <span class="num">6</span>A real skill, end to end
+        <span class="num">6</span
+        ><span data-lang="pt">Uma skill real, de ponta a ponta</span
+        ><span data-lang="en">A real skill, end to end</span>
       </h2>
       <p class="kicker">
-        Drop this in <code class="inline">~/.pi/agent/skills/commit/</code> and
-        you've extended Pi. It drafts a Conventional Commit from staged changes.
+        <span data-lang="pt"
+          >Solte isso em
+          <code class="inline">~/.pi/agent/skills/commit/</code> e você estendeu
+          o Pi. Ela rascunha um Conventional Commit a partir das mudanças
+          staged.</span
+        ><span data-lang="en"
+          >Drop this in
+          <code class="inline">~/.pi/agent/skills/commit/</code> and you've
+          extended Pi. It drafts a Conventional Commit from staged
+          changes.</span
+        >
       </p>
 
       <pre class="block"><span class="c">commit/SKILL.md</span>
 ---
 name: commit
-description: Draft and create a Conventional Commit from staged changes. Use when the user says "commit", "commit this", or wants to save staged work with a clear message.
+description: <span data-lang="pt">Rascunhe e crie um Conventional Commit a partir das mudanças staged. Use quando o usuário diz "commit", "commit this", ou quer salvar trabalho staged com uma mensagem clara.</span><span data-lang="en">Draft and create a Conventional Commit from staged changes. Use when the user says "commit", "commit this", or wants to save staged work with a clear message.</span>
 ---
 
 # Commit
 
-## Convention
+<span data-lang="pt">## Convenção</span><span data-lang="en">## Convention</span>
 `type(scope): summary` — type ∈ feat | fix | refactor | docs | test | chore.
-Summary ≤ 72 chars. Body explains the <em>why</em>, not the what.
+<span data-lang="pt">Resumo ≤ 72 caracteres. O corpo explica o <em>porquê</em>, não o quê.</span><span data-lang="en">Summary ≤ 72 chars. Body explains the <em>why</em>, not the what.</span>
 
-## Steps
-1. Run `./scripts/diff-stat.sh` to see what's staged.
-2. `read` the staged diff if you need detail.
-3. Draft summary + short body.
-4. Show the message; on approval run `git commit`.
-5. Never commit secrets, .env, or node_modules.</pre>
+<span data-lang="pt">## Passos</span><span data-lang="en">## Steps</span>
+<span data-lang="pt">1. Rode `./scripts/diff-stat.sh` para ver o que está staged.</span><span data-lang="en">1. Run `./scripts/diff-stat.sh` to see what's staged.</span>
+<span data-lang="pt">2. Dê `read` no diff staged se precisar de detalhe.</span><span data-lang="en">2. `read` the staged diff if you need detail.</span>
+<span data-lang="pt">3. Rascunhe resumo + corpo curto.</span><span data-lang="en">3. Draft summary + short body.</span>
+<span data-lang="pt">4. Mostre a mensagem; com aprovação rode `git commit`.</span><span data-lang="en">4. Show the message; on approval run `git commit`.</span>
+<span data-lang="pt">5. Nunca commite secrets, .env, ou node_modules.</span><span data-lang="en">5. Never commit secrets, .env, or node_modules.</span></pre>
 
       <pre class="block"><span class="c">commit/scripts/diff-stat.sh</span>
 <span class="c">#!/usr/bin/env bash</span>
@@ -523,22 +842,39 @@ git diff --cached --stat</pre>
       <div class="grid cols-2" style="margin-top: 14px">
         <div class="callout tip" style="margin: 0">
           <p>
-            <strong>That's it.</strong> No build, no compile, no package step.
-            Restart Pi (or <code class="inline">/reload</code>) and say "commit
-            this" — the skill loads and the model follows your steps.
+            <span data-lang="pt"
+              ><strong>É isso.</strong> Sem build, sem compile, sem passo de
+              package. Reinicie o Pi (ou <code class="inline">/reload</code>) e
+              diga "commit this" — a skill carrega e o modelo segue seus
+              passos.</span
+            ><span data-lang="en"
+              ><strong>That's it.</strong> No build, no compile, no package
+              step. Restart Pi (or <code class="inline">/reload</code>) and say
+              "commit this" — the skill loads and the model follows your
+              steps.</span
+            >
           </p>
         </div>
         <div class="callout key" style="margin: 0">
           <p>
-            <strong>Cheate-code:</strong> just
-            <em>ask Pi to build the skill.</em> "Make me a skill that…" — Pi
-            writes the <code class="inline">SKILL.md</code> and scripts for you,
-            then <code class="inline">/reload</code>.
+            <span data-lang="pt"
+              ><strong>Truque:</strong> basta
+              <em>pedir ao Pi para construir a skill.</em> "Make me a skill
+              that…" — o Pi escreve o <code class="inline">SKILL.md</code> e os
+              scripts para você, depois
+              <code class="inline">/reload</code>.</span
+            ><span data-lang="en"
+              ><strong>Cheat-code:</strong> just
+              <em>ask Pi to build the skill.</em> "Make me a skill that…" — Pi
+              writes the <code class="inline">SKILL.md</code> and scripts for
+              you, then <code class="inline">/reload</code>.</span
+            >
           </p>
         </div>
       </div>
       <p class="cite">
-        Mine real patterns:
+        <span data-lang="pt">Garimpe padrões reais:</span
+        ><span data-lang="en">Mine real patterns:</span>
         <a
           href="https://github.com/anthropics/skills"
           target="_blank"
@@ -555,123 +891,323 @@ git diff --cached --stat</pre>
       </p>
 
       <!-- ===================== QUIZ ===================== -->
-      <h2 class="section"><span class="num">7</span>Check your skills</h2>
+      <h2 class="section">
+        <span class="num">7</span><span data-lang="pt">Confira suas skills</span
+        ><span data-lang="en">Check your skills</span>
+      </h2>
 
-      <div class="quiz" id="q1">
-        <div class="q">
-          Q1. At startup, what from each skill sits in the model's context?
+      <div class="quiz" id="q1" role="group" aria-labelledby="q1l">
+        <div class="q" id="q1l">
+          <span data-lang="pt"
+            >Q1. Na inicialização, o quê de cada skill fica no contexto do
+            modelo?</span
+          ><span data-lang="en"
+            >Q1. At startup, what from each skill sits in the model's
+            context?</span
+          >
         </div>
-        <div class="options" data-answer="Just description">
-          <button class="opt">Just description</button>
-          <button class="opt">Full SKILL.md</button>
-          <button class="opt">All the scripts</button>
-          <button class="opt">Name plus body</button>
+        <div class="options">
+          <button
+            class="opt"
+            data-correct="true"
+            data-fb-pt="Exato: só o nome + a descrição ficam no contexto."
+            data-fb-en="Exact: only the name + description sit in context."
+          >
+            <span data-lang="pt">Nome mais descrição</span
+            ><span data-lang="en">Name plus description</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — o SKILL.md completo carrega só sob demanda."
+            data-fb-en="No — the full SKILL.md loads only on demand."
+          >
+            <span data-lang="pt">O SKILL.md completo</span
+            ><span data-lang="en">The full SKILL.md</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — scripts só rodam quando invocados."
+            data-fb-en="No — scripts only run when invoked."
+          >
+            <span data-lang="pt">Todos os scripts empacotados</span
+            ><span data-lang="en">All bundled scripts</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — o corpo (SKILL.md) vem só sob demanda."
+            data-fb-en="No — the body (SKILL.md) comes only on demand."
+          >
+            <span data-lang="pt">Nome mais corpo</span
+            ><span data-lang="en">Name plus body</span>
+          </button>
         </div>
-        <div class="verdict"></div>
+        <div class="verdict" aria-live="polite"></div>
       </div>
 
-      <div class="quiz" id="q2">
-        <div class="q">
-          Q2. Which field decides WHEN the agent auto-loads a skill?
+      <div class="quiz" id="q2" role="group" aria-labelledby="q2l">
+        <div class="q" id="q2l">
+          <span data-lang="pt"
+            >Q2. Qual campo decide QUANDO o agente auto-carrega uma skill?</span
+          ><span data-lang="en"
+            >Q2. Which field decides WHEN the agent auto-loads a skill?</span
+          >
         </div>
-        <div class="options" data-answer="description">
-          <button class="opt">description</button>
-          <button class="opt">metadata</button>
-          <button class="opt">license</button>
-          <button class="opt">compatibility</button>
+        <div class="options">
+          <button
+            class="opt"
+            data-correct="true"
+            data-fb-pt="Exato: a description é o sinal de roteamento."
+            data-fb-en="Exact: the description is the routing signal."
+          >
+            <span data-lang="pt">description</span
+            ><span data-lang="en">description</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — metadata é opcional, não roteia."
+            data-fb-en="No — metadata is optional, doesn't route."
+          >
+            <span data-lang="pt">metadata</span
+            ><span data-lang="en">metadata</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — license é só legal, não funcional."
+            data-fb-en="No — license is just legal, not functional."
+          >
+            <span data-lang="pt">license</span
+            ><span data-lang="en">license</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — compatibility declara suporte, não roteia."
+            data-fb-en="No — compatibility declares support, doesn't route."
+          >
+            <span data-lang="pt">compatibility</span
+            ><span data-lang="en">compatibility</span>
+          </button>
         </div>
-        <div class="verdict"></div>
+        <div class="verdict" aria-live="polite"></div>
       </div>
 
-      <div class="quiz" id="q3">
-        <div class="q">Q3. The skill name "PDF-Processing" is…</div>
-        <div class="options" data-answer="Invalid name">
-          <button class="opt">Invalid name</button>
-          <button class="opt">Valid name</button>
-          <button class="opt">Almost valid</button>
-          <button class="opt">Preferable style</button>
+      <div class="quiz" id="q3" role="group" aria-labelledby="q3l">
+        <div class="q" id="q3l">
+          <span data-lang="pt">Q3. O nome de skill "PDF-Processing" é…</span
+          ><span data-lang="en">Q3. The skill name "PDF-Processing" is…</span>
         </div>
-        <div class="verdict"></div>
+        <div class="options">
+          <button
+            class="opt"
+            data-correct="true"
+            data-fb-pt="Exato: maiúsculas não são permitidas (só a-z minúsculas)."
+            data-fb-en="Exact: uppercase isn't allowed (lowercase a-z only)."
+          >
+            <span data-lang="pt">Nome inválido</span
+            ><span data-lang="en">Invalid name</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — maiúsculas quebram a regra."
+            data-fb-en="No — uppercase breaks the rule."
+          >
+            <span data-lang="pt">Nome válido</span
+            ><span data-lang="en">Valid name</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — é simplesmente inválido."
+            data-fb-en="No — it's simply invalid."
+          >
+            <span data-lang="pt">Quase válido</span
+            ><span data-lang="en">Almost valid</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — é inválido, não uma questão de estilo."
+            data-fb-en="No — it's invalid, not a style question."
+          >
+            <span data-lang="pt">Estilo preferido</span
+            ><span data-lang="en">Preferable style</span>
+          </button>
+        </div>
+        <div class="verdict" aria-live="polite"></div>
       </div>
 
       <!-- ===================== PRIMARY SOURCE + FOOTER ===================== -->
-      <h2 class="section"><span class="num">8</span>Read &amp; do this next</h2>
+      <h2 class="section">
+        <span class="num">8</span
+        ><span data-lang="pt">Leia &amp; faça isso a seguir</span
+        ><span data-lang="en">Read &amp; do this next</span>
+      </h2>
       <p>
-        <strong>Primary source:</strong>
-        <a
-          href="https://pi.dev/docs/latest/skills"
-          target="_blank"
-          rel="noopener"
-          >Pi docs · Skills</a
+        <span data-lang="pt"
+          ><strong>Fonte primária:</strong>
+          <a
+            href="https://pi.dev/docs/latest/skills"
+            target="_blank"
+            rel="noopener"
+            >Pi docs · Skills</a
+          >
+          + o
+          <a
+            href="https://agentskills.io/specification"
+            target="_blank"
+            rel="noopener"
+            >spec do Agent Skills</a
+          >.</span
+        ><span data-lang="en"
+          ><strong>Primary source:</strong>
+          <a
+            href="https://pi.dev/docs/latest/skills"
+            target="_blank"
+            rel="noopener"
+            >Pi docs · Skills</a
+          >
+          + the
+          <a
+            href="https://agentskills.io/specification"
+            target="_blank"
+            rel="noopener"
+            >Agent Skills spec</a
+          >.</span
         >
-        + the
-        <a
-          href="https://agentskills.io/specification"
-          target="_blank"
-          rel="noopener"
-          >Agent Skills spec</a
-        >.
       </p>
       <p>
-        <strong>Do it now:</strong> create
-        <code class="inline">~/.pi/agent/skills/commit/SKILL.md</code> from §6,
-        <code class="inline">/reload</code>, stage a change, and say "commit
-        this." Watch the skill load and run — your first custom capability.
+        <span data-lang="pt"
+          ><strong>Faça agora:</strong> crie
+          <code class="inline">~/.pi/agent/skills/commit/SKILL.md</code> a
+          partir do §6, <code class="inline">/reload</code>, stage uma mudança,
+          e diga "commit this." Veja a skill carregar e rodar — sua primeira
+          capacidade customizada.</span
+        ><span data-lang="en"
+          ><strong>Do it now:</strong> create
+          <code class="inline">~/.pi/agent/skills/commit/SKILL.md</code> from
+          §6, <code class="inline">/reload</code>, stage a change, and say
+          "commit this." Watch the skill load and run — your first custom
+          capability.</span
+        >
       </p>
 
       <div class="callout key">
         <p>
-          🗣️ <strong>Ask me anything.</strong> Common follow-ups:
-          <em>"skill vs extension — when which?"</em>,
-          <em>"how do I share skills via a package?"</em>,
-          <em>"can a skill call an MCP server?"</em> (no — but it can call a
-          CLI).
+          🗣️
+          <strong
+            ><span data-lang="pt">Pergunte-me qualquer coisa.</span
+            ><span data-lang="en">Ask me anything.</span></strong
+          >
+          <span data-lang="pt"
+            >Continuações comuns: <em>"skill vs extension — quando qual?"</em>,
+            <em>"como compartilho skills via um package?"</em>,
+            <em>"uma skill pode chamar um servidor MCP?"</em> (skills não
+            executam nada; uma extensão MCP pode expor ferramentas ao
+            agente).</span
+          ><span data-lang="en"
+            >Common follow-ups: <em>"skill vs extension — when which?"</em>,
+            <em>"how do I share skills via a package?"</em>,
+            <em>"can a skill call an MCP server?"</em> (skills execute nothing;
+            an MCP extension can expose tools to the agent).</span
+          >
         </p>
       </div>
 
       <footer class="lesson-foot">
         <div class="next-card">
-          <div class="lbl">Next lesson →</div>
+          <div class="lbl">
+            <span data-lang="pt">Próxima lição →</span
+            ><span data-lang="en">Next lesson →</span>
+          </div>
           <div class="t">
-            <a href="./0006-extensions.html">Extensions: programming Pi</a>
+            <a href="./0006-extensions.html"
+              ><span data-lang="pt">Extensions: programando o Pi</span
+              ><span data-lang="en">Extensions: programming Pi</span></a
+            >
           </div>
           <p style="margin: 8px 0 0; font-size: 0.85rem">
-            When instructions aren't enough — TypeScript that adds tools,
-            commands, events, and UI.
+            <span data-lang="pt"
+              >Quando instruções não bastam — TypeScript que adiciona
+              ferramentas, comandos, eventos e UI.</span
+            ><span data-lang="en"
+              >When instructions aren't enough — TypeScript that adds tools,
+              commands, events, and UI.</span
+            >
           </p>
         </div>
         <div style="flex: 0 1 220px">
-          <div class="lbl">Reference</div>
+          <div class="lbl">
+            <span data-lang="pt">Referência</span
+            ><span data-lang="en">Reference</span>
+          </div>
           <p style="margin: 6px 0 0">
-            <a href="../reference/pi-glossary.html">Pi glossary</a> ·
-            <a href="../MISSION.md">Mission</a>
+            <a href="../reference/pi-glossary.html"
+              ><span data-lang="pt">Glossário do Pi</span
+              ><span data-lang="en">Pi glossary</span></a
+            >
+            ·
+            <a href="../MISSION.md"
+              ><span data-lang="pt">Missão</span
+              ><span data-lang="en">Mission</span></a
+            >
           </p>
         </div>
       </footer>
     </article>
 
     <script>
+      // bilingual quiz wiring — data-correct + per-lang feedback
+      function verdictFor(btn, quiz) {
+        const correct = btn.dataset.correct === "true";
+        const fb = btn.getAttribute(
+          PiI18n.lang === "en" ? "data-fb-en" : "data-fb-pt",
+        );
+        const sec = quiz.id.replace("q", "");
+        const fallback =
+          PiI18n.lang === "en"
+            ? "✗ Not quite — re-read section " + sec + "."
+            : "✗ Quase — releia a seção " + sec + ".";
+        return {
+          ok: correct,
+          text: (correct ? "✓ " : "✗ ") + (fb || fallback),
+        };
+      }
+      function resetQuiz(quiz) {
+        quiz.querySelectorAll(".opt").forEach((b) => {
+          b.classList.remove("correct", "wrong");
+          b.setAttribute("aria-pressed", "false");
+        });
+        const v = quiz.querySelector(".verdict");
+        v.textContent = "";
+        v.className = "verdict";
+      }
       document.querySelectorAll(".quiz").forEach((quiz) => {
-        const answer = quiz.querySelector(".options").dataset.answer;
-        const verdict = quiz.querySelector(".verdict");
         quiz.querySelectorAll(".opt").forEach((btn) => {
+          btn.setAttribute("aria-pressed", "false");
           btn.addEventListener("click", () => {
-            quiz
-              .querySelectorAll(".opt")
-              .forEach((b) => b.classList.remove("correct", "wrong"));
-            if (btn.textContent.trim() === answer) {
-              btn.classList.add("correct");
-              verdict.textContent = "✓ Correct.";
-              verdict.className = "verdict ok";
-            } else {
-              btn.classList.add("wrong");
-              verdict.textContent =
-                "✗ Re-read section " + quiz.id.replace("q", "") + ".";
-              verdict.className = "verdict no";
-            }
+            quiz.querySelectorAll(".opt").forEach((b) => {
+              b.classList.remove("correct", "wrong");
+              b.setAttribute("aria-pressed", "false");
+            });
+            const v = verdictFor(btn, quiz);
+            btn.classList.add(v.ok ? "correct" : "wrong");
+            btn.setAttribute("aria-pressed", "true");
+            const verdict = quiz.querySelector(".verdict");
+            verdict.textContent = v.text;
+            verdict.className = "verdict " + (v.ok ? "ok" : "no");
           });
         });
       });
+      // re-render in the new language on switch (i18n.js is deferred, so hook DOMContentLoaded)
+      document.addEventListener("DOMContentLoaded", () =>
+        PiI18n.on(() => document.querySelectorAll(".quiz").forEach(resetQuiz)),
+      );
     </script>
   </body>
 </html>

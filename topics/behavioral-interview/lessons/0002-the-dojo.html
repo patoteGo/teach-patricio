@@ -1,0 +1,1114 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title
+      data-pt="Entrevista Comportamental · Lição 2 — O Dojo"
+      data-en="Behavioral Interview · Lesson 2 — The Dojo"
+    >
+      Entrevista Comportamental · Lição 2 — O Dojo
+    </title>
+    <link rel="stylesheet" href="../assets/style.css" />
+    <link rel="stylesheet" href="../assets/dark.css" />
+    <link rel="stylesheet" href="../assets/i18n.css" />
+    <script src="../assets/i18n.js" defer></script>
+    <script src="../assets/nav.js" defer></script>
+    <style>
+      .panel {
+        background: var(--paper-2);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 20px 22px;
+        box-shadow: var(--shadow);
+        margin: 18px 0;
+      }
+      .qcard {
+        background: linear-gradient(120deg, var(--violet), #8b5cf6);
+        color: #fff;
+        border-radius: 14px;
+        padding: 24px 26px;
+        box-shadow: var(--shadow-lg);
+        position: relative;
+        overflow: hidden;
+      }
+      .qcard .cat {
+        font: 600 11px "Space Grotesk";
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 5px 10px;
+        border-radius: 999px;
+        display: inline-block;
+      }
+      .qcard .qtxt {
+        font-family: "Space Grotesk";
+        font-size: 1.5rem;
+        line-height: 1.3;
+        margin: 14px 0 0;
+        font-weight: 600;
+      }
+      .row {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+        margin-top: 14px;
+      }
+      button.act {
+        font: 600 0.92rem "Space Grotesk";
+        cursor: pointer;
+        border: none;
+        border-radius: 10px;
+        padding: 11px 18px;
+        color: #fff;
+        background: var(--violet);
+        box-shadow: var(--shadow);
+        transition: transform 0.12s;
+      }
+      button.act:hover {
+        transform: translateY(-1px);
+      }
+      button.act.ghost {
+        background: var(--paper-2);
+        color: var(--violet);
+        border: 1.5px solid var(--violet);
+      }
+      button.act.teal {
+        background: var(--teal);
+      }
+      button.act.rose {
+        background: var(--rose);
+      }
+      select.sel {
+        font: 600 0.9rem "Space Grotesk";
+        padding: 10px 14px;
+        border-radius: 10px;
+        border: 1.5px solid var(--line);
+        background: var(--paper-2);
+        color: var(--ink);
+        cursor: pointer;
+      }
+      .timerwrap {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        flex-wrap: wrap;
+      }
+      .timer {
+        font-family: "JetBrains Mono";
+        font-size: 3rem;
+        font-weight: 700;
+        color: var(--violet);
+        min-width: 150px;
+      }
+      .timer.warn {
+        color: var(--rose);
+      }
+      .field {
+        display: block;
+        margin: 14px 0 6px;
+        font: 600 0.85rem "Space Grotesk";
+        letter-spacing: 0.03em;
+      }
+      .field .hint {
+        font-weight: 400;
+        color: var(--ink-soft);
+        font-size: 0.8rem;
+      }
+      input.txt,
+      textarea.txt {
+        width: 100%;
+        font-family: inherit;
+        font-size: 0.95rem;
+        border: 1.5px solid var(--line);
+        border-radius: 10px;
+        padding: 10px 12px;
+        background: var(--paper-2);
+        color: var(--ink);
+        resize: vertical;
+      }
+      textarea.txt {
+        min-height: 64px;
+      }
+      .bluf input.txt {
+        border-color: var(--violet);
+        background: var(--violet-50);
+      }
+      .check {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 18px;
+        margin-top: 8px;
+      }
+      .check label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.9rem;
+        cursor: pointer;
+        background: var(--paper-2);
+        border: 1px solid var(--line);
+        padding: 8px 12px;
+        border-radius: 9px;
+      }
+      .check input {
+        width: 18px;
+        height: 18px;
+        accent-color: var(--teal);
+      }
+      .storyrow {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        background: var(--paper-2);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 12px 14px;
+        margin-bottom: 8px;
+      }
+      .storyrow .meta {
+        flex: 1;
+        min-width: 0;
+      }
+      .storyrow .meta b {
+        font-family: "Space Grotesk";
+      }
+      .storyrow .meta small {
+        display: block;
+        color: var(--ink-soft);
+        font-size: 0.82rem;
+        margin-top: 3px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .storyrow button {
+        font: 600 0.8rem "Space Grotesk";
+        cursor: pointer;
+        border: 1.5px solid var(--line);
+        background: var(--paper-2);
+        color: var(--ink);
+        border-radius: 8px;
+        padding: 6px 10px;
+      }
+      .storyrow button:hover {
+        border-color: var(--violet);
+        color: var(--violet);
+      }
+      .storyrow button.del:hover {
+        border-color: var(--rose);
+        color: var(--rose);
+      }
+      .empty {
+        color: var(--ink-soft);
+        font-size: 0.9rem;
+        font-style: italic;
+        padding: 8px 0;
+      }
+    </style>
+  </head>
+  <body class="lang-pt">
+    <article class="lesson">
+      <header class="hero">
+        <span class="eyebrow"
+          ><span data-lang="pt">⬡ Lição 02 · O Dojo</span
+          ><span data-lang="en">⬡ Lesson 02 · The Dojo</span></span
+        >
+        <h1>
+          <span data-lang="pt">Pratique até<br />ficar natural.</span
+          ><span data-lang="en">Practice until<br />it's natural.</span>
+        </h1>
+        <p class="lead">
+          <span data-lang="pt"
+            >O conhecimento vive na sua cabeça; a <em>fluência</em> vive na sua
+            boca. Esta é sua máquina de repetições: tire uma pergunta, diga sua
+            resposta em voz alta contra o relógio, capture-a como BLUF + bullets
+            STAR, e construa uma biblioteca das <strong>suas</strong> histórias.
+            Sem decorar — só rounds.</span
+          ><span data-lang="en"
+            >Knowledge lives in your head; <em>fluency</em> lives in your mouth.
+            This is your reps machine: draw a question, say your answer out loud
+            against the clock, capture it as BLUF + STAR bullets, and build a
+            library of <strong>your</strong> stories. No memorizing — just
+            rounds.</span
+          >
+        </p>
+        <p class="lesson-nav-top">
+          ↑ <span data-lang="pt">Parte da</span
+          ><span data-lang="en">Part of the</span>
+          <a href="../MISSION.md"
+            ><span data-lang="pt">Missão</span
+            ><span data-lang="en">Mission</span></a
+          >
+          · <span data-lang="pt">anterior:</span
+          ><span data-lang="en">prev:</span>
+          <a href="./0001-bluf-star.html"
+            ><span data-lang="pt">Lição 1 · BLUF+STAR</span
+            ><span data-lang="en">Lesson 1 · BLUF+STAR</span></a
+          >
+          · <span data-lang="pt">ref:</span><span data-lang="en">ref:</span>
+          <a href="../reference/question-bank.html"
+            ><span data-lang="pt">Banco de perguntas</span
+            ><span data-lang="en">Question bank</span></a
+          >
+        </p>
+      </header>
+
+      <!-- ===== DRAW A QUESTION ===== -->
+      <h2 class="section">
+        <span class="num">1</span><span data-lang="pt">Tire uma pergunta</span
+        ><span data-lang="en">Draw a question</span>
+      </h2>
+      <p class="kicker">
+        <span data-lang="pt"
+          >Aperte <em>Tirar</em> até conseguir uma que você quer treinar — ou
+          filtre por categoria.</span
+        ><span data-lang="en"
+          >Hit <em>Draw</em> until you get one you want to drill — or filter by
+          category.</span
+        >
+      </p>
+      <div class="qcard" id="qcard">
+        <span class="cat" id="qcat">—</span>
+        <div class="qtxt" id="qtxt">
+          <span data-lang="pt">Aperte “Tirar uma pergunta” para começar.</span
+          ><span data-lang="en">Press “Draw a question” to start.</span>
+        </div>
+        <div class="row">
+          <button class="act" onclick="drawQuestion()">
+            <span data-lang="pt">🔀 Tirar uma pergunta</span
+            ><span data-lang="en">🔀 Draw a question</span>
+          </button>
+          <select class="sel" id="catfilter" onchange="drawQuestion()"></select>
+        </div>
+      </div>
+
+      <!-- ===== TIMER ===== -->
+      <h2 class="section">
+        <span class="num">2</span
+        ><span data-lang="pt">Diga em voz alta — cronometrado</span
+        ><span data-lang="en">Say it out loud — timed</span>
+      </h2>
+      <p class="kicker">
+        <span data-lang="pt"
+          >Uma resposta forte dura ~60–90 segundos. Fale seu BLUF + STAR
+          <em>antes</em> de escrever qualquer coisa. Silêncio &gt; “ééh.”</span
+        ><span data-lang="en"
+          >A strong answer is ~60–90 seconds. Talk through your BLUF + STAR
+          <em>before</em> you write anything. Silence &gt; “um.”</span
+        >
+      </p>
+      <div class="panel">
+        <div class="timerwrap">
+          <div class="timer" id="timer">2:00</div>
+          <button class="act teal" id="tbtn" onclick="toggleTimer()">
+            <span data-lang="pt">▶ Iniciar</span
+            ><span data-lang="en">▶ Start</span>
+          </button>
+          <button class="act ghost" onclick="resetTimer()">
+            <span data-lang="pt">↺ Reiniciar</span
+            ><span data-lang="en">↺ Reset</span>
+          </button>
+          <span class="kicker" id="thint"
+            ><span data-lang="pt">Meta de 2 minutos</span
+            ><span data-lang="en">2-minute target</span></span
+          >
+        </div>
+      </div>
+
+      <!-- ===== ANSWER BUILDER ===== -->
+      <h2 class="section">
+        <span class="num">3</span
+        ><span data-lang="pt">Capture: BLUF + STAR</span
+        ><span data-lang="en">Capture it: BLUF + STAR</span>
+      </h2>
+      <p class="kicker">
+        <span data-lang="pt"
+          >Bullets, não prosa. Improvise as palavras toda vez — é isso que faz
+          soar sem roteiro.</span
+        ><span data-lang="en"
+          >Bullets, not prose. Improvise the words every time — that's what
+          makes it sound unscripted.</span
+        >
+      </p>
+      <div class="panel">
+        <label class="field"
+          ><span data-lang="pt">Título da história </span
+          ><span data-lang="en">Story title </span>
+          <span class="hint"
+            ><span data-lang="pt"
+              >(um rótulo para você reencontrar — p.ex. “bug de dedup do
+              SendGrid”)</span
+            ><span data-lang="en"
+              >(a label so you can find it again — e.g. "SendGrid dedup
+              bug")</span
+            ></span
+          ></label
+        >
+        <input
+          class="txt"
+          id="title"
+          data-ph-pt="Rótulo curto para esta história"
+          data-ph-en="Short label for this story"
+        />
+
+        <div class="bluf">
+          <label class="field"
+            ><span data-lang="pt">🟣 BLUF — a manchete / impacto </span
+            ><span data-lang="en">🟣 BLUF — the headline / impact </span>
+            <span class="hint"
+              ><span data-lang="pt"
+                >(diga isso primeiro: “O resultado principal foi…”) </span
+              ><span data-lang="en"
+                >(say this first: "The key result was…")
+              </span></span
+            ></label
+          >
+          <input
+            class="txt"
+            id="bluf"
+            data-ph-pt="Tenho mais orgulho de ___ porque ___ (impacto, com um número)"
+            data-ph-en="I'm most proud of ___ because it ___ (impact, with a number)"
+          />
+        </div>
+
+        <label class="field"
+          ><span data-lang="pt">S — Situação / Tarefa </span
+          ><span data-lang="en">S — Situation / Task </span>
+          <span class="hint"
+            ><span data-lang="pt"
+              >(o contexto &amp; o problema — brevemente) </span
+            ><span data-lang="en"
+              >(the context &amp; problem — briefly)
+            </span></span
+          ></label
+        >
+        <textarea
+          class="txt"
+          id="sit"
+          data-ph-pt="O problema era… as retentativas do SendGrid estavam inflando as métricas de campanha."
+          data-ph-en="The problem was… SendGrid retries were inflating campaign metrics."
+        ></textarea>
+
+        <label class="field"
+          ><span data-lang="pt">A — Ação </span
+          ><span data-lang="en">A — Action </span>
+          <span class="hint"
+            ><span data-lang="pt"
+              >(“Eu, pessoalmente…” — suas ações específicas) </span
+            ><span data-lang="en"
+              >("I personally…" — your specific moves)
+            </span></span
+          ></label
+        >
+        <textarea
+          class="txt"
+          id="act"
+          data-ph-pt="Investiguei os logs, encontrei IDs de mensagem duplicados, publiquei a deduplicação e adicionei observabilidade."
+          data-ph-en="I investigated the logs, found duplicated message IDs, shipped deduplication, and added observability."
+        ></textarea>
+
+        <label class="field"
+          ><span data-lang="pt">R — Resultado </span
+          ><span data-lang="en">R — Result </span>
+          <span class="hint"
+            ><span data-lang="pt">(desfecho, idealmente medido) </span
+            ><span data-lang="en">(outcome, ideally measured) </span></span
+          ></label
+        >
+        <textarea
+          class="txt"
+          id="res"
+          data-ph-pt="Números corretos restaurados; próximo incidente diagnosticado em minutos em vez de horas."
+          data-ph-en="Correct numbers restored; next incident diagnosed in minutes instead of hours."
+        ></textarea>
+
+        <label class="field"
+          ><span data-lang="pt">Autoavaliação </span
+          ><span data-lang="en">Self-check </span>
+          <span class="hint"
+            ><span data-lang="pt"
+              >(seja honesto — este é o loop de feedback) </span
+            ><span data-lang="en"
+              >(be honest — this is the feedback loop)
+            </span></span
+          ></label
+        >
+        <div class="check">
+          <label
+            ><input type="checkbox" id="c1" /><span data-lang="pt"
+              >Abriu com impacto</span
+            ><span data-lang="en">Led with impact</span></label
+          >
+          <label
+            ><input type="checkbox" id="c2" /><span data-lang="pt"
+              >Disse “eu”, não só “nós”</span
+            ><span data-lang="en">Said "I", not just "we"</span></label
+          >
+          <label
+            ><input type="checkbox" id="c3" /><span data-lang="pt"
+              >Citei um número</span
+            ><span data-lang="en">Named a number</span></label
+          >
+          <label
+            ><input type="checkbox" id="c4" /><span data-lang="pt"
+              >Abaixo de ~90 seg</span
+            ><span data-lang="en">Under ~90 sec</span></label
+          >
+          <label
+            ><input type="checkbox" id="c5" /><span data-lang="pt"
+              >Honesto (sem blefe)</span
+            ><span data-lang="en">Honest (no bluff)</span></label
+          >
+        </div>
+
+        <div class="row" style="margin-top: 18px">
+          <button class="act" onclick="saveStory()">
+            <span data-lang="pt">💾 Salvar história</span
+            ><span data-lang="en">💾 Save story</span>
+          </button>
+          <button class="act ghost" onclick="clearForm()">
+            <span data-lang="pt">Limpar formulário</span
+            ><span data-lang="en">Clear form</span>
+          </button>
+          <button class="act ghost" onclick="exportStory()">
+            <span data-lang="pt">📋 Copiar como Markdown</span
+            ><span data-lang="en">📋 Copy as Markdown</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ===== LIBRARY ===== -->
+      <h2 class="section">
+        <span class="num">4</span
+        ><span data-lang="pt">Sua biblioteca de histórias</span
+        ><span data-lang="en">Your story library</span>
+      </h2>
+      <p class="kicker">
+        <span data-lang="pt"
+          >Salvas no seu navegador (localStorage) — suas, privadas, portáteis
+          como texto. Mire 5–8 histórias fortes que se reenquadram entre
+          perguntas.</span
+        ><span data-lang="en"
+          >Saved in your browser (localStorage) — yours, private, portable as
+          text. Aim for 5–8 strong stories that reframe across questions.</span
+        >
+      </p>
+      <div class="panel">
+        <div id="lib"></div>
+        <div class="row" style="margin-top: 6px">
+          <button class="act ghost" onclick="exportAll()">
+            <span data-lang="pt">📋 Exportar tudo (Markdown)</span
+            ><span data-lang="en">📋 Export all (Markdown)</span>
+          </button>
+          <button class="act ghost" onclick="downloadAll()">
+            <span data-lang="pt">⬇ Baixar .md</span
+            ><span data-lang="en">⬇ Download .md</span>
+          </button>
+          <button class="act rose" onclick="clearAll()">
+            <span data-lang="pt">🗑 Limpar tudo</span
+            ><span data-lang="en">🗑 Clear all</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="callout key">
+        <p>
+          🗣️
+          <strong
+            ><span data-lang="pt">O loop de feedback real sou eu.</span
+            ><span data-lang="en">The real feedback loop is me.</span></strong
+          >
+          <span data-lang="pt"
+            >Aperte “Copiar como Markdown” na sua história mais frágil e cole
+            aqui. Eu te digo: você abriu com impacto? Seu “eu” está claro? O que
+            o entrevistador vai sondar a seguir? Vá de bullets à prova de
+            balas.</span
+          ><span data-lang="en"
+            >Hit “Copy as Markdown” on your shakiest story and paste it here.
+            I'll tell you: did you lead with impact? Is your "I" clear? What
+            will the interviewer probe next? Go from bullets to
+            bulletproof.</span
+          >
+        </p>
+      </div>
+      <p class="cite">
+        <span data-lang="pt">Recorde o padrão:</span
+        ><span data-lang="en">Recall the pattern:</span>
+        <a href="./0001-bluf-star.html"
+          ><span data-lang="pt">Lição 1 · BLUF+STAR</span
+          ><span data-lang="en">Lesson 1 · BLUF+STAR</span></a
+        >. <span data-lang="pt">Ideias de perguntas:</span
+        ><span data-lang="en">Question ideas:</span>
+        <a href="../reference/question-bank.html"
+          ><span data-lang="pt">o banco</span
+          ><span data-lang="en">the bank</span></a
+        >.
+      </p>
+
+      <footer class="lesson-foot">
+        <div class="next-card">
+          <div class="lbl">
+            <span data-lang="pt">Loop →</span><span data-lang="en">Loop →</span>
+          </div>
+          <div class="t">
+            <span data-lang="pt">Tirar → dizer → capturar → orientar</span
+            ><span data-lang="en">Draw → say → capture → coach</span>
+          </div>
+          <p style="margin: 8px 0 0; font-size: 0.85rem">
+            <span data-lang="pt"
+              >5–8 histórias, ensaiadas em voz alta, vencem 50 linhas decoradas.
+              Depois durma — amanhã você dá conta.</span
+            ><span data-lang="en"
+              >5–8 stories, rehearsed aloud, beats 50 memorized lines. Then
+              sleep — you've got this tomorrow.</span
+            >
+          </p>
+        </div>
+        <div>
+          <div class="lbl">
+            <span data-lang="pt">Referência</span
+            ><span data-lang="en">Reference</span>
+          </div>
+          <p style="margin: 6px 0 0">
+            <a href="../reference/question-bank.html"
+              ><span data-lang="pt">Banco de perguntas</span
+              ><span data-lang="en">Question bank</span></a
+            >
+            ·
+            <a href="../MISSION.md"
+              ><span data-lang="pt">Missão</span
+              ><span data-lang="en">Mission</span></a
+            >
+          </p>
+        </div>
+      </footer>
+    </article>
+
+    <script>
+      const QUESTIONS = [
+        {
+          cat: "Ownership",
+          q: {
+            pt: "Conte-me sobre o projeto de que você mais se orgulha.",
+            en: "Tell me about the project you're most proud of.",
+          },
+        },
+        {
+          cat: "Ownership",
+          q: {
+            pt: "Conte-me sobre uma vez em que você tomou a iniciativa além do seu papel.",
+            en: "Tell me about a time you took initiative beyond your role.",
+          },
+        },
+        {
+          cat: "Ownership",
+          q: {
+            pt: "Descreva algo que você conduziu de ponta a ponta.",
+            en: "Describe something you owned end-to-end.",
+          },
+        },
+        {
+          cat: "Conflict",
+          q: {
+            pt: "Conte-me sobre uma vez em que você discordou de um colega de equipe.",
+            en: "Tell me about a time you disagreed with a teammate.",
+          },
+        },
+        {
+          cat: "Conflict",
+          q: {
+            pt: "Conte-me sobre uma vez em que você discordou do seu gestor ou PM.",
+            en: "Tell me about a time you disagreed with your manager or PM.",
+          },
+        },
+        {
+          cat: "Conflict",
+          q: {
+            pt: "Conte-me sobre uma vez em que você convenceu a equipe de uma direção técnica.",
+            en: "Tell me about a time you convinced the team of a technical direction.",
+          },
+        },
+        {
+          cat: "Failure",
+          q: {
+            pt: "Conte-me sobre uma vez em que você falhou ou cometeu um erro sério.",
+            en: "Tell me about a time you failed or made a serious mistake.",
+          },
+        },
+        {
+          cat: "Failure",
+          q: {
+            pt: "Conte-me sobre um incidente de produção que você causou ou lidou.",
+            en: "Tell me about a production incident you caused or handled.",
+          },
+        },
+        {
+          cat: "Failure",
+          q: {
+            pt: "Conte-me sobre um projeto que não saiu como planejado.",
+            en: "Tell me about a project that didn't go as planned.",
+          },
+        },
+        {
+          cat: "Ambiguity",
+          q: {
+            pt: "Descreva um projeto em que os requisitos eram pouco claros.",
+            en: "Describe a project where the requirements were unclear.",
+          },
+        },
+        {
+          cat: "Ambiguity",
+          q: {
+            pt: "Conte-me sobre uma decisão que você tomou com informações incompletas.",
+            en: "Tell me about a decision you made with incomplete information.",
+          },
+        },
+        {
+          cat: "Ambiguity",
+          q: {
+            pt: "Como você prioriza demandas concorrentes?",
+            en: "How do you prioritize competing demands?",
+          },
+        },
+        {
+          cat: "Delivery",
+          q: {
+            pt: "Conte-me sobre uma vez em que você entregou sob um prazo apertado.",
+            en: "Tell me about a time you delivered under a tight deadline.",
+          },
+        },
+        {
+          cat: "Delivery",
+          q: {
+            pt: "Conte-me sobre uma vez em que você entregou uma troca entre velocidade e qualidade.",
+            en: "Tell me about a time you shipped a speed-vs-quality tradeoff.",
+          },
+        },
+        {
+          cat: "Delivery",
+          q: {
+            pt: "Conte-me sobre uma vez em que você melhorou performance ou escalabilidade.",
+            en: "Tell me about a time you improved performance or scalability.",
+          },
+        },
+        {
+          cat: "Mentorship",
+          q: {
+            pt: "Conte-me sobre uma vez em que você mentorou alguém.",
+            en: "Tell me about a time you mentored someone.",
+          },
+        },
+        {
+          cat: "Mentorship",
+          q: {
+            pt: "Conte-me sobre uma vez em que você ajudou um colega em dificuldade.",
+            en: "Tell me about a time you helped a struggling teammate.",
+          },
+        },
+        {
+          cat: "Mentorship",
+          q: {
+            pt: "Conte-me sobre uma vez em que você melhorou um processo ou a cultura do time.",
+            en: "Tell me about a time you improved a team process or culture.",
+          },
+        },
+        {
+          cat: "Influence",
+          q: {
+            pt: "Conte-me sobre uma vez em que você alinhou stakeholders de diferentes áreas.",
+            en: "Tell me about a time you aligned cross-functional stakeholders.",
+          },
+        },
+        {
+          cat: "Influence",
+          q: {
+            pt: "Explique um problema técnico complexo para stakeholders não técnicos.",
+            en: "Explain a complex technical issue to non-technical stakeholders.",
+          },
+        },
+        {
+          cat: "Influence",
+          q: {
+            pt: "Conte-me sobre uma vez em que você influenciou sem autoridade formal.",
+            en: "Tell me about a time you influenced without authority.",
+          },
+        },
+      ];
+      const CATS = {
+        Ownership: { pt: "Propriedade", en: "Ownership" },
+        Conflict: { pt: "Conflito", en: "Conflict" },
+        Failure: { pt: "Falha", en: "Failure" },
+        Ambiguity: { pt: "Ambiguidade", en: "Ambiguity" },
+        Delivery: { pt: "Entrega", en: "Delivery" },
+        Mentorship: { pt: "Mentoria", en: "Mentorship" },
+        Influence: { pt: "Influência", en: "Influence" },
+      };
+      const T = {
+        draw: { pt: "🔀 Tirar uma pergunta", en: "🔀 Draw a question" },
+        start: { pt: "▶ Iniciar", en: "▶ Start" },
+        pause: { pt: "⏸ Pausar", en: "⏸ Pause" },
+        target: { pt: "Meta de 2 minutos", en: "2-minute target" },
+        timeUp: {
+          pt: "⏰ Tempo — como foi?",
+          en: "⏰ Time — how did it feel?",
+        },
+        saved: { pt: "Salvo ✓", en: "Saved ✓" },
+        storyCopied: { pt: "História copiada ✓", en: "Story copied ✓" },
+        allCopied: {
+          pt: "Todas as histórias copiadas ✓",
+          en: "All stories copied ✓",
+        },
+        nothing: {
+          pt: "Nada para exportar ainda.",
+          en: "Nothing to export yet.",
+        },
+        copyFail: {
+          pt: "Cópia falhou — selecione & ⌘C",
+          en: "Copy failed — select & ⌘C",
+        },
+        empty: {
+          pt: "Ainda não há histórias — salve a primeira acima.",
+          en: "No stories yet — save your first one above.",
+        },
+        load: { pt: "Carregar", en: "Load" },
+        del: { pt: "Excluir", en: "Delete" },
+        confirmClear: {
+          pt: "Excluir TODAS as histórias salvas? Isso não pode ser desfeito.",
+          en: "Delete ALL saved stories? This can't be undone.",
+        },
+        pressStart: {
+          pt: "Aperte “Tirar uma pergunta” para começar.",
+          en: "Press “Draw a question” to start.",
+        },
+        allCats: { pt: "Todas as categorias", en: "All categories" },
+      };
+      const STORE = "behavioral-dojo.stories";
+      const $ = (id) => document.getElementById(id);
+      const L = (o) => o[PiI18n.lang];
+      const cats = [...new Set(QUESTIONS.map((x) => x.cat))];
+      const sel = $("catfilter");
+
+      let lastQ = null;
+      function drawQuestion() {
+        const f = sel.value;
+        const pool = f ? QUESTIONS.filter((x) => x.cat === f) : QUESTIONS;
+        if (pool.length === 0) return;
+        let pick;
+        do {
+          pick = pool[Math.floor(Math.random() * pool.length)];
+        } while (pool.length > 1 && pick === lastQ);
+        lastQ = pick;
+        renderQuestion();
+      }
+      function renderQuestion() {
+        if (!lastQ) {
+          $("qcat").textContent = "—";
+          $("qtxt").textContent = L(T.pressStart);
+          return;
+        }
+        $("qcat").textContent = L(CATS[lastQ.cat]);
+        $("qtxt").textContent = "“" + L(lastQ.q) + "”";
+      }
+      function renderFilter() {
+        const cur = sel.value;
+        sel.options.length = 0;
+        const all = document.createElement("option");
+        all.value = "";
+        all.textContent = L(T.allCats);
+        sel.appendChild(all);
+        cats.forEach((c) => {
+          const o = document.createElement("option");
+          o.value = c;
+          o.textContent = L(CATS[c]);
+          sel.appendChild(o);
+        });
+        sel.value = cur;
+      }
+      function renderPlaceholders() {
+        document.querySelectorAll("[data-ph-pt]").forEach((el) => {
+          el.placeholder =
+            PiI18n.lang === "en" ? el.dataset.phEn : el.dataset.phPt;
+        });
+      }
+
+      // ---- timer ----
+      let t = 120,
+        interval = null,
+        running = false,
+        timeUp = false;
+      function fmt(s) {
+        const m = Math.floor(s / 60),
+          r = s % 60;
+        return m + ":" + (r < 10 ? "0" : "") + r;
+      }
+      function renderTimer() {
+        $("timer").textContent = fmt(t);
+        $("timer").classList.toggle("warn", t <= 20 && running);
+        $("tbtn").textContent = running ? L(T.pause) : L(T.start);
+        $("thint").textContent = timeUp ? L(T.timeUp) : L(T.target);
+      }
+      function toggleTimer() {
+        if (running) {
+          clearInterval(interval);
+          running = false;
+          renderTimer();
+          return;
+        }
+        running = true;
+        timeUp = false;
+        renderTimer();
+        interval = setInterval(() => {
+          t--;
+          if (t <= 0) {
+            clearInterval(interval);
+            running = false;
+            timeUp = true;
+          }
+          renderTimer();
+        }, 1000);
+      }
+      function resetTimer() {
+        clearInterval(interval);
+        running = false;
+        timeUp = false;
+        t = 120;
+        renderTimer();
+      }
+
+      // ---- storage ----
+      function load() {
+        try {
+          return JSON.parse(localStorage.getItem(STORE) || "[]");
+        } catch (e) {
+          return [];
+        }
+      }
+      function persist(a) {
+        try {
+          localStorage.setItem(STORE, JSON.stringify(a));
+        } catch (e) {}
+      }
+      function formVals() {
+        return {
+          title:
+            $("title").value.trim() ||
+            L({ pt: "Sem título", en: "Untitled story" }),
+          bluf: $("bluf").value.trim(),
+          sit: $("sit").value.trim(),
+          act: $("act").value.trim(),
+          res: $("res").value.trim(),
+          checks: [
+            $("c1").checked,
+            $("c2").checked,
+            $("c3").checked,
+            $("c4").checked,
+            $("c5").checked,
+          ],
+          ts: Date.now(),
+        };
+      }
+      function saveStory() {
+        const v = formVals();
+        const a = load();
+        a.unshift(v);
+        persist(a);
+        renderLib();
+        flash(L(T.saved));
+      }
+      function clearForm() {
+        ["title", "bluf", "sit", "act", "res"].forEach(
+          (id) => ($(id).value = ""),
+        );
+        ["c1", "c2", "c3", "c4", "c5"].forEach((id) => ($(id).checked = false));
+      }
+      function loadStory(ts) {
+        const s = load().find((x) => x.ts === ts);
+        if (!s) return;
+        $("title").value = s.title;
+        $("bluf").value = s.bluf;
+        $("sit").value = s.sit;
+        $("act").value = s.act;
+        $("res").value = s.res;
+        $("c1").checked = s.checks[0];
+        $("c2").checked = s.checks[1];
+        $("c3").checked = s.checks[2];
+        $("c4").checked = s.checks[3];
+        $("c5").checked = s.checks[4];
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+      function delStory(ts) {
+        persist(load().filter((x) => x.ts !== ts));
+        renderLib();
+      }
+      function clearAll() {
+        if (confirm(L(T.confirmClear))) {
+          persist([]);
+          renderLib();
+        }
+      }
+
+      function renderLib() {
+        const a = load();
+        const lib = $("lib");
+        lib.textContent = "";
+        if (a.length === 0) {
+          const e = document.createElement("div");
+          e.className = "empty";
+          e.textContent = L(T.empty);
+          lib.appendChild(e);
+          return;
+        }
+        let totalChecks = 0;
+        a.forEach((s) => {
+          totalChecks += s.checks.filter(Boolean).length;
+          const row = document.createElement("div");
+          row.className = "storyrow";
+          const meta = document.createElement("div");
+          meta.className = "meta";
+          const b = document.createElement("b");
+          b.textContent = s.title;
+          meta.appendChild(b);
+          const sm = document.createElement("small");
+          sm.textContent = (s.bluf || s.sit || "(empty)").slice(0, 90);
+          meta.appendChild(sm);
+          const loadBtn = document.createElement("button");
+          loadBtn.textContent = L(T.load);
+          loadBtn.onclick = () => loadStory(s.ts);
+          const delBtn = document.createElement("button");
+          delBtn.className = "del";
+          delBtn.textContent = L(T.del);
+          delBtn.onclick = () => delStory(s.ts);
+          row.appendChild(meta);
+          row.appendChild(loadBtn);
+          row.appendChild(delBtn);
+          lib.appendChild(row);
+        });
+        const k = document.createElement("div");
+        k.className = "kicker";
+        k.style.marginTop = "6px";
+        k.textContent =
+          PiI18n.lang === "en"
+            ? a.length +
+              (a.length === 1 ? " story" : " stories") +
+              " saved · " +
+              totalChecks +
+              " self-checks ticked"
+            : a.length +
+              (a.length === 1 ? " história salva" : " histórias salvas") +
+              " · " +
+              totalChecks +
+              " autoavaliações marcadas";
+        lib.appendChild(k);
+      }
+
+      function mdOne(s) {
+        const en = PiI18n.lang === "en";
+        return (
+          "### " +
+          s.title +
+          "\n\n" +
+          "**BLUF:** " +
+          s.bluf +
+          "\n\n" +
+          "**" +
+          (en ? "Situation/Task" : "Situação/Tarefa") +
+          ":** " +
+          s.sit +
+          "\n\n" +
+          "**" +
+          (en ? "Action" : "Ação") +
+          ":** " +
+          s.act +
+          "\n\n" +
+          "**" +
+          (en ? "Result" : "Resultado") +
+          ":** " +
+          s.res +
+          "\n"
+        );
+      }
+      function exportStory() {
+        copy(mdOne(formVals()), L(T.storyCopied));
+      }
+      function exportAll() {
+        const a = load();
+        if (!a.length) {
+          flash(L(T.nothing));
+          return;
+        }
+        copy(a.map(mdOne).join("\n---\n\n"), L(T.allCopied));
+      }
+      function downloadAll() {
+        const a = load();
+        if (!a.length) {
+          flash(L(T.nothing));
+          return;
+        }
+        const header =
+          PiI18n.lang === "en"
+            ? "# My Behavioral Story Bank\n\n"
+            : "# Meu Banco de Histórias Comportamentais\n\n";
+        const md = header + a.map(mdOne).join("\n---\n\n");
+        const blob = new Blob([md], { type: "text/markdown" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "my-stories.md";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }
+      function copy(text, ok) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard
+            .writeText(text)
+            .then(() => flash(ok))
+            .catch(() => fallbackCopy(text, ok));
+        } else fallbackCopy(text, ok);
+      }
+      function fallbackCopy(text, ok) {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        try {
+          document.execCommand("copy");
+          flash(ok);
+        } catch (e) {
+          flash(L(T.copyFail));
+        }
+        document.body.removeChild(ta);
+      }
+      let flashT = null;
+      function flash(msg) {
+        const b = $("tbtn");
+        if (!b) return;
+        b.textContent = msg;
+        clearTimeout(flashT);
+        flashT = setTimeout(() => renderTimer(), 1400);
+      }
+
+      // i18n.js is deferred → it loads after parse but before DOMContentLoaded.
+      // All PiI18n access happens here or later, never at top level.
+      document.addEventListener("DOMContentLoaded", () => {
+        renderFilter();
+        renderPlaceholders();
+        drawQuestion();
+        renderTimer();
+        renderLib();
+        // re-render every dynamic string when the language switches
+        PiI18n.on(() => {
+          renderFilter();
+          renderPlaceholders();
+          renderQuestion();
+          renderTimer();
+          renderLib();
+        });
+      });
+    </script>
+  </body>
+</html>

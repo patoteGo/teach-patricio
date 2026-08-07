@@ -1,56 +1,104 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pi · Lesson 2 — Driving the TUI</title>
+    <title
+      data-pt="Pi · Lição 2 — Dirigindo o TUI"
+      data-en="Pi · Lesson 2 — Driving the TUI"
+    >
+      Pi · Lição 2 — Dirigindo o TUI
+    </title>
     <link rel="stylesheet" href="../assets/style.css" />
+    <link rel="stylesheet" href="../assets/dark.css" />
+    <link rel="stylesheet" href="../assets/i18n.css" />
+    <script src="../assets/i18n.js" defer></script>
+    <script src="../assets/nav.js" defer></script>
   </head>
-  <body>
+  <body class="lang-pt">
     <article class="lesson">
       <!-- ===================== HERO ===================== -->
       <header class="hero">
-        <span class="eyebrow">⬡ Lesson 02 · Interactive mastery</span>
-        <h1>Drive the loop,<br />don't watch it.</h1>
+        <span class="eyebrow"
+          ><span data-lang="pt">⬡ Lição 02 · Domínio interativo</span
+          ><span data-lang="en">⬡ Lesson 02 · Interactive mastery</span></span
+        >
+        <h1>
+          <span data-lang="pt">Dirija o loop,<br />não apenas o observe.</span
+          ><span data-lang="en">Drive the loop,<br />don't watch it.</span>
+        </h1>
         <p class="lead">
-          You know the loop now (Lesson 1). This lesson is the cockpit: the four
-          regions of the screen, the handful of keys that make Pi fast, and the
-          one superpower —
-          <em>steering a live agent without ever waiting for it.</em>
+          <span data-lang="pt"
+            >Você já conhece o loop (Lição 1). Esta lição é a cabine: as quatro
+            regiões da tela, o punhado de teclas que torna o Pi rápido, e o
+            único superpoder —
+            <em>dirigir um agente ao vivo sem nunca esperar por ele.</em></span
+          ><span data-lang="en"
+            >You know the loop now (Lesson 1). This lesson is the cockpit: the
+            four regions of the screen, the handful of keys that make Pi fast,
+            and the one superpower —
+            <em>steering a live agent without ever waiting for it.</em></span
+          >
         </p>
         <p class="lesson-nav-top">
-          ↑ <a href="../MISSION.md">Mission</a> · prev:
-          <a href="./0001-the-core-loop.html">Lesson 1 · The Core Loop</a> ·
-          ref: <a href="../reference/pi-glossary.html">Glossary</a>
+          ↑ <span data-lang="pt">parte de</span
+          ><span data-lang="en">part of</span>
+          <a href="../MISSION.md"
+            ><span data-lang="pt">Missão</span
+            ><span data-lang="en">Mission</span></a
+          >
+          · <span data-lang="pt">anterior</span
+          ><span data-lang="en">prev</span>:
+          <a href="./0001-the-core-loop.html"
+            ><span data-lang="pt">Lição 1 · O Core Loop</span
+            ><span data-lang="en">Lesson 1 · The Core Loop</span></a
+          >
+          · <span data-lang="pt">ref</span><span data-lang="en">ref</span>:
+          <a href="../reference/pi-glossary.html"
+            ><span data-lang="pt">Glossário</span
+            ><span data-lang="en">Glossary</span></a
+          >
         </p>
       </header>
 
       <!-- ===================== 1. SCREEN ANATOMY ===================== -->
-      <h2 class="section"><span class="num">1</span>Anatomy of the screen</h2>
+      <h2 class="section">
+        <span class="num">1</span><span data-lang="pt">Anatomia da tela</span
+        ><span data-lang="en">Anatomy of the screen</span>
+      </h2>
       <p class="kicker">
-        Four regions, top to bottom. Knowing what each shows is the difference
-        between guessing and <em>reading</em> Pi.
+        <span data-lang="pt"
+          >Quatro regiões, de cima para baixo. Saber o que cada uma mostra é a
+          diferença entre adivinhar e <em>ler</em> o Pi.</span
+        ><span data-lang="en"
+          >Four regions, top to bottom. Knowing what each shows is the
+          difference between guessing and <em>reading</em> Pi.</span
+        >
       </p>
 
       <div style="margin: 22px 0 8px">
-        <svg
-          viewBox="0 0 820 330"
-          width="100%"
-          role="img"
-          aria-label="Anatomy of the Pi TUI: header, messages, editor, footer"
-        >
+        <svg viewBox="0 0 820 330" width="100%" role="img" aria-labelledby="t1">
+          <title
+            id="t1"
+            data-pt="Anatomia do TUI do Pi: cabeçalho, mensagens, editor, rodapé"
+            data-en="Anatomy of the Pi TUI: header, messages, editor, footer"
+          >
+            Anatomia do TUI do Pi
+          </title>
           <!-- outer terminal frame -->
-          <rect x="10" y="10" width="800" height="310" rx="14" fill="#14132b" />
-          <circle cx="30" cy="30" r="5" fill="#ef476f" />
-          <circle cx="46" cy="30" r="5" fill="#f59e0b" />
-          <circle cx="62" cy="30" r="5" fill="#0fb9a4" />
+          <rect x="10" y="10" width="800" height="310" rx="14" fill="#211d33" />
+          <circle cx="30" cy="30" r="5" fill="#fb7185" />
+          <circle cx="46" cy="30" r="5" fill="#fbbf24" />
+          <circle cx="62" cy="30" r="5" fill="#2dd4bf" />
           <text
             x="410"
             y="34"
             text-anchor="middle"
             font-family="JetBrains Mono"
             font-size="11"
-            fill="#8b88b8"
+            fill="#a0a3b5"
+            data-pt="~/projects/myapp — pi"
+            data-en="~/projects/myapp — pi"
           >
             ~/projects/myapp — pi
           </text>
@@ -71,10 +119,12 @@
             font-family="JetBrains Mono"
             font-size="11"
             fill="#c4b5ff"
+            data-pt="⬡ atalhos · AGENTS.md · 2 skills · 1 extensão"
+            data-en="⬡ shortcuts · AGENTS.md · 2 skills · 1 extension"
           >
-            ⬡ shortcuts · AGENTS.md · 2 skills · 1 extension
+            ⬡ atalhos · AGENTS.md · 2 skills · 1 extensão
           </text>
-          <rect x="700" y="58" width="84" height="20" rx="6" fill="#6c4bf0" />
+          <rect x="700" y="58" width="84" height="20" rx="6" fill="#8b6ff7" />
           <text
             x="742"
             y="72"
@@ -83,8 +133,10 @@
             font-size="10"
             font-weight="700"
             fill="#fff"
+            data-pt="CABEÇALHO"
+            data-en="HEADER"
           >
-            HEADER
+            CABEÇALHO
           </text>
 
           <!-- 2 messages -->
@@ -102,9 +154,11 @@
             y="116"
             font-family="JetBrains Mono"
             font-size="10.5"
-            fill="#8b88b8"
+            fill="#a0a3b5"
+            data-pt="&gt; adicione um endpoint de health"
+            data-en="&gt; add a health endpoint"
           >
-            &gt; add a health endpoint
+            &gt; adicione um endpoint de health
           </text>
           <text
             x="36"
@@ -112,6 +166,8 @@
             font-family="JetBrains Mono"
             font-size="10.5"
             fill="#7ee0c8"
+            data-pt="🔧 read src/routes.ts"
+            data-en="🔧 read src/routes.ts"
           >
             🔧 read src/routes.ts
           </text>
@@ -121,6 +177,8 @@
             font-family="JetBrains Mono"
             font-size="10.5"
             fill="#7ee0c8"
+            data-pt="🔧 bash npm test"
+            data-en="🔧 bash npm test"
           >
             🔧 bash npm test
           </text>
@@ -130,8 +188,10 @@
             font-family="JetBrains Mono"
             font-size="10.5"
             fill="#c4b5ff"
+            data-pt="🧠 thinking… (recolhido)"
+            data-en="🧠 thinking… (collapsed)"
           >
-            🧠 thinking… (collapsed)
+            🧠 thinking… (recolhido)
           </text>
           <text
             x="36"
@@ -139,10 +199,12 @@
             font-family="JetBrains Mono"
             font-size="10.5"
             fill="#e8e6ff"
+            data-pt="💬 Pronto — GET /health → 200"
+            data-en="💬 Done — GET /health → 200"
           >
-            💬 Done — GET /health → 200
+            💬 Pronto — GET /health → 200
           </text>
-          <rect x="700" y="196" width="84" height="20" rx="6" fill="#0fb9a4" />
+          <rect x="700" y="196" width="84" height="20" rx="6" fill="#2dd4bf" />
           <text
             x="742"
             y="210"
@@ -151,8 +213,10 @@
             font-size="10"
             font-weight="700"
             fill="#fff"
+            data-pt="MENSAGENS"
+            data-en="MESSAGES"
           >
-            MESSAGES
+            MENSAGENS
           </text>
 
           <!-- 3 editor -->
@@ -163,7 +227,7 @@
             height="50"
             rx="8"
             fill="#2a2748"
-            stroke="#6c4bf0"
+            stroke="#8b6ff7"
             stroke-width="2"
           />
           <text
@@ -172,10 +236,12 @@
             font-family="JetBrains Mono"
             font-size="12"
             fill="#e8e6ff"
+            data-pt="▎agora adicione /metrics_"
+            data-en="▎now add /metrics_"
           >
-            ▎now add /metrics_
+            ▎agora adicione /metrics_
           </text>
-          <rect x="554" y="262" width="80" height="20" rx="6" fill="#f59e0b" />
+          <rect x="554" y="262" width="80" height="20" rx="6" fill="#fbbf24" />
           <text
             x="594"
             y="276"
@@ -184,6 +250,8 @@
             font-size="10"
             font-weight="700"
             fill="#fff"
+            data-pt="EDITOR"
+            data-en="EDITOR"
           >
             EDITOR
           </text>
@@ -203,7 +271,9 @@
             y="272"
             font-family="JetBrains Mono"
             font-size="8.5"
-            fill="#8b88b8"
+            fill="#a0a3b5"
+            data-pt="~/myapp · s: health-endpoint"
+            data-en="~/myapp · s: health-endpoint"
           >
             ~/myapp · s: health-endpoint
           </text>
@@ -212,7 +282,9 @@
             y="286"
             font-family="JetBrains Mono"
             font-size="8.5"
-            fill="#8b88b8"
+            fill="#a0a3b5"
+            data-pt="↑12k ↓3k R8k · $0.04 · 18% · sonnet"
+            data-en="↑12k ↓3k R8k · $0.04 · 18% · sonnet"
           >
             ↑12k ↓3k R8k · $0.04 · 18% · sonnet
           </text>
@@ -225,196 +297,396 @@
             font-size="9"
             font-weight="700"
             fill="#fff"
+            data-pt="RODAPÉ"
+            data-en="FOOTER"
           >
-            FOOTER
+            RODAPÉ
           </text>
         </svg>
       </div>
 
       <div class="grid cols-2" style="margin-top: 14px">
         <div class="card">
-          <h4>① Header</h4>
+          <h4>
+            <span data-lang="pt">① Cabeçalho</span
+            ><span data-lang="en">① Header</span>
+          </h4>
           <p>
-            Loaded <code class="inline">AGENTS.md</code>, active skills,
-            extensions, prompt templates. Your "what's wired up" glance.
-            <code class="inline">/hotkeys</code> lives here.
+            <span data-lang="pt"
+              >Mostra o <code class="inline">AGENTS.md</code> carregado, skills
+              ativas, extensões, prompt templates. Seu olhar de "o que está
+              ligado". O <code class="inline">/hotkeys</code> fica aqui.</span
+            ><span data-lang="en"
+              >Loaded <code class="inline">AGENTS.md</code>, active skills,
+              extensions, prompt templates. Your "what's wired up" glance.
+              <code class="inline">/hotkeys</code> lives here.</span
+            >
           </p>
         </div>
         <div class="card">
-          <h4>② Messages</h4>
+          <h4>
+            <span data-lang="pt">② Mensagens</span
+            ><span data-lang="en">② Messages</span>
+          </h4>
           <p>
-            Your prompt, the model's reply, every tool call + result. Collapse
-            noise with <span class="kbd">Ctrl</span>+<span class="kbd">O</span>
-            (tools) and <span class="kbd">Ctrl</span>+<span class="kbd">T</span>
-            (thinking).
+            <span data-lang="pt"
+              >Seu prompt, a resposta do modelo, toda chamada de ferramenta +
+              resultado. Recolha o ruído com <span class="kbd">Ctrl</span>+<span
+                class="kbd"
+                >O</span
+              >
+              (ferramentas) e <span class="kbd">Ctrl</span>+<span class="kbd"
+                >T</span
+              >
+              (thinking).</span
+            ><span data-lang="en"
+              >Your prompt, the model's reply, every tool call + result.
+              Collapse noise with <span class="kbd">Ctrl</span>+<span
+                class="kbd"
+                >O</span
+              >
+              (tools) and <span class="kbd">Ctrl</span>+<span class="kbd"
+                >T</span
+              >
+              (thinking).</span
+            >
           </p>
         </div>
         <div class="card">
-          <h4>③ Editor</h4>
+          <h4>
+            <span data-lang="pt">③ Editor</span
+            ><span data-lang="en">③ Editor</span>
+          </h4>
           <p>
-            Where you type. Border color = thinking level.
-            <code class="inline">@</code> files,
-            <span class="kbd">Tab</span> complete,
-            <span class="kbd">Ctrl</span>+<span class="kbd">G</span> for a real
-            editor.
+            <span data-lang="pt"
+              >Onde você digita. A cor da borda = nível de thinking.
+              <code class="inline">@</code> arquivos,
+              <span class="kbd">Tab</span> completa,
+              <span class="kbd">Ctrl</span>+<span class="kbd">G</span> para um
+              editor de verdade.</span
+            ><span data-lang="en"
+              >Where you type. Border color = thinking level.
+              <code class="inline">@</code> files,
+              <span class="kbd">Tab</span> complete,
+              <span class="kbd">Ctrl</span>+<span class="kbd">G</span> for a
+              real editor.</span
+            >
           </p>
         </div>
         <div class="card">
-          <h4>④ Footer</h4>
+          <h4>
+            <span data-lang="pt">④ Rodapé</span
+            ><span data-lang="en">④ Footer</span>
+          </h4>
           <p>
-            The dashboard: cwd, session name, token/cache/cost,
-            <strong>context %</strong>, current model. Your budget readout.
+            <span data-lang="pt"
+              >O painel: cwd, nome da sessão, token/cache/custo,
+              <strong>contexto %</strong>, modelo atual. Sua leitura de
+              orçamento.</span
+            ><span data-lang="en"
+              >The dashboard: cwd, session name, token/cache/cost,
+              <strong>context %</strong>, current model. Your budget
+              readout.</span
+            >
           </p>
         </div>
       </div>
       <p class="cite">
-        Source:
+        <span data-lang="pt">Fonte:</span><span data-lang="en">Source:</span>
         <a href="https://pi.dev/docs/latest" target="_blank" rel="noopener"
-          >Pi docs · Interactive Mode</a
+          ><span data-lang="pt">documentos do Pi · Modo Interativo</span
+          ><span data-lang="en">Pi docs · Interactive Mode</span></a
         >.
       </p>
 
       <!-- ===================== 2. KEYBOARD POWER MAP ===================== -->
-      <h2 class="section"><span class="num">2</span>The power keys</h2>
+      <h2 class="section">
+        <span class="num">2</span><span data-lang="pt">As teclas de poder</span
+        ><span data-lang="en">The power keys</span>
+      </h2>
       <p class="kicker">
-        You don't need all of them today. Memorize these six groups and Pi stops
-        feeling like a chat and starts feeling like a cockpit.
+        <span data-lang="pt"
+          >Você não precisa de todas hoje. Decore esses seis grupos e o Pi deixa
+          de parecer um chat e passa a parecer uma cabine.</span
+        ><span data-lang="en"
+          >You don't need all of them today. Memorize these six groups and Pi
+          stops feeling like a chat and starts feeling like a cockpit.</span
+        >
       </p>
 
       <div class="grid cols-2" style="margin-top: 18px">
-        <div class="card" style="border-top: 4px solid #6c4bf0">
-          <h4>🎛️ Models &amp; thinking</h4>
+        <div class="card" style="border-top: 4px solid #8b6ff7">
+          <h4>
+            <span data-lang="pt">🎛️ Modelos &amp; thinking</span
+            ><span data-lang="en">🎛️ Models &amp; thinking</span>
+          </h4>
           <p>
-            <span class="kbd">Ctrl</span>+<span class="kbd">L</span> model
-            picker · <span class="kbd">Ctrl</span>+<span class="kbd">P</span> /
-            <span class="kbd">⇧Ctrl</span>+<span class="kbd">P</span> cycle
-            scoped models · <span class="kbd">Shift</span>+<span class="kbd"
-              >Tab</span
+            <span data-lang="pt"
+              ><span class="kbd">Ctrl</span>+<span class="kbd">L</span> seletor
+              de modelos · <span class="kbd">Ctrl</span>+<span class="kbd"
+                >P</span
+              >
+              / <span class="kbd">⇧Ctrl</span>+<span class="kbd">P</span>
+              percorre modelos com escopo · <span class="kbd">Shift</span>+<span
+                class="kbd"
+                >Tab</span
+              >
+              alterna o nível de thinking</span
+            ><span data-lang="en"
+              ><span class="kbd">Ctrl</span>+<span class="kbd">L</span> model
+              picker · <span class="kbd">Ctrl</span>+<span class="kbd">P</span>
+              / <span class="kbd">⇧Ctrl</span>+<span class="kbd">P</span> cycle
+              scoped models · <span class="kbd">Shift</span>+<span class="kbd"
+                >Tab</span
+              >
+              cycle thinking level</span
             >
-            cycle thinking level
           </p>
         </div>
-        <div class="card" style="border-top: 4px solid #ef476f">
-          <h4>📣 Steering the loop</h4>
+        <div class="card" style="border-top: 4px solid #fb7185">
+          <h4>
+            <span data-lang="pt">📣 Dirigindo o loop</span
+            ><span data-lang="en">📣 Steering the loop</span>
+          </h4>
           <p>
-            <span class="kbd">Enter</span> queue steering msg ·
-            <span class="kbd">Alt</span>+<span class="kbd">Enter</span> queue
-            follow-up · <span class="kbd">Alt</span>+<span class="kbd">↑</span>
-            pull a queued msg back · <span class="kbd">Esc</span> abort
+            <span data-lang="pt"
+              ><span class="kbd">Enter</span> enfileira steering ·
+              <span class="kbd">Alt</span>+<span class="kbd">Enter</span>
+              enfileira follow-up · <span class="kbd">Alt</span>+<span
+                class="kbd"
+                >↑</span
+              >
+              recupera uma msg enfileirada ·
+              <span class="kbd">Esc</span> aborta</span
+            ><span data-lang="en"
+              ><span class="kbd">Enter</span> queue steering msg ·
+              <span class="kbd">Alt</span>+<span class="kbd">Enter</span> queue
+              follow-up · <span class="kbd">Alt</span>+<span class="kbd"
+                >↑</span
+              >
+              pull a queued msg back · <span class="kbd">Esc</span> abort</span
+            >
           </p>
         </div>
-        <div class="card" style="border-top: 4px solid #0fb9a4">
-          <h4>🧹 Taming the output</h4>
+        <div class="card" style="border-top: 4px solid #2dd4bf">
+          <h4>
+            <span data-lang="pt">🧹 Domando a saída</span
+            ><span data-lang="en">🧹 Taming the output</span>
+          </h4>
           <p>
-            <span class="kbd">Ctrl</span>+<span class="kbd">O</span>
-            collapse/expand tool output · <span class="kbd">Ctrl</span>+<span
-              class="kbd"
-              >T</span
+            <span data-lang="pt"
+              ><span class="kbd">Ctrl</span>+<span class="kbd">O</span>
+              recolhe/expandi a saída de ferramentas ·
+              <span class="kbd">Ctrl</span>+<span class="kbd">T</span>
+              recolhe/expandi o thinking · <span class="kbd">Ctrl</span>+<span
+                class="kbd"
+                >X</span
+              >
+              copia a última resposta</span
+            ><span data-lang="en"
+              ><span class="kbd">Ctrl</span>+<span class="kbd">O</span>
+              collapse/expand tool output · <span class="kbd">Ctrl</span>+<span
+                class="kbd"
+                >T</span
+              >
+              collapse/expand thinking · <span class="kbd">Ctrl</span>+<span
+                class="kbd"
+                >X</span
+              >
+              copy last reply</span
             >
-            collapse/expand thinking · <span class="kbd">Ctrl</span>+<span
-              class="kbd"
-              >X</span
-            >
-            copy last reply
           </p>
         </div>
-        <div class="card" style="border-top: 4px solid #f59e0b">
-          <h4>🌲 Sessions</h4>
+        <div class="card" style="border-top: 4px solid #fbbf24">
+          <h4>
+            <span data-lang="pt">🌲 Sessões</span
+            ><span data-lang="en">🌲 Sessions</span>
+          </h4>
           <p>
-            <span class="kbd">Esc</span> <span class="kbd">Esc</span> open
-            <code class="inline">/tree</code> · then
-            <span class="kbd">⌃←</span>/<span class="kbd">⌃→</span> jump
-            branches · <span class="kbd">Shift</span>+<span class="kbd">L</span>
-            label a bookmark
+            <span data-lang="pt"
+              ><span class="kbd">Esc</span> <span class="kbd">Esc</span> abre o
+              <code class="inline">/tree</code> · depois
+              <span class="kbd">⌃←</span>/<span class="kbd">⌃→</span> pula entre
+              ramos · <span class="kbd">Shift</span>+<span class="kbd">L</span>
+              rotula um marcador</span
+            ><span data-lang="en"
+              ><span class="kbd">Esc</span> <span class="kbd">Esc</span> open
+              <code class="inline">/tree</code> · then
+              <span class="kbd">⌃←</span>/<span class="kbd">⌃→</span> jump
+              branches · <span class="kbd">Shift</span>+<span class="kbd"
+                >L</span
+              >
+              label a bookmark</span
+            >
           </p>
         </div>
-        <div class="card" style="border-top: 4px solid #3b82f6">
-          <h4>✍️ Editor craft</h4>
+        <div class="card" style="border-top: 4px solid #60a5fa">
+          <h4>
+            <span data-lang="pt">✍️ Ofício do editor</span
+            ><span data-lang="en">✍️ Editor craft</span>
+          </h4>
           <p>
-            <span class="kbd">Shift</span>+<span class="kbd">Enter</span>
-            newline · <span class="kbd">Ctrl</span>+<span class="kbd">G</span>
-            external editor · <span class="kbd">Ctrl</span>+<span class="kbd"
-              >V</span
+            <span data-lang="pt"
+              ><span class="kbd">Shift</span>+<span class="kbd">Enter</span>
+              nova linha · <span class="kbd">Ctrl</span>+<span class="kbd"
+                >G</span
+              >
+              editor externo · <span class="kbd">Ctrl</span>+<span class="kbd"
+                >V</span
+              >
+              cola imagem/texto · <code class="inline">!</code>cmd bash
+              inline</span
+            ><span data-lang="en"
+              ><span class="kbd">Shift</span>+<span class="kbd">Enter</span>
+              newline · <span class="kbd">Ctrl</span>+<span class="kbd">G</span>
+              external editor · <span class="kbd">Ctrl</span>+<span class="kbd"
+                >V</span
+              >
+              paste image/text · <code class="inline">!</code>cmd inline
+              bash</span
             >
-            paste image/text · <code class="inline">!</code>cmd inline bash
           </p>
         </div>
         <div class="card" style="border-top: 4px solid #64748b">
-          <h4>🛑 Exit &amp; clear</h4>
+          <h4>
+            <span data-lang="pt">🛑 Sair &amp; limpar</span
+            ><span data-lang="en">🛑 Exit &amp; clear</span>
+          </h4>
           <p>
-            <span class="kbd">Ctrl</span>+<span class="kbd">C</span> clear
-            editor · <span class="kbd">Ctrl</span>+<span class="kbd">C</span>
-            <span class="kbd">Ctrl</span>+<span class="kbd">C</span> quit ·
-            <span class="kbd">Ctrl</span>+<span class="kbd">D</span> exit when
-            empty
+            <span data-lang="pt"
+              ><span class="kbd">Ctrl</span>+<span class="kbd">C</span> limpa o
+              editor · <span class="kbd">Ctrl</span>+<span class="kbd">C</span>
+              <span class="kbd">Ctrl</span>+<span class="kbd">C</span> encerra ·
+              <span class="kbd">Ctrl</span>+<span class="kbd">D</span> sai
+              quando vazio</span
+            ><span data-lang="en"
+              ><span class="kbd">Ctrl</span>+<span class="kbd">C</span> clear
+              editor · <span class="kbd">Ctrl</span>+<span class="kbd">C</span>
+              <span class="kbd">Ctrl</span>+<span class="kbd">C</span> quit ·
+              <span class="kbd">Ctrl</span>+<span class="kbd">D</span> exit when
+              empty</span
+            >
           </p>
         </div>
       </div>
       <p class="cite">
-        Full list:
+        <span data-lang="pt">Lista completa:</span
+        ><span data-lang="en">Full list:</span>
         <a href="https://pi.dev/docs/latest" target="_blank" rel="noopener"
-          >Pi docs · Keyboard Shortcuts</a
+          ><span data-lang="pt">documentos do Pi · Atalhos de Teclado</span
+          ><span data-lang="en">Pi docs · Keyboard Shortcuts</span></a
         >
-        (or <code class="inline">/hotkeys</code> in-app). Customize via
-        <code class="inline">~/.pi/agent/keybindings.json</code>.
+        <span data-lang="pt"
+          >(ou <code class="inline">/hotkeys</code> no app). Personalize via
+          <code class="inline">~/.pi/agent/keybindings.json</code>.</span
+        ><span data-lang="en"
+          >(or <code class="inline">/hotkeys</code> in-app). Customize via
+          <code class="inline">~/.pi/agent/keybindings.json</code>.</span
+        >
       </p>
 
       <!-- ===================== 3. STEERING (the superpower) ===================== -->
       <h2 class="section">
-        <span class="num">3</span>Steering — the power-user superpower
+        <span class="num">3</span
+        ><span data-lang="pt">Steering — o superpoder do power-user</span
+        ><span data-lang="en">Steering — the power-user superpower</span>
       </h2>
       <p class="kicker">
-        This is the single biggest productivity lever in Pi. While the agent is
-        mid-loop, you have three ways to intervene. Pick the right one and you
-        never sit idle.
+        <span data-lang="pt"
+          >Esta é a maior alavanca de produtividade do Pi. Com o agente no meio
+          do loop, você tem três formas de intervir. Escolha a certa e nunca
+          fica parado.</span
+        ><span data-lang="en"
+          >This is the single biggest productivity lever in Pi. While the agent
+          is mid-loop, you have three ways to intervene. Pick the right one and
+          you never sit idle.</span
+        >
       </p>
 
       <div class="grid cols-3" style="margin-top: 18px">
         <div class="card" style="text-align: center">
           <div style="font-size: 34px; margin-bottom: 6px">↩️</div>
-          <h4 style="text-align: center">Steering</h4>
+          <h4 style="text-align: center">
+            <span data-lang="pt">Steering</span
+            ><span data-lang="en">Steering</span>
+          </h4>
           <p style="text-align: center">
-            <span class="kbd">Enter</span> while working
+            <span data-lang="pt"
+              ><span class="kbd">Enter</span> durante o trabalho</span
+            ><span data-lang="en"
+              ><span class="kbd">Enter</span> while working</span
+            >
           </p>
           <div
             class="callout key"
             style="margin: 10px 0 0; padding: 10px 12px 10px 38px"
           >
             <p style="font-size: 0.85rem">
-              Delivered
-              <strong>after the current turn's tool calls</strong> finish.
-              "Actually, also check the tests."
+              <span data-lang="pt"
+                >Entregue
+                <strong>após as chamadas de ferramenta do turno atual</strong>
+                terminarem. "Na verdade, confira os testes também."</span
+              ><span data-lang="en"
+                >Delivered
+                <strong>after the current turn's tool calls</strong> finish.
+                "Actually, also check the tests."</span
+              >
             </p>
           </div>
         </div>
         <div class="card" style="text-align: center">
           <div style="font-size: 34px; margin-bottom: 6px">📋</div>
-          <h4 style="text-align: center">Follow-up</h4>
+          <h4 style="text-align: center">
+            <span data-lang="pt">Follow-up</span
+            ><span data-lang="en">Follow-up</span>
+          </h4>
           <p style="text-align: center">
-            <span class="kbd">Alt</span>+<span class="kbd">Enter</span>
+            <span data-lang="pt"
+              ><span class="kbd">Alt</span>+<span class="kbd">Enter</span></span
+            ><span data-lang="en"
+              ><span class="kbd">Alt</span>+<span class="kbd">Enter</span></span
+            >
           </p>
           <div
             class="callout tip"
             style="margin: 10px 0 0; padding: 10px 12px 10px 38px"
           >
             <p style="font-size: 0.85rem">
-              Delivered only after the agent is <strong>fully done</strong>.
-              "Now do the docs too."
+              <span data-lang="pt"
+                >Entregue só depois que o agente <strong>terminar tudo</strong>.
+                "Agora faça a documentação também."</span
+              ><span data-lang="en"
+                >Delivered only after the agent is <strong>fully done</strong>.
+                "Now do the docs too."</span
+              >
             </p>
           </div>
         </div>
         <div class="card" style="text-align: center">
           <div style="font-size: 34px; margin-bottom: 6px">✋</div>
-          <h4 style="text-align: center">Abort</h4>
-          <p style="text-align: center"><span class="kbd">Esc</span></p>
+          <h4 style="text-align: center">
+            <span data-lang="pt">Abortar</span><span data-lang="en">Abort</span>
+          </h4>
+          <p style="text-align: center">
+            <span data-lang="pt"><span class="kbd">Esc</span></span
+            ><span data-lang="en"><span class="kbd">Esc</span></span>
+          </p>
           <div
             class="callout warn"
             style="margin: 10px 0 0; padding: 10px 12px 10px 38px"
           >
             <p style="font-size: 0.85rem">
-              Stops the run; queued msgs return to the editor (<span class="kbd"
-                >Alt</span
-              >+<span class="kbd">↑</span>). Nothing lost.
+              <span data-lang="pt"
+                >Para a execução; as msgs enfileiradas voltam ao editor (<span
+                  class="kbd"
+                  >Alt</span
+                >+<span class="kbd">↑</span>). Nada perdido.</span
+              ><span data-lang="en"
+                >Stops the run; queued msgs return to the editor (<span
+                  class="kbd"
+                  >Alt</span
+                >+<span class="kbd">↑</span>). Nothing lost.</span
+              >
             </p>
           </div>
         </div>
@@ -422,53 +694,61 @@
 
       <!-- timeline visual -->
       <div style="margin: 22px 0 6px">
-        <svg
-          viewBox="0 0 820 120"
-          width="100%"
-          role="img"
-          aria-label="Timeline showing when steering vs follow-up messages are delivered"
-        >
+        <svg viewBox="0 0 820 120" width="100%" role="img" aria-labelledby="t2">
+          <title
+            id="t2"
+            data-pt="Linha do tempo mostrando quando mensagens de steering vs follow-up são entregues"
+            data-en="Timeline showing when steering vs follow-up messages are delivered"
+          >
+            Linha do tempo: steering vs follow-up
+          </title>
           <line
             x1="20"
             y1="60"
             x2="800"
             y2="60"
-            stroke="#e7e5f0"
+            stroke="#3a3f55"
             stroke-width="3"
           />
           <!-- turn segments -->
-          <rect x="60" y="52" width="120" height="16" rx="8" fill="#6c4bf0" />
+          <rect x="60" y="52" width="120" height="16" rx="8" fill="#8b6ff7" />
           <text
             x="120"
             y="44"
             text-anchor="middle"
             font-family="JetBrains Mono"
             font-size="10"
-            fill="#6c4bf0"
+            fill="#8b6ff7"
+            data-pt="turno 1"
+            data-en="turn 1"
           >
-            turn 1
+            turno 1
           </text>
-          <rect x="220" y="52" width="160" height="16" rx="8" fill="#6c4bf0" />
+          <rect x="220" y="52" width="160" height="16" rx="8" fill="#8b6ff7" />
           <text
             x="300"
             y="44"
             text-anchor="middle"
             font-family="JetBrains Mono"
             font-size="10"
-            fill="#6c4bf0"
+            fill="#8b6ff7"
+            data-pt="turno 2 (ferramentas)"
+            data-en="turn 2 (tools)"
           >
-            turn 2 (tools)
+            turno 2 (ferramentas)
           </text>
-          <rect x="420" y="52" width="100" height="16" rx="8" fill="#0fb9a4" />
+          <rect x="420" y="52" width="100" height="16" rx="8" fill="#2dd4bf" />
           <text
             x="470"
             y="44"
             text-anchor="middle"
             font-family="JetBrains Mono"
             font-size="10"
-            fill="#0fb9a4"
+            fill="#2dd4bf"
+            data-pt="turno 3"
+            data-en="turn 3"
           >
-            turn 3
+            turno 3
           </text>
           <text
             x="560"
@@ -477,6 +757,8 @@
             font-family="JetBrains Mono"
             font-size="10"
             fill="#64748b"
+            data-pt="agent_end"
+            data-en="agent_end"
           >
             agent_end
           </text>
@@ -488,21 +770,23 @@
             y1="86"
             x2="300"
             y2="66"
-            stroke="#ef476f"
+            stroke="#fb7185"
             stroke-width="2"
             stroke-dasharray="3 3"
           />
-          <circle cx="300" cy="60" r="5" fill="#ef476f" />
+          <circle cx="300" cy="60" r="5" fill="#fb7185" />
           <text
             x="300"
             y="104"
             text-anchor="middle"
             font-family="Inter"
             font-size="10.5"
-            fill="#ef476f"
+            fill="#fb7185"
             font-weight="600"
+            data-pt="↩️ steering → injetado após as ferramentas do turno 2"
+            data-en="↩️ steering → injected after turn 2's tools"
           >
-            ↩️ steering → injected after turn 2's tools
+            ↩️ steering → injetado após as ferramentas do turno 2
           </text>
 
           <!-- follow-up drop -->
@@ -511,49 +795,71 @@
             y1="92"
             x2="560"
             y2="66"
-            stroke="#0fb9a4"
+            stroke="#2dd4bf"
             stroke-width="2"
             stroke-dasharray="3 3"
           />
-          <circle cx="560" cy="60" r="5" fill="#0fb9a4" />
+          <circle cx="560" cy="60" r="5" fill="#2dd4bf" />
           <text
             x="560"
             y="110"
             text-anchor="middle"
             font-family="Inter"
             font-size="10.5"
-            fill="#0fb9a4"
+            fill="#2dd4bf"
             font-weight="600"
+            data-pt="📋 follow-up → inicia uma nova execução"
+            data-en="📋 follow-up → starts a fresh run"
           >
-            📋 follow-up → starts a fresh run
+            📋 follow-up → inicia uma nova execução
           </text>
         </svg>
       </div>
 
       <div class="callout tip">
         <p>
-          <strong>Mental model:</strong> steering
-          <em>edits the current run's plan</em>; follow-up
-          <em>queues the next run</em>. Default delivery is one-at-a-time (each
-          waits for a reply) — switch to batch in settings via
-          <code class="inline">steeringMode</code> /
-          <code class="inline">followUpMode</code> =
-          <code class="inline">"all"</code>.
+          <span data-lang="pt"
+            ><strong>Modelo mental:</strong> o steering
+            <em>edita o plano da execução atual</em>; o follow-up
+            <em>enfileira a próxima execução</em>. A entrega padrão é uma de
+            cada vez (cada uma espera por uma resposta) — mude para lote nas
+            configurações via <code class="inline">steeringMode</code> /
+            <code class="inline">followUpMode</code> =
+            <code class="inline">"all"</code>.</span
+          ><span data-lang="en"
+            ><strong>Mental model:</strong> steering
+            <em>edits the current run's plan</em>; follow-up
+            <em>queues the next run</em>. Default delivery is one-at-a-time
+            (each waits for a reply) — switch to batch in settings via
+            <code class="inline">steeringMode</code> /
+            <code class="inline">followUpMode</code> =
+            <code class="inline">"all"</code>.</span
+          >
         </p>
       </div>
       <p class="cite">
-        Source:
+        <span data-lang="pt">Fonte:</span><span data-lang="en">Source:</span>
         <a href="https://pi.dev/docs/latest" target="_blank" rel="noopener"
-          >Pi docs · Message Queue</a
+          ><span data-lang="pt">documentos do Pi · Fila de Mensagens</span
+          ><span data-lang="en">Pi docs · Message Queue</span></a
         >.
       </p>
 
       <!-- ===================== 4. READING THE FOOTER ===================== -->
-      <h2 class="section"><span class="num">4</span>Read your budget</h2>
+      <h2 class="section">
+        <span class="num">4</span><span data-lang="pt">Leia seu orçamento</span
+        ><span data-lang="en">Read your budget</span>
+      </h2>
       <p class="kicker">
-        The footer is your dashboard. The two numbers that matter most:
-        <strong>context %</strong> (how full the window is) and
-        <strong>cost</strong>.
+        <span data-lang="pt"
+          >O rodapé é seu painel. Os dois números que mais importam:
+          <strong>contexto %</strong> (quão cheia está a janela) e
+          <strong>custo</strong>.</span
+        ><span data-lang="en"
+          >The footer is your dashboard. The two numbers that matter most:
+          <strong>context %</strong> (how full the window is) and
+          <strong>cost</strong>.</span
+        >
       </p>
 
       <div class="card" style="margin-top: 18px">
@@ -568,27 +874,42 @@
           "
         >
           <span
-            >↑ <strong style="color: #6c4bf0">12.4k</strong>
-            <span class="kicker">input</span></span
+            >↑ <strong style="color: #8b6ff7">12.4k</strong>
+            <span class="kicker"
+              ><span data-lang="pt">entrada</span
+              ><span data-lang="en">input</span></span
+            ></span
           >
           <span
-            >↓ <strong style="color: #0fb9a4">3.1k</strong>
-            <span class="kicker">output</span></span
+            >↓ <strong style="color: #2dd4bf">3.1k</strong>
+            <span class="kicker"
+              ><span data-lang="pt">saída</span
+              ><span data-lang="en">output</span></span
+            ></span
           >
           <span
-            >R <strong style="color: #3b82f6">8.0k</strong>
-            <span class="kicker">cache read</span></span
+            >R <strong style="color: #60a5fa">8.0k</strong>
+            <span class="kicker"
+              ><span data-lang="pt">leitura de cache</span
+              ><span data-lang="en">cache read</span></span
+            ></span
           >
           <span
-            >W <strong style="color: #f59e0b">2.2k</strong>
-            <span class="kicker">cache write</span></span
+            >W <strong style="color: #fbbf24">2.2k</strong>
+            <span class="kicker"
+              ><span data-lang="pt">escrita de cache</span
+              ><span data-lang="en">cache write</span></span
+            ></span
           >
           <span
-            >CH <strong style="color: #64748b">87%</strong>
-            <span class="kicker">cache hit</span></span
+            >CH <strong style="color: #9ea2b8">87%</strong>
+            <span class="kicker"
+              ><span data-lang="pt">acerto de cache</span
+              ><span data-lang="en">cache hit</span></span
+            ></span
           >
-          <span>$ <strong style="color: #ef476f">0.04</strong></span>
-          <span>_CTX <strong style="color: #ef476f">18%</strong></span>
+          <span>$ <strong style="color: #fb7185">0.04</strong></span>
+          <span>_CTX <strong style="color: #fb7185">18%</strong></span>
         </div>
         <!-- context gauge -->
         <div style="margin-top: 14px">
@@ -596,7 +917,7 @@
             style="
               height: 16px;
               border-radius: 8px;
-              background: #efeafb;
+              background: #181a26;
               overflow: hidden;
             "
           >
@@ -609,195 +930,454 @@
             ></div>
           </div>
           <p class="kicker" style="margin: 6px 0 0">
-            Context 18% — green. Past ~80%, expect auto-compaction (Lesson 3) to
-            kick in.
+            <span data-lang="pt"
+              >Contexto 18% — verde. Passando de ~80%, espere a compactação
+              automática (Lição 3) entrar em ação.</span
+            ><span data-lang="en"
+              >Context 18% — green. Past ~80%, expect auto-compaction (Lesson 3)
+              to kick in.</span
+            >
           </p>
         </div>
       </div>
 
       <div class="callout warn">
         <p>
-          <strong>Cache hit rate (CH) = free money.</strong> A high cache-read
-          ratio means Pi is reusing prompt-cached tokens (cheap) instead of
-          re-sending (full price). If CH drops, you may be churning context
-          unnecessarily — a signal to compact or start a fresh session.
+          <span data-lang="pt"
+            ><strong>Acerto de cache (CH) = dinheiro de graça.</strong> Uma alta
+            proporção de leitura de cache significa que o Pi está reaproveitando
+            tokens em cache (baratos) em vez de reenviar (preço cheio). Se o CH
+            cai, você pode estar agitando o contexto à toa — um sinal para
+            compactar ou iniciar uma sessão nova.</span
+          ><span data-lang="en"
+            ><strong>Cache hit rate (CH) = free money.</strong> A high
+            cache-read ratio means Pi is reusing prompt-cached tokens (cheap)
+            instead of re-sending (full price). If CH drops, you may be churning
+            context unnecessarily — a signal to compact or start a fresh
+            session.</span
+          >
         </p>
       </div>
 
       <!-- ===================== 5. ESSENTIAL COMMANDS ===================== -->
       <h2 class="section">
-        <span class="num">5</span>Commands you'll type daily
+        <span class="num">5</span
+        ><span data-lang="pt">Comandos que você digita todo dia</span
+        ><span data-lang="en">Commands you'll type daily</span>
       </h2>
       <p class="kicker">
-        Type <code class="inline">/</code> to open the command menu. These eight
-        cover 90% of daily use.
+        <span data-lang="pt"
+          >Digite <code class="inline">/</code> para abrir o menu de comandos.
+          Esses oito cobrem 90% do uso diário.</span
+        ><span data-lang="en"
+          >Type <code class="inline">/</code> to open the command menu. These
+          eight cover 90% of daily use.</span
+        >
       </p>
 
       <div class="grid cols-2" style="margin-top: 18px">
         <div class="card">
           <span class="sig">/model</span>
           <p>
-            Switch models (also <span class="kbd">Ctrl</span>+<span class="kbd"
-              >L</span
-            >).
+            <span data-lang="pt"
+              >Troca de modelo (também <span class="kbd">Ctrl</span>+<span
+                class="kbd"
+                >L</span
+              >).</span
+            ><span data-lang="en"
+              >Switch models (also <span class="kbd">Ctrl</span>+<span
+                class="kbd"
+                >L</span
+              >).</span
+            >
           </p>
         </div>
         <div class="card">
           <span class="sig">/compact [prompt]</span>
-          <p>Free context; optional focus instructions.</p>
+          <p>
+            <span data-lang="pt"
+              >Libera contexto; instruções de foco opcionais.</span
+            ><span data-lang="en"
+              >Free context; optional focus instructions.</span
+            >
+          </p>
         </div>
         <div class="card">
           <span class="sig">/tree</span>
-          <p>Navigate &amp; branch the session.</p>
+          <p>
+            <span data-lang="pt">Navega e ramifica a sessão.</span
+            ><span data-lang="en">Navigate &amp; branch the session.</span>
+          </p>
         </div>
         <div class="card">
           <span class="sig">/new · /resume · /fork</span>
-          <p>Session lifecycle.</p>
+          <p>
+            <span data-lang="pt">Ciclo de vida da sessão.</span
+            ><span data-lang="en">Session lifecycle.</span>
+          </p>
         </div>
         <div class="card">
           <span class="sig">/copy · /export · /share</span>
-          <p>Get data out (clipboard, HTML/JSONL, gist).</p>
+          <p>
+            <span data-lang="pt"
+              >Tira dados para fora (clipboard, HTML/JSONL, gist).</span
+            ><span data-lang="en"
+              >Get data out (clipboard, HTML/JSONL, gist).</span
+            >
+          </p>
         </div>
         <div class="card">
           <span class="sig">/reload</span>
-          <p>Hot-reload skills/extensions/themes.</p>
+          <p>
+            <span data-lang="pt"
+              >Recarrega skills/extensões/temas em quente.</span
+            ><span data-lang="en">Hot-reload skills/extensions/themes.</span>
+          </p>
         </div>
         <div class="card">
           <span class="sig">/settings</span>
-          <p>Thinking, theme, delivery, transport.</p>
+          <p>
+            <span data-lang="pt">Thinking, tema, entrega, transporte.</span
+            ><span data-lang="en">Thinking, theme, delivery, transport.</span>
+          </p>
         </div>
         <div class="card">
           <span class="sig">/session</span>
-          <p>See ID, tokens, cost for this session.</p>
+          <p>
+            <span data-lang="pt">Veja ID, tokens, custo desta sessão.</span
+            ><span data-lang="en">See ID, tokens, cost for this session.</span>
+          </p>
         </div>
       </div>
       <p class="cite">
-        Full table:
+        <span data-lang="pt">Tabela completa:</span
+        ><span data-lang="en">Full table:</span>
         <a href="https://pi.dev/docs/latest" target="_blank" rel="noopener"
-          >Pi docs · Commands</a
+          ><span data-lang="pt">documentos do Pi · Comandos</span
+          ><span data-lang="en">Pi docs · Commands</span></a
         >.
       </p>
 
       <!-- ===================== QUIZ ===================== -->
-      <h2 class="section"><span class="num">6</span>Check your grip</h2>
+      <h2 class="section">
+        <span class="num">6</span><span data-lang="pt">Confira seu domínio</span
+        ><span data-lang="en">Check your grip</span>
+      </h2>
       <p class="kicker">
-        Same-length options, instant feedback — retrieval over re-reading.
+        <span data-lang="pt"
+          >Opções do mesmo tamanho, feedback instantâneo — recordação bate
+          reler.</span
+        ><span data-lang="en"
+          >Same-length options, instant feedback — retrieval over
+          re-reading.</span
+        >
       </p>
 
-      <div class="quiz" id="q1">
-        <div class="q">
-          Q1. Mid-loop, you want to add a task <em>after</em> the agent finishes
-          everything. Which key?
+      <div class="quiz" id="q1" role="group" aria-labelledby="q1l">
+        <div class="q" id="q1l">
+          <span data-lang="pt"
+            >Q1. No meio do loop, você quer adicionar uma tarefa
+            <em>depois</em> que o agente terminar tudo. Qual tecla?</span
+          ><span data-lang="en"
+            >Q1. Mid-loop, you want to add a task <em>after</em> the agent
+            finishes everything. Which key?</span
+          >
         </div>
-        <div class="options" data-answer="Alt plus Enter">
-          <button class="opt">Alt plus Enter</button>
-          <button class="opt">Just plain Enter</button>
-          <button class="opt">Shift plus Enter</button>
-          <button class="opt">Control plus C</button>
+        <div class="options">
+          <button
+            class="opt"
+            data-correct="true"
+            data-fb-pt="Exato: Alt+Enter enfileira um follow-up, entregue só no fim."
+            data-fb-en="Exact: Alt+Enter queues a follow-up, delivered only at the end."
+          >
+            <span data-lang="pt">Alt mais Enter</span
+            ><span data-lang="en">Alt plus Enter</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — Enter entrega steering após o lote atual, não no fim."
+            data-fb-en="No — Enter delivers steering after the current batch, not at the end."
+          >
+            <span data-lang="pt">Só Enter</span
+            ><span data-lang="en">Just plain Enter</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — Shift+Enter só insere uma nova linha."
+            data-fb-en="No — Shift+Enter just inserts a newline."
+          >
+            <span data-lang="pt">Shift mais Enter</span
+            ><span data-lang="en">Shift plus Enter</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — Ctrl+C limpa o editor (ou encerra em dobro)."
+            data-fb-en="No — Ctrl+C clears the editor (or quits on double)."
+          >
+            <span data-lang="pt">Control mais C</span
+            ><span data-lang="en">Control plus C</span>
+          </button>
         </div>
-        <div class="verdict"></div>
+        <div class="verdict" aria-live="polite"></div>
       </div>
 
-      <div class="quiz" id="q2">
-        <div class="q">
-          Q2. The agent is doing the wrong thing now. Safest immediate action?
+      <div class="quiz" id="q2" role="group" aria-labelledby="q2l">
+        <div class="q" id="q2l">
+          <span data-lang="pt"
+            >Q2. O agente está fazendo a coisa errada agora. Ação imediata mais
+            segura?</span
+          ><span data-lang="en"
+            >Q2. The agent is doing the wrong thing now. Safest immediate
+            action?</span
+          >
         </div>
-        <div class="options" data-answer="Press Escape">
-          <button class="opt">Press Escape</button>
-          <button class="opt">Type /compact</button>
-          <button class="opt">Press Ctrl plus L</button>
-          <button class="opt">Close terminal</button>
+        <div class="options">
+          <button
+            class="opt"
+            data-correct="true"
+            data-fb-pt="Exato: Esc aborta a execução; nada é perdido."
+            data-fb-en="Exact: Esc aborts the run; nothing is lost."
+          >
+            <span data-lang="pt">Pressionar Escape</span
+            ><span data-lang="en">Press Escape</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — /compact libera contexto, não para o agente."
+            data-fb-en="No — /compact frees context, it doesn't stop the agent."
+          >
+            <span data-lang="pt">Digitar /compact</span
+            ><span data-lang="en">Type /compact</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — Ctrl+L abre o seletor de modelos."
+            data-fb-en="No — Ctrl+L opens the model picker."
+          >
+            <span data-lang="pt">Pressionar Ctrl mais L</span
+            ><span data-lang="en">Press Ctrl plus L</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — fechar o terminal perde a sessão; Esc é mais seguro."
+            data-fb-en="No — closing the terminal loses the session; Esc is safer."
+          >
+            <span data-lang="pt">Fechar o terminal</span
+            ><span data-lang="en">Close terminal</span>
+          </button>
         </div>
-        <div class="verdict"></div>
+        <div class="verdict" aria-live="polite"></div>
       </div>
 
-      <div class="quiz" id="q3">
-        <div class="q">
-          Q3. Which footer number signals cheap, reused tokens?
+      <div class="quiz" id="q3" role="group" aria-labelledby="q3l">
+        <div class="q" id="q3l">
+          <span data-lang="pt"
+            >Q3. Qual número do rodapé sinaliza tokens baratos
+            reaproveitados?</span
+          ><span data-lang="en"
+            >Q3. Which footer number signals cheap, reused tokens?</span
+          >
         </div>
-        <div class="options" data-answer="Cache hit rate">
-          <button class="opt">Cache hit rate</button>
-          <button class="opt">Input tokens</button>
-          <button class="opt">Output tokens</button>
-          <button class="opt">Context percent</button>
+        <div class="options">
+          <button
+            class="opt"
+            data-correct="true"
+            data-fb-pt="Exato: cache hit (CH) marca tokens reaproveitados, mais baratos."
+            data-fb-en="Exact: cache hit (CH) marks reused tokens, cheaper."
+          >
+            <span data-lang="pt">Acerto de cache</span
+            ><span data-lang="en">Cache hit rate</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — input conta tokens enviados, não reaproveitados."
+            data-fb-en="No — input counts tokens sent, not reused."
+          >
+            <span data-lang="pt">Tokens de entrada</span
+            ><span data-lang="en">Input tokens</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — output conta tokens gerados pelo modelo."
+            data-fb-en="No — output counts tokens generated by the model."
+          >
+            <span data-lang="pt">Tokens de saída</span
+            ><span data-lang="en">Output tokens</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — contexto % mede o quão cheia está a janela."
+            data-fb-en="No — context % measures how full the window is."
+          >
+            <span data-lang="pt">Percentual de contexto</span
+            ><span data-lang="en">Context percent</span>
+          </button>
         </div>
-        <div class="verdict"></div>
+        <div class="verdict" aria-live="polite"></div>
       </div>
 
       <!-- ===================== PRIMARY SOURCE + FOOTER ===================== -->
-      <h2 class="section"><span class="num">7</span>Read &amp; do this next</h2>
+      <h2 class="section">
+        <span class="num">7</span
+        ><span data-lang="pt">Leia e faça isto a seguir</span
+        ><span data-lang="en">Read &amp; do this next</span>
+      </h2>
       <p>
-        <strong>Primary source:</strong> the
-        <a href="https://pi.dev/docs/latest" target="_blank" rel="noopener"
-          >Interactive Mode</a
+        <span data-lang="pt"
+          ><strong>Fonte primária:</strong> as páginas de documentação
+          <a href="https://pi.dev/docs/latest" target="_blank" rel="noopener"
+            >Modo Interativo</a
+          >
+          +
+          <a href="https://pi.dev/docs/latest" target="_blank" rel="noopener"
+            >Atalhos de Teclado</a
+          >.</span
+        ><span data-lang="en"
+          ><strong>Primary source:</strong> the
+          <a href="https://pi.dev/docs/latest" target="_blank" rel="noopener"
+            >Interactive Mode</a
+          >
+          +
+          <a href="https://pi.dev/docs/latest" target="_blank" rel="noopener"
+            >Keyboard Shortcuts</a
+          >
+          doc pages.</span
         >
-        +
-        <a href="https://pi.dev/docs/latest" target="_blank" rel="noopener"
-          >Keyboard Shortcuts</a
-        >
-        doc pages.
       </p>
       <p>
-        <strong>Do it now:</strong> open a real Pi session, run
-        <code class="inline">/hotkeys</code>, and try steering a live loop —
-        queue a message with <span class="kbd">Enter</span> while it works. Feel
-        the difference.
+        <span data-lang="pt"
+          ><strong>Faça agora:</strong> abra uma sessão real do Pi, rode
+          <code class="inline">/hotkeys</code> e tente dirigir um loop ao vivo —
+          enfileire uma mensagem com <span class="kbd">Enter</span> enquanto ele
+          trabalha. Sinta a diferença.</span
+        ><span data-lang="en"
+          ><strong>Do it now:</strong> open a real Pi session, run
+          <code class="inline">/hotkeys</code>, and try steering a live loop —
+          queue a message with <span class="kbd">Enter</span> while it works.
+          Feel the difference.</span
+        >
       </p>
 
       <div class="callout key">
         <p>
-          🗣️ <strong>Ask me anything.</strong> Common follow-ups:
-          <em>"how do I remap keys to Vim/Emacs?"</em>,
-          <em>"what's the difference between /fork and /clone?"</em>,
-          <em>"how do I see what context the model actually got?"</em>
+          🗣️
+          <strong
+            ><span data-lang="pt">Pergunte-me qualquer coisa.</span
+            ><span data-lang="en">Ask me anything.</span></strong
+          >
+          <span data-lang="pt"
+            >Continuações comuns:
+            <em>"como remapeio teclas para Vim/Emacs?"</em>,
+            <em>"qual a diferença entre /fork e /clone?"</em>,
+            <em>"como vejo qual contexto o modelo realmente recebeu?"</em></span
+          ><span data-lang="en"
+            >Common follow-ups: <em>"how do I remap keys to Vim/Emacs?"</em>,
+            <em>"what's the difference between /fork and /clone?"</em>,
+            <em>"how do I see what context the model actually got?"</em></span
+          >
         </p>
       </div>
 
       <footer class="lesson-foot">
         <div class="next-card">
-          <div class="lbl">Next lesson →</div>
+          <div class="lbl">
+            <span data-lang="pt">Próxima lição →</span
+            ><span data-lang="en">Next lesson →</span>
+          </div>
           <div class="t">
             <a href="./0003-sessions-branching-compaction.html"
-              >Sessions, branching &amp; compaction</a
+              ><span data-lang="pt">Sessões, ramificação &amp; compactação</span
+              ><span data-lang="en"
+                >Sessions, branching &amp; compaction</span
+              ></a
             >
           </div>
           <p style="margin: 8px 0 0; font-size: 0.85rem">
-            Long sessions, multiple branches, and not losing your mind when the
-            context fills up.
+            <span data-lang="pt"
+              >Sessões longas, múltiplos ramos, e não perder a cabeça quando o
+              contexto enche.</span
+            ><span data-lang="en"
+              >Long sessions, multiple branches, and not losing your mind when
+              the context fills up.</span
+            >
           </p>
         </div>
         <div style="flex: 0 1 220px">
-          <div class="lbl">Reference</div>
+          <div class="lbl">
+            <span data-lang="pt">Referência</span
+            ><span data-lang="en">Reference</span>
+          </div>
           <p style="margin: 6px 0 0">
-            <a href="../reference/pi-glossary.html">Pi glossary</a> ·
-            <a href="../MISSION.md">Mission</a>
+            <a href="../reference/pi-glossary.html"
+              ><span data-lang="pt">Glossário do Pi</span
+              ><span data-lang="en">Pi glossary</span></a
+            >
+            ·
+            <a href="../MISSION.md"
+              ><span data-lang="pt">Missão</span
+              ><span data-lang="en">Mission</span></a
+            >
           </p>
         </div>
       </footer>
     </article>
 
     <script>
+      // bilingual quiz wiring — data-correct + per-lang feedback
+      function verdictFor(btn, quiz) {
+        const correct = btn.dataset.correct === "true";
+        const fb = btn.getAttribute(
+          PiI18n.lang === "en" ? "data-fb-en" : "data-fb-pt",
+        );
+        const sec = quiz.id.replace("q", "");
+        const fallback =
+          PiI18n.lang === "en"
+            ? "✗ Not quite — re-read section " + sec + "."
+            : "✗ Quase — releia a seção " + sec + ".";
+        return {
+          ok: correct,
+          text: (correct ? "✓ " : "✗ ") + (fb || fallback),
+        };
+      }
+      function resetQuiz(quiz) {
+        quiz.querySelectorAll(".opt").forEach((b) => {
+          b.classList.remove("correct", "wrong");
+          b.setAttribute("aria-pressed", "false");
+        });
+        const v = quiz.querySelector(".verdict");
+        v.textContent = "";
+        v.className = "verdict";
+      }
       document.querySelectorAll(".quiz").forEach((quiz) => {
-        const answer = quiz.querySelector(".options").dataset.answer;
-        const verdict = quiz.querySelector(".verdict");
         quiz.querySelectorAll(".opt").forEach((btn) => {
+          btn.setAttribute("aria-pressed", "false");
           btn.addEventListener("click", () => {
-            quiz
-              .querySelectorAll(".opt")
-              .forEach((b) => b.classList.remove("correct", "wrong"));
-            if (btn.textContent.trim() === answer) {
-              btn.classList.add("correct");
-              verdict.textContent = "✓ Correct.";
-              verdict.className = "verdict ok";
-            } else {
-              btn.classList.add("wrong");
-              verdict.textContent =
-                "✗ Re-read section " + quiz.id.replace("q", "") + ".";
-              verdict.className = "verdict no";
-            }
+            quiz.querySelectorAll(".opt").forEach((b) => {
+              b.classList.remove("correct", "wrong");
+              b.setAttribute("aria-pressed", "false");
+            });
+            const v = verdictFor(btn, quiz);
+            btn.classList.add(v.ok ? "correct" : "wrong");
+            btn.setAttribute("aria-pressed", "true");
+            const verdict = quiz.querySelector(".verdict");
+            verdict.textContent = v.text;
+            verdict.className = "verdict " + (v.ok ? "ok" : "no");
           });
         });
       });
+      // re-render in the new language on switch (i18n.js is deferred, so hook DOMContentLoaded)
+      document.addEventListener("DOMContentLoaded", () =>
+        PiI18n.on(() => document.querySelectorAll(".quiz").forEach(resetQuiz)),
+      );
     </script>
   </body>
 </html>

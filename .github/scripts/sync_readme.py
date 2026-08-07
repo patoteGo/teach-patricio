@@ -23,12 +23,17 @@ START = "<!-- topics:start -->"
 END = "<!-- topics:end -->"
 
 # Strip a leading "<Anything> · Lesson N — " or bare "Lesson N — " prefix.
-PREFIX_RE = re.compile(r"^.*?Lesson\s*\d+\s*[—–-]\s*", re.I)
+PREFIX_RE = re.compile(r"^.*?(?:Lesson|Lição)\s*\d+\s*[—–-]\s*", re.I)
 
 
 def lesson_title(html: str) -> str:
-    m = re.search(r"<title>(.*?)</title>", html, re.S | re.I)
-    raw = unescape(m.group(1).strip()) if m else ""
+    # Prefer the bilingual title's English label (data-en), else the tag text.
+    m = re.search(r'<title[^>]*\bdata-en="([^"]*)"', html, re.I)
+    if m:
+        raw = unescape(m.group(1).strip())
+    else:
+        m = re.search(r"<title[^>]*>(.*?)</title>", html, re.S | re.I)
+        raw = unescape(m.group(1).strip()) if m else ""
     title = PREFIX_RE.sub("", raw).strip()
     return title or "Untitled"
 

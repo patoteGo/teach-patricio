@@ -1,0 +1,1043 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title
+      data-pt="ClearOne — lembretes rápidos do stack"
+      data-en="ClearOne — stack quick reminders"
+    >
+      ClearOne — stack quick reminders
+    </title>
+    <link rel="stylesheet" href="../assets/style.css" />
+    <link rel="stylesheet" href="../assets/dark.css" />
+    <link rel="stylesheet" href="../assets/i18n.css" />
+    <script src="../assets/i18n.js" defer></script>
+    <script src="../assets/nav.js" defer></script>
+    <style>
+      .stack-h {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 34px 0 4px;
+      }
+      .stack-h .badge {
+        display: grid;
+        place-items: center;
+        width: 46px;
+        height: 46px;
+        border-radius: 12px;
+        font: 800 1.1rem "Space Grotesk";
+        color: #fff;
+      }
+      .stack-h h3 {
+        margin: 0;
+        font-family: "Space Grotesk";
+        font-size: 1.35rem;
+      }
+      .concepts {
+        background: var(--paper-2);
+        border: 1px solid var(--line);
+        border-left: 4px solid var(--accent);
+        border-radius: 12px;
+        padding: 14px 18px;
+        margin: 12px 0;
+        box-shadow: var(--shadow);
+      }
+      .concepts ul {
+        margin: 0;
+        padding-left: 18px;
+        color: var(--ink-soft);
+        font-size: 0.9rem;
+        line-height: 1.7;
+      }
+      .concepts li {
+        margin-bottom: 3px;
+      }
+      .concepts li b {
+        color: var(--ink);
+      }
+      .concepts code,
+      .qa code,
+      .key code {
+        font-family: "JetBrains Mono";
+        color: var(--violet);
+        font-size: 0.85em;
+        background: var(--violet-50);
+        padding: 0 4px;
+        border-radius: 4px;
+      }
+      .qsec {
+        font: 700 0.62rem "Space Grotesk";
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--teal);
+        margin: 16px 0 6px;
+      }
+      details.qa {
+        background: var(--paper-2);
+        border: 1px solid var(--line);
+        border-radius: 11px;
+        padding: 11px 16px;
+        margin: 8px 0;
+        box-shadow: var(--shadow);
+      }
+      details.qa summary {
+        cursor: pointer;
+        font-weight: 600;
+        color: var(--ink);
+        font-size: 0.92rem;
+      }
+      details.qa summary::-webkit-details-marker {
+        display: none;
+      }
+      details.qa summary::before {
+        content: "Q ";
+        color: var(--violet);
+        font-weight: 800;
+      }
+      details.qa .ans {
+        margin-top: 8px;
+        padding-top: 8px;
+        border-top: 1px solid var(--line);
+        color: var(--ink-soft);
+        font-size: 0.9rem;
+        line-height: 1.6;
+      }
+      .compare {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin: 12px 0;
+      }
+      .compare .col {
+        background: var(--paper-2);
+        border: 1px solid var(--line);
+        border-radius: 11px;
+        padding: 12px 14px;
+      }
+      .compare .col h4 {
+        margin: 0 0 6px;
+        font-family: "Space Grotesk";
+      }
+      .compare .col.server {
+        border-top: 3px solid var(--violet);
+      }
+      .compare .col.client {
+        border-top: 3px solid var(--teal);
+      }
+      .compare .col ul {
+        margin: 0;
+        padding-left: 16px;
+        color: var(--ink-soft);
+        font-size: 0.85rem;
+        line-height: 1.6;
+      }
+      .compare .col li {
+        margin-bottom: 3px;
+      }
+      .key {
+        background: linear-gradient(120deg, var(--violet-50), var(--teal-50));
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 10px 14px;
+        margin: 10px 0;
+        color: var(--ink);
+        font-size: 0.9rem;
+      }
+      @media (max-width: 640px) {
+        .compare {
+          grid-template-columns: 1fr;
+        }
+      }
+      @media print {
+        details.qa {
+          break-inside: avoid;
+        }
+      }
+    </style>
+  </head>
+  <body class="lang-pt">
+    <article class="lesson">
+      <header class="hero">
+        <span class="eyebrow"
+          ><span data-lang="pt">⬡ ClearOne · lembretes rápidos do stack</span
+          ><span data-lang="en">⬡ ClearOne · stack quick reminders</span></span
+        >
+        <h1>
+          <span data-lang="pt">React · Node · TypeScript · Next.js</span
+          ><span data-lang="en">React · Node · TypeScript · Next.js</span>
+        </h1>
+        <p class="lead">
+          <span data-lang="pt"
+            >Cram de 30 min: conceitos + perguntas típicas de entrevista.
+            Next.js com foco em React Server Components e os dois routers. Toque
+            uma pergunta para revelar a resposta.</span
+          ><span data-lang="en"
+            >30-min cram: core concepts + typical interview questions. Next.js
+            with emphasis on React Server Components and the two routers. Tap a
+            question to reveal the answer.</span
+          >
+        </p>
+        <p class="lesson-nav-top">
+          ↑
+          <a href="../MISSION.md"
+            ><span data-lang="pt">Missão</span
+            ><span data-lang="en">Mission</span></a
+          >
+          · <span data-lang="pt">veja também:</span
+          ><span data-lang="en">see also:</span>
+          <a href="./0001-clearone-playbook.html"
+            ><span data-lang="pt">o playbook (comportamental)</span
+            ><span data-lang="en">the playbook (behavioral)</span></a
+          >
+        </p>
+      </header>
+
+      <!-- ============ REACT ============ -->
+      <div class="stack-h">
+        <span class="badge" style="background: #2dd4bf">R</span>
+        <h3>React</h3>
+      </div>
+      <div class="concepts" style="--accent: #2dd4bf">
+        <ul>
+          <li>
+            <span data-lang="pt"
+              ><b>Component + props</b> — UI como função pura das props/estado;
+              <b>state</b> via hooks.</span
+            ><span data-lang="en"
+              ><b>Component + props</b> — UI as a pure function of props/state;
+              <b>state</b> via hooks.</span
+            >
+          </li>
+          <li>
+            <span data-lang="pt"
+              ><b>Hooks essenciais:</b> <code>useState</code>,
+              <code>useEffect</code>, <code>useReducer</code>,
+              <code>useContext</code>, <code>useRef</code>,
+              <code>useMemo</code>, <code>useCallback</code>.</span
+            ><span data-lang="en"
+              ><b>Essential hooks:</b> <code>useState</code>,
+              <code>useEffect</code>, <code>useReducer</code>,
+              <code>useContext</code>, <code>useRef</code>,
+              <code>useMemo</code>, <code>useCallback</code>.</span
+            >
+          </li>
+          <li>
+            <span data-lang="pt"
+              ><b>Regras dos hooks:</b> topo do componente (não em loops/conds);
+              só em components ou hooks custom.</span
+            ><span data-lang="en"
+              ><b>Rules of hooks:</b> top-level (not in loops/conds); only in
+              components or custom hooks.</span
+            >
+          </li>
+          <li>
+            <span data-lang="pt"
+              ><b>Reconciliação:</b> Virtual DOM + diff; <b>keys</b> dão
+              identidade estável em listas.</span
+            ><span data-lang="en"
+              ><b>Reconciliation:</b> Virtual DOM + diff; <b>keys</b> give
+              stable identity in lists.</span
+            >
+          </li>
+          <li>
+            <span data-lang="pt"
+              ><b>Efeitos:</b> array de deps; cleanup.
+              <code>useLayoutEffect</code> roda antes da pintura (síncrono),
+              <code>useEffect</code> depois (assíncrono).</span
+            ><span data-lang="en"
+              ><b>Effects:</b> dep array; cleanup.
+              <code>useLayoutEffect</code> runs before paint (sync),
+              <code>useEffect</code> after (async).</span
+            >
+          </li>
+          <li>
+            <span data-lang="pt"
+              ><b>Performance:</b> <code>React.memo</code>,
+              <code>useMemo</code>, <code>useCallback</code> — mas memoizar
+              demais <em>atrapalha</em>; meça antes.</span
+            ><span data-lang="en"
+              ><b>Performance:</b> <code>React.memo</code>,
+              <code>useMemo</code>, <code>useCallback</code> — but
+              over-memoizing <em>hurts</em>; measure first.</span
+            >
+          </li>
+          <li>
+            <span data-lang="pt"
+              ><b>React 18:</b> <em>automatic batching</em>,
+              <code>useTransition</code>/<code>useDeferredValue</code>, Suspense
+              para data.</span
+            ><span data-lang="en"
+              ><b>React 18:</b> <em>automatic batching</em>,
+              <code>useTransition</code>/<code>useDeferredValue</code>, Suspense
+              for data.</span
+            >
+          </li>
+        </ul>
+      </div>
+      <div class="qsec">
+        <span data-lang="pt">Perguntas típicas</span
+        ><span data-lang="en">Typical questions</span>
+      </div>
+      <details class="qa">
+        <summary>
+          <span data-lang="pt"
+            >Por que precisamos de <code>key</code> em listas?</span
+          ><span data-lang="en">Why do lists need a <code>key</code>?</span>
+        </summary>
+        <div class="ans">
+          <span data-lang="pt"
+            >Para o React identificar quais itens mudaram (identidade estável no
+            diff). Use um id estável —
+            <strong>não o índice do array</strong> (quebra em
+            reordenação/inserção e causa bugs de estado).</span
+          ><span data-lang="en"
+            >So React can track item identity across renders during diffing. Use
+            a stable id — <strong>not the array index</strong> (it breaks on
+            reorder/insert and causes state bugs).</span
+          >
+        </div>
+      </details>
+      <details class="qa">
+        <summary>
+          <span data-lang="pt"
+            ><code>useEffect</code> vs <code>useLayoutEffect</code>?</span
+          ><span data-lang="en"
+            ><code>useEffect</code> vs <code>useLayoutEffect</code>?</span
+          >
+        </summary>
+        <div class="ans">
+          <span data-lang="pt"
+            ><code>useEffect</code> roda <em>depois</em> da pintura (assíncrono,
+            não bloqueia) — o padrão. <code>useLayoutEffect</code> roda
+            <em>antes</em> da pintura, síncrono — só para leitura/escrita de DOM
+            que precisa evitar flicker (raro).</span
+          ><span data-lang="en"
+            ><code>useEffect</code> runs <em>after</em> paint (async,
+            non-blocking) — the default. <code>useLayoutEffect</code> runs
+            <em>before</em> paint, synchronously — only for DOM reads/writes
+            that must avoid flicker (rare).</span
+          >
+        </div>
+      </details>
+      <details class="qa">
+        <summary>
+          <span data-lang="pt">Controlled vs uncontrolled inputs?</span
+          ><span data-lang="en">Controlled vs uncontrolled inputs?</span>
+        </summary>
+        <div class="ans">
+          <span data-lang="pt"
+            >Controlado: o React é a fonte da verdade (<code>value</code> +
+            <code>onChange</code>). Uncontrolled: o DOM guarda o estado, lido
+            via <code>ref</code>. Prefira controlled para
+            validação/transformação.</span
+          ><span data-lang="en"
+            >Controlled: React is the source of truth (<code>value</code> +
+            <code>onChange</code>). Uncontrolled: the DOM holds state, read via
+            a <code>ref</code>. Prefer controlled when you need
+            validation/transformation.</span
+          >
+        </div>
+      </details>
+      <details class="qa">
+        <summary>
+          <span data-lang="pt"
+            >O que é "stale closure" em hooks e como evitar?</span
+          ><span data-lang="en"
+            >What's a "stale closure" in hooks, and how do you avoid it?</span
+          >
+        </summary>
+        <div class="ans">
+          <span data-lang="pt"
+            >Um effect/callback captura um valor antigo do estado porque as deps
+            estão erradas. Correção: incluir todas as deps externas no array (ou
+            usar o <em>functional update</em> <code>setX(x =&gt; …)</code> /
+            <code>ref</code> quando precisar do valor mais recente).</span
+          ><span data-lang="en"
+            >An effect/callback captures an old state value because the deps are
+            wrong. Fix: include every external value in the dep array (or use a
+            functional update <code>setX(x =&gt; …)</code> / a
+            <code>ref</code> when you need the latest value).</span
+          >
+        </div>
+      </details>
+
+      <!-- ============ NODE ============ -->
+      <div class="stack-h">
+        <span class="badge" style="background: #0fb9a4">N</span>
+        <h3>Node.js</h3>
+      </div>
+      <div class="concepts" style="--accent: #0fb9a4">
+        <ul>
+          <li>
+            <span data-lang="pt"
+              ><b>Single-threaded (JS) + non-blocking I/O</b> via libuv (thread
+              pool para fs/crypto pesado).</span
+            ><span data-lang="en"
+              ><b>Single-threaded (JS) + non-blocking I/O</b> via libuv (thread
+              pool for heavy fs/crypto).</span
+            >
+          </li>
+          <li>
+            <span data-lang="pt"
+              ><b>Event loop</b> — fases:
+              <code>timers → pending → poll → check(setImmediate) → close</code
+              >. <b>Microtasks</b> (<code>process.nextTick</code>, promises)
+              rodam entre as fases.</span
+            ><span data-lang="en"
+              ><b>Event loop</b> — phases:
+              <code>timers → pending → poll → check(setImmediate) → close</code
+              >. <b>Microtasks</b> (<code>process.nextTick</code>, promises) run
+              between phases.</span
+            >
+          </li>
+          <li>
+            <span data-lang="pt"
+              ><b>Streams:</b> Readable / Writable / Duplex / Transform;
+              <b>backpressure</b>; <code>pipeline</code>.</span
+            ><span data-lang="en"
+              ><b>Streams:</b> Readable / Writable / Duplex / Transform;
+              <b>backpressure</b>; <code>pipeline</code>.</span
+            >
+          </li>
+          <li>
+            <span data-lang="pt"
+              ><b>Módulos:</b> CJS (<code>require</code>) vs ESM
+              (<code>import</code>); <code>"type":"module"</code> no
+              package.json.</span
+            ><span data-lang="en"
+              ><b>Modules:</b> CJS (<code>require</code>) vs ESM
+              (<code>import</code>); <code>"type":"module"</code> in
+              package.json.</span
+            >
+          </li>
+          <li>
+            <span data-lang="pt"
+              ><b>CPU-bound?</b> <code>worker_threads</code> ou offload — não
+              bloqueie o event loop.</span
+            ><span data-lang="en"
+              ><b>CPU-bound?</b> <code>worker_threads</code> or offload — don't
+              block the event loop.</span
+            >
+          </li>
+          <li>
+            <span data-lang="pt"
+              ><b>Erros:</b> eventos <code>'error'</code> não tratados
+              <strong>derrubam o processo</strong>; sempre trate.</span
+            ><span data-lang="en"
+              ><b>Errors:</b> unhandled <code>'error'</code> events
+              <strong>crash the process</strong>; always handle them.</span
+            >
+          </li>
+        </ul>
+      </div>
+      <div class="qsec">
+        <span data-lang="pt">Perguntas típicas</span
+        ><span data-lang="en">Typical questions</span>
+      </div>
+      <details class="qa">
+        <summary>
+          <span data-lang="pt"
+            >Como o Node lida com concorrência sendo single-threaded?</span
+          ><span data-lang="en"
+            >How does Node handle concurrency if it's single-threaded?</span
+          >
+        </summary>
+        <div class="ans">
+          <span data-lang="pt"
+            >Um event loop single-thread faz I/O não-bloqueante — milhares de
+            conexões simultâneas sem uma thread por conexão. Operações pesadas
+            (fs/crypto) vão para o <em>thread pool</em> do libuv; CPU-bound real
+            precisa de <code>worker_threads</code>.</span
+          ><span data-lang="en"
+            >A single-threaded event loop does non-blocking I/O — thousands of
+            concurrent connections without a thread per connection. Heavy ops
+            (fs/crypto) go to libuv's thread pool; true CPU-bound work needs
+            <code>worker_threads</code>.</span
+          >
+        </div>
+      </details>
+      <details class="qa">
+        <summary>
+          <span data-lang="pt"
+            >Ordem: <code>nextTick</code> vs <code>setImmediate</code> vs
+            <code>setTimeout(0)</code>?</span
+          ><span data-lang="en"
+            >Order: <code>nextTick</code> vs <code>setImmediate</code> vs
+            <code>setTimeout(0)</code>?</span
+          >
+        </summary>
+        <div class="ans">
+          <span data-lang="pt"
+            ><code>process.nextTick</code> (microtask) roda
+            <strong>primeiro</strong>, entre cada fase; depois
+            <code>setTimeout</code>/<code>setInterval</code> (fase timers);
+            <code>setImmediate</code> roda na fase <em>check</em>.</span
+          ><span data-lang="en"
+            ><code>process.nextTick</code> (microtask) runs
+            <strong>first</strong>, between every phase; then
+            <code>setTimeout</code>/<code>setInterval</code> (timers phase);
+            <code>setImmediate</code> runs in the <em>check</em> phase.</span
+          >
+        </div>
+      </details>
+      <details class="qa">
+        <summary>
+          <span data-lang="pt">O que é backpressure em streams?</span
+          ><span data-lang="en">What is stream backpressure?</span>
+        </summary>
+        <div class="ans">
+          <span data-lang="pt"
+            >Quando o produtor é mais rápido que o consumidor e dados se
+            acumulam. Streams Node sinalizam/pausam via
+            <code>.pause()</code>/retorno <code>false</code> em
+            <code>write</code>; use <code>pipeline()</code> para tratar
+            automaticamente — senão vaza memória.</span
+          ><span data-lang="en"
+            >When the producer is faster than the consumer and data piles up.
+            Node streams signal/pause via <code>.pause()</code> / returning
+            <code>false</code> from <code>write</code>; use
+            <code>pipeline()</code> to handle it automatically — otherwise you
+            leak memory.</span
+          >
+        </div>
+      </details>
+      <details class="qa">
+        <summary>
+          <span data-lang="pt"
+            >Por que Node para ingest/I/O-heavy (como no seu serviço
+            Cencosud)?</span
+          ><span data-lang="en"
+            >Why Node for I/O-heavy ingest (like your Cencosud service)?</span
+          >
+        </summary>
+        <div class="ans">
+          <span data-lang="pt"
+            >Modelo async não-bloqueante lida com milhares de I/O concorrentes
+            com baixo custo de recurso — ideal para ingest de eventos.
+            <em>(Use isto se perguntarem "por que Node".)</em></span
+          ><span data-lang="en"
+            >The async non-blocking model handles thousands of concurrent I/O
+            ops cheaply — ideal for event ingest.
+            <em>(Use this if asked "why Node".)</em></span
+          >
+        </div>
+      </details>
+
+      <!-- ============ TYPESCRIPT ============ -->
+      <div class="stack-h">
+        <span class="badge" style="background: #3b82f6">TS</span>
+        <h3>TypeScript</h3>
+      </div>
+      <div class="concepts" style="--accent: #3b82f6">
+        <ul>
+          <li>
+            <span data-lang="pt"
+              ><b>Tipagem estrutural</b> (duck typing) — não nominal; o
+              "formato" importa, não o nome.</span
+            ><span data-lang="en"
+              ><b>Structural typing</b> (duck typing) — not nominal; the "shape"
+              matters, not the name.</span
+            >
+          </li>
+          <li>
+            <span data-lang="pt"
+              ><b><code>interface</code> vs <code>type</code>:</b> interface é
+              extensível/declaration-merging; type faz
+              união/intersecção/condicional.
+              <em>Use interface para objetos, type para uniões.</em></span
+            ><span data-lang="en"
+              ><b><code>interface</code> vs <code>type</code>:</b> interface is
+              extensible/declaration-merging; type does
+              union/intersection/conditional.
+              <em>Use interface for objects, type for unions.</em></span
+            >
+          </li>
+          <li>
+            <span data-lang="pt"
+              ><b><code>any</code> vs <code>unknown</code>:</b>
+              <code>any</code> desliga a checagem; <code>unknown</code>
+              <strong>exige narrowing</strong> antes de usar.</span
+            ><span data-lang="en"
+              ><b><code>any</code> vs <code>unknown</code>:</b>
+              <code>any</code> turns off checking; <code>unknown</code>
+              <strong>requires narrowing</strong> before use.</span
+            >
+          </li>
+          <li>
+            <span data-lang="pt"
+              ><b>Generics</b> &amp; <b>utility types:</b> <code>Partial</code>,
+              <code>Pick</code>, <code>Omit</code>, <code>Record</code>,
+              <code>ReturnType</code>, <code>Awaited</code>.</span
+            ><span data-lang="en"
+              ><b>Generics</b> &amp; <b>utility types:</b> <code>Partial</code>,
+              <code>Pick</code>, <code>Omit</code>, <code>Record</code>,
+              <code>ReturnType</code>, <code>Awaited</code>.</span
+            >
+          </li>
+          <li>
+            <span data-lang="pt"
+              ><b>Narrowing:</b> <code>typeof</code>, <code>instanceof</code>,
+              <code>in</code>, uniões discriminadas, type guards
+              <code>x is T</code>.</span
+            ><span data-lang="en"
+              ><b>Narrowing:</b> <code>typeof</code>, <code>instanceof</code>,
+              <code>in</code>, discriminated unions, type guards
+              <code>x is T</code>.</span
+            >
+          </li>
+          <li>
+            <span data-lang="pt"
+              ><b>Apaga em runtime:</b> tipos não existem no JS final — cuide do
+              espaço de tipo vs valor.</span
+            ><span data-lang="en"
+              ><b>Erased at runtime:</b> types don't exist in the final JS —
+              mind the type vs value space.</span
+            >
+          </li>
+        </ul>
+      </div>
+      <div class="qsec">
+        <span data-lang="pt">Perguntas típicas</span
+        ><span data-lang="en">Typical questions</span>
+      </div>
+      <details class="qa">
+        <summary>
+          <span data-lang="pt"
+            ><code>interface</code> ou <code>type</code> — qual usar?</span
+          ><span data-lang="en"
+            ><code>interface</code> or <code>type</code> — which to use?</span
+          >
+        </summary>
+        <div class="ans">
+          <span data-lang="pt"
+            >Para formatos de objeto/API, <code>interface</code> (extensível,
+            declaration merging). Para uniões, tuplas, tipos
+            mapeados/condicionais, <code>type</code>. Ambos são
+            estruturais.</span
+          ><span data-lang="en"
+            >For object/API shapes, <code>interface</code> (extensible,
+            declaration merging). For unions, tuples, mapped/conditional types,
+            <code>type</code>. Both are structural.</span
+          >
+        </div>
+      </details>
+      <details class="qa">
+        <summary>
+          <span data-lang="pt"><code>any</code> vs <code>unknown</code>?</span
+          ><span data-lang="en"><code>any</code> vs <code>unknown</code>?</span>
+        </summary>
+        <div class="ans">
+          <span data-lang="pt"
+            ><code>any</code> desliga a checagem de tipos (evite).
+            <code>unknown</code> é "tipo top" seguro — você é obrigado a fazer
+            <em>narrowing</em> antes de usar, então erros são pegos. Prefira
+            <code>unknown</code> para dados externos.</span
+          ><span data-lang="en"
+            ><code>any</code> turns off type checking (avoid).
+            <code>unknown</code> is the safe "top type" — you must narrow before
+            use, so errors get caught. Prefer <code>unknown</code> for external
+            data.</span
+          >
+        </div>
+      </details>
+      <details class="qa">
+        <summary>
+          <span data-lang="pt"
+            >Por que <code>enum</code> pode ser problemático?</span
+          ><span data-lang="en">Why can <code>enum</code> be problematic?</span>
+        </summary>
+        <div class="ans">
+          <span data-lang="pt"
+            >Enums viram objetos em runtime (ocupam espaço) e
+            <code>const enum</code> é incompatível entre isolates. Muitos times
+            usam <strong>união de string literals</strong> (<code
+              >type Status = 'on' | 'off'</code
+            >) — leve e tree-shakeable.</span
+          ><span data-lang="en"
+            >Enums compile to runtime objects (take space) and
+            <code>const enum</code> is incompatible across isolates. Many teams
+            use a <strong>union of string literals</strong> (<code
+              >type Status = 'on' | 'off'</code
+            >) — lighter and tree-shakeable.</span
+          >
+        </div>
+      </details>
+
+      <!-- ============ NEXT.JS (emphasis) ============ -->
+      <div class="stack-h">
+        <span class="badge" style="background: #eceef6; color: #14132b">N</span>
+        <h3>
+          Next.js <span data-lang="pt">(foco: RSC + os dois routers)</span
+          ><span data-lang="en">(focus: RSC + the two routers)</span>
+        </h3>
+      </div>
+
+      <div class="qsec">
+        <span data-lang="pt">Os dois routers</span
+        ><span data-lang="en">The two routers</span>
+      </div>
+      <div class="compare">
+        <div class="col server">
+          <h4 style="color: var(--violet)">
+            App Router <code>app/</code>
+            <span data-lang="pt">(novo, padrão)</span
+            ><span data-lang="en">(new, default)</span>
+          </h4>
+          <ul>
+            <li>
+              <span data-lang="pt"
+                ><b>Server Components por padrão</b>;
+                <code>'use client'</code> habilita client.</span
+              ><span data-lang="en"
+                ><b>Server Components by default</b>;
+                <code>'use client'</code> enables client.</span
+              >
+            </li>
+            <li>
+              <span data-lang="pt"
+                >Routing por pasta: <code>page.tsx</code> (rota),
+                <code>layout.tsx</code> (compartilhado),
+                <code>loading.tsx</code>, <code>error.tsx</code>.</span
+              ><span data-lang="en"
+                >Folder-based routing: <code>page.tsx</code> (route),
+                <code>layout.tsx</code> (shared), <code>loading.tsx</code>,
+                <code>error.tsx</code>.</span
+              >
+            </li>
+            <li>
+              <span data-lang="pt"
+                >Data fetching direto: <code>async</code> server components +
+                <code>await fetch()</code>.</span
+              ><span data-lang="en"
+                >Direct data fetching: <code>async</code> server components +
+                <code>await fetch()</code>.</span
+              >
+            </li>
+            <li>
+              <span data-lang="pt"
+                >Streaming com <code>Suspense</code>; SSR/SSG/ISR nativos.</span
+              ><span data-lang="en"
+                >Streaming with <code>Suspense</code>; SSR/SSG/ISR
+                built-in.</span
+              >
+            </li>
+          </ul>
+        </div>
+        <div class="col client">
+          <h4 style="color: var(--teal)">
+            Pages Router <code>pages/</code> <span data-lang="pt">(legado)</span
+            ><span data-lang="en">(legacy)</span>
+          </h4>
+          <ul>
+            <li>
+              <span data-lang="pt">Tudo é Client Component por padrão.</span
+              ><span data-lang="en"
+                >Everything is a Client Component by default.</span
+              >
+            </li>
+            <li>
+              <span data-lang="pt"
+                >Data fetching via <code>getServerSideProps</code> /
+                <code>getStaticProps</code> /
+                <code>getInitialProps</code>.</span
+              ><span data-lang="en"
+                >Data fetching via <code>getServerSideProps</code> /
+                <code>getStaticProps</code> /
+                <code>getInitialProps</code>.</span
+              >
+            </li>
+            <li>
+              <span data-lang="pt"
+                >Roteamento por arquivo em <code>pages/</code>.</span
+              ><span data-lang="en"
+                >File-based routing in <code>pages/</code>.</span
+              >
+            </li>
+            <li>
+              <span data-lang="pt"
+                >Ainda suportado, mas a App Router é o futuro.</span
+              ><span data-lang="en"
+                >Still supported, but App Router is the future.</span
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="qsec">
+        <span data-lang="pt"
+          >React Server Components — o coração da App Router</span
+        ><span data-lang="en"
+          >React Server Components — the heart of App Router</span
+        >
+      </div>
+      <div class="compare">
+        <div class="col server">
+          <h4 style="color: var(--violet)">
+            Server Component <span data-lang="pt">(padrão)</span
+            ><span data-lang="en">(default)</span>
+          </h4>
+          <ul>
+            <li>
+              <span data-lang="pt"
+                >Pode ser <code>async</code>; faz <code>fetch</code>/<code
+                  >await</code
+                >
+                direto.</span
+              ><span data-lang="en"
+                >Can be <code>async</code>; does <code>fetch</code>/<code
+                  >await</code
+                >
+                directly.</span
+              >
+            </li>
+            <li>
+              <span data-lang="pt"
+                >Acesso a backend/secrets;
+                <strong>roda só no servidor</strong>.</span
+              ><span data-lang="en"
+                >Access to backend/secrets;
+                <strong>runs only on the server</strong>.</span
+              >
+            </li>
+            <li>
+              <span data-lang="pt"
+                ><b>Não pode:</b> hooks, <code>onClick</code>,
+                <code>window</code>, estado.</span
+              ><span data-lang="en"
+                ><b>Cannot:</b> hooks, <code>onClick</code>,
+                <code>window</code>, state.</span
+              >
+            </li>
+            <li>
+              <span data-lang="pt"
+                >Envia <em>HTML serializado</em>, não JS — menos bundle no
+                cliente.</span
+              ><span data-lang="en"
+                >Sends <em>serialized HTML</em>, not JS — less client
+                bundle.</span
+              >
+            </li>
+          </ul>
+        </div>
+        <div class="col client">
+          <h4 style="color: var(--teal)">
+            Client Component
+            <span data-lang="pt">(<code>'use client'</code>)</span
+            ><span data-lang="en">(<code>'use client'</code>)</span>
+          </h4>
+          <ul>
+            <li>
+              <span data-lang="pt"
+                >Interatividade: hooks, eventos,
+                <code>useState</code>/<code>useEffect</code>, browser
+                APIs.</span
+              ><span data-lang="en"
+                >Interactivity: hooks, events,
+                <code>useState</code>/<code>useEffect</code>, browser
+                APIs.</span
+              >
+            </li>
+            <li>
+              <span data-lang="pt">Marca a fronteira do bundle do cliente.</span
+              ><span data-lang="en">Marks the client bundle boundary.</span>
+            </li>
+            <li>
+              <span data-lang="pt"
+                >Pode receber Server Components
+                <em>só como children/props</em>.</span
+              ><span data-lang="en"
+                >Can receive Server Components
+                <em>only as children/props</em>.</span
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="key">
+        ⚠️
+        <span data-lang="pt"
+          ><b>Regra de ouro:</b> Server → Client passa só
+          <b>props serializáveis</b> (sem funções/instâncias de classe). Client
+          importa Server <strong>apenas</strong> passando-o como
+          <code>children</code> de um Server Component — não por import
+          direto.</span
+        ><span data-lang="en"
+          ><b>Golden rule:</b> Server → Client passes only
+          <b>serializable props</b> (no functions/class instances). A Client
+          component imports a Server component <strong>only</strong> by
+          receiving it as <code>children</code> from a Server component — not
+          via direct import.</span
+        >
+      </div>
+
+      <div class="qsec">
+        <span data-lang="pt">Perguntas típicas (Next.js)</span
+        ><span data-lang="en">Typical questions (Next.js)</span>
+      </div>
+      <details class="qa">
+        <summary>
+          <span data-lang="pt">Quando usar <code>'use client'</code>?</span
+          ><span data-lang="en"
+            >When do you use <code>'use client'</code>?</span
+          >
+        </summary>
+        <div class="ans">
+          <span data-lang="pt"
+            >Só quando precisar de interatividade no cliente:
+            <code>useState</code>/<code>useEffect</code>, event handlers
+            (<code>onClick</code>), ou APIs do browser. Mantenha o máximo
+            possível como Server Component — menos JS, dados no servidor,
+            secrets protegidas.</span
+          ><span data-lang="en"
+            >Only when you need client interactivity:
+            <code>useState</code>/<code>useEffect</code>, event handlers
+            (<code>onClick</code>), or browser APIs. Keep as much as possible as
+            Server Components — less JS, data on the server, secrets
+            protected.</span
+          >
+        </div>
+      </details>
+      <details class="qa">
+        <summary>
+          <span data-lang="pt"
+            >Por que Server Components? Qual o benefício?</span
+          ><span data-lang="en"
+            >Why Server Components? What's the benefit?</span
+          >
+        </summary>
+        <div class="ans">
+          <span data-lang="pt"
+            >(1) <strong>Menos JS no cliente</strong> — a lógica/data-fetching
+            fica no servidor; (2) fetch de dados perto da fonte, sem waterfall
+            de fetches no cliente; (3) secrets/token ficam server-side; (4)
+            melhor First Load e SEO.</span
+          ><span data-lang="en"
+            >(1) <strong>Less client JS</strong> — logic/data-fetching stays on
+            the server; (2) data fetched close to the source, no client-side
+            fetch waterfall; (3) secrets/tokens stay server-side; (4) better
+            First Load and SEO.</span
+          >
+        </div>
+      </details>
+      <details class="qa">
+        <summary>
+          <span data-lang="pt"
+            >Um Client Component pode renderizar um Server Component?</span
+          ><span data-lang="en"
+            >Can a Client Component render a Server Component?</span
+          >
+        </summary>
+        <div class="ans">
+          <span data-lang="pt"
+            >Não por import direto. Mas um Server Component pode
+            <strong>passar</strong> um Server Component como
+            <code>children</code> para um Client Component — então "sim", via
+            composição. (A fronteira cliente/servidor é respeitada.)</span
+          ><span data-lang="en"
+            >Not via direct import. But a Server Component can
+            <strong>pass</strong> a Server Component as <code>children</code> to
+            a Client Component — so "yes", via composition. (The client/server
+            boundary is respected.)</span
+          >
+        </div>
+      </details>
+      <details class="qa">
+        <summary>
+          <span data-lang="pt">Como o App Router busca dados?</span
+          ><span data-lang="en">How does the App Router fetch data?</span>
+        </summary>
+        <div class="ans">
+          <span data-lang="pt"
+            >Server Components são <code>async</code> — você faz
+            <code>await fetch(url, { cache, revalidate })</code> direto no
+            componente. Next estende o <code>fetch</code> com cache (<code
+              >'force-cache'</code
+            >
+            padrão, <code>'no-store'</code>, ou <code>revalidate: 60</code> para
+            ISR). Sem <code>getServerSideProps</code>.</span
+          ><span data-lang="en"
+            >Server Components are <code>async</code> — you
+            <code>await fetch(url, { cache, revalidate })</code> right in the
+            component. Next extends <code>fetch</code> with caching (<code
+              >'force-cache'</code
+            >
+            default, <code>'no-store'</code>, or <code>revalidate: 60</code> for
+            ISR). No <code>getServerSideProps</code>.</span
+          >
+        </div>
+      </details>
+      <details class="qa">
+        <summary>
+          <span data-lang="pt"
+            >SSR vs SSG vs ISR vs CSR — em uma linha cada?</span
+          ><span data-lang="en">SSR vs SSG vs ISR vs CSR — one line each?</span>
+        </summary>
+        <div class="ans">
+          <span data-lang="pt"
+            ><b>SSR</b>: HTML no servidor a cada request. <b>SSG</b>: HTML
+            gerado no build (estático). <b>ISR</b>: estático com revalidação
+            (rega no <code>revalidate</code>). <b>CSR</b>: renderiza no browser
+            (client component). O App Router escolhe automaticamente por
+            rota.</span
+          ><span data-lang="en"
+            ><b>SSR</b>: HTML on the server per request. <b>SSG</b>: HTML
+            generated at build (static). <b>ISR</b>: static with revalidation
+            (set <code>revalidate</code>). <b>CSR</b>: rendered in the browser
+            (client component). App Router chooses per route
+            automatically.</span
+          >
+        </div>
+      </details>
+
+      <!-- close -->
+      <div class="callout key" style="margin-top: 26px">
+        <p>
+          🧠
+          <span data-lang="pt"
+            ><b>Cram de 30 min:</b> leia os conceitos, depois abra cada pergunta
+            e responda <em>antes</em> de revelar. Para Next.js, grave a
+            fronteira Server/Client e a regra do <code>children</code>.</span
+          ><span data-lang="en"
+            ><b>30-min cram:</b> read the concepts, then open each question and
+            answer it <em>before</em> revealing. For Next.js, lock the
+            Server/Client boundary and the <code>children</code> rule.</span
+          >
+        </p>
+      </div>
+      <footer class="lesson-foot">
+        <div class="next-card">
+          <div class="lbl">
+            <span data-lang="pt">Depois →</span
+            ><span data-lang="en">Then →</span>
+          </div>
+          <div class="t">
+            <a href="./0001-clearone-playbook.html"
+              ><span data-lang="pt">Volte ao playbook comportamental</span
+              ><span data-lang="en">Back to the behavioral playbook</span></a
+            >
+          </div>
+        </div>
+        <div style="flex: 0 1 240px">
+          <div class="lbl">
+            <span data-lang="pt">Referência</span
+            ><span data-lang="en">Reference</span>
+          </div>
+          <p style="margin: 6px 0 0">
+            <a href="../NOTES.md"
+              ><span data-lang="pt">Notas</span
+              ><span data-lang="en">Notes</span></a
+            >
+            ·
+            <a href="../MISSION.md"
+              ><span data-lang="pt">Missão</span
+              ><span data-lang="en">Mission</span></a
+            >
+          </p>
+        </div>
+      </footer>
+    </article>
+  </body>
+</html>

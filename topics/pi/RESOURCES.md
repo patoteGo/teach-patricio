@@ -17,6 +17,16 @@
   - `models.md`, `providers.md`, `custom-provider.md`, `compaction.md`, `sdk.md`, `rpc.md`, `security.md`
 - [Agent Skills Specification — agentskills.io](https://agentskills.io/specification)
   The open standard Pi skills follow. Use for: writing portable skills usable across harnesses (Claude Code, Codex, etc.).
+- [pi-subagents — github.com/nicobailon/pi-subagents](https://github.com/nicobailon/pi-subagents)
+  The active extension that adds subagents, chains, parallel fan-out, async/background runs, and intercom coordination (`contact_supervisor` / `subagent_supervisor`) to Pi. Use for: the manager-workers topology and multi-agent message flows. (Installed locally at v0.40.0.)
+- [Google ML Crash Course — “Introduction to Large Language Models”](https://developers.google.com/machine-learning/crash-course/llm)
+  Primary explainer for language models, tokens, and context. Use for: distinguishing the model from the system built around it.
+- [Anthropic — “Building Effective AI Agents”](https://www.anthropic.com/engineering/building-effective-agents)
+  Primary architectural distinction between workflows and agents, plus the model–tool–feedback loop. Use for: defining agent behavior without treating every LLM app as an agent.
+- [OpenAI — “A Practical Guide to Building AI Agents”](https://openai.com/business/guides-and-resources/a-practical-guide-to-building-ai-agents/)
+  Defines the model, tools, and instructions as agent foundations and explains the run loop. Use for: cross-checking agent/tool boundaries.
+- [Model Context Protocol — Introduction & Architecture](https://modelcontextprotocol.io/docs/learn/architecture)
+  Canonical host–client–server model and the tools/resources/prompts primitives. Use for: distinguishing MCP itself from capabilities exposed through MCP.
 
 ## Knowledge (philosophy & rationale — read these once, they reframe how you think about Pi)
 

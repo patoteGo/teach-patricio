@@ -1,0 +1,57 @@
+/* =========================================================================
+   Pi Learning — bilingual engine (shared component)
+   Pair with i18n.js. Any lesson opts into PT/EN by:
+     - linking this stylesheet + i18n.js
+     - wrapping text in <span data-lang="pt">..</span><span data-lang="en">..</span>
+     - giving SVG <text>/<title>/<desc> both data-pt and data-en
+   i18n.js auto-injects the PT/EN switch into the hero. No per-lesson JS needed
+   for static content. Print hides the switch.
+   ========================================================================= */
+
+body.lang-pt [data-lang="en"] {
+	display: none !important;
+}
+body.lang-en [data-lang="pt"] {
+	display: none !important;
+}
+
+.langswitch {
+	position: absolute;
+	top: 20px;
+	right: 24px;
+	z-index: 6;
+	display: inline-flex;
+	gap: 2px;
+	padding: 3px;
+	border-radius: 999px;
+	background: rgba(255, 255, 255, 0.16);
+	border: 1px solid rgba(255, 255, 255, 0.3);
+	backdrop-filter: blur(6px);
+}
+.langswitch button {
+	cursor: pointer;
+	font: 700 0.72rem "Space Grotesk", sans-serif;
+	letter-spacing: 0.08em;
+	padding: 5px 12px;
+	border: 0;
+	border-radius: 999px;
+	background: transparent;
+	color: rgba(255, 255, 255, 0.85);
+	transition: all 0.14s;
+}
+.langswitch button[aria-pressed="true"] {
+	background: #fff;
+	color: #14132b;
+}
+
+@media (max-width: 520px) {
+	.langswitch {
+		top: 14px;
+		right: 16px;
+	}
+}
+@media print {
+	.langswitch {
+		display: none;
+	}
+}
