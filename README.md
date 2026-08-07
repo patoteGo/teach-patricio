@@ -65,6 +65,14 @@ Action on every push, so it never drifts. (See
 | 08 | [The map: LLM, agent, harness, tools, skills and MCP](./topics/pi/lessons/0008-o-mapa-dos-agentes.html) |
 | 09 | [Manager-workers topology](./topics/pi/lessons/0009-orquestra-de-agentes.html) |
 
+### Missão: EP Software — nossa empresa (Patricio + esposa)
+
+`topics/software-company/` · 1 lesson(s)
+
+| # | Lesson |
+|---|--------|
+| 01 | [Before code, the person (discovery with the pre-launch baker)](./topics/software-company/lessons/0001-antes-do-codigo.html) |
+
 ### System Design (backend · infra · frontend)
 
 `topics/system-design/` · 4 lesson(s)
@@ -76,7 +84,7 @@ Action on every push, so it never drifts. (See
 | 03 | [Scale & Estimation](./topics/system-design/lessons/0003-scale-and-estimation.html) |
 | 04 | [State, coupling & deep modules](./topics/system-design/lessons/0004-state-and-boundaries.html) |
 
-**Total: 19 lesson(s) across 4 topic(s).**
+**Total: 20 lesson(s) across 5 topic(s).**
 <!-- topics:end -->
 
 ## 🗂 Repo map
