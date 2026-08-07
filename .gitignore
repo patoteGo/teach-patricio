@@ -16,3 +16,7 @@ Thumbs.db
 
 # Local-only notes (never leave the machine)
 NOTES.local.md
+.pi-subagents/
+
+# Vercel project linkage (local `vercel link`; never deploy-relevant)
+.vercel/
