@@ -440,3 +440,17 @@ footer.lesson-foot .lbl {
 		background: #fff;
 	}
 }
+
+/* ---------- mobile + horizontal-scroll helper ---------- */
+.scroll-x {
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+}
+@media (max-width: 520px) {
+	.hero {
+		padding: 38px 18px 28px;
+	}
+	h2.section {
+		font-size: 1.35rem;
+	}
+}

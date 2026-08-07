@@ -150,7 +150,7 @@
 .pi-nav .pn-head .pn-topic{font:700 1.02rem/1.2 "Space Grotesk",sans-serif;color:var(--ink);display:block}
 .pi-nav .pn-head .pn-sub{font:700 .6rem "Space Grotesk";letter-spacing:.12em;text-transform:uppercase;color:var(--violet);margin-top:4px;display:block}
 .pi-nav .pn-sec{padding:14px 18px 4px;font:700 .58rem "Space Grotesk";letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
-.pi-nav a.pn-link{display:flex;gap:10px;align-items:baseline;padding:7px 18px;color:var(--ink-soft);text-decoration:none;border-left:3px solid transparent;transition:background .12s,color .12s}
+.pi-nav a.pn-link{display:flex;gap:10px;align-items:center;padding:10px 18px;min-height:44px;color:var(--ink-soft);text-decoration:none;border-left:3px solid transparent;transition:background .12s,color .12s}
 .pi-nav a.pn-link:hover{color:var(--ink);background:rgba(255,255,255,.04)}
 .pi-nav a.pn-link.active{color:var(--violet);border-left-color:var(--violet);background:var(--violet-50);font-weight:700}
 .pi-nav a.pn-link .pn-n{font:700 .68rem "JetBrains Mono",monospace;color:var(--ink-soft);min-width:20px;flex:none}
@@ -160,7 +160,7 @@
 .pi-nav .pn-foot a:hover{color:var(--ink)}
 .pi-nav .pn-foot a.pn-other{color:var(--teal);font-weight:600}
 .pi-nav .pn-close{position:absolute;top:12px;right:12px;cursor:pointer;border:0;background:transparent;color:var(--ink-soft);font-size:1.3rem;line-height:1;display:none}
-.pn-toggle{position:fixed;top:16px;left:16px;z-index:201;width:42px;height:42px;border-radius:11px;border:1px solid var(--line);background:var(--paper-2);color:var(--ink);cursor:pointer;font-size:1.15rem;display:none;align-items:center;justify-content:center;box-shadow:var(--shadow)}
+.pn-toggle{position:fixed;top:16px;left:16px;z-index:201;width:44px;height:44px;border-radius:11px;border:1px solid var(--line);background:var(--paper-2);color:var(--ink);cursor:pointer;font-size:1.15rem;display:none;align-items:center;justify-content:center;box-shadow:var(--shadow)}
 .pn-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:199;opacity:0;pointer-events:none;transition:opacity .2s}
 .pn-backdrop.show{opacity:1;pointer-events:auto}
 @media (min-width:1024px){
@@ -172,7 +172,7 @@
 @media (max-width:1023px){
   .pn-toggle{display:flex}
   .pi-nav .pn-close{display:block}
-  body.pn-has .hero .eyebrow,body.pn-has .hero h1,body.pn-has .hero p{padding-left:54px}
+  body.pn-has .hero .eyebrow{padding-left:54px}
 }`;
 	const style = document.createElement("style");
 	style.textContent = CSS;

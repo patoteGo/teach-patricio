@@ -42,7 +42,7 @@
 .ex-opt {
 	cursor: pointer;
 	font: inherit;
-	padding: 7px 13px;
+	padding: 10px 14px;
 	border-radius: 9px;
 	border: 1.5px solid var(--line);
 	background: var(--paper);
@@ -109,6 +109,7 @@
 	background: var(--paper);
 	color: var(--ink);
 	width: 100%;
+	min-height: 44px;
 }
 .calc-grid input:focus {
 	outline: none;

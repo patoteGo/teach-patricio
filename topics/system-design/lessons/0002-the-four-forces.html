@@ -72,10 +72,11 @@
         >
       </p>
 
-      <div style="margin: 22px 0 8px">
+      <div class="scroll-x" style="margin: 22px 0 8px">
         <svg
           viewBox="0 0 520 320"
           width="100%"
+          style="min-width: 520px"
           role="img"
           aria-labelledby="ff2"
         >
@@ -456,40 +457,90 @@
       </div>
 
       <!-- ============ 4. QUIZ ============ -->
-            <h2 class="section"><span class="num">★</span><span data-lang="pt">🧠 Calculadora: noves e orçamento de erro</span><span data-lang="en">🧠 Calculator: nines & error budget</span></h2>
+      <h2 class="section">
+        <span class="num">★</span
+        ><span data-lang="pt">🧠 Calculadora: noves e orçamento de erro</span
+        ><span data-lang="en">🧠 Calculator: nines & error budget</span>
+      </h2>
       <div class="ex calc" id="ex-nines">
         <div class="calc-grid">
-          <label><span data-lang="pt">Disponibilidade alvo (%)</span><span data-lang="en">Target availability (%)</span> <input type="number" id="n-av" value="99.9" step="0.01" /></label>
-          <label><span data-lang="pt">Requisições / mês</span><span data-lang="en">Requests / month</span> <input type="number" id="n-req" value="100000000" /></label>
+          <label
+            ><span data-lang="pt">Disponibilidade alvo (%)</span
+            ><span data-lang="en">Target availability (%)</span>
+            <input type="number" id="n-av" value="99.9" step="0.01"
+          /></label>
+          <label
+            ><span data-lang="pt">Requisições / mês</span
+            ><span data-lang="en">Requests / month</span>
+            <input type="number" id="n-req" value="100000000"
+          /></label>
         </div>
         <div class="calc-out">
-          <div><span data-lang="pt">Downtime / ano:</span><span data-lang="en">Downtime / year:</span> <b id="o-dy"></b></div>
-          <div><span data-lang="pt">Downtime / mês:</span><span data-lang="en">Downtime / month:</span> <b id="o-dm"></b></div>
-          <div><span data-lang="pt">Falhas permitidas / mês:</span><span data-lang="en">Allowed failures / month:</span> <b id="o-af"></b></div>
+          <div>
+            <span data-lang="pt">Downtime / ano:</span
+            ><span data-lang="en">Downtime / year:</span> <b id="o-dy"></b>
+          </div>
+          <div>
+            <span data-lang="pt">Downtime / mês:</span
+            ><span data-lang="en">Downtime / month:</span> <b id="o-dm"></b>
+          </div>
+          <div>
+            <span data-lang="pt">Falhas permitidas / mês:</span
+            ><span data-lang="en">Allowed failures / month:</span>
+            <b id="o-af"></b>
+          </div>
           <div class="calc-warn" id="o-note"></div>
         </div>
       </div>
       <script>
         (function () {
-          const av = document.getElementById("n-av"), req = document.getElementById("n-req");
-          const dy = document.getElementById("o-dy"), dm = document.getElementById("o-dm"),
-            af = document.getElementById("o-af"), note = document.getElementById("o-note");
-          const dur = (s) => { s = Math.round(s); if (s < 60) return s + " s"; if (s < 3600) return Math.round(s / 60) + " min"; if (s < 86400) return (s / 3600).toFixed(1) + " h"; return (s / 86400).toFixed(1) + " d"; };
-          const cnt = (n) => (n >= 1e9 ? (n / 1e9).toFixed(2) + "B" : n >= 1e6 ? (n / 1e6).toFixed(2) + "M" : n >= 1e3 ? (n / 1e3).toFixed(1) + "k" : String(Math.round(n)));
+          const av = document.getElementById("n-av"),
+            req = document.getElementById("n-req");
+          const dy = document.getElementById("o-dy"),
+            dm = document.getElementById("o-dm"),
+            af = document.getElementById("o-af"),
+            note = document.getElementById("o-note");
+          const dur = (s) => {
+            s = Math.round(s);
+            if (s < 60) return s + " s";
+            if (s < 3600) return Math.round(s / 60) + " min";
+            if (s < 86400) return (s / 3600).toFixed(1) + " h";
+            return (s / 86400).toFixed(1) + " d";
+          };
+          const cnt = (n) =>
+            n >= 1e9
+              ? (n / 1e9).toFixed(2) + "B"
+              : n >= 1e6
+                ? (n / 1e6).toFixed(2) + "M"
+                : n >= 1e3
+                  ? (n / 1e3).toFixed(1) + "k"
+                  : String(Math.round(n));
           function compute() {
-            const avl = parseFloat(av.value) || 0, r = parseFloat(req.value) || 0;
-            const budget = Math.max(0, 1 - avl / 100), y = budget * 365 * 86400;
-            dy.textContent = dur(y); dm.textContent = dur(y / 12); af.textContent = cnt(budget * r);
+            const avl = parseFloat(av.value) || 0,
+              r = parseFloat(req.value) || 0;
+            const budget = Math.max(0, 1 - avl / 100),
+              y = budget * 365 * 86400;
+            dy.textContent = dur(y);
+            dm.textContent = dur(y / 12);
+            af.textContent = cnt(budget * r);
             const en = window.PiI18n && PiI18n.lang === "en";
-            note.textContent = avl < 99 ? (en ? "⚠ Below 99% is rarely acceptable in production." : "⚠ Abaixo de 99% raramente é aceitável em produção.") : "";
+            note.textContent =
+              avl < 99
+                ? en
+                  ? "⚠ Below 99% is rarely acceptable in production."
+                  : "⚠ Abaixo de 99% raramente é aceitável em produção."
+                : "";
           }
-          av.addEventListener("input", compute); req.addEventListener("input", compute);
+          av.addEventListener("input", compute);
+          req.addEventListener("input", compute);
           compute();
-          document.addEventListener("DOMContentLoaded", () => { if (window.PiI18n) PiI18n.on(compute); });
+          document.addEventListener("DOMContentLoaded", () => {
+            if (window.PiI18n) PiI18n.on(compute);
+          });
         })();
       </script>
 
-<h2 class="section">
+      <h2 class="section">
         <span class="num">4</span
         ><span data-lang="pt">Confira o modelo mental</span
         ><span data-lang="en">Check the mental model</span>

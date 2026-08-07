@@ -96,10 +96,11 @@
         >
       </p>
 
-      <div style="margin: 22px 0 8px">
+      <div class="scroll-x" style="margin: 22px 0 8px">
         <svg
           viewBox="0 0 720 348"
           width="100%"
+          style="min-width: 720px"
           role="img"
           aria-labelledby="ll-title"
         >
@@ -427,41 +428,106 @@
       </div>
 
       <!-- ============ 5. QUIZ ============ -->
-            <h2 class="section"><span class="num">★</span><span data-lang="pt">🧠 Calculadora: back-of-envelope</span><span data-lang="en">🧠 Calculator: back-of-envelope</span></h2>
+      <h2 class="section">
+        <span class="num">★</span
+        ><span data-lang="pt">🧠 Calculadora: back-of-envelope</span
+        ><span data-lang="en">🧠 Calculator: back-of-envelope</span>
+      </h2>
       <div class="ex calc" id="ex-boe">
         <div class="calc-grid">
-          <label><span data-lang="pt">Usuários</span><span data-lang="en">Users</span> <input type="number" id="b-u" value="50000000" /></label>
-          <label><span data-lang="pt">Ações/usuário/dia</span><span data-lang="en">Actions/user/day</span> <input type="number" id="b-a" value="40" /></label>
-          <label><span data-lang="pt">Payload (bytes)</span><span data-lang="en">Payload (bytes)</span> <input type="number" id="b-p" value="100" /></label>
-          <label><span data-lang="pt">Retenção (dias)</span><span data-lang="en">Retention (days)</span> <input type="number" id="b-r" value="365" /></label>
+          <label
+            ><span data-lang="pt">Usuários</span
+            ><span data-lang="en">Users</span>
+            <input type="number" id="b-u" value="50000000"
+          /></label>
+          <label
+            ><span data-lang="pt">Ações/usuário/dia</span
+            ><span data-lang="en">Actions/user/day</span>
+            <input type="number" id="b-a" value="40"
+          /></label>
+          <label
+            ><span data-lang="pt">Payload (bytes)</span
+            ><span data-lang="en">Payload (bytes)</span>
+            <input type="number" id="b-p" value="100"
+          /></label>
+          <label
+            ><span data-lang="pt">Retenção (dias)</span
+            ><span data-lang="en">Retention (days)</span>
+            <input type="number" id="b-r" value="365"
+          /></label>
         </div>
         <div class="calc-out">
-          <div><span data-lang="pt">Eventos / dia:</span><span data-lang="en">Events / day:</span> <b id="bo-eday"></b></div>
-          <div><span data-lang="pt">Eventos / s (média):</span><span data-lang="en">Events / s (avg):</span> <b id="bo-eps"></b></div>
-          <div><span data-lang="pt">Eventos / s (pico ≈3×):</span><span data-lang="en">Events / s (peak ≈3×):</span> <b id="bo-peak"></b></div>
-          <div><span data-lang="pt">Armazenamento (retido):</span><span data-lang="en">Storage (retained):</span> <b id="bo-st"></b></div>
-          <div><span data-lang="pt">Banda (média):</span><span data-lang="en">Bandwidth (avg):</span> <b id="bo-bw"></b></div>
+          <div>
+            <span data-lang="pt">Eventos / dia:</span
+            ><span data-lang="en">Events / day:</span> <b id="bo-eday"></b>
+          </div>
+          <div>
+            <span data-lang="pt">Eventos / s (média):</span
+            ><span data-lang="en">Events / s (avg):</span> <b id="bo-eps"></b>
+          </div>
+          <div>
+            <span data-lang="pt">Eventos / s (pico ≈3×):</span
+            ><span data-lang="en">Events / s (peak ≈3×):</span>
+            <b id="bo-peak"></b>
+          </div>
+          <div>
+            <span data-lang="pt">Armazenamento (retido):</span
+            ><span data-lang="en">Storage (retained):</span> <b id="bo-st"></b>
+          </div>
+          <div>
+            <span data-lang="pt">Banda (média):</span
+            ><span data-lang="en">Bandwidth (avg):</span> <b id="bo-bw"></b>
+          </div>
         </div>
       </div>
       <script>
         (function () {
-          const U = document.getElementById("b-u"), A = document.getElementById("b-a"), P = document.getElementById("b-p"), R = document.getElementById("b-r");
-          const ed = document.getElementById("bo-eday"), ep = document.getElementById("bo-eps"), pk = document.getElementById("bo-peak"), st = document.getElementById("bo-st"), bw = document.getElementById("bo-bw");
-          const cnt = (n) => (n >= 1e9 ? (n / 1e9).toFixed(2) + "B" : n >= 1e6 ? (n / 1e6).toFixed(2) + "M" : n >= 1e3 ? (n / 1e3).toFixed(1) + "k" : String(Math.round(n)));
-          const hb = (n) => { const u = ["B", "KB", "MB", "GB", "TB", "PB"]; let i = 0; while (n >= 1024 && i < u.length - 1) { n /= 1024; i++; } return n.toFixed(n >= 100 ? 0 : 1) + " " + u[i] + "/s"; };
+          const U = document.getElementById("b-u"),
+            A = document.getElementById("b-a"),
+            P = document.getElementById("b-p"),
+            R = document.getElementById("b-r");
+          const ed = document.getElementById("bo-eday"),
+            ep = document.getElementById("bo-eps"),
+            pk = document.getElementById("bo-peak"),
+            st = document.getElementById("bo-st"),
+            bw = document.getElementById("bo-bw");
+          const cnt = (n) =>
+            n >= 1e9
+              ? (n / 1e9).toFixed(2) + "B"
+              : n >= 1e6
+                ? (n / 1e6).toFixed(2) + "M"
+                : n >= 1e3
+                  ? (n / 1e3).toFixed(1) + "k"
+                  : String(Math.round(n));
+          const hb = (n) => {
+            const u = ["B", "KB", "MB", "GB", "TB", "PB"];
+            let i = 0;
+            while (n >= 1024 && i < u.length - 1) {
+              n /= 1024;
+              i++;
+            }
+            return n.toFixed(n >= 100 ? 0 : 1) + " " + u[i] + "/s";
+          };
           const hb2 = (n) => hb(n).replace("/s", "");
           function compute() {
-            const u = parseFloat(U.value) || 0, a = parseFloat(A.value) || 0, p = parseFloat(P.value) || 0, r = parseFloat(R.value) || 0;
-            const eday = u * a, eps = eday / 86400;
-            ed.textContent = cnt(eday); ep.textContent = cnt(eps) + "/s"; pk.textContent = cnt(eps * 3) + "/s";
-            st.textContent = hb2(eday * p * r); bw.textContent = hb(eps * p);
+            const u = parseFloat(U.value) || 0,
+              a = parseFloat(A.value) || 0,
+              p = parseFloat(P.value) || 0,
+              r = parseFloat(R.value) || 0;
+            const eday = u * a,
+              eps = eday / 86400;
+            ed.textContent = cnt(eday);
+            ep.textContent = cnt(eps) + "/s";
+            pk.textContent = cnt(eps * 3) + "/s";
+            st.textContent = hb2(eday * p * r);
+            bw.textContent = hb(eps * p);
           }
           [U, A, P, R].forEach((el) => el.addEventListener("input", compute));
           compute();
         })();
       </script>
 
-<h2 class="section">
+      <h2 class="section">
         <span class="num">5</span
         ><span data-lang="pt">Confira o modelo mental</span
         ><span data-lang="en">Check the mental model</span>
