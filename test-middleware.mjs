@@ -19,10 +19,12 @@ function req(path, { method = "GET", cookie = "", form = null } = {}) {
 	return new Request(new URL(path, base), { method, headers, body });
 }
 
-// 1. No cookie -> gate page
+// 1. No cookie -> gate page (with password reveal toggle)
 let r = await mw(req("/topics/pi/lessons/0001-the-core-loop.html"));
 assert.equal(r.status, 401);
-assert.match(await r.text(), /Senha/);
+const body1 = await r.text();
+assert.match(body1, /Senha/);
+assert.match(body1, /id="eye"/);
 
 // 2. Correct password -> redirect + auth cookie
 r = await mw(
