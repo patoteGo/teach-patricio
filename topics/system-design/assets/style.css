@@ -462,4 +462,12 @@ footer.lesson-foot .lbl {
 	h2.section {
 		font-size: 1.35rem;
 	}
+	.scroll-x svg,
+	.diagram-shell svg,
+	.topo svg {
+		width: 100% !important;
+		min-width: 0 !important;
+		max-width: 100%;
+		height: auto;
+	}
 }
