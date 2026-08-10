@@ -139,7 +139,12 @@
 					t: { pt: "Antes do código", en: "Before the code" },
 				},
 			],
-			extra: [],
+			extra: [
+				{
+					f: "fluxo-de-uma-requisicao.html",
+					t: { pt: "🗺️ Fluxo de uma requisição", en: "🗺️ Request flow" },
+				},
+			],
 		},
 	};
 	const OTHER = {
