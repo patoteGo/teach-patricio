@@ -232,3 +232,157 @@ add any new stories to `my-stories.md`; update LR-0001 if the BLUF gap closed in
 - The MyBetterAI RSC/Next.js architecture decisions (server vs client components, why).
 - CRM simplification (right-size to business reality, feature flags for scale).
 - Terraform/infra angle (they're building infra UI over Terraform — your Cencosud Terraform is relevant).
+
+---
+
+## Session 5 — Round 2 prep: interviewer profiles + tailored strategy
+
+### Interview 1: Gati Vashi — Director of Salesforce Program Management (PO)
+
+**Who he is (from LinkedIn):**
+
+- **Current title:** Director of Salesforce Program Management @ ClearOne (Feb 2025–present).
+  He OWNS the Salesforce platform they want to cut/migrate from. This migration is his baby.
+- **Background:** 14+ years PM/engineering. PMP, PMI-ACP, CSPO, CSM certified.
+  Former Director of Product Management (Strategic Financial Solutions, Salesforce platform).
+  Former Application Development Manager at AXA US (Salesforce technical lead, CRM team,
+  Agile transformation). Former SWE at Thomson Reuters/Thomson Financial (J2EE).
+- **Education:** MS Computer Science (RIT), thesis in Computer Vision/AI; BS CS.
+- **He's TECHNICAL** — former SWE with a CS master's. Don't dumb down; he understands tradeoffs.
+  But he's now a PM/Director — lead with product/collaboration, support with tech credibility.
+- **His world = Salesforce + Agile + CRM + product strategy.**
+
+**Strategy for Gati:**
+
+1. **Frame everything as "I help you replace Salesforce."** His pain: Salesforce is expensive,
+   rigid, he wants custom JS apps. Your pitch: "I build the kind of platforms that replace
+   Salesforce — Node APIs, React UIs, from scratch." Cencosud ingest = lead processing. MyBetterAI
+   = building from scratch, fast.
+2. **Agile fluency.** He's PMP/CSPO/CSM certified — runs structured Agile. Show you're comfortable:
+   "I take tickets from the PO, estimate, sprint demo, work in Scrum/Kanban." Speak his language
+   (sprints, stories, backlog grooming, acceptance criteria).
+3. **Product thinking.** He manages 4 PMs + QA + product support. Show you think about the USER
+   (the admin, the call center agent), not just the code. CRM-simplification story is PERFECT
+   (worked with the overwhelmed admin to match the system to business reality).
+4. **Salesforce migration empathy.** "I've integrated with CRMs; I understand the tradeoff:
+   configurable platform (Salesforce = fast to customize, expensive, rigid) vs custom code
+   (flexible, cheaper at scale, more maintenance). You're making the right call to own the stack."
+5. **AI angle.** His thesis was in Computer Vision/AI. Mention your AI-first work (MyBetterAI)
+   as a product differentiator for their new platform.
+6. **Connect:** "Processing leads from call center + external APIs into one normalized system =
+   exactly the pattern I built at Cencosud for delivery events." Drop this early.
+
+### Interview 2: Manasa Krishnan — Junior Software Engineer (peer)
+
+**Who she is (from LinkedIn):**
+
+- Junior SWE at Orchestro.AI. Recent USF grad. "Open to work" (may be exploring).
+- Limited profile — no detailed tech stack visible. Related profiles suggest React/JS/Python.
+- **She's JUNIOR.** The peer interview is "understand your thought process on coding" — NOT live coding.
+
+**Strategy for Manasa:**
+
+1. **Mentorship signal.** She's junior; the peer interview with a junior engineer tests culture fit:
+   "can this senior work with juniors? will they mentor?" Your Textus story (taught a junior to
+   ask the right questions) + Cencosud TS workshop are PERFECT. Show you grow people.
+2. **Thought process walkthrough.** "How I approach a feature": clarify → estimate → sketch →
+   deep-dive → tradeoffs (your System Design Lesson 1!). Walk through a design decision
+   conversationally (Cencosud: "why SQS? why batch inserts? why idempotency?").
+3. **Code review culture.** How you review PRs: constructive, teaching, not gatekeeping. "I review
+   to teach, not to reject." Juniors care about this deeply.
+4. **Be warm + curious.** Juniors are often nervous in peer interviews. Ask HER questions: "What
+   do you work on at Orchestro? What's your stack?" Show genuine interest. She might recommend you.
+5. **Don't intimidate.** You're senior, she's junior. Be collaborative, not superior. "I'd love to
+   hear how you'd approach this" shows you value her perspective.
+
+---
+
+## ⚠️ CORRECTION — Manasa Krishnan was the WRONG profile
+
+**Real interviewer: Manasa K. (Kommareddy)** — linkedin.com/in/manasakommareddy
+
+**She is a SENIOR full-stack engineer, NOT a junior.**
+
+### Corrected profile
+
+- **Current:** Sr Software Engineer @ ClearOne Advantage (Aug 2025–present, ~1 year). **INSIDER** — knows the codebase, team, culture.
+- **~7.5 years total experience** — true peer to the user (8 years).
+- **Domain:** 5+ years in **debt-relief fintech** (Freedom Financial Network → Achieve, which is a digital personal finance / debt relief company). She KNOWS this domain deeply.
+- **Stack:** TypeScript, React, Node.js, **Go**, Next.js, GCP, REST APIs, microservices, SQL & NoSQL, DevOps. Azure, Terraform visible.
+- **Previous:** Sr SWE at Guild Mortgage (Next.js, Node.js, ~7 months). Senior Engineer at Achieve (React, Go, ~2.4 years). SWE at Freedom Financial Network (~2.9 years). SWE at USAA (~10 months).
+- **Self-described:** scalable web apps, clean/maintainable code, user-centric design, loves POCs, eager to grow into AI/ML.
+- **Recommendations:** strong React + Go, platform engineering, business-critical internal tools, adapts quickly to new frameworks.
+- **Education:** B.Tech Electrical & Electronics (India).
+
+### Strategy shift (from junior → senior peer)
+
+- **NOT mentorship vibes.** True peer-to-peer. Collaborative, equal.
+- **She knows the domain BETTER than you** (5+ years debt relief vs your CRM/leads). Respect that.
+- **Technical depth matters** — she uses the same stack (React/Node/TS/Next.js). Show depth, don't oversimplify.
+- **She's an insider** — she knows the codebase, the Salesforce pain, the team. She'll evaluate: do you fit HER team?
+- **Connect on fintech domain** — her Freedom Financial/Achieve background = debt relief = ClearOne's domain. Your CRM/leads connects.
+- **Ask about her work at ClearOne** — "What's the codebase like? What are you building? What's the team culture?" Shows genuine interest + insider intel.
+- **AI angle** — she's "eager to expand into AI/ML." Your MyBetterAI experience = perfect connection. "I've built AI products — happy to share."
+- **Go** — she knows Go; you're JS/TS deep. Be honest if Go comes up.
+
+---
+
+## Session 6 — Round 2 debrief: Manasa interview (system-design)
+
+**Format surprise:** This was NOT behavioral — it was a **system-design question** (despite the
+eng manager saying "thought process on coding, not live coding"). She asked a real design problem.
+
+**The question:** "If a user updates a document from their cellphone and it fails, then the next
+day tries to access that file on a desktop client, how can you ensure it doesn't fail and shows
+the user the current state?"
+
+**User's answer:**
+
+- Drew a diagram (opened a diagram app — strong proactive move)
+- Proposed: S3 blob for file storage + DB table for the URL/metadata + SQS queue for decoupling
+- After the design: asked about Salesforce migration → she talked about it (good domain curiosity)
+
+**Assessment:**
+
+- ✅ S3 + DB pattern = correct architecture (content in S3, metadata/source-of-truth in DB)
+- ✅ SQS decoupling = async thinking
+- ✅ Drawing a diagram = #1 differentiator in system design; most candidates just talk
+- ✅ Asked about Salesforce = domain interest + treated her as insider
+- ⚠️ Missing: explicit failure-handling — "write to S3 first, update DB only on success → DB
+  always points to last good version → desktop reads correct state." This is the KEY insight
+  for the "if the update fails" scenario.
+- ⚠️ Missing: versioning (new S3 object per update, DB stores current-version pointer) and
+  clarifying the SQS role (write pipeline? retry? notification?)
+
+**Overall:** Passed. Architecture sound, diagram proactive, interviewer engaged. For a peer
+round testing thought process, this demonstrated clear visual structured thinking.
+
+**Next:** Gati interview (PO/Director) — expect behavioral/product/migration focus, NOT technical.
+Lead with the Cencosud=leads connection. BLUF first. "Unblock first, scale later." Ask about
+Salesforce migration priorities.
+
+---
+
+## Session 6 (cont.) — Manasa interview debrief
+
+**Format:** Stack/experience + live coding (React) + SQL basics + system design diagram.
+
+**What happened:**
+
+- ✅ Stack/experience — good fit, she recognized the overlap (React, Node, TS, Next.js).
+- ✅ React live coding — went well.
+- ❌ SQL basics — forgot aggregation (GROUP BY / SUM / COUNT). Minor gap.
+- ✅ System design — bidding system diagram. Went well (consistent with the diagram-habit from Gati's round).
+- Overall vibe: "seems a good fit, just wait."
+
+**Assessment:**
+
+- The React live coding + system design are the STRONGER signals — those went well. For a senior
+  full-stack role, proving you can code React and design systems > remembering SQL aggregation syntax.
+- The SQL miss is minor but worth brushing up if there's a next round (GROUP BY, HAVING,
+  window functions, JOINs with aggregation). Add to future-prep backlog.
+- Both interviews (Gati + Manasa) included system-design + thought-process questions — confirms
+  ClearOne tests HOW you think, not just WHAT you know. The diagram habit (from system-design
+  lessons) was a genuine differentiator.
+
+**Status: Both round-2 interviews complete. Waiting for feedback.**

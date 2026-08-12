@@ -2,7 +2,7 @@
 
 ## Why
 
-Interview round 1 ✅ done (engineering manager, conversational, positive vibe). **Next: 2 more rounds** — a PO interview (high-level/conversational) and an engineer peer (code thought process, not live coding). **Senior Full-Stack Engineer** role
+Interviews ✅ done — round 1 (eng manager) + round 2 (Gati PO + Manasa peer). Both positive. **Waiting for feedback.** **Senior Full-Stack Engineer** role
 (React · Node.js · AWS serverless · AI-first; marketing/onboarding/servicing platforms).
 The user reads tomorrow as **mostly behavioral**. The concrete outcome: walk in able to
 land every behavioral answer with a senior, natural, *ClearOne-tailored* delivery —

@@ -49,6 +49,12 @@ Action on every push, so it never drifts. (See
 | 01 | [ClearOne Advantage — your playbook for tomorrow](./topics/clearone-interview/lessons/0001-clearone-playbook.html) |
 | 02 | [ClearOne — stack quick reminders](./topics/clearone-interview/lessons/0002-stack-cheatsheet.html) |
 
+### Frontdoor / Lob — Senior Software Engineer (contract)
+
+`topics/frontdoor-interview/` · 0 lesson(s)
+
+_(no lessons yet)_
+
 ### Master the Pi Coding Harness as a Power Tool
 
 `topics/pi/` · 9 lesson(s)
@@ -84,7 +90,15 @@ Action on every push, so it never drifts. (See
 | 03 | [Scale & Estimation](./topics/system-design/lessons/0003-scale-and-estimation.html) |
 | 04 | [State, coupling & deep modules](./topics/system-design/lessons/0004-state-and-boundaries.html) |
 
-**Total: 20 lesson(s) across 5 topic(s).**
+### System Design Interview Dojo
+
+`topics/system-design-practice/` · 1 lesson(s)
+
+| # | Lesson |
+|---|--------|
+| 01 | [System Design Dojo · Draw and talk](./topics/system-design-practice/lessons/0001-draw-and-talk.html) |
+
+**Total: 21 lesson(s) across 7 topic(s).**
 <!-- topics:end -->
 
 ## 🗂 Repo map

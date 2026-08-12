@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title
+      data-pt="System Design Dojo · Desenhe e fale"
+      data-en="System Design Dojo · Draw and talk"
+    >
+      System Design Dojo · Desenhe e fale
+    </title>
+    <link rel="stylesheet" href="../assets/style.css" />
+    <link rel="stylesheet" href="../assets/dark.css" />
+    <link rel="stylesheet" href="../assets/i18n.css" />
+    <link rel="stylesheet" href="../assets/exercises.css" />
+    <script src="../assets/i18n.js" defer></script>
+    <script src="../assets/nav.js" defer></script>
+    <script src="../assets/exercises.js" defer></script>
+  </head>
+  <body class="lang-pt">
+    <article class="lesson">
+      <header class="hero">
+        <span class="eyebrow"
+          ><span data-lang="pt">⬡ System Design · Dojo</span
+          ><span data-lang="en">⬡ System Design · Dojo</span></span
+        >
+        <h1>
+          <span data-lang="pt">Desenhe.<br />Fale. Repita.</span
+          ><span data-lang="en">Draw.<br />Talk. Repeat.</span>
+        </h1>
+        <p class="lead">
+          <span data-lang="pt"
+            >A entrevista não avalia um diagrama bonito. Avalia se você consegue
+            <strong>pensar em voz alta</strong>, escolher o próximo corte e
+            explicar tradeoffs enquanto o desenho evolui.</span
+          ><span data-lang="en"
+            >The interview does not grade a pretty diagram. It tests whether you
+            can <strong>think aloud</strong>, choose the next cut, and explain
+            tradeoffs as the drawing evolves.</span
+          >
+        </p>
+        <p class="lesson-nav-top">
+          ↑ <a href="../MISSION.md">System Design Dojo</a> ·
+          <span data-lang="pt">primeira prática</span
+          ><span data-lang="en">first practice</span>
+        </p>
+      </header>
+
+      <h2 class="section">
+        <span class="num">1</span
+        ><span data-lang="pt">O loop de performance</span
+        ><span data-lang="en">The performance loop</span>
+      </h2>
+      <p class="kicker">
+        <span data-lang="pt"
+          >Não tente desenhar e explicar tudo ao mesmo tempo. Use um ritmo fixo:
+          cada traço responde a uma pergunta.</span
+        ><span data-lang="en"
+          >Do not try to draw and explain everything at once. Use a fixed
+          rhythm: every stroke answers one question.</span
+        >
+      </p>
+      <div class="scroll-x" style="margin: 20px 0">
+        <svg
+          viewBox="0 0 760 190"
+          width="100%"
+          style="min-width: 700px"
+          role="img"
+          aria-labelledby="loop-title"
+        >
+          <title
+            id="loop-title"
+            data-pt="Loop de prática: perguntar, desenhar, narrar, verificar"
+            data-en="Practice loop: ask, draw, narrate, verify"
+          >
+            Practice loop
+          </title>
+          <defs>
+            <marker
+              id="arrow"
+              markerWidth="8"
+              markerHeight="8"
+              refX="6"
+              refY="3"
+              orient="auto"
+            >
+              <path d="M0,0 L0,6 L7,3 z" fill="#8b6ff7" />
+            </marker>
+          </defs>
+          <path
+            d="M145 82 H220 M335 82 H410 M525 82 H600"
+            stroke="#8b6ff7"
+            stroke-width="3"
+            marker-end="url(#arrow)"
+          />
+          <g font-family="Space Grotesk" text-anchor="middle">
+            <g>
+              <rect
+                x="25"
+                y="45"
+                width="120"
+                height="74"
+                rx="16"
+                fill="#211d33"
+                stroke="#2dd4bf"
+              />
+              <text
+                x="85"
+                y="73"
+                fill="#2dd4bf"
+                font-size="13"
+                font-weight="700"
+                data-pt="PERGUNTE"
+                data-en="ASK"
+              >
+                PERGUNTE
+              </text>
+              <text
+                x="85"
+                y="96"
+                fill="#eceef6"
+                font-size="11"
+                data-pt="requisitos"
+                data-en="requirements"
+              >
+                requisitos
+              </text>
+            </g>
+            <g>
+              <rect
+                x="220"
+                y="45"
+                width="115"
+                height="74"
+                rx="16"
+                fill="#211d33"
+                stroke="#8b6ff7"
+              />
+              <text
+                x="277"
+                y="73"
+                fill="#a995ff"
+                font-size="13"
+                font-weight="700"
+                data-pt="DESENHE"
+                data-en="DRAW"
+              >
+                DESENHE
+              </text>
+              <text
+                x="277"
+                y="96"
+                fill="#eceef6"
+                font-size="11"
+                data-pt="caixas + setas"
+                data-en="boxes + arrows"
+              >
+                caixas + setas
+              </text>
+            </g>
+            <g>
+              <rect
+                x="410"
+                y="45"
+                width="115"
+                height="74"
+                rx="16"
+                fill="#211d33"
+                stroke="#f59e0b"
+              />
+              <text
+                x="467"
+                y="73"
+                fill="#fbbf24"
+                font-size="13"
+                font-weight="700"
+                data-pt="NARRE"
+                data-en="NARRATE"
+              >
+                NARRE
+              </text>
+              <text
+                x="467"
+                y="96"
+                fill="#eceef6"
+                font-size="11"
+                data-pt="request path"
+                data-en="request path"
+              >
+                request path
+              </text>
+            </g>
+            <g>
+              <rect
+                x="600"
+                y="45"
+                width="135"
+                height="74"
+                rx="16"
+                fill="#211d33"
+                stroke="#ef476f"
+              />
+              <text
+                x="667"
+                y="73"
+                fill="#fb7185"
+                font-size="13"
+                font-weight="700"
+                data-pt="VERIFIQUE"
+                data-en="CHECK"
+              >
+                VERIFIQUE
+              </text>
+              <text
+                x="667"
+                y="96"
+                fill="#eceef6"
+                font-size="11"
+                data-pt="falha + tradeoff"
+                data-en="failure + tradeoff"
+              >
+                falha + tradeoff
+              </text>
+            </g>
+          </g>
+        </svg>
+      </div>
+      <div class="callout key">
+        <strong
+          ><span data-lang="pt">Frase de controle:</span
+          ><span data-lang="en">Control sentence:</span></strong
+        >
+        <span data-lang="pt"
+          >“Vou desenhar o caminho principal primeiro; depois escolho um gargalo
+          para aprofundar.”</span
+        ><span data-lang="en"
+          >“I’ll draw the happy path first; then I’ll choose one bottleneck to
+          deep-dive.”</span
+        >
+      </div>
+
+      <h2 class="section">
+        <span class="num">2</span
+        ><span data-lang="pt">O desenho mínimo viável</span
+        ><span data-lang="en">The minimum viable drawing</span>
+      </h2>
+      <p class="kicker">
+        <span data-lang="pt"
+          >Para os primeiros cinco minutos, limite-se a cinco elementos.
+          Complexidade precoce é silêncio disfarçado.</span
+        ><span data-lang="en"
+          >For the first five minutes, limit yourself to five elements.
+          Premature complexity is silence in disguise.</span
+        >
+      </p>
+      <div class="cards">
+        <div class="card">
+          <h3>
+            ① <span data-lang="pt">Cliente</span
+            ><span data-lang="en">Client</span>
+          </h3>
+          <p>
+            <span data-lang="pt">Quem inicia? Web, mobile, outro serviço?</span
+            ><span data-lang="en"
+              >Who initiates? Web, mobile, another service?</span
+            >
+          </p>
+        </div>
+        <div class="card">
+          <h3>
+            ② <span data-lang="pt">Entrada</span
+            ><span data-lang="en">Entry</span>
+          </h3>
+          <p>
+            <span data-lang="pt">DNS, CDN, load balancer ou API gateway.</span
+            ><span data-lang="en"
+              >DNS, CDN, load balancer, or API gateway.</span
+            >
+          </p>
+        </div>
+        <div class="card">
+          <h3>
+            ③ <span data-lang="pt">Compute</span
+            ><span data-lang="en">Compute</span>
+          </h3>
+          <p>
+            <span data-lang="pt"
+              >Um serviço. Não uma frota de microsserviços.</span
+            ><span data-lang="en"
+              >One service. Not a fleet of microservices.</span
+            >
+          </p>
+        </div>
+        <div class="card">
+          <h3>
+            ④ <span data-lang="pt">Estado</span
+            ><span data-lang="en">State</span>
+          </h3>
+          <p>
+            <span data-lang="pt"
+              >DB, cache, object storage—só o que o fluxo usa.</span
+            ><span data-lang="en"
+              >DB, cache, object storage—only what the path uses.</span
+            >
+          </p>
+        </div>
+      </div>
+      <div class="diagram" style="margin-top: 20px">
+        <div class="diagram-title">
+          <span data-lang="pt">Exemplo: encurtador de URL</span
+          ><span data-lang="en">Example: URL shortener</span>
+        </div>
+        <pre class="code"><code>Browser ──&gt; API ──&gt; URL service ──&gt; DB
+                              └──&gt; cache (read path)
+
+<span data-lang="pt">fala: “Escreve no DB; leituras quentes podem evitar o DB via cache.”</span><span data-lang="en">say: “Writes go to the DB; hot reads can bypass it through cache.”</span></code></pre>
+      </div>
+
+      <h2 class="section">
+        <span class="num">3</span
+        ><span data-lang="pt">A fala que acompanha o traço</span
+        ><span data-lang="en">The narration that follows the stroke</span>
+      </h2>
+      <div class="callout tip">
+        <p>
+          <strong
+            >“<span data-lang="pt">Desenho</span
+            ><span data-lang="en">Draw</span> →
+            <span data-lang="pt">intenção</span
+            ><span data-lang="en">intent</span> →
+            <span data-lang="pt">limite</span
+            ><span data-lang="en">boundary</span>.”</strong
+          >
+        </p>
+        <ul>
+          <li>
+            <span data-lang="pt"
+              >“Adiciono um cache para reduzir latência de leitura.”</span
+            ><span data-lang="en"
+              >“I’m adding a cache to reduce read latency.”</span
+            >
+          </li>
+          <li>
+            <span data-lang="pt"
+              >“O custo é invalidação; aceito consistência eventual para este
+              caso.”</span
+            ><span data-lang="en"
+              >“The cost is invalidation; I accept eventual consistency
+              here.”</span
+            >
+          </li>
+          <li>
+            <span data-lang="pt"
+              >“Se o cache cair, a leitura volta ao DB—mais lenta, mas
+              funcional.”</span
+            ><span data-lang="en"
+              >“If cache fails, reads fall back to the DB—slower, but
+              functional.”</span
+            >
+          </li>
+        </ul>
+      </div>
+      <p>
+        <span data-lang="pt"
+          >Isso torna seu raciocínio observável. O entrevistador pode corrigir
+          uma hipótese antes de você investir dez minutos no ramo errado.</span
+        ><span data-lang="en"
+          >This makes your reasoning observable. The interviewer can correct an
+          assumption before you spend ten minutes on the wrong branch.</span
+        >
+      </p>
+
+      <h2 class="section">
+        <span class="num">4</span
+        ><span data-lang="pt">Seu treino de 25 minutos</span
+        ><span data-lang="en">Your 25-minute drill</span>
+      </h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>
+                <span data-lang="pt">Tempo</span
+                ><span data-lang="en">Time</span>
+              </th>
+              <th>
+                <span data-lang="pt">Ação</span
+                ><span data-lang="en">Action</span>
+              </th>
+              <th>
+                <span data-lang="pt">Regra</span
+                ><span data-lang="en">Rule</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>0–3</td>
+              <td>
+                <span data-lang="pt">Clarifique</span
+                ><span data-lang="en">Clarify</span>
+              </td>
+              <td>
+                <span data-lang="pt">3 perguntas + 2 hipóteses</span
+                ><span data-lang="en">3 questions + 2 assumptions</span>
+              </td>
+            </tr>
+            <tr>
+              <td>3–8</td>
+              <td>
+                <span data-lang="pt">Desenhe o caminho</span
+                ><span data-lang="en">Draw the path</span>
+              </td>
+              <td>
+                <span data-lang="pt">máximo 5 caixas</span
+                ><span data-lang="en">5 boxes max</span>
+              </td>
+            </tr>
+            <tr>
+              <td>8–15</td>
+              <td>
+                <span data-lang="pt">Estime e aprofunde</span
+                ><span data-lang="en">Estimate and deep-dive</span>
+              </td>
+              <td>
+                <span data-lang="pt">um gargalo, números aproximados</span
+                ><span data-lang="en">one bottleneck, rough numbers</span>
+              </td>
+            </tr>
+            <tr>
+              <td>15–20</td>
+              <td>
+                <span data-lang="pt">Falhe o sistema</span
+                ><span data-lang="en">Break the system</span>
+              </td>
+              <td>
+                <span data-lang="pt">um fallback + idempotência</span
+                ><span data-lang="en">one fallback + idempotency</span>
+              </td>
+            </tr>
+            <tr>
+              <td>20–25</td>
+              <td>
+                <span data-lang="pt">Feche</span
+                ><span data-lang="en">Wrap up</span>
+              </td>
+              <td>
+                <span data-lang="pt">2 tradeoffs + próximo passo</span
+                ><span data-lang="en">2 tradeoffs + next step</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="ex classify" id="ex-practice">
+        <div class="ex-head">
+          <h3>
+            <span data-lang="pt"
+              >Qual comportamento treina melhor a habilidade?</span
+            ><span data-lang="en">Which behavior best trains the skill?</span>
+          </h3>
+          <div class="ex-score"></div>
+        </div>
+        <div class="ex-item" data-correct="b">
+          <p>
+            <span data-lang="pt">Você deve...</span
+            ><span data-lang="en">You should...</span>
+          </p>
+          <button class="ex-opt" data-pick="a">
+            <span data-lang="pt"
+              >estudar mais dez soluções antes de desenhar.</span
+            ><span data-lang="en"
+              >study ten more solutions before drawing.</span
+            ></button
+          ><button class="ex-opt" data-pick="b">
+            <span data-lang="pt"
+              >tentar primeiro, gravar a fala e revisar um único ponto.</span
+            ><span data-lang="en"
+              >attempt first, record yourself, and review one point.</span
+            ></button
+          ><button class="ex-opt" data-pick="c">
+            <span data-lang="pt"
+              >polir o diagrama até ele parecer de produção.</span
+            ><span data-lang="en"
+              >polish the diagram until it looks production-ready.</span
+            >
+          </button>
+          <div class="ex-fb"></div>
+        </div>
+      </div>
+
+      <h2 class="section">
+        <span class="num">5</span><span data-lang="pt">Próximo prompt</span
+        ><span data-lang="en">Next prompt</span>
+      </h2>
+      <div class="callout warn">
+        <strong
+          ><span data-lang="pt">Desenhe um rate limiter.</span
+          ><span data-lang="en">Design a rate limiter.</span></strong
+        ><br /><span data-lang="pt"
+          >Comece sem pesquisar. Grave 25 minutos. Depois compare com o System
+          Design Primer e anote: uma decisão boa, uma lacuna, uma pergunta para
+          a próxima tentativa.</span
+        ><span data-lang="en"
+          >Start without research. Record 25 minutes. Then compare with the
+          System Design Primer and write: one good decision, one gap, one
+          question for the next attempt.</span
+        >
+      </div>
+      <footer class="lesson-foot">
+        <span data-lang="pt"
+          >Base: <a href="../RESOURCES.md">recursos do dojo</a> · método:
+          tentativa antes da solução.</span
+        ><span data-lang="en"
+          >Basis: <a href="../RESOURCES.md">dojo resources</a> · method: attempt
+          before solution.</span
+        >
+      </footer>
+    </article>
+  </body>
+</html>

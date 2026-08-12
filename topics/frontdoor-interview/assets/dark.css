@@ -1,0 +1,104 @@
+/* =========================================================================
+   Pi Learning — dark theme override
+   Layered ON TOP of style.css. Redefines the design tokens to dark values
+   so every shared component (hero, callout, card, quiz, cite…) flips to dark
+   automatically, plus a few hardcoded light backgrounds. Any lesson opts in
+   by linking this AFTER style.css. Print stays readable.
+   ========================================================================= */
+
+:root {
+	/* surfaces */
+	--paper: #0e0f17;
+	--paper-2: #181a26;
+	--ink: #eceef6;
+	--ink-soft: #9ea2b8;
+	--line: #292d40;
+
+	/* accents — brightened for dark contrast */
+	--violet: #8b6ff7;
+	--violet-50: #221a3d;
+	--teal: #2dd4bf;
+	--teal-50: #0c2a27;
+	--amber: #fbbf24;
+	--amber-50: #2b2110;
+	--rose: #fb7185;
+	--rose-50: #2c1622;
+	--blue: #60a5fa;
+
+	--shadow: 0 8px 30px -12px rgba(0, 0, 0, 0.65);
+	--shadow-lg: 0 22px 60px -20px rgba(0, 0, 0, 0.75);
+}
+
+body {
+	background:
+		radial-gradient(
+			120% 80% at 50% -10%,
+			rgba(108, 75, 240, 0.12),
+			transparent 60%
+		),
+		var(--paper);
+}
+
+/* links: the browser default blue is invisible on dark → bright violet everywhere */
+a {
+	color: var(--violet);
+}
+a:visited {
+	color: #c4b5ff;
+}
+a:hover {
+	color: #fff;
+}
+.hero a {
+	color: #fff;
+}
+
+/* hardcoded light backgrounds → dark surfaces */
+code.inline {
+	background: var(--violet-50);
+	color: var(--violet);
+}
+
+.kbd {
+	background: var(--paper-2);
+	border-color: var(--line);
+	color: var(--ink);
+}
+
+.quiz button.opt {
+	background: var(--paper-2);
+	border-color: var(--line);
+	color: var(--ink);
+}
+.quiz button.opt:hover {
+	border-color: var(--violet);
+}
+
+/* callout icon chips stay vivid; soften the tint fills a touch */
+.callout {
+	background: var(--paper-2);
+}
+
+/* keep code blocks legible (already dark in style.css, just align border) */
+pre.block {
+	border: 1px solid var(--line);
+}
+
+/* footer next-card gradient reads better muted on dark */
+.next-card {
+	background: linear-gradient(120deg, var(--violet-50), var(--teal-50));
+	border-color: var(--line);
+}
+
+@media print {
+	body {
+		background: #fff;
+	}
+	:root {
+		--paper: #fbfbf8;
+		--paper-2: #fff;
+		--ink: #14132b;
+		--ink-soft: #4a4866;
+		--line: #e7e5f0;
+	}
+}
