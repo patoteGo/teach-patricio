@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Behavioral Interview · Question Bank</title>
     <link rel="stylesheet" href="../assets/style.css" />
+    <link rel="stylesheet" href="../assets/dark.css" />
+    <script src="../assets/reading-ui.js" defer></script>
     <style>
       .filterbar {
         position: sticky;
@@ -15,7 +17,7 @@
         gap: 8px;
         margin: 0 -22px 18px;
         padding: 14px 22px;
-        background: rgba(251, 251, 248, 0.92);
+        background: color-mix(in srgb, var(--paper) 92%, transparent);
         backdrop-filter: blur(8px);
         border-bottom: 1px solid var(--line);
       }
@@ -29,7 +31,7 @@
         min-height: 44px;
         border-radius: 999px;
         border: 1.5px solid var(--line);
-        background: #fff;
+        background: var(--paper-2);
         color: var(--ink-soft);
         transition: all 0.14s ease;
         display: inline-flex;

@@ -102,3 +102,38 @@ pre.block {
 		--line: #e7e5f0;
 	}
 }
+/* ---------- calm reading dark tokens ---------- */
+:root {
+	--paper: #0c1119;
+	--paper-2: #121925;
+	--surface-muted: #182131;
+	--ink: #e8edf5;
+	--ink-soft: #9ba8ba;
+	--line: #263144;
+	--line-strong: #36445a;
+	--violet: #a78bfa;
+	--teal: #5eead4;
+	--amber: #f6c453;
+	--rose: #fb8da0;
+	--blue: #7db7ff;
+	--hero-bg: radial-gradient(90% 130% at 100% 0%, rgba(94, 234, 212, 0.1), transparent 58%), linear-gradient(135deg, #171e2c 0%, #202a3d 58%, #193033 130%);
+	--hero-border: #2d394c;
+}
+
+body {
+	background: radial-gradient(90% 55% at 50% -15%, rgba(107, 133, 180, 0.1), transparent 62%), var(--paper);
+}
+@media print {
+	:root {
+		--paper: #fbfbf8;
+		--paper-2: #fff;
+		--surface-muted: #f1f3f6;
+		--ink: #14132b;
+		--ink-soft: #4a4866;
+		--line: #e1e5eb;
+		--line-strong: #cbd2dc;
+	}
+	.hero {
+		--hero-bg: linear-gradient(135deg, #334155, #475569);
+	}
+}

@@ -461,3 +461,365 @@ footer.lesson-foot .lbl {
 		background: #fff;
 	}
 }
+
+/* =========================================================================
+   Learning Hub — calm reading system
+   Load after style.css and before dark.css. Shared by every lesson/reference.
+   ========================================================================= */
+:root {
+	--ink: #182230;
+	--ink-soft: #5d6878;
+	--paper: #f6f7f9;
+	--paper-2: #ffffff;
+	--line: #e1e5eb;
+	--line-strong: #cbd2dc;
+	--surface-muted: #eef1f5;
+	--contentw: 68ch;
+	--radius: 12px;
+	--shadow: 0 1px 2px rgba(20, 30, 45, 0.04), 0 8px 24px rgba(20, 30, 45, 0.05);
+	--shadow-lg: 0 18px 46px rgba(20, 30, 45, 0.12);
+	--hero-bg: radial-gradient(90% 130% at 100% 0%, rgba(15, 185, 164, 0.12), transparent 58%), linear-gradient(135deg, #334155 0%, #475569 58%, #315b5b 130%);
+	--hero-border: rgba(255, 255, 255, 0.14);
+}
+
+body {
+	font-size: 17px;
+	line-height: 1.72;
+	letter-spacing: -0.006em;
+}
+
+article.lesson {
+	max-width: 920px;
+	padding-bottom: 104px;
+}
+
+article.lesson > :is(p, .kicker, ul, ol),
+article.lesson > section > :is(p, .kicker, ul, ol) {
+	max-width: var(--contentw);
+}
+
+.hero {
+	margin-top: 24px;
+	padding: 44px 46px 38px;
+	border: 1px solid var(--hero-border);
+	border-radius: 18px;
+	background: var(--hero-bg);
+	box-shadow: var(--shadow-lg);
+}
+
+.hero::after {
+	opacity: 0.28;
+	background-size: 32px 32px;
+}
+
+.hero h1 {
+	max-width: 18ch;
+	font-size: clamp(2rem, 5vw, 3rem);
+	line-height: 1.08;
+	letter-spacing: -0.035em;
+}
+
+.hero p.lead {
+	max-width: 62ch;
+	font-size: 1rem;
+	line-height: 1.66;
+	color: rgba(255, 255, 255, 0.84);
+}
+
+.eyebrow {
+	background: rgba(255, 255, 255, 0.08);
+	border-color: rgba(255, 255, 255, 0.16);
+	backdrop-filter: none;
+}
+
+h2.section {
+	margin-top: 64px;
+	padding-top: 30px;
+	border-top: 1px solid var(--line);
+	font-size: clamp(1.45rem, 3vw, 1.7rem);
+	line-height: 1.25;
+}
+
+h2.section .num {
+	width: 32px;
+	height: 32px;
+	border-radius: 999px;
+	font-size: 0.86rem;
+	box-shadow: none;
+}
+
+h3.subsection,
+h3 {
+	line-height: 1.35;
+	letter-spacing: -0.012em;
+}
+
+.kicker {
+	max-width: var(--contentw);
+	font-size: 0.98rem;
+	line-height: 1.65;
+}
+
+a {
+	text-underline-offset: 0.18em;
+	text-decoration-thickness: 0.08em;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible {
+	outline: 3px solid color-mix(in srgb, var(--violet) 45%, transparent);
+	outline-offset: 3px;
+}
+
+/* Existing semantic emphasis becomes a consistent skimming system. */
+article.lesson p strong,
+article.lesson p .skim {
+	padding: 0.08em 0.24em;
+	border-radius: 4px;
+	background: color-mix(in srgb, var(--amber) 13%, transparent);
+	color: color-mix(in srgb, var(--amber) 70%, var(--ink));
+	font-weight: 700;
+	box-decoration-break: clone;
+	-webkit-box-decoration-break: clone;
+}
+
+article.lesson p em:not(.plain) {
+	color: var(--teal);
+	font-style: normal;
+	font-weight: 650;
+}
+
+mark.skim {
+	border: 0;
+}
+
+.card,
+.quiz,
+.ex,
+.diagram,
+.diagram-shell,
+.table-wrap {
+	box-shadow: none;
+}
+
+.callout {
+	padding: 17px 20px 17px 54px;
+	border-color: var(--line);
+	box-shadow: none;
+}
+
+.callout.tip {
+	background: color-mix(in srgb, var(--teal) 7%, var(--paper-2));
+	border-color: color-mix(in srgb, var(--teal) 28%, var(--line));
+}
+
+.callout.warn {
+	background: color-mix(in srgb, var(--amber) 8%, var(--paper-2));
+	border-color: color-mix(in srgb, var(--amber) 30%, var(--line));
+}
+
+.callout.key {
+	background: color-mix(in srgb, var(--violet) 7%, var(--paper-2));
+	border-color: color-mix(in srgb, var(--violet) 26%, var(--line));
+}
+
+.diagram,
+.diagram-shell {
+	margin: 20px 0;
+	padding: 18px;
+	background: var(--paper-2);
+	border: 1px solid var(--line);
+	border-radius: var(--radius);
+	overflow-x: auto;
+}
+
+.diagram-title {
+	margin-bottom: 10px;
+	font: 700 0.72rem "Space Grotesk", sans-serif;
+	letter-spacing: 0.09em;
+	text-transform: uppercase;
+	color: var(--ink-soft);
+}
+
+pre,
+pre.block,
+pre.code {
+	margin: 0;
+	padding: 18px 20px;
+	border: 1px solid #283247;
+	border-radius: 10px;
+	background: #0d131d;
+	color: #e8edf5;
+	box-shadow: none;
+	line-height: 1.58;
+	overflow-x: auto;
+}
+
+code.inl,
+code.inline,
+:not(pre) > code {
+	padding: 0.12em 0.38em;
+	border: 1px solid color-mix(in srgb, var(--violet) 20%, var(--line));
+	border-radius: 5px;
+	background: color-mix(in srgb, var(--violet) 7%, var(--paper-2));
+	color: var(--violet);
+	font-size: 0.84em;
+}
+
+.table-wrap {
+	margin: 20px 0;
+	border: 1px solid var(--line);
+	border-radius: var(--radius);
+	overflow-x: auto;
+	background: var(--paper-2);
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 0.92rem;
+	line-height: 1.5;
+}
+
+th,
+td {
+	padding: 13px 15px;
+	border-bottom: 1px solid var(--line);
+	text-align: left;
+	vertical-align: top;
+}
+
+th {
+	background: var(--surface-muted);
+	font: 700 0.75rem "Space Grotesk", sans-serif;
+	letter-spacing: 0.045em;
+	text-transform: uppercase;
+	color: var(--ink-soft);
+}
+
+tbody tr:last-child td {
+	border-bottom: 0;
+}
+
+tbody tr:hover td {
+	background: color-mix(in srgb, var(--violet) 3%, transparent);
+}
+
+.ex-opts {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 10px;
+}
+
+.ex-opt {
+	display: block;
+	width: 100%;
+	min-height: 48px;
+	text-align: left;
+}
+
+.ex-item .ex-opt + .ex-opt {
+	margin-top: 10px;
+}
+
+.scroll-x {
+	scrollbar-width: thin;
+	scrollbar-color: var(--line-strong) transparent;
+}
+
+.reading-progress {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 4px;
+	z-index: 1000;
+	background: color-mix(in srgb, var(--line) 65%, transparent);
+	pointer-events: none;
+}
+
+.reading-progress > span {
+	display: block;
+	width: 0;
+	height: 100%;
+	background: linear-gradient(90deg, var(--violet), var(--teal));
+	box-shadow: 0 0 12px color-mix(in srgb, var(--teal) 45%, transparent);
+	transition: width 80ms linear;
+}
+
+body.pn-has.pn-collapsed {
+	padding-left: 0;
+}
+
+body.pn-has.pn-collapsed .pi-nav {
+	transform: translateX(-100%);
+}
+
+body.pn-has.pn-collapsed .pn-toggle {
+	display: flex !important;
+}
+
+.pi-nav .pn-collapse {
+	position: absolute;
+	top: 12px;
+	right: 12px;
+	width: 32px;
+	height: 32px;
+	border: 1px solid var(--line);
+	border-radius: 8px;
+	background: var(--paper);
+	color: var(--ink-soft);
+	cursor: pointer;
+	font: 700 1rem/1 sans-serif;
+}
+
+.pi-nav .pn-collapse:hover {
+	color: var(--ink);
+	border-color: var(--line-strong);
+}
+
+@media (max-width: 1023px) {
+	.pi-nav .pn-collapse {
+		display: none;
+	}
+}
+
+@media (max-width: 640px) {
+	article.lesson {
+		padding-inline: 16px;
+	}
+
+	.hero {
+		margin: 16px 0 6px;
+		padding: 54px 22px 30px;
+		border-radius: 14px;
+	}
+
+	h2.section {
+		margin-top: 48px;
+		padding-top: 24px;
+	}
+
+	th,
+	td {
+		padding: 11px 12px;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		scroll-behavior: auto !important;
+		transition-duration: 0.01ms !important;
+		animation-duration: 0.01ms !important;
+	}
+}
+
+@media print {
+	.reading-progress,
+	.pi-nav .pn-collapse {
+		display: none !important;
+	}
+}

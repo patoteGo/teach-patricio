@@ -116,12 +116,24 @@ pre.block {
 	--amber: #f6c453;
 	--rose: #fb8da0;
 	--blue: #7db7ff;
-	--hero-bg: radial-gradient(90% 130% at 100% 0%, rgba(94, 234, 212, 0.1), transparent 58%), linear-gradient(135deg, #171e2c 0%, #202a3d 58%, #193033 130%);
+	--hero-bg:
+		radial-gradient(
+			90% 130% at 100% 0%,
+			rgba(94, 234, 212, 0.1),
+			transparent 58%
+		),
+		linear-gradient(135deg, #171e2c 0%, #202a3d 58%, #193033 130%);
 	--hero-border: #2d394c;
 }
 
 body {
-	background: radial-gradient(90% 55% at 50% -15%, rgba(107, 133, 180, 0.1), transparent 62%), var(--paper);
+	background:
+		radial-gradient(
+			90% 55% at 50% -15%,
+			rgba(107, 133, 180, 0.1),
+			transparent 62%
+		),
+		var(--paper);
 }
 @media print {
 	:root {

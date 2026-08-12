@@ -8,6 +8,10 @@
     </title>
     <link rel="stylesheet" href="./topics/pi/assets/i18n.css" />
     <script src="./topics/pi/assets/i18n.js" defer></script>
+    <script
+      src="./topics/behavioral-interview/assets/reading-ui.js"
+      defer
+    ></script>
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;600&display=swap");
       * {
@@ -247,6 +251,201 @@
         background: rgba(255, 255, 255, 0.12);
         padding: 1px 6px;
         border-radius: 5px;
+      }
+
+      /* Approved calm reading system — hub variant */
+      :root {
+        --paper: #0c1119;
+        --paper-2: #121925;
+        --surface-muted: #182131;
+        --ink: #e8edf5;
+        --ink-soft: #9ba8ba;
+        --line: #263144;
+        --line-strong: #36445a;
+        --violet: #a78bfa;
+        --teal: #5eead4;
+        --amber: #f6c453;
+      }
+      body {
+        background:
+          radial-gradient(
+            90% 55% at 50% -15%,
+            rgba(107, 133, 180, 0.1),
+            transparent 62%
+          ),
+          var(--paper);
+        color: var(--ink);
+        font-size: 17px;
+        line-height: 1.72;
+        letter-spacing: -0.006em;
+      }
+      .wrap {
+        max-width: 920px;
+        padding-bottom: 104px;
+      }
+      .hero {
+        margin: 24px 0 8px;
+        padding: 44px 46px 38px;
+        border: 1px solid #2d394c;
+        border-radius: 18px;
+        background:
+          radial-gradient(
+            90% 130% at 100% 0%,
+            rgba(94, 234, 212, 0.1),
+            transparent 58%
+          ),
+          linear-gradient(135deg, #171e2c 0%, #202a3d 58%, #193033 130%);
+        box-shadow: 0 20px 54px rgba(0, 0, 0, 0.28);
+      }
+      .hero::after {
+        opacity: 0.28;
+        background-size: 32px 32px;
+      }
+      .hero h1 {
+        max-width: 18ch;
+        font-size: clamp(2rem, 5vw, 3rem);
+        line-height: 1.08;
+        letter-spacing: -0.035em;
+      }
+      .hero p {
+        color: rgba(255, 255, 255, 0.84);
+      }
+      .eyebrow {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.16);
+      }
+      h2 {
+        margin-top: 64px;
+        padding-top: 28px;
+        border-top: 1px solid var(--line);
+        font-size: clamp(1.4rem, 3vw, 1.6rem);
+        line-height: 1.25;
+      }
+      h2 .n {
+        width: 32px;
+        height: 32px;
+        border-radius: 999px;
+        background: var(--violet);
+        box-shadow: none;
+        font-size: 0.86rem;
+      }
+      .k {
+        max-width: 68ch;
+        color: var(--ink-soft);
+        font-size: 0.98rem;
+      }
+      .cards {
+        gap: 14px;
+        margin-top: 20px;
+      }
+      .card {
+        min-height: 210px;
+        padding: 21px;
+        border-color: var(--line);
+        border-radius: 12px;
+        background: var(--paper-2);
+        box-shadow: none;
+        transition:
+          border-color 0.14s,
+          background 0.14s,
+          transform 0.14s;
+      }
+      .card:hover {
+        transform: translateY(-2px);
+        border-color: var(--line-strong);
+        background: color-mix(in srgb, var(--violet) 3%, var(--paper-2));
+        box-shadow: none;
+      }
+      .card:focus-visible {
+        outline: 3px solid color-mix(in srgb, var(--violet) 45%, transparent);
+        outline-offset: 3px;
+      }
+      .card .tag {
+        color: var(--teal);
+        letter-spacing: 0.09em;
+      }
+      .card h3 {
+        color: var(--ink);
+        letter-spacing: -0.018em;
+      }
+      .card p {
+        color: var(--ink-soft);
+        line-height: 1.62;
+      }
+      .card .meta,
+      .card .enter,
+      .add code,
+      a {
+        color: var(--violet);
+      }
+      .add {
+        min-height: 150px;
+        border: 1px dashed var(--line-strong);
+        background: transparent;
+        color: var(--ink-soft);
+      }
+      pre,
+      .tree {
+        border-color: var(--line);
+        border-radius: 12px;
+        background: #0d131d;
+        box-shadow: none;
+      }
+      .tree {
+        color: var(--ink-soft);
+      }
+      .tree b {
+        color: var(--ink);
+      }
+      code.inl {
+        border: 1px solid color-mix(in srgb, var(--violet) 22%, var(--line));
+        background: color-mix(in srgb, var(--violet) 8%, transparent);
+        color: #e7ddff;
+      }
+      .foot {
+        border-color: var(--line);
+        color: var(--ink-soft);
+      }
+      .reading-progress {
+        position: fixed;
+        inset: 0 0 auto;
+        z-index: 1000;
+        height: 4px;
+        background: color-mix(in srgb, var(--line) 65%, transparent);
+        pointer-events: none;
+      }
+      .reading-progress > span {
+        display: block;
+        width: 0;
+        height: 100%;
+        background: linear-gradient(90deg, var(--violet), var(--teal));
+        box-shadow: 0 0 12px color-mix(in srgb, var(--teal) 45%, transparent);
+        transition: width 80ms linear;
+      }
+      @media (max-width: 640px) {
+        .wrap {
+          padding-inline: 16px;
+        }
+        .hero {
+          margin: 16px 0 6px;
+          padding: 54px 22px 30px;
+          border-radius: 14px;
+        }
+        h2 {
+          margin-top: 48px;
+          padding-top: 24px;
+        }
+        .card {
+          min-height: auto;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          transition-duration: 0.01ms !important;
+        }
       }
     </style>
   </head>
