@@ -222,18 +222,26 @@
         >
         <span style="color: var(--ink-soft); font-weight: 700">→</span>
         <span class="card" style="padding: 10px 14px; flex: 1 1 90px"
-          ><b>3 · Orçamento</b><br /><span data-lang="pt"
-            >cotar com firmeza</span
+          ><b
+            ><span data-lang="pt">3 · Orçamento</span
+            ><span data-lang="en">3 · Quote</span></b
+          ><br /><span data-lang="pt">cotar com firmeza</span
           ><span data-lang="en">quote with confidence</span></span
         >
         <span style="color: var(--ink-soft); font-weight: 700">→</span>
         <span class="card" style="padding: 10px 14px; flex: 1 1 90px"
-          ><b>4 · Acordo</b><br /><span data-lang="pt">fechar + data</span
+          ><b
+            ><span data-lang="pt">4 · Acordo</span
+            ><span data-lang="en">4 · Agreement</span></b
+          ><br /><span data-lang="pt">fechar + data</span
           ><span data-lang="en">close + date</span></span
         >
         <span style="color: var(--ink-soft); font-weight: 700">→</span>
         <span class="card" style="padding: 10px 14px; flex: 1 1 90px"
-          ><b>5 · Entrega</b></span
+          ><b
+            ><span data-lang="pt">5 · Entrega</span
+            ><span data-lang="en">5 · Delivery</span></b
+          ></span
         >
         <span style="color: var(--ink-soft); font-weight: 700">→</span>
         <span class="card" style="padding: 10px 14px; flex: 1 1 90px"
@@ -537,20 +545,40 @@
         </h3>
         <div class="q"></div>
         <div class="options">
-          <button class="opt" data-correct="1">
+          <button
+            class="opt"
+            data-correct="1"
+            data-fb-pt="Exato: uma pergunta sobre um episódio real recupera comportamento e fatos, não uma previsão educada."
+            data-fb-en="Exactly: asking about a real episode retrieves behavior and facts, not a polite prediction."
+          >
             <span data-lang="pt"
               >"A última vez que você fez um bolo pra alguém…"</span
             ><span data-lang="en">"The last time you baked for someone…"</span>
           </button>
-          <button class="opt" data-correct="0">
+          <button
+            class="opt"
+            data-correct="0"
+            data-fb-pt="Perguntar se usaria descreve um futuro hipotético; a pessoa pode querer agradar sem revelar comportamento real."
+            data-fb-en="Asking whether they would use it describes a hypothetical future; they may try to please you without revealing real behavior."
+          >
             <span data-lang="pt">"Você usaria um app que fizesse X?"</span
             ><span data-lang="en">"Would you use an app that did X?"</span>
           </button>
-          <button class="opt" data-correct="0">
+          <button
+            class="opt"
+            data-correct="0"
+            data-fb-pt="Uma intenção de compra hipotética não custa nada; procure compras, tentativas ou compromissos passados."
+            data-fb-en="A hypothetical purchase intention costs nothing; look for past purchases, attempts, or commitments."
+          >
             <span data-lang="pt">"Você pagaria R$ 30 por isso?"</span
             ><span data-lang="en">"Would you pay R$30 for this?"</span>
           </button>
-          <button class="opt" data-correct="0">
+          <button
+            class="opt"
+            data-correct="0"
+            data-fb-pt="É uma pergunta óbvia e enviesada: quase todos dirão sim, mas a resposta não revela prioridade, esforço nem bloqueio."
+            data-fb-en="It is an obvious leading question: almost everyone says yes, but the answer reveals no priority, effort, or blocker."
+          >
             <span data-lang="pt">"Você gostaria de ter mais clientes?"</span
             ><span data-lang="en"
               >"Would you like to have more customers?"</span
@@ -613,16 +641,9 @@
               opts.forEach((o) => o.classList.remove("correct", "wrong"));
               const ok = opt.dataset.correct === "1";
               opt.classList.add(ok ? "correct" : "wrong");
-              const OK = {
-                pt: "✓ Exato — passado (mesmo informal) é verdade; futuro é gentileza.",
-                en: "✓ Exactly — the past (even informal) is truth; the future is politeness.",
-              };
-              const NO = {
-                pt: "✗ Quase — perguntas sobre o futuro só rendem 'sim' educado.",
-                en: "✗ Not quite — questions about the future only get a polite 'yes'.",
-              };
               const lang = (window.PiI18n && PiI18n.lang) || "pt";
-              verdict.textContent = (ok ? OK : NO)[lang] || OK.pt;
+              const explanation = opt.getAttribute(`data-fb-${lang}`);
+              verdict.textContent = `${ok ? "✓" : "✗"} ${explanation}`;
               verdict.className = "verdict " + (ok ? "ok" : "no");
             });
           });

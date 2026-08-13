@@ -40,20 +40,22 @@ Action on every push, so it never drifts. (See
 | 03 | [The Pitch](./topics/behavioral-interview/lessons/0003-the-pitch.html) |
 | 04 | [Follow-ups](./topics/behavioral-interview/lessons/0004-follow-ups.html) |
 
-### Ace the ClearOne Advantage Senior Full-Stack interview (tomorrow)
+### ClearOne Advantage Senior Full-Stack interview (8 August 2026)
 
 `topics/clearone-interview/` · 2 lesson(s)
 
 | # | Lesson |
 |---|--------|
-| 01 | [ClearOne Advantage — your playbook for tomorrow](./topics/clearone-interview/lessons/0001-clearone-playbook.html) |
+| 01 | [ClearOne Advantage — playbook · 8 August 2026](./topics/clearone-interview/lessons/0001-clearone-playbook.html) |
 | 02 | [ClearOne — stack quick reminders](./topics/clearone-interview/lessons/0002-stack-cheatsheet.html) |
 
-### Frontdoor / Lob — Senior Software Engineer (contract)
+### Lob — Senior Software Engineer intro screen (13 August 2026)
 
-`topics/frontdoor-interview/` · 0 lesson(s)
+`topics/frontdoor-interview/` · 1 lesson(s)
 
-_(no lessons yet)_
+| # | Lesson |
+|---|--------|
+| 01 | [Lob — 30-minute intro screen · 13 August 2026](./topics/frontdoor-interview/lessons/0001-lob-intro-screen.html) |
 
 ### Master the Pi Coding Harness as a Power Tool
 
@@ -79,6 +81,18 @@ _(no lessons yet)_
 |---|--------|
 | 01 | [Before code, the person (discovery with the pre-launch baker)](./topics/software-company/lessons/0001-antes-do-codigo.html) |
 
+### Practical software concepts
+
+`topics/software-concepts/` · 5 lesson(s)
+
+| # | Lesson |
+|---|--------|
+| 01 | [Basic SQL — select, join, and aggregate](./topics/software-concepts/lessons/0001-sql-foundations.html) |
+| 02 | [OAuth — the basic flow, visually](./topics/software-concepts/lessons/0002-oauth-flow.html) |
+| 03 | [SQL sandbox — learn by writing](./topics/software-concepts/lessons/0003-sql-sandbox.html) |
+| 04 | [Relational keys — PK and FK, the one-to-many](./topics/software-concepts/lessons/0004-relational-keys.html) |
+| 05 | [Estimation — DAU, QPS and why one number is enough](./topics/software-concepts/lessons/0005-estimation.html) |
+
 ### System Design (backend · infra · frontend)
 
 `topics/system-design/` · 4 lesson(s)
@@ -92,13 +106,17 @@ _(no lessons yet)_
 
 ### System Design Interview Dojo
 
-`topics/system-design-practice/` · 1 lesson(s)
+`topics/system-design-practice/` · 5 lesson(s)
 
 | # | Lesson |
 |---|--------|
 | 01 | [System Design Dojo · Draw and talk](./topics/system-design-practice/lessons/0001-draw-and-talk.html) |
+| 02 | [System Design · The difficulty ladder](./topics/system-design-practice/lessons/0002-the-difficulty-ladder.html) |
+| 03 | [Brief L1 — URL shortener](./topics/system-design-practice/lessons/0003-starter-url-shortener.html) |
+| 04 | [Brief L1–2 — Onboarding + email (ClearOne)](./topics/system-design-practice/lessons/0004-starter-onboarding-email.html) |
+| 05 | [Brief L2 — Webhook delivery (Lob)](./topics/system-design-practice/lessons/0005-starter-webhook-delivery.html) |
 
-**Total: 21 lesson(s) across 7 topic(s).**
+**Total: 31 lesson(s) across 8 topic(s).**
 <!-- topics:end -->
 
 ## 🗂 Repo map

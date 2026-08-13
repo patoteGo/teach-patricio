@@ -1,0 +1,557 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title
+      data-pt="Lob — tela inicial de 30 minutos · 13 de agosto de 2026"
+      data-en="Lob — 30-minute intro screen · 13 August 2026"
+    >
+      Lob — 30-minute intro screen
+    </title>
+    <link rel="stylesheet" href="../assets/style.css" />
+    <link rel="stylesheet" href="../assets/dark.css" />
+    <link rel="stylesheet" href="../assets/i18n.css" />
+    <script src="../assets/i18n.js" defer></script>
+    <script src="../assets/nav.js" defer></script>
+    <style>
+      .memory-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin: 16px 0;
+      }
+      .memory-grid .card {
+        margin: 0;
+      }
+      .script {
+        border-left: 4px solid var(--teal);
+        background: var(--teal-50);
+        padding: 16px 18px;
+        border-radius: 0 12px 12px 0;
+      }
+      .script p {
+        margin: 0;
+      }
+      .timeline {
+        display: grid;
+        grid-template-columns: 72px 1fr;
+        gap: 8px 14px;
+        margin: 16px 0;
+      }
+      .timeline b {
+        color: var(--violet);
+        font-family: "JetBrains Mono", monospace;
+      }
+      .question {
+        padding: 12px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .question:last-child {
+        border-bottom: 0;
+      }
+      @media (max-width: 640px) {
+        .memory-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body class="lang-pt">
+    <article class="lesson">
+      <header class="hero">
+        <span class="eyebrow"
+          ><span data-lang="pt">⬡ Lob · conversa inicial · 13 ago 2026</span
+          ><span data-lang="en">⬡ Lob · intro screen · 13 Aug 2026</span></span
+        >
+        <h1>
+          <span data-lang="pt">Lembre o essencial.</span
+          ><span data-lang="en">Remember the essentials.</span>
+        </h1>
+        <p class="lead">
+          <span data-lang="pt"
+            >Uma folha curta para a conversa de 30 minutos com Grace Derksen.
+            Objetivo: explicar seu valor, confirmar o que “Frontdoor” significa
+            e avançar para a próxima etapa.</span
+          ><span data-lang="en"
+            >A short sheet for the 30-minute conversation with Grace Derksen.
+            Goal: explain your value, clarify what “Frontdoor” means, and
+            advance to the next round.</span
+          >
+        </p>
+      </header>
+
+      <div class="callout key">
+        <p>
+          <strong
+            ><span data-lang="pt">Interpretação correta:</span
+            ><span data-lang="en">Correct interpretation:</span></strong
+          >
+          <span data-lang="pt"
+            >Lob é a empresa contratante. “Frontdoor” parece ser um rótulo
+            interno de equipe, área ou contrato. Não é evidência de ligação com
+            a Frontdoor, Inc.</span
+          ><span data-lang="en"
+            >Lob is the hiring company. “Frontdoor” appears to be an internal
+            team, area, or contract label. It is not evidence of a connection to
+            Frontdoor, Inc.</span
+          >
+        </p>
+      </div>
+
+      <h2 class="section">
+        <span class="num">1</span
+        ><span data-lang="pt">O que esta conversa é</span
+        ><span data-lang="en">What this conversation is</span>
+      </h2>
+      <p class="kicker">
+        <span data-lang="pt"
+          >Grace é Senior Technical Talent Partner. Espere uma triagem de
+          recrutamento, não um system design profundo.</span
+        ><span data-lang="en"
+          >Grace is a Senior Technical Talent Partner. Expect a recruiting
+          screen, not a deep system-design round.</span
+        >
+      </p>
+      <div class="memory-grid">
+        <div class="card">
+          <h3>🏢 Lob</h3>
+          <p>
+            <span data-lang="pt"
+              >Automatiza mala direta: criar, validar endereço, rotear,
+              imprimir, rastrear e entregar correspondência física.</span
+            ><span data-lang="en"
+              >Automates direct mail: create, validate addresses, route, print,
+              track, and deliver physical mail.</span
+            >
+          </p>
+        </div>
+        <div class="card">
+          <h3>
+            🎯 <span data-lang="pt">Seu objetivo</span
+            ><span data-lang="en">Your goal</span>
+          </h3>
+          <p>
+            <span data-lang="pt"
+              >Fit de carreira, comunicação e experiência técnica em alto nível.
+              Pagamento e contrato ficam com a empresa de recrutamento — fora
+              desta conversa.</span
+            ><span data-lang="en"
+              >Career fit, communication, and high-level technical experience.
+              Payment and contract stay with the recruiting company — out of
+              scope for this call.</span
+            >
+          </p>
+        </div>
+        <div class="card">
+          <h3>
+            ⚙️ <span data-lang="pt">Por que é interessante</span
+            ><span data-lang="en">Why it is interesting</span>
+          </h3>
+          <p>
+            <span data-lang="pt"
+              >Software encontra logística real: retries, handoffs assíncronos,
+              dados corretos e observabilidade afetam a entrega.</span
+            ><span data-lang="en"
+              >Software meets real logistics: retries, asynchronous handoffs,
+              correct data, and observability affect delivery.</span
+            >
+          </p>
+        </div>
+        <div class="card">
+          <h3>🧭 Frontdoor</h3>
+          <p>
+            <span data-lang="pt"
+              >Não existe “Frontdoor” público na Lob — pode ser rótulo interno
+              da vaga ou da agência. Pergunte a Grace qual cliente, produto e
+              problema essa área possui.</span
+            ><span data-lang="en"
+              >There is no public “Frontdoor” at Lob — it may be an internal
+              label from the req or the agency. Ask Grace which customer,
+              product, and problem this area owns.</span
+            >
+          </p>
+        </div>
+      </div>
+      <div class="callout info">
+        <p>
+          <strong
+            ><span data-lang="pt"
+              >Stack pública da Lob (blog de engenharia):</span
+            ><span data-lang="en"
+              >Lob's public stack (engineering blog):</span
+            ></strong
+          >
+          <span data-lang="pt"
+            >API-first em Node.js (Hapi, Bookshelf/Knex), Postgres como banco
+            principal, serviços internos em Elixir/Phoenix, infra AWS. Não é
+            evidência do time “Frontdoor” — mas é o palpite informado até Grace
+            responder.</span
+          ><span data-lang="en"
+            >API-first on Node.js (Hapi, Bookshelf/Knex), Postgres as the main
+            database, internal Elixir/Phoenix services, AWS infra. Not evidence
+            of the “Frontdoor” team — but the informed guess until Grace
+            answers.</span
+          >
+        </p>
+      </div>
+
+      <div class="callout info">
+        <p>
+          <strong
+            ><span data-lang="pt">Contexto:</span
+            ><span data-lang="en">Context:</span></strong
+          >
+          <span data-lang="pt"
+            >esta tela vem de uma empresa de recrutamento. Não negocie rate,
+            contrato, duração ou modelo de pagamento aqui — se o tema aparecer,
+            direcione para a agência e volte ao fit técnico.</span
+          ><span data-lang="en"
+            >this screen comes from a recruiting company. Do not negotiate rate,
+            contract, duration, or payment model here — if it comes up, redirect
+            to the agency and return to technical fit.</span
+          >
+        </p>
+      </div>
+
+      <h2 class="section">
+        <span class="num">2</span
+        ><span data-lang="pt">Seu pitch de 60 segundos</span
+        ><span data-lang="en">Your 60-second pitch</span>
+      </h2>
+      <div class="script">
+        <p>
+          <span data-lang="pt"
+            >“Sou engenheiro full-stack sênior com cerca de oito anos
+            construindo sistemas operacionais e voltados ao cliente,
+            principalmente com TypeScript, React e Node.js. Na Cencosud,
+            trabalhei em uma plataforma de rastreabilidade de pedidos que chegou
+            a cerca de um milhão de requests por dia em eventos de pico. Na
+            TextUs, trabalhei com React, serviços Node, Kafka, Redis, APIs, jobs
+            agendados e observabilidade. Gosto de acompanhar uma ação do cliente
+            por todo o sistema e operar o resultado em produção. A Lob me
+            interessa porque conecta uma experiência de software clara a um
+            resultado operacional real: uma solicitação precisa virar uma
+            entrega correta e rastreável.”</span
+          ><span data-lang="en"
+            >“I’m a senior full-stack engineer with about eight years of
+            experience building customer-facing and operational systems, mainly
+            with TypeScript, React, and Node.js. At Cencosud, I worked on an
+            order-traceability platform that reached roughly one million
+            requests a day during peak events. At TextUs, I worked with React,
+            Node services, Kafka, Redis, APIs, scheduled jobs, and
+            observability. I like following a customer action through the whole
+            system and operating the result in production. Lob interests me
+            because it connects a clear software experience to a real
+            operational outcome: a request must become a correct, trackable
+            delivery.”</span
+          >
+        </p>
+      </div>
+      <div class="callout info">
+        <p>
+          <strong
+            ><span data-lang="pt">Regra:</span
+            ><span data-lang="en">Rule:</span></strong
+          >
+          <span data-lang="pt"
+            >fale devagar, pare após o impacto e deixe Grace pedir
+            profundidade.</span
+          ><span data-lang="en"
+            >speak slowly, stop after the impact, and let Grace ask for
+            depth.</span
+          >
+        </p>
+      </div>
+
+      <h2 class="section">
+        <span class="num">3</span
+        ><span data-lang="pt">Quatro histórias, uma frase cada</span
+        ><span data-lang="en">Four stories, one sentence each</span>
+      </h2>
+      <table>
+        <thead>
+          <tr>
+            <th>
+              <span data-lang="pt">Tema</span><span data-lang="en">Theme</span>
+            </th>
+            <th>
+              <span data-lang="pt">História para puxar</span
+              ><span data-lang="en">Story to use</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <strong
+                ><span data-lang="pt">Escala</span
+                ><span data-lang="en">Scale</span></strong
+              >
+            </td>
+            <td>
+              <span data-lang="pt"
+                >Cencosud: rastreabilidade de pedidos, picos de ~1M
+                requests/dia.</span
+              ><span data-lang="en"
+                >Cencosud: order traceability, peaks of ~1M requests/day.</span
+              >
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong
+                ><span data-lang="pt">Diagnóstico</span
+                ><span data-lang="en">Diagnosis</span></strong
+              >
+            </td>
+            <td>
+              <span data-lang="pt"
+                >TextUs: métricas incorretas → correlacionou IDs → retries
+                duplicados do SendGrid → deduplicação e logs.</span
+              ><span data-lang="en"
+                >TextUs: incorrect metrics → correlated IDs → duplicate SendGrid
+                retries → deduplication and logs.</span
+              >
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong
+                ><span data-lang="pt">Produto</span
+                ><span data-lang="en">Product</span></strong
+              >
+            </td>
+            <td>
+              <span data-lang="pt"
+                >CRM: fluxo real tinha 2 papéis, não 4 → simplificou e preservou
+                reversibilidade com feature flag.</span
+              ><span data-lang="en"
+                >CRM: real workflow had 2 roles, not 4 → simplified it and
+                preserved reversibility with a feature flag.</span
+              >
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong
+                ><span data-lang="pt">Ownership</span
+                ><span data-lang="en">Ownership</span></strong
+              >
+            </td>
+            <td>
+              <span data-lang="pt"
+                >POS de restaurante: produto, frontend, backend, webhooks,
+                observabilidade e deploy.</span
+              ><span data-lang="en"
+                >Restaurant POS: product, frontend, backend, webhooks,
+                observability, and deployment.</span
+              >
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2 class="section">
+        <span class="num">4</span
+        ><span data-lang="pt">Respostas que provavelmente virão</span
+        ><span data-lang="en">Answers you will probably need</span>
+      </h2>
+      <details class="qa">
+        <summary>Why Lob?</summary>
+        <div class="ans">
+          <span data-lang="pt"
+            >API e produto digital com consequência física. Você traz
+            experiência em fluxos operacionais, integrações, confiabilidade e
+            ownership full-stack.</span
+          ><span data-lang="en"
+            >An API and digital product with a physical consequence. You bring
+            experience in operational workflows, integrations, reliability, and
+            full-stack ownership.</span
+          >
+        </div>
+      </details>
+      <details class="qa">
+        <summary>
+          <span data-lang="pt">Que trabalho você procura?</span
+          ><span data-lang="en">What work are you looking for?</span>
+        </summary>
+        <div class="ans">
+          <span data-lang="pt"
+            >Trabalho full-stack orientado a produto, com ownership de
+            resultados e responsabilidade por sistemas em produção.</span
+          ><span data-lang="en"
+            >Product-focused full-stack work where you own outcomes and operate
+            systems in production.</span
+          >
+        </div>
+      </details>
+      <details class="qa">
+        <summary>
+          <span data-lang="pt">Experiência com stack desconhecido?</span
+          ><span data-lang="en">Experience with an unfamiliar stack?</span>
+        </summary>
+        <div class="ans">
+          <span data-lang="pt"
+            >Comece pelo que é próximo, declare o gap sem desculpas e conecte
+            princípios transferíveis: limites, integridade, testes,
+            observabilidade e outcomes.</span
+          ><span data-lang="en"
+            >Start with the closest experience, state the gap plainly, and
+            connect transferable principles: boundaries, integrity, testing,
+            observability, and outcomes.</span
+          >
+        </div>
+      </details>
+      <details class="qa">
+        <summary>
+          <span data-lang="pt">Disponibilidade e timezone?</span
+          ><span data-lang="en">Availability and timezone?</span>
+        </summary>
+        <div class="ans">
+          <span data-lang="pt"
+            >Tenha datas exatas e seu overlap com o fuso deles. Brasil remoto é
+            o ponto a confirmar. Rate, contrato e pagamento são tratados pela
+            empresa de recrutamento — não por você nesta conversa.</span
+          ><span data-lang="en"
+            >Have exact dates and your timezone overlap ready. Remote from
+            Brazil is the point to confirm. Rate, contract, and payment are
+            handled by the recruiting company — not by you on this call.</span
+          >
+        </div>
+      </details>
+
+      <h2 class="section">
+        <span class="num">5</span
+        ><span data-lang="pt">Perguntas para Grace</span
+        ><span data-lang="en">Questions for Grace</span>
+      </h2>
+      <div class="card">
+        <p class="question">
+          <strong>1.</strong>
+          <span data-lang="pt"
+            >“O que Frontdoor significa internamente: equipe, superfície de
+            produto, jornada do cliente ou rótulo de contrato?”</span
+          ><span data-lang="en"
+            >“What does Frontdoor mean internally: a team, product surface,
+            customer journey, or contract label?”</span
+          >
+        </p>
+        <p class="question">
+          <strong>2.</strong>
+          <span data-lang="pt"
+            >“Qual problema do cliente a equipe possui e onde ele fica no ciclo
+            criar → rotear → produzir → rastrear?”</span
+          ><span data-lang="en"
+            >“What customer problem does the team own, and where does it sit in
+            the create → route → fulfill → track lifecycle?”</span
+          >
+        </p>
+        <p class="question">
+          <strong>3.</strong>
+          <span data-lang="pt"
+            >“Qual é a stack principal e o trabalho é mais UI, plataforma/API ou
+            full-stack?”</span
+          ><span data-lang="en"
+            >“What is the primary stack, and is the work mainly UI,
+            platform/API, or full-stack?”</span
+          >
+        </p>
+        <p class="question">
+          <strong>4.</strong>
+          <span data-lang="pt"
+            >“Como seria sucesso nos primeiros 30, 60 e 90 dias?”</span
+          ><span data-lang="en"
+            >“What would success look like in the first 30, 60, and 90
+            days?”</span
+          >
+        </p>
+        <p class="question">
+          <strong>5.</strong>
+          <span data-lang="pt"
+            >“Como funciona o processo daqui: etapas, prazos e com quem vou
+            conversar em seguida?”</span
+          ><span data-lang="en"
+            >“What does the process look like from here: stages, timeline, and
+            who I speak with next?”</span
+          >
+        </p>
+      </div>
+
+      <h2 class="section">
+        <span class="num">6</span
+        ><span data-lang="pt">Plano dos 30 minutos</span
+        ><span data-lang="en">The 30-minute plan</span>
+      </h2>
+      <div class="timeline">
+        <b>0–5</b
+        ><span
+          ><span data-lang="pt">Rapport + pitch curto.</span
+          ><span data-lang="en">Rapport + short pitch.</span></span
+        >
+        <b>5–15</b
+        ><span
+          ><span data-lang="pt"
+            >Fit, motivação e 1–2 histórias em alto nível.</span
+          ><span data-lang="en"
+            >Fit, motivation, and 1–2 high-level stories.</span
+          ></span
+        >
+        <b>15–23</b
+        ><span
+          ><span data-lang="pt"
+            >Disponibilidade, timezone, viabilidade Brasil e ritmo do
+            processo.</span
+          ><span data-lang="en"
+            >Availability, timezone, Brazil feasibility, and process pace.</span
+          ></span
+        >
+        <b>23–28</b
+        ><span
+          ><span data-lang="pt"
+            >Suas perguntas: Frontdoor, escopo, stack e sucesso.</span
+          ><span data-lang="en"
+            >Your questions: Frontdoor, scope, stack, and success.</span
+          ></span
+        >
+        <b>28–30</b
+        ><span
+          ><span data-lang="pt"
+            >Reforce interesse e pergunte os próximos passos.</span
+          ><span data-lang="en"
+            >Restate interest and ask about next steps.</span
+          ></span
+        >
+      </div>
+
+      <div class="callout warn">
+        <p>
+          <strong
+            ><span data-lang="pt">Não faça:</span
+            ><span data-lang="en">Do not:</span></strong
+          >
+          <span data-lang="pt"
+            >não mencione Frontdoor, Inc.; não assuma a stack; não exagere
+            AWS/Lambda; não liste tecnologias sem ligá-las a um resultado.</span
+          ><span data-lang="en"
+            >do not mention Frontdoor, Inc.; do not assume the stack; do not
+            oversell AWS/Lambda; do not list technologies without connecting
+            them to an outcome.</span
+          >
+        </p>
+      </div>
+
+      <footer class="lesson-end">
+        <p>
+          <strong
+            ><span data-lang="pt">Última lembrança:</span
+            ><span data-lang="en">Final reminder:</span></strong
+          >
+          <span data-lang="pt">outcome → exemplo → impacto → pare.</span
+          ><span data-lang="en">outcome → example → impact → stop.</span>
+        </p>
+        <a href="../../../index.html">← Hub</a>
+      </footer>
+    </article>
+  </body>
+</html>

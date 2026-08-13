@@ -8,7 +8,14 @@
 (() => {
 	const en = () => !!(window.PiI18n && PiI18n.lang === "en");
 	const okMsg = () => (en() ? "✓ Correct" : "✓ Correto");
-	const noMsg = (c) => (en() ? "✗ Answer was: " + c : "✗ Resposta: " + c);
+	const noMsg = (item, correct) => {
+		const button = item.querySelector(`.ex-opt[data-pick="${correct}"]`);
+		const label =
+			button
+				?.querySelector(en() ? '[data-lang="en"]' : '[data-lang="pt"]')
+				?.textContent.trim() || correct;
+		return en() ? `✗ Correct answer: ${label}` : `✗ Resposta correta: ${label}`;
+	};
 	const scoreLbl = (r, a) =>
 		en() ? `Score: ${r} / ${a}` : `Acertos: ${r} / ${a}`;
 
@@ -16,7 +23,13 @@
 		const picked = item.dataset.picked;
 		const correct = item.dataset.correct;
 		const ok = picked === correct;
-		return { ok, text: ok ? okMsg() : noMsg(correct) };
+		const pickedButton = item.querySelector(`.ex-opt[data-pick="${picked}"]`);
+		const explanation = en()
+			? pickedButton?.dataset.fbEn || item.dataset.explainEn
+			: pickedButton?.dataset.fbPt || item.dataset.explainPt;
+		let text = ok ? okMsg() : noMsg(item, correct);
+		if (explanation) text += ` — ${explanation}`;
+		return { ok, text };
 	}
 	function renderVerdict(item) {
 		const fb = item.querySelector(".ex-fb");

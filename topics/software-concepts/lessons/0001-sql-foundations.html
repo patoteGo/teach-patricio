@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title
+      data-pt="SQL básico — selecionar, combinar e resumir"
+      data-en="Basic SQL — select, join, and aggregate"
+    >
+      Basic SQL
+    </title>
+    <link rel="stylesheet" href="../assets/style.css" />
+    <link rel="stylesheet" href="../assets/dark.css" />
+    <link rel="stylesheet" href="../assets/i18n.css" />
+    <link rel="stylesheet" href="../assets/concepts.css" />
+    <script src="../assets/i18n.js" defer></script>
+    <script src="../assets/nav.js" defer></script>
+    <script src="../assets/reading-ui.js" defer></script>
+    <script src="../assets/concepts.js" defer></script>
+  </head>
+  <body class="lang-pt">
+    <article class="lesson">
+      <header class="hero">
+        <span class="eyebrow"
+          >⬡ SQL · <span data-lang="pt">fundamentos</span
+          ><span data-lang="en">foundations</span></span
+        >
+        <h1>
+          <span data-lang="pt">Pergunte aos dados.</span
+          ><span data-lang="en">Ask the data.</span>
+        </h1>
+        <p class="lead">
+          <span data-lang="pt"
+            >Em 15 minutos: escolher colunas, filtrar linhas, combinar tabelas e
+            transformar muitas linhas em um resumo.</span
+          ><span data-lang="en"
+            >In 15 minutes: choose columns, filter rows, combine tables, and
+            turn many rows into a summary.</span
+          >
+        </p>
+      </header>
+      <nav class="concept-nav">
+        <a href="0001-sql-foundations.html">SQL</a
+        ><a href="0002-oauth-flow.html">OAuth →</a
+        ><a href="0003-sql-sandbox.html">⌨ Sandbox</a
+        ><a href="../reference/software-concepts-cheatsheet.html"
+          ><span data-lang="pt">Folha rápida</span
+          ><span data-lang="en">Cheat sheet</span></a
+        ><a href="../../../index.html">Hub</a>
+      </nav>
+
+      <h2 class="section">
+        <span class="num">1</span><span data-lang="pt">O modelo mental</span
+        ><span data-lang="en">The mental model</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >Uma consulta SQL é um pipeline:
+          <strong
+            >comece pelas linhas, reduza, agrupe e finalmente apresente</strong
+          >. A ordem escrita não é exatamente a ordem mental de execução.</span
+        ><span data-lang="en"
+          >An SQL query is a pipeline:
+          <strong
+            >start with rows, reduce them, group them, then present them</strong
+          >. Written order is not exactly the mental execution order.</span
+        >
+      </p>
+      <div class="pipeline" aria-label="SQL pipeline">
+        <div class="pipe">
+          <code>FROM/JOIN</code><br /><small
+            ><span data-lang="pt">obter linhas</span
+            ><span data-lang="en">get rows</span></small
+          >
+        </div>
+        <span class="arrow">→</span>
+        <div class="pipe">
+          <code>WHERE</code><br /><small
+            ><span data-lang="pt">filtrar</span
+            ><span data-lang="en">filter</span></small
+          >
+        </div>
+        <span class="arrow">→</span>
+        <div class="pipe">
+          <code>GROUP BY</code><br /><small
+            ><span data-lang="pt">agrupar</span
+            ><span data-lang="en">group</span></small
+          >
+        </div>
+        <span class="arrow">→</span>
+        <div class="pipe">
+          <code>SELECT</code><br /><small
+            ><span data-lang="pt">mostrar</span
+            ><span data-lang="en">project</span></small
+          >
+        </div>
+      </div>
+      <div class="mental-model">
+        <div class="concept-card">
+          <h3>SELECT</h3>
+          <p>
+            <span data-lang="pt">Quais colunas quero ver?</span
+            ><span data-lang="en">Which columns do I want?</span>
+          </p>
+        </div>
+        <div class="concept-card">
+          <h3>FROM</h3>
+          <p>
+            <span data-lang="pt">De quais tabelas vêm?</span
+            ><span data-lang="en">Which tables supply them?</span>
+          </p>
+        </div>
+        <div class="concept-card">
+          <h3>WHERE</h3>
+          <p>
+            <span data-lang="pt">Quais linhas sobrevivem?</span
+            ><span data-lang="en">Which rows survive?</span>
+          </p>
+        </div>
+      </div>
+
+      <h2 class="section">
+        <span class="num">2</span><code>SELECT</code> + <code>WHERE</code>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >O <code>SELECT</code> define a saída; <code>WHERE</code> elimina
+          linhas que não atendem à condição.
+          <strong>SQL descreve o resultado desejado</strong>; o banco decide
+          como buscá-lo.</span
+        ><span data-lang="en"
+          ><code>SELECT</code> defines the output; <code>WHERE</code> removes
+          rows that fail the condition.
+          <strong>SQL describes the desired result</strong>; the database
+          decides how to retrieve it.</span
+        >
+      </p>
+      <div class="code-stage">
+        <pre><code><span style="color:#c4b5fd">SELECT</span> id, customer_id, total
+<span style="color:#c4b5fd">FROM</span> orders
+<span style="color:#c4b5fd">WHERE</span> status = <span style="color:#5eead4">'paid'</span> <span style="color:#c4b5fd">AND</span> total &gt; 100
+<span style="color:#c4b5fd">ORDER BY</span> total <span style="color:#c4b5fd">DESC</span>;</code></pre>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>id</th>
+              <th>customer_id</th>
+              <th>total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>104</td>
+              <td>2</td>
+              <td>240</td>
+            </tr>
+            <tr>
+              <td>101</td>
+              <td>1</td>
+              <td>120</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="cite-line">
+        <span data-lang="pt">Fonte primária:</span
+        ><span data-lang="en">Primary source:</span>
+        <a href="https://www.postgresql.org/docs/current/tutorial-select.html"
+          >PostgreSQL — Querying a Table</a
+        >.
+      </p>
+
+      <h2 class="section">
+        <span class="num">3</span><code>JOIN</code>:
+        <span data-lang="pt">reconecte relações</span
+        ><span data-lang="en">reconnect relationships</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >Normalmente guardamos clientes e pedidos separadamente. O
+          <code>JOIN ... ON</code> diz
+          <strong>qual chave conecta uma linha à outra</strong>.</span
+        ><span data-lang="en"
+          >We normally store customers and orders separately.
+          <code>JOIN ... ON</code> says
+          <strong>which key connects one row to another</strong>.</span
+        >
+      </p>
+      <div class="schema">
+        <div class="db-table">
+          <b>customers</b>
+          <div class="db-row"><span>id</span><span>name</span></div>
+          <div class="db-row match"><span>1</span><span>Ana</span></div>
+          <div class="db-row"><span>2</span><span>Ben</span></div>
+        </div>
+        <div class="join-link">⟷</div>
+        <div class="db-table">
+          <b>orders</b>
+          <div class="db-row"><span>customer_id</span><span>total</span></div>
+          <div class="db-row match"><span>1</span><span>120</span></div>
+          <div class="db-row"><span>1</span><span>80</span></div>
+        </div>
+      </div>
+      <div class="code-stage">
+        <pre><code><span style="color:#c4b5fd">SELECT</span> c.name, o.total
+<span style="color:#c4b5fd">FROM</span> customers c
+<span style="color:#c4b5fd">JOIN</span> orders o <span style="color:#c4b5fd">ON</span> o.customer_id = c.id;</code></pre>
+      </div>
+      <div class="security-pair">
+        <div class="concept-card">
+          <h3>INNER JOIN</h3>
+          <p>
+            <span data-lang="pt">Somente pares que têm correspondência.</span
+            ><span data-lang="en">Only pairs that have a match.</span>
+          </p>
+        </div>
+        <div class="concept-card">
+          <h3>LEFT JOIN</h3>
+          <p>
+            <span data-lang="pt"
+              >Todas as linhas da esquerda; sem par vira
+              <code>NULL</code>.</span
+            ><span data-lang="en"
+              >Every left row; a missing match becomes <code>NULL</code>.</span
+            >
+          </p>
+        </div>
+      </div>
+      <p class="cite-line">
+        <span data-lang="pt">Fonte primária:</span
+        ><span data-lang="en">Primary source:</span>
+        <a href="https://www.postgresql.org/docs/current/tutorial-join.html"
+          >PostgreSQL — Joins Between Tables</a
+        >.
+      </p>
+
+      <h2 class="section">
+        <span class="num">4</span
+        ><span data-lang="pt">Agregação: muitas linhas → uma resposta</span
+        ><span data-lang="en">Aggregation: many rows → one answer</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          ><code>COUNT</code>, <code>SUM</code>, <code>AVG</code>,
+          <code>MIN</code> e <code>MAX</code> resumem linhas.
+          <code>GROUP BY</code> cria um balde por valor:
+          <strong>uma linha de saída por grupo</strong>.</span
+        ><span data-lang="en"
+          ><code>COUNT</code>, <code>SUM</code>, <code>AVG</code>,
+          <code>MIN</code> and <code>MAX</code> summarize rows.
+          <code>GROUP BY</code> creates one bucket per value:
+          <strong>one output row per group</strong>.</span
+        >
+      </p>
+      <div class="code-stage">
+        <pre><code><span style="color:#c4b5fd">SELECT</span> status,
+       <span style="color:#5eead4">COUNT</span>(*) <span style="color:#c4b5fd">AS</span> orders,
+       <span style="color:#5eead4">SUM</span>(total) <span style="color:#c4b5fd">AS</span> revenue
+<span style="color:#c4b5fd">FROM</span> orders
+<span style="color:#c4b5fd">WHERE</span> created_at &gt;= <span style="color:#5eead4">'2026-08-01'</span>
+<span style="color:#c4b5fd">GROUP BY</span> status
+<span style="color:#c4b5fd">HAVING</span> <span style="color:#5eead4">COUNT</span>(*) &gt; 1;</code></pre>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>status</th>
+              <th>orders</th>
+              <th>revenue</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>paid</td>
+              <td>3</td>
+              <td>440</td>
+            </tr>
+            <tr>
+              <td>pending</td>
+              <td>2</td>
+              <td>95</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout key">
+        <p>
+          <strong>WHERE vs HAVING:</strong> <code>WHERE</code>
+          <span data-lang="pt"
+            >filtra linhas antes de agrupar; <code>HAVING</code> filtra grupos
+            depois de agregar.</span
+          ><span data-lang="en"
+            >filters rows before grouping; <code>HAVING</code> filters groups
+            after aggregation.</span
+          >
+        </p>
+      </div>
+
+      <h2 class="section">
+        <span class="num">5</span
+        ><span data-lang="pt">Teste de recuperação</span
+        ><span data-lang="en">Retrieval check</span>
+      </h2>
+      <div class="playground" data-sql-quiz data-answer="where">
+        <label for="sql-answer"
+          ><span data-lang="pt"
+            >Você quer receita por status, mas apenas para pedidos de agosto.
+            Onde filtra a data?</span
+          ><span data-lang="en"
+            >You want revenue by status, but only for August orders. Where do
+            you filter the date?</span
+          ></label
+        ><br /><select id="sql-answer">
+          <option value="">—</option>
+          <option value="select">SELECT</option>
+          <option value="where">WHERE</option>
+          <option value="having">HAVING</option></select
+        ><button type="button">
+          <span data-lang="pt">Verificar</span><span data-lang="en">Check</span>
+        </button>
+        <div class="result" aria-live="polite">
+          <span data-lang="pt">Escolha sem olhar acima.</span
+          ><span data-lang="en">Choose without looking above.</span>
+        </div>
+      </div>
+      <details>
+        <summary>
+          <span data-lang="pt">Desafio: explique esta consulta em voz alta</span
+          ><span data-lang="en">Challenge: explain this query aloud</span>
+        </summary>
+        <p>
+          <span data-lang="pt"
+            >Use a ordem: “parte de orders → mantém agosto → cria um grupo por
+            status → calcula contagem e soma → mantém grupos com mais de um
+            pedido → mostra o resultado”.</span
+          ><span data-lang="en"
+            >Use this order: “start with orders → keep August → make one group
+            per status → calculate count and sum → keep groups with more than
+            one order → show the result”.</span
+          >
+        </p>
+      </details>
+      <div class="callout info">
+        <p>
+          <span data-lang="pt"
+            >Dúvida ou quer praticar outra consulta?
+            <strong
+              >Pergunte ao agente e descreva o resultado desejado antes da
+              sintaxe.</strong
+            ></span
+          ><span data-lang="en"
+            >Confused or want another query?
+            <strong
+              >Ask the agent and describe the desired result before the
+              syntax.</strong
+            ></span
+          >
+        </p>
+      </div>
+      <p class="cite-line">
+        <span data-lang="pt">Leitura recomendada:</span
+        ><span data-lang="en">Recommended reading:</span>
+        <a href="https://www.postgresql.org/docs/current/tutorial-agg.html"
+          >PostgreSQL — Aggregate Functions</a
+        >.
+        <a href="0002-oauth-flow.html"
+          ><span data-lang="pt">Próxima lição: OAuth →</span
+          ><span data-lang="en">Next lesson: OAuth →</span></a
+        >
+      </p>
+    </article>
+  </body>
+</html>

@@ -478,13 +478,7 @@ footer.lesson-foot .lbl {
 	--radius: 12px;
 	--shadow: 0 1px 2px rgba(20, 30, 45, 0.04), 0 8px 24px rgba(20, 30, 45, 0.05);
 	--shadow-lg: 0 18px 46px rgba(20, 30, 45, 0.12);
-	--hero-bg:
-		radial-gradient(
-			90% 130% at 100% 0%,
-			rgba(15, 185, 164, 0.12),
-			transparent 58%
-		),
-		linear-gradient(135deg, #334155 0%, #475569 58%, #315b5b 130%);
+	--hero-bg: radial-gradient(90% 130% at 100% 0%, rgba(15, 185, 164, 0.12), transparent 58%), linear-gradient(135deg, #334155 0%, #475569 58%, #315b5b 130%);
 	--hero-border: rgba(255, 255, 255, 0.14);
 }
 
@@ -642,9 +636,7 @@ mark.skim {
 
 .diagram-title {
 	margin-bottom: 10px;
-	font:
-		700 0.72rem "Space Grotesk",
-		sans-serif;
+	font: 700 0.72rem "Space Grotesk", sans-serif;
 	letter-spacing: 0.09em;
 	text-transform: uppercase;
 	color: var(--ink-soft);
@@ -700,9 +692,7 @@ td {
 
 th {
 	background: var(--surface-muted);
-	font:
-		700 0.75rem "Space Grotesk",
-		sans-serif;
+	font: 700 0.75rem "Space Grotesk", sans-serif;
 	letter-spacing: 0.045em;
 	text-transform: uppercase;
 	color: var(--ink-soft);
@@ -781,7 +771,7 @@ body.pn-has.pn-collapsed .pn-toggle {
 	background: var(--paper);
 	color: var(--ink-soft);
 	cursor: pointer;
-	font: 700 1rem / 1 sans-serif;
+	font: 700 1rem/1 sans-serif;
 }
 
 .pi-nav .pn-collapse:hover {
@@ -858,9 +848,7 @@ body.pn-has.pn-collapsed .pn-toggle {
 	background: transparent;
 	color: var(--ink-soft);
 	cursor: pointer;
-	font:
-		700 0.72rem "Space Grotesk",
-		sans-serif;
+	font: 700 0.72rem "Space Grotesk", sans-serif;
 	letter-spacing: 0.02em;
 }
 
@@ -880,9 +868,7 @@ body.pn-has.pn-collapsed .pn-toggle {
 	min-width: 42px;
 	padding: 0 8px;
 	color: var(--violet);
-	font:
-		700 0.78rem "JetBrains Mono",
-		monospace;
+	font: 700 0.78rem "JetBrains Mono", monospace;
 	text-align: center;
 }
 
@@ -896,7 +882,7 @@ body.pn-has.pn-collapsed .pn-toggle {
 	background: var(--paper-2);
 	color: var(--ink-soft);
 	cursor: pointer;
-	font: 700 1rem / 1 sans-serif;
+	font: 700 1rem/1 sans-serif;
 }
 
 .section-check:hover {
@@ -916,10 +902,7 @@ h2.section.is-learned {
 
 .recall-target {
 	cursor: pointer;
-	transition:
-		color 0.14s,
-		background 0.14s,
-		filter 0.14s;
+	transition: color 0.14s, background 0.14s, filter 0.14s;
 }
 
 body.study-recall-mode .recall-target:not(.revealed) {
@@ -986,78 +969,4 @@ body.study-recall-mode .recall-target.revealed {
 		background: transparent !important;
 		text-shadow: none !important;
 	}
-}
-
-/* ---------- Q&A accordions (details.qa) ---------- */
-details.qa {
-	border: 1.5px solid var(--line);
-	border-radius: 12px;
-	background: var(--paper-2);
-	margin: 12px 0;
-	overflow: hidden;
-	box-shadow: var(--shadow);
-	transition: border-color 0.15s ease;
-}
-details.qa + details.qa {
-	margin-top: 14px;
-}
-details.qa[open] {
-	border-color: color-mix(in srgb, var(--violet) 55%, var(--line));
-}
-details.qa summary {
-	cursor: pointer;
-	list-style: none;
-	display: flex;
-	align-items: center;
-	gap: 12px;
-	padding: 15px 18px;
-	font-family: "Space Grotesk", sans-serif;
-	font-weight: 700;
-	color: var(--ink);
-	user-select: none;
-}
-details.qa summary::-webkit-details-marker {
-	display: none;
-}
-details.qa summary::before {
-	content: "?";
-	flex: none;
-	display: grid;
-	place-items: center;
-	width: 26px;
-	height: 26px;
-	border-radius: 8px;
-	background: var(--violet-50);
-	color: var(--violet);
-	font:
-		800 0.85rem "JetBrains Mono",
-		monospace;
-}
-details.qa summary::after {
-	content: "+";
-	margin-left: auto;
-	flex: none;
-	color: var(--violet);
-	font:
-		700 1.3rem "JetBrains Mono",
-		monospace;
-	transition: transform 0.15s ease;
-}
-details.qa[open] summary::after {
-	transform: rotate(45deg);
-}
-details.qa .ans {
-	margin: 0 18px 16px;
-	padding: 14px 0 0 56px;
-	border-top: 1px solid var(--line);
-	color: var(--ink-soft);
-	line-height: 1.65;
-}
-details.qa .ans::before {
-	content: "";
-	display: block;
-	width: 34px;
-	height: 2px;
-	margin-bottom: 10px;
-	background: linear-gradient(90deg, var(--violet), transparent);
 }

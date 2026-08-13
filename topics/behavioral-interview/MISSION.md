@@ -2,7 +2,7 @@
 
 ## Why
 
-The user has a **senior fullstack developer behavioral interview tomorrow**. The concrete outcome: walk in able to answer any behavioral question with a clear, senior-sounding, *natural* (not scripted) response — leading with impact, then proving it with a real story. When this lands, they convert the interview into an offer instead of a "we went with someone who communicated better."
+Prepared for a **senior fullstack developer behavioral interview on 8 August 2026**. The concrete outcome: walk in able to answer any behavioral question with a clear, senior-sounding, *natural* (not scripted) response — leading with impact, then proving it with a real story. When this lands, they convert the interview into an offer instead of a "we went with someone who communicated better."
 
 ## Success looks like
 
@@ -13,7 +13,7 @@ The user has a **senior fullstack developer behavioral interview tomorrow**. The
 
 ## Constraints
 
-- **Interview is tomorrow** → optimize for *tonight*: high-signal, actionable, practice-first. No long research arc.
+- **Interview date: 8 August 2026** → high-signal, actionable, practice-first. No long research arc.
 - Learner is a senior fullstack developer — skip generic interview basics; focus on senior-level behavioral signals.
 - Graphical, interactive artifacts (user preference). Self-contained & portable.
 - **Honest prep only** — no fabrication/bluffing; senior interviews probe, and invented stories collapse on follow-up.

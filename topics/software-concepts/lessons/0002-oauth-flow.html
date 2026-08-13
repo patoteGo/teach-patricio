@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title
+      data-pt="OAuth — o fluxo básico, visualmente"
+      data-en="OAuth — the basic flow, visually"
+    >
+      OAuth flow
+    </title>
+    <link rel="stylesheet" href="../assets/style.css" />
+    <link rel="stylesheet" href="../assets/dark.css" />
+    <link rel="stylesheet" href="../assets/i18n.css" />
+    <link rel="stylesheet" href="../assets/concepts.css" />
+    <script src="../assets/i18n.js" defer></script>
+    <script src="../assets/nav.js" defer></script>
+    <script src="../assets/reading-ui.js" defer></script>
+    <script src="../assets/concepts.js" defer></script>
+  </head>
+  <body class="lang-pt">
+    <article class="lesson">
+      <header class="hero">
+        <span class="eyebrow">⬡ OAuth 2.0 · Authorization Code + PKCE</span>
+        <h1>
+          <span data-lang="pt">Dê acesso, não sua senha.</span
+          ><span data-lang="en">Grant access, not your password.</span>
+        </h1>
+        <p class="lead">
+          <span data-lang="pt"
+            >Em 15 minutos: quem participa, como o código vira token e por que
+            PKCE impede que um código roubado seja útil.</span
+          ><span data-lang="en"
+            >In 15 minutes: who participates, how a code becomes a token, and
+            why PKCE makes a stolen code useless.</span
+          >
+        </p>
+      </header>
+      <nav class="concept-nav">
+        <a href="0001-sql-foundations.html">← SQL</a
+        ><a href="0002-oauth-flow.html">OAuth</a
+        ><a href="0003-sql-sandbox.html">⌨ Sandbox</a
+        ><a href="../reference/software-concepts-cheatsheet.html"
+          ><span data-lang="pt">Folha rápida</span
+          ><span data-lang="en">Cheat sheet</span></a
+        ><a href="../../../index.html">Hub</a>
+      </nav>
+
+      <h2 class="section">
+        <span class="num">1</span
+        ><span data-lang="pt">Primeiro: OAuth não é login</span
+        ><span data-lang="en">First: OAuth is not login</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >OAuth é um framework de <strong>autorização delegada</strong>: um
+          aplicativo recebe permissão limitada para agir sobre recursos do
+          usuário sem receber sua senha. “Login com…” normalmente adiciona
+          OpenID Connect para autenticação.</span
+        ><span data-lang="en"
+          >OAuth is a framework for <strong>delegated authorization</strong>: an
+          app gets limited permission to act on a user's resources without
+          receiving the password. “Sign in with…” normally adds OpenID Connect
+          for authentication.</span
+        >
+      </p>
+      <div class="callout warn">
+        <p>
+          <span data-lang="pt"
+            ><strong>Pergunta diferente:</strong> autenticação = “quem é você?”;
+            autorização = “o que este app pode fazer?”</span
+          ><span data-lang="en"
+            ><strong>Different question:</strong> authentication = “who are
+            you?”; authorization = “what may this app do?”</span
+          >
+        </p>
+      </div>
+
+      <h2 class="section">
+        <span class="num">2</span
+        ><span data-lang="pt">Os quatro participantes</span
+        ><span data-lang="en">The four participants</span>
+      </h2>
+      <div class="actors">
+        <div class="actor">
+          <span class="icon">🧑</span
+          ><strong
+            ><span data-lang="pt">Dono do recurso</span
+            ><span data-lang="en">Resource owner</span></strong
+          ><br /><small
+            ><span data-lang="pt">você</span
+            ><span data-lang="en">you</span></small
+          >
+        </div>
+        <div class="actor">
+          <span class="icon">📱</span><strong>Client</strong><br /><small
+            ><span data-lang="pt">app pedindo acesso</span
+            ><span data-lang="en">app requesting access</span></small
+          >
+        </div>
+        <div class="actor">
+          <span class="icon">🪪</span><strong>Authorization server</strong
+          ><br /><small
+            ><span data-lang="pt">login, consentimento, tokens</span
+            ><span data-lang="en">login, consent, tokens</span></small
+          >
+        </div>
+        <div class="actor">
+          <span class="icon">🗄️</span><strong>Resource server</strong
+          ><br /><small
+            ><span data-lang="pt">API protegida</span
+            ><span data-lang="en">protected API</span></small
+          >
+        </div>
+      </div>
+      <p>
+        <span data-lang="pt"
+          >O cliente nunca precisa ver a senha:
+          <strong
+            >o usuário autentica diretamente no servidor de autorização</strong
+          >.</span
+        ><span data-lang="en"
+          >The client never needs the password:
+          <strong
+            >the user authenticates directly with the authorization
+            server</strong
+          >.</span
+        >
+      </p>
+      <p class="cite-line">
+        <span data-lang="pt">Definições oficiais:</span
+        ><span data-lang="en">Official definitions:</span>
+        <a href="https://datatracker.ietf.org/doc/html/rfc6749#section-1.1"
+          >RFC 6749 §1.1</a
+        >.
+      </p>
+
+      <h2 class="section">
+        <span class="num">3</span><span data-lang="pt">Percorra o fluxo</span
+        ><span data-lang="en">Walk through the flow</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >Clique em “próximo”. Observe que o navegador transporta um
+          <em>código curto e descartável</em>; o access token chega no token
+          endpoint, não na URL de autorização.</span
+        ><span data-lang="en"
+          >Click “next”. Notice that the browser carries a
+          <em>short-lived, disposable code</em>; the access token arrives from
+          the token endpoint, not in the authorization URL.</span
+        >
+      </p>
+      <div class="flow-board" data-flow>
+        <div class="flow-row">
+          <span class="step">1</span>
+          <div>
+            <strong>Client → Authorization server</strong><br /><span
+              data-lang="pt"
+              >Redireciona com <code>client_id</code>,
+              <code>redirect_uri</code>, <code>scope</code>,
+              <code>state</code> e desafio PKCE.</span
+            ><span data-lang="en"
+              >Redirects with <code>client_id</code>, <code>redirect_uri</code>,
+              <code>scope</code>, <code>state</code>, and a PKCE
+              challenge.</span
+            >
+          </div>
+        </div>
+        <div class="flow-row">
+          <span class="step">2</span>
+          <div>
+            <strong>User ↔ Authorization server</strong><br /><span
+              data-lang="pt"
+              >O usuário faz login e aprova o escopo pedido.</span
+            ><span data-lang="en"
+              >The user signs in and approves the requested scope.</span
+            >
+          </div>
+        </div>
+        <div class="flow-row">
+          <span class="step">3</span>
+          <div>
+            <strong>Authorization server → Client callback</strong><br /><span
+              data-lang="pt"
+              >Redireciona para a URI registrada com
+              <span class="token">code</span> + <code>state</code>.</span
+            ><span data-lang="en"
+              >Redirects to the registered URI with a
+              <span class="token">code</span> + <code>state</code>.</span
+            >
+          </div>
+        </div>
+        <div class="flow-row">
+          <span class="step">4</span>
+          <div>
+            <strong>Client → Token endpoint</strong><br /><span data-lang="pt"
+              >Troca <code>code</code> + <code>code_verifier</code> por
+              tokens.</span
+            ><span data-lang="en"
+              >Exchanges <code>code</code> + <code>code_verifier</code> for
+              tokens.</span
+            >
+          </div>
+        </div>
+        <div class="flow-row">
+          <span class="step">5</span>
+          <div>
+            <strong>Client → Resource server</strong><br /><span data-lang="pt"
+              >Chama a API com
+              <code>Authorization: Bearer &lt;access_token&gt;</code>.</span
+            ><span data-lang="en"
+              >Calls the API with
+              <code>Authorization: Bearer &lt;access_token&gt;</code>.</span
+            >
+          </div>
+        </div>
+        <div class="flow-row">
+          <span class="step">6</span>
+          <div>
+            <strong>Resource server → Client</strong><br /><span data-lang="pt"
+              >Valida token e escopo; devolve o recurso permitido.</span
+            ><span data-lang="en"
+              >Validates token and scope; returns the permitted resource.</span
+            >
+          </div>
+        </div>
+        <div class="flow-controls">
+          <button type="button" data-next>
+            <span data-lang="pt">Próximo →</span
+            ><span data-lang="en">Next →</span></button
+          ><button type="button" data-reset>
+            <span data-lang="pt">Reiniciar</span
+            ><span data-lang="en">Reset</span></button
+          ><span data-flow-status aria-live="polite"></span>
+        </div>
+      </div>
+      <p class="cite-line">
+        <span data-lang="pt">Fluxo-base:</span
+        ><span data-lang="en">Base flow:</span>
+        <a href="https://datatracker.ietf.org/doc/html/rfc6749#section-4.1"
+          >RFC 6749 §4.1</a
+        >.
+      </p>
+
+      <h2 class="section">
+        <span class="num">4</span><span data-lang="pt">Código não é token</span
+        ><span data-lang="en">A code is not a token</span>
+      </h2>
+      <div class="mental-model">
+        <div class="concept-card">
+          <h3>Authorization code</h3>
+          <p>
+            <span data-lang="pt"
+              >Uso único, vida curta, só serve para a troca.</span
+            ><span data-lang="en"
+              >One-time, short-lived, useful only for exchange.</span
+            >
+          </p>
+        </div>
+        <div class="concept-card">
+          <h3>Access token</h3>
+          <p>
+            <span data-lang="pt"
+              >Credencial apresentada à API; limitado por escopo e tempo.</span
+            ><span data-lang="en"
+              >Credential presented to the API; limited by scope and
+              lifetime.</span
+            >
+          </p>
+        </div>
+        <div class="concept-card">
+          <h3>Refresh token</h3>
+          <p>
+            <span data-lang="pt"
+              >Opcional; obtém novo access token sem novo consentimento.</span
+            ><span data-lang="en"
+              >Optional; gets a new access token without new consent.</span
+            >
+          </p>
+        </div>
+      </div>
+      <p>
+        <span data-lang="pt"
+          ><strong>Trate tokens como credenciais</strong>: não coloque access
+          tokens em URLs, logs ou armazenamento inseguro.</span
+        ><span data-lang="en"
+          ><strong>Treat tokens as credentials</strong>: do not put access
+          tokens in URLs, logs, or insecure storage.</span
+        >
+      </p>
+
+      <h2 class="section">
+        <span class="num">5</span>PKCE:
+        <span data-lang="pt">a prova de posse</span
+        ><span data-lang="en">proof of possession</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >Antes do redirect, o cliente cria um segredo aleatório
+          <code>verifier</code> e envia apenas seu hash <code>challenge</code>.
+          Na troca, revela o verifier. O servidor recalcula o hash.
+          <strong>Um código interceptado não basta sem o verifier</strong
+          >.</span
+        ><span data-lang="en"
+          >Before redirecting, the client creates a random
+          <code>verifier</code> and sends only its hashed
+          <code>challenge</code>. During exchange it reveals the verifier. The
+          server hashes it again.
+          <strong>An intercepted code is useless without the verifier</strong
+          >.</span
+        >
+      </p>
+      <div class="schema">
+        <div class="db-table">
+          <b>Client keeps</b>
+          <div class="db-row match">
+            <span>verifier</span><span>🎲 secret</span>
+          </div>
+        </div>
+        <div class="join-link">SHA-256 →</div>
+        <div class="db-table">
+          <b>Server receives first</b>
+          <div class="db-row match">
+            <span>challenge</span><span># hash</span>
+          </div>
+        </div>
+      </div>
+      <div class="security-pair">
+        <div class="concept-card danger">
+          <h3>
+            😈 <span data-lang="pt">Atacante</span
+            ><span data-lang="en">Attacker</span>
+          </h3>
+          <p>
+            <span data-lang="pt"
+              >Rouba o <code>code</code>, mas não conhece o verifier: troca
+              recusada.</span
+            ><span data-lang="en"
+              >Steals the <code>code</code>, but lacks the verifier: exchange
+              rejected.</span
+            >
+          </p>
+        </div>
+        <div class="concept-card safe">
+          <h3>✅ Client</h3>
+          <p>
+            <span data-lang="pt"
+              >Apresenta code + verifier correto: recebe o token.</span
+            ><span data-lang="en"
+              >Presents code + correct verifier: receives the token.</span
+            >
+          </p>
+        </div>
+      </div>
+      <p class="cite-line">
+        <a href="https://datatracker.ietf.org/doc/html/rfc7636#section-4"
+          >RFC 7636 §4</a
+        >
+        ·
+        <a href="https://datatracker.ietf.org/doc/html/rfc9700#section-2.1.1"
+          >RFC 9700 §2.1.1</a
+        >
+        <span data-lang="pt"
+          >requer PKCE para clientes públicos e recomenda para clientes
+          confidenciais.</span
+        ><span data-lang="en"
+          >requires PKCE for public clients and recommends it for confidential
+          clients.</span
+        >
+      </p>
+
+      <h2 class="section">
+        <span class="num">6</span
+        ><span data-lang="pt">Cheque sua explicação</span
+        ><span data-lang="en">Check your explanation</span>
+      </h2>
+      <details>
+        <summary>
+          <span data-lang="pt"
+            >Por que redirecionar para o authorization server?</span
+          ><span data-lang="en">Why redirect to the authorization server?</span>
+        </summary>
+        <p>
+          <span data-lang="pt"
+            >Para que credenciais e consentimento fiquem com a autoridade
+            confiável; o client recebe delegação, não a senha.</span
+          ><span data-lang="en"
+            >So credentials and consent stay with the trusted authority; the
+            client receives delegation, not the password.</span
+          >
+        </p>
+      </details>
+      <details>
+        <summary>
+          <span data-lang="pt">O que scope controla?</span
+          ><span data-lang="en">What does scope control?</span>
+        </summary>
+        <p>
+          <span data-lang="pt"
+            >A extensão do acesso delegado, por exemplo
+            <code>photos:read</code> sem <code>photos:delete</code>.</span
+          ><span data-lang="en"
+            >The extent of delegated access, for example
+            <code>photos:read</code> without <code>photos:delete</code>.</span
+          >
+        </p>
+      </details>
+      <details>
+        <summary>
+          <span data-lang="pt">OAuth faz autenticação?</span
+          ><span data-lang="en">Does OAuth authenticate?</span>
+        </summary>
+        <p>
+          <span data-lang="pt"
+            >Não sozinho. OAuth autoriza acesso. OpenID Connect adiciona
+            identidade/autenticação sobre OAuth.</span
+          ><span data-lang="en"
+            >Not by itself. OAuth authorizes access. OpenID Connect adds
+            identity/authentication on top of OAuth.</span
+          >
+        </p>
+      </details>
+      <div class="callout key">
+        <p>
+          <strong
+            ><span data-lang="pt">Resposta de entrevista em 20 segundos:</span
+            ><span data-lang="en">20-second interview answer:</span></strong
+          >
+          <span data-lang="pt"
+            >“O client redireciona o usuário ao authorization server para login
+            e consentimento. Recebe um código curto no callback, valida state e
+            troca código + PKCE verifier por um access token. Usa esse token,
+            limitado por scope, para chamar a API. Assim o app nunca recebe a
+            senha do usuário.”</span
+          ><span data-lang="en"
+            >“The client redirects the user to the authorization server for
+            sign-in and consent. It receives a short-lived code at its callback,
+            validates state, and exchanges the code plus PKCE verifier for an
+            access token. It uses that scoped token to call the API, so the app
+            never receives the user's password.”</span
+          >
+        </p>
+      </div>
+      <div class="callout info">
+        <p>
+          <span data-lang="pt"
+            >Quer mapear isso para Next.js, Node ou uma SPA?
+            <strong
+              >Pergunte ao agente; a localização segura dos tokens depende da
+              arquitetura.</strong
+            ></span
+          ><span data-lang="en"
+            >Want to map this to Next.js, Node, or an SPA?
+            <strong
+              >Ask the agent; safe token placement depends on the
+              architecture.</strong
+            ></span
+          >
+        </p>
+      </div>
+      <p class="cite-line">
+        <span data-lang="pt">Leitura principal:</span
+        ><span data-lang="en">Primary reading:</span>
+        <a href="https://datatracker.ietf.org/doc/html/rfc9700#section-2.1"
+          >OAuth 2.0 Security Best Current Practice §2.1</a
+        >.
+        <a href="../reference/software-concepts-cheatsheet.html"
+          ><span data-lang="pt">Revisar folha rápida →</span
+          ><span data-lang="en">Review cheat sheet →</span></a
+        >
+      </p>
+    </article>
+  </body>
+</html>

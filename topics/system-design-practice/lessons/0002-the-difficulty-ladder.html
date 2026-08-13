@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title
+      data-pt="System Design · A escada de dificuldade"
+      data-en="System Design · The difficulty ladder"
+    >
+      The difficulty ladder
+    </title>
+    <link rel="stylesheet" href="../assets/style.css" />
+    <link rel="stylesheet" href="../assets/dark.css" />
+    <link rel="stylesheet" href="../assets/i18n.css" />
+    <link rel="stylesheet" href="../assets/exercises.css" />
+    <script src="../assets/i18n.js" defer></script>
+    <script src="../assets/nav.js" defer></script>
+    <script src="../assets/exercises.js" defer></script>
+  </head>
+  <body class="lang-pt">
+    <article class="lesson">
+      <header class="hero">
+        <span class="eyebrow"
+          ><span data-lang="pt">⬡ Dojo · onde você está</span
+          ><span data-lang="en">⬡ Dojo · where you are</span></span
+        >
+        <h1>
+          <span data-lang="pt">Você não precisa do leilão ainda.</span
+          ><span data-lang="en">You don't need the auction yet.</span>
+        </h1>
+        <p class="lead">
+          <span data-lang="pt"
+            >O problema do leilão é <strong>nível 4</strong>: concorrência em
+            chave única, teoria de filas. As entrevistas da Lob e da ClearOne
+            pedem <strong>nível 1–2</strong>: API, banco, um pouco de
+            assíncrono. Comece aqui. Suba com o tempo.</span
+          ><span data-lang="en"
+            >The auction problem is <strong>level 4</strong>: single-key
+            contention, queueing theory. Lob and ClearOne interviews ask for
+            <strong>level 1–2</strong>: an API, a database, a bit of async.
+            Start here. Climb over time.</span
+          >
+        </p>
+        <p class="lesson-nav-top">
+          ↑ <a href="../MISSION.md">Dojo</a> ·
+          <span data-lang="pt">mapa de progressão</span
+          ><span data-lang="en">progression map</span>
+        </p>
+      </header>
+
+      <h2 class="section">
+        <span class="num">1</span
+        ><span data-lang="pt">A regra de uma frase</span
+        ><span data-lang="en">The one-sentence rule</span>
+      </h2>
+      <div class="callout key">
+        <p>
+          <span data-lang="pt"
+            >Nível = número de componentes assíncronos + número de restrições
+            difíceis. <strong>Nível 1</strong> = um cliente, uma API, um banco.
+            <strong>Nível 2</strong> = adiciona fila/email/cache.
+            <strong>Nível 4</strong> = adiciona concorrência em um único valor
+            (leilão) ou ordem global.</span
+          ><span data-lang="en"
+            >Level = number of async components + number of hard constraints.
+            <strong>Level 1</strong> = one client, one API, one database.
+            <strong>Level 2</strong> = add a queue/email/cache.
+            <strong>Level 4</strong> = add contention on a single value
+            (auction) or global ordering.</span
+          >
+        </p>
+      </div>
+
+      <h2 class="section">
+        <span class="num">2</span><span data-lang="pt">A escada</span
+        ><span data-lang="en">The ladder</span>
+      </h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>
+                <span data-lang="pt">Nível</span
+                ><span data-lang="en">Level</span>
+              </th>
+              <th>
+                <span data-lang="pt">Problema</span
+                ><span data-lang="en">Problem</span>
+              </th>
+              <th>
+                <span data-lang="pt">O que treina</span
+                ><span data-lang="en">What it trains</span>
+              </th>
+              <th>
+                <span data-lang="pt">Para você</span
+                ><span data-lang="en">For you</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>L0</strong></td>
+              <td>
+                <span data-lang="pt">App de tarefas (CRUD)</span
+                ><span data-lang="en">Todo app (CRUD)</span>
+              </td>
+              <td>
+                <span data-lang="pt">dados + API básica</span
+                ><span data-lang="en">data + basic API</span>
+              </td>
+              <td>
+                <span data-lang="pt">aquecimento</span
+                ><span data-lang="en">warmup</span>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>L1</strong></td>
+              <td>
+                <a href="0003-starter-url-shortener.html"
+                  ><span data-lang="pt">Encurtador de URL</span
+                  ><span data-lang="en">URL shortener</span></a
+                >
+              </td>
+              <td>
+                <span data-lang="pt"
+                  >o loop de design inteiro em baixa complexidade</span
+                ><span data-lang="en"
+                  >the whole design loop at low complexity</span
+                >
+              </td>
+              <td class="key" style="color: var(--teal)">
+                <strong
+                  ><span data-lang="pt">comece aqui ★</span
+                  ><span data-lang="en">start here ★</span></strong
+                >
+              </td>
+            </tr>
+            <tr>
+              <td><strong>L1–2</strong></td>
+              <td>
+                <a href="0004-starter-onboarding-email.html"
+                  ><span data-lang="pt">Onboarding + email (ClearOne)</span
+                  ><span data-lang="en">Onboarding + email (ClearOne)</span></a
+                >
+              </td>
+              <td>
+                <span data-lang="pt"
+                  >React + Node + serverless + um passo assíncrono</span
+                ><span data-lang="en"
+                  >React + Node + serverless + one async step</span
+                >
+              </td>
+              <td class="key" style="color: var(--teal)">
+                <strong
+                  ><span data-lang="pt">ClearOne ★</span
+                  ><span data-lang="en">ClearOne ★</span></strong
+                >
+              </td>
+            </tr>
+            <tr>
+              <td><strong>L2</strong></td>
+              <td>
+                <a href="0005-starter-webhook-delivery.html"
+                  ><span data-lang="pt">Entrega de webhook (Lob)</span
+                  ><span data-lang="en">Webhook delivery (Lob)</span></a
+                >
+              </td>
+              <td>
+                <span data-lang="pt">fila, retry, idempotência</span
+                ><span data-lang="en">queue, retry, idempotency</span>
+              </td>
+              <td class="key" style="color: var(--teal)">
+                <strong
+                  ><span data-lang="pt">Lob ★</span
+                  ><span data-lang="en">Lob ★</span></strong
+                >
+              </td>
+            </tr>
+            <tr>
+              <td><strong>L2–3</strong></td>
+              <td>
+                <span data-lang="pt">Rate limiter · Top-K · chat simples</span
+                ><span data-lang="en">Rate limiter · Top-K · simple chat</span>
+              </td>
+              <td>
+                <span data-lang="pt">cache, contador, pub/sub</span
+                ><span data-lang="en">cache, counter, pub/sub</span>
+              </td>
+              <td>
+                <span data-lang="pt">depois</span
+                ><span data-lang="en">later</span>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>L4</strong></td>
+              <td>
+                <a href="0001-draw-and-talk.html"
+                  ><span data-lang="pt">Leilão / leilão com pico</span
+                  ><span data-lang="en">Auction / spiky auction</span></a
+                >
+              </td>
+              <td>
+                <span data-lang="pt"
+                  >concorrência em chave única, filas M/M/1</span
+                ><span data-lang="en">single-key contention, M/M/1 queues</span>
+              </td>
+              <td style="color: var(--rose)">
+                <strong
+                  ><span data-lang="pt">depois de L1–2 firme</span
+                  ><span data-lang="en">after L1–2 is solid</span></strong
+                >
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout warn">
+        <p>
+          <span data-lang="pt"
+            ><strong>Você já tem o material do L4.</strong> A página
+            <a href="../reference/bidding-concurrency.html"
+              >bidding-concurrency</a
+            >
+            cobre tudo (Redis Lua, fan-out, durabilidade, fechamento). O
+            problema <em>não</em> é conhecimento — é prática em desenhar e falar
+            no relógio. Por isso comece no L1: construa o ritmo, depois
+            suba.</span
+          ><span data-lang="en"
+            ><strong>You already have the L4 material.</strong> The
+            <a href="../reference/bidding-concurrency.html"
+              >bidding-concurrency</a
+            >
+            page covers all of it (Redis Lua, fan-out, durability, close). The
+            problem is <em>not</em> knowledge — it's practice drawing and
+            talking against the clock. That's why you start at L1: build the
+            rhythm, then climb.</span
+          >
+        </p>
+      </div>
+
+      <h2 class="section">
+        <span class="num">3</span
+        ><span data-lang="pt">Por que isso casa com Lob e ClearOne</span
+        ><span data-lang="en">Why this matches Lob and ClearOne</span>
+      </h2>
+      <div class="ex classify" id="ex-match">
+        <div class="ex-head">
+          <h3>
+            <span data-lang="pt">Qual nível cada empresa costuma pedir?</span
+            ><span data-lang="en"
+              >Which level does each company usually ask?</span
+            >
+          </h3>
+        </div>
+        <div
+          class="ex-item"
+          data-correct="lob"
+          data-explain-pt="Lob tem APIs, validação de endereço, rastreio de correspondência e webhooks: é fluxo assíncrono + entrega confiável, sem contenção em chave única. Nível 2."
+          data-explain-en="Lob has APIs, address validation, mail tracking, and webhooks: async flow + reliable delivery, no single-key contention. Level 2."
+        >
+          <div class="ex-stem">
+            <strong>Lob</strong> —
+            <span data-lang="pt">plataforma de automação de mala direta</span
+            ><span data-lang="en">direct-mail automation platform</span>
+          </div>
+          <div class="ex-opts">
+            <button class="ex-opt" data-pick="crud">L0 CRUD</button>
+            <button class="ex-opt" data-pick="url">L1 URL</button>
+            <button class="ex-opt" data-pick="lob">
+              L2 <span data-lang="pt">fila/webhook</span
+              ><span data-lang="en">queue/webhook</span>
+            </button>
+            <button class="ex-opt" data-pick="auction">
+              L4 <span data-lang="pt">leilão</span
+              ><span data-lang="en">auction</span>
+            </button>
+          </div>
+          <div class="ex-fb"></div>
+        </div>
+        <div
+          class="ex-item"
+          data-correct="clearone"
+          data-explain-pt="ClearOne é full-stack (React + Node + AWS serverless) de plataformas de marketing/onboarding/servicing: formulário, API, banco, um passo assíncrono. Nível 1–2."
+          data-explain-en="ClearOne is full-stack (React + Node + AWS serverless) for marketing/onboarding/servicing platforms: form, API, DB, one async step. Level 1–2."
+        >
+          <div class="ex-stem">
+            <strong>ClearOne</strong> —
+            <span data-lang="pt">full-stack marketing/onboarding</span
+            ><span data-lang="en">full-stack marketing/onboarding</span>
+          </div>
+          <div class="ex-opts">
+            <button class="ex-opt" data-pick="crud">L0 CRUD</button>
+            <button class="ex-opt" data-pick="clearone">
+              L1–2 <span data-lang="pt">onboarding+email</span
+              ><span data-lang="en">onboarding+email</span>
+            </button>
+            <button class="ex-opt" data-pick="lob">
+              L2 <span data-lang="pt">webhook</span
+              ><span data-lang="en">webhook</span>
+            </button>
+            <button class="ex-opt" data-pick="auction">
+              L4 <span data-lang="pt">leilão</span
+              ><span data-lang="en">auction</span>
+            </button>
+          </div>
+          <div class="ex-fb"></div>
+        </div>
+      </div>
+
+      <h2 class="section">
+        <span class="num">4</span
+        ><span data-lang="pt">Seu plano de 2 semanas</span
+        ><span data-lang="en">Your 2-week plan</span>
+      </h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>
+                <span data-lang="pt">Semana</span
+                ><span data-lang="en">Week</span>
+              </th>
+              <th>
+                <span data-lang="pt">Faça</span><span data-lang="en">Do</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>1</strong></td>
+              <td>
+                <span data-lang="pt"
+                  ><a href="0003-starter-url-shortener.html">URL shortener</a> —
+                  25 min, 3× (seg/qua/sex). Toda vez do zero, sem olhar a
+                  solução.</span
+                ><span data-lang="en"
+                  ><a href="0003-starter-url-shortener.html">URL shortener</a> —
+                  25 min, 3× (Mon/Wed/Fri). Every time from scratch, no peeking
+                  at the solution.</span
+                >
+              </td>
+            </tr>
+            <tr>
+              <td><strong>1–2</strong></td>
+              <td>
+                <span data-lang="pt"
+                  ><a href="0004-starter-onboarding-email.html"
+                    >Onboarding + email</a
+                  >
+                  — 25 min, 3×. Aqui você praticar falar a parte
+                  assíncrona.</span
+                ><span data-lang="en"
+                  ><a href="0004-starter-onboarding-email.html"
+                    >Onboarding + email</a
+                  >
+                  — 25 min, 3×. Here you practice talking through the async
+                  step.</span
+                >
+              </td>
+            </tr>
+            <tr>
+              <td><strong>2</strong></td>
+              <td>
+                <span data-lang="pt"
+                  ><a href="0005-starter-webhook-delivery.html"
+                    >Webhook delivery</a
+                  >
+                  — 25 min, 3×. Agora retry e idempotência no automático.</span
+                ><span data-lang="en"
+                  ><a href="0005-starter-webhook-delivery.html"
+                    >Webhook delivery</a
+                  >
+                  — 25 min, 3×. Now retry and idempotency on autopilot.</span
+                >
+              </td>
+            </tr>
+            <tr>
+              <td><strong>3+</strong></td>
+              <td>
+                <span data-lang="pt"
+                  >Só então volte ao
+                  <a href="0001-draw-and-talk.html">leilão</a>. Vai parecer
+                  fácil.</span
+                ><span data-lang="en"
+                  >Only then return to the
+                  <a href="0001-draw-and-talk.html">auction</a>. It'll feel
+                  easy.</span
+                >
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout tip">
+        <p>
+          <span data-lang="pt"
+            >🗣️
+            <strong>Cada brief tem a solução em &lt;details&gt;.</strong> Tente
+            25 min primeiro. Só abra para se autocorrigir. A memória vem da
+            tentativa, não da leitura.</span
+          ><span data-lang="en"
+            >🗣️
+            <strong>Each brief hides the solution in &lt;details&gt;.</strong>
+            Try 25 min first. Only open it to self-correct. Memory comes from
+            the attempt, not the reading.</span
+          >
+        </p>
+      </div>
+      <p class="cite">
+        <span data-lang="pt">Primeiro problema →</span
+        ><span data-lang="en">First problem →</span>
+        <a href="0003-starter-url-shortener.html"
+          ><span data-lang="pt">Encurtador de URL</span
+          ><span data-lang="en">URL shortener</span></a
+        >.
+      </p>
+    </article>
+  </body>
+</html>

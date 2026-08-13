@@ -112,12 +112,34 @@
 		"clearone-interview": {
 			name: { pt: "ClearOne (entrevista)", en: "ClearOne (interview)" },
 			lessons: [
-				{ f: "0001-clearone-playbook.html", n: "01", t: { pt: "O playbook", en: "The playbook" } },
-				{ f: "0002-stack-cheatsheet.html", n: "02", t: { pt: "Lembretes do stack", en: "Stack reminders" } },
+				{
+					f: "0001-clearone-playbook.html",
+					n: "01",
+					t: { pt: "O playbook", en: "The playbook" },
+				},
+				{
+					f: "0002-stack-cheatsheet.html",
+					n: "02",
+					t: { pt: "Lembretes do stack", en: "Stack reminders" },
+				},
 			],
 			extra: [
-				{ f: "my-stories.html", t: { pt: "📖 Minhas histórias", en: "📖 My stories" } },
+				{
+					f: "my-stories.html",
+					t: { pt: "📖 Minhas histórias", en: "📖 My stories" },
+				},
 			],
+		},
+		"frontdoor-interview": {
+			name: { pt: "Lob (entrevista)", en: "Lob (interview)" },
+			lessons: [
+				{
+					f: "0001-lob-intro-screen.html",
+					n: "01",
+					t: { pt: "Conversa inicial", en: "Intro screen" },
+				},
+			],
+			extra: [],
 		},
 	};
 	const OTHER = {
@@ -125,6 +147,7 @@
 		"behavioral-interview": "pi",
 		"system-design": "pi",
 		"clearone-interview": "behavioral-interview",
+		"frontdoor-interview": "behavioral-interview",
 	};
 
 	const path = location.pathname.replace(/\\/g, "/");
@@ -524,7 +547,10 @@
 				collapse.setAttribute("aria-label", text);
 				collapse.setAttribute("title", text);
 			}
-			tools?.setAttribute("aria-label", L("Ferramentas de estudo", "Study tools"));
+			tools?.setAttribute(
+				"aria-label",
+				L("Ferramentas de estudo", "Study tools"),
+			);
 			status?.setAttribute(
 				"title",
 				sections.length
@@ -538,7 +564,10 @@
 					: L("Recordar", "Recall");
 				recall.setAttribute(
 					"title",
-					L("Oculte frases-chave e tente lembrar", "Hide key phrases and recall them"),
+					L(
+						"Oculte frases-chave e tente lembrar",
+						"Hide key phrases and recall them",
+					),
 				);
 			}
 			if (test) {
@@ -559,7 +588,10 @@
 			targets.forEach((target) =>
 				target.setAttribute(
 					"aria-label",
-					L("Clique para revelar a frase-chave", "Click to reveal the key phrase"),
+					L(
+						"Clique para revelar a frase-chave",
+						"Click to reveal the key phrase",
+					),
 				),
 			);
 		}

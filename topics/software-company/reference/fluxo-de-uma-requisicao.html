@@ -521,30 +521,61 @@ headers: { ...(cookie ? { Cookie: cookie } : {}) }</pre>
       </p>
       <div class="onion" style="margin-top: 12px">
         <div class="layer" style="background: var(--violet-50)">
-          <b>GerenciadorTasksApi</b> — controllers, middleware, composição
-          (<code class="inline">Program.cs</code>).
-          <span class="dep">depende de → Application, Infrastructure</span>
+          <b>GerenciadorTasksApi</b>
+          <span data-lang="pt"
+            >— controllers, middleware, composição (<code class="inline"
+              >Program.cs</code
+            >).</span
+          ><span data-lang="en"
+            >— controllers, middleware, composition (<code class="inline"
+              >Program.cs</code
+            >).</span
+          >
+          <span class="dep"
+            ><span data-lang="pt">depende de → Application, Infrastructure</span
+            ><span data-lang="en"
+              >depends on → Application, Infrastructure</span
+            ></span
+          >
         </div>
         <div class="layer" style="background: var(--teal-50)">
           <b>Infrastructure</b> — EF Core,
           <code class="inline">Ef*Repository</code>, BCrypt.
           <span data-lang="pt">Implementa as interfaces.</span
           ><span data-lang="en">Implements the interfaces.</span>
-          <span class="dep">depende de → Application (interfaces), Core</span>
+          <span class="dep"
+            ><span data-lang="pt"
+              >depende de → Application (interfaces), Core</span
+            ><span data-lang="en"
+              >depends on → Application (interfaces), Core</span
+            ></span
+          >
         </div>
         <div class="layer" style="background: #eef2ff">
           <b>Application</b> — Services, DTOs,
           <code class="inline">I*Repository</code>,
           <code class="inline">IUnitOfWork</code>.
-          <span class="dep">depende de → Core</span>
+          <span class="dep"
+            ><span data-lang="pt">depende de → Core</span
+            ><span data-lang="en">depends on → Core</span></span
+          >
         </div>
         <div
           class="layer"
           style="background: #fff; border: 2px solid var(--violet)"
         >
-          <b>Core</b> — entidades, enums, invariantes,
-          <code class="inline">DomainException</code>.
-          <span class="dep">depende de → ninguém 🎯</span>
+          <b>Core</b>
+          <span data-lang="pt"
+            >— entidades, enums, invariantes,
+            <code class="inline">DomainException</code>.</span
+          ><span data-lang="en"
+            >— entities, enums, invariants,
+            <code class="inline">DomainException</code>.</span
+          >
+          <span class="dep"
+            ><span data-lang="pt">depende de → ninguém 🎯</span
+            ><span data-lang="en">depends on → nobody 🎯</span></span
+          >
         </div>
       </div>
       <div class="callout key">
@@ -592,7 +623,7 @@ headers: { ...(cookie ? { Cookie: cookie } : {}) }</pre>
       </p>
       <pre
         class="block"
-      ><span class="c">// API devolve o status puro — não redireciona</span>
+      ><span class="c"><span data-lang="pt">// API devolve o status puro — não redireciona</span><span data-lang="en">// API returns the raw status — it does not redirect</span></span>
 options.Events.OnRedirectToLogin = ctx =&gt; { ctx.Response.StatusCode = 401; <span class="k">return</span> Task.CompletedTask; };</pre>
       <p>
         <span data-lang="pt"

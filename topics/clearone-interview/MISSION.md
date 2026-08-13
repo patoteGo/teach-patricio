@@ -1,10 +1,10 @@
-# Mission: Ace the ClearOne Advantage Senior Full-Stack interview (tomorrow)
+# Mission: ClearOne Advantage Senior Full-Stack interview (8 August 2026)
 
 ## Why
 
 Interviews ✅ done — round 1 (eng manager) + round 2 (Gati PO + Manasa peer). Both positive. **Waiting for feedback.** **Senior Full-Stack Engineer** role
 (React · Node.js · AWS serverless · AI-first; marketing/onboarding/servicing platforms).
-The user reads tomorrow as **mostly behavioral**. The concrete outcome: walk in able to
+The interview was expected to be **mostly behavioral**. The concrete outcome: walk in able to
 land every behavioral answer with a senior, natural, *ClearOne-tailored* delivery —
 mission-fit pitch, the right story for each theme, honest handling of the stack gaps
 (Lambda/API Gateway, A/B/marketing integrations), and strong questions to ask back.
@@ -22,7 +22,7 @@ mission-fit pitch, the right story for each theme, honest handling of the stack 
 
 ## Constraints
 
-- **Tomorrow** → optimize for *tonight*: scannable, actionable, practice-first.
+- **Interview date: 8 August 2026** → scannable, actionable, practice-first.
 - Senior fullstack (React/Node/TS core) — skip basics.
 - House style: dark + bilingual (PT default / EN toggle) + sidebar, self-contained.
 - **Honest prep only** — inventing Lambda war-stories will collapse on follow-up.

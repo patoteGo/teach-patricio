@@ -1,48 +1,38 @@
-# Teaching Notes — Frontdoor / Lob Interview
+# Teaching Notes — Lob Interview · 13 August 2026
 
-## The setup
+## Confirmed setup
 
-- **Interview:** Grace Derksen, Senior Talent Partner at Lob. Recruiter screen, not hiring manager.
-- **Role:** Sr Software Engineer — Frontdoor contract (On Demand digital team).
-- **Frontdoor:** public US home-services company (NASDAQ: FTDR). Home warranty brands (American
-  Home Shield, HSA, Landmark, OneGuard) + growing non-warranty services (Candu, Streem AR/CV/ML).
-- **The team:** On Demand digital team — enhances/maintains portals for non-warranty business.
-- **NOT Lob's product** — Lob is the direct-mail tech company facilitating the contract.
+- **Company:** Lob, the direct-mail automation and logistics platform.
+- **Interviewer:** Grace Derksen, Senior Technical Talent Partner / recruiter at Lob.
+- **Role:** Senior Software Engineer contract carrying the label “Frontdoor.”
+- **Unknown:** Frontdoor may be a Lob team, product area, requisition, or contract label. Ask Grace.
+- **Do not infer:** No evidence connects this role to the public company Frontdoor, Inc.
 
 ## Strongest match
 
-- Full-stack TS/JS: React + Node.js (core stack).
-- Cencosud: high-volume operational system (~1M req/day at peak).
-- TextUs: customer-facing messaging, Node, Kafka, Redis, REST, observability, K8s.
-- CRM: lead validation, admin workflow simplification.
-- End-to-end ownership: UI → API → integrations → ops → testing.
+- Full-stack TypeScript/JavaScript: React + Node.js.
+- Cencosud: order-traceability service at peak scale of roughly 1M requests/day.
+- TextUs: React, Node, Kafka, Redis, REST, scheduled workflows, observability, and Kubernetes.
+- End-to-end ownership: UI, APIs, integrations/webhooks, operations, testing, and stakeholders.
+- Senior operating style: clarify outcomes, make a safe reversible decision, instrument, and own the result.
 
-## 60-second pitch (rehearse this)
+## Stories
 
-"I'm a senior full-stack engineer with about eight years building customer-facing and operational
-systems — TypeScript, React, Node.js. At Cencosud I owned a service handling ~1M requests/day at
-peak. At TextUs I worked across React and Node services with Kafka, Redis, observability. What
-attracts me to Frontdoor is the On Demand team improving a real customer service journey."
+1. **Scale:** Cencosud order traceability.
+2. **Diagnosis:** duplicate SendGrid retries inflated TextUs campaign metrics.
+3. **Product judgment:** simplify a CRM workflow from four roles to the two roles the operation used.
+4. **Quality:** make testing risk explicit and negotiate follow-up work at Cencosud.
+5. **Ownership:** deliver a restaurant POS end to end.
 
-## Questions to ask Grace
+## Best opening question
 
-1. "Is Lob the direct employer/vendor, and would I work embedded with Frontdoor's team?"
-2. "Who is the direct engineering manager and key product/design partners?"
-3. "What's the planned contract duration, hours, renewal, and overlap-hour expectation?"
-4. "Is remote from LATAM feasible — legal, payroll, security?"
-5. "What's the primary tech stack for this team?"
-6. "What does success look like in the first 30/60/90 days?"
-
-## What NOT to do
-
-- Don't confuse Lob with Frontdoor.
-- Don't oversell AWS/Lambda — frame Vercel serverless as transferable, be honest about the gap.
-- Don't go deep technical — this is a recruiter screen.
-- Don't make it only about tools — tie to homeowner outcomes.
+“Could you tell me a little about the Frontdoor team or area—its customer, core product surface,
+and the problems this engineer would own?”
 
 ## Logistics to prepare
 
-- Availability / start date.
-- Rate expectation (have a number ready).
-- Timezone overlap (US business hours from LATAM).
-- US work authorization / remote-from-LATAM feasibility.
+- Availability and start date.
+- Contract rate.
+- US-hours overlap from Brazil.
+- Legal, payroll, and security feasibility for remote work from Brazil.
+- Contract duration, weekly hours, and renewal possibility.

@@ -1,0 +1,924 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title
+      data-pt="Cache — a taxa de hit é um dial de carga do banco"
+      data-en="Cache — the hit rate is a DB-load dial"
+    >
+      Cache hit rate
+    </title>
+    <link rel="stylesheet" href="../assets/style.css" />
+    <link rel="stylesheet" href="../assets/dark.css" />
+    <link rel="stylesheet" href="../assets/i18n.css" />
+    <link rel="stylesheet" href="../assets/concepts.css" />
+    <script src="../assets/i18n.js" defer></script>
+    <script src="../assets/nav.js" defer></script>
+    <script src="../assets/reading-ui.js" defer></script>
+    <script src="../assets/concepts.js" defer></script>
+    <style>
+      /* Lesson-specific: cache simulator */
+      .sim {
+        padding: 18px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: var(--paper-2);
+        margin: 20px 0;
+      }
+      .sim-controls {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
+      }
+      .sim-controls label {
+        display: flex;
+        justify-content: space-between;
+        font-weight: 700;
+      }
+      .sim-controls b {
+        color: var(--violet);
+        font-family: "JetBrains Mono", monospace;
+      }
+      .sim input[type="range"] {
+        width: 100%;
+        accent-color: var(--violet);
+      }
+      .kpis {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 10px;
+        margin-top: 14px;
+      }
+      .kpi {
+        padding: 10px 12px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: var(--paper);
+        text-align: center;
+      }
+      .kpi .v {
+        display: block;
+        font:
+          700 1.3rem "JetBrains Mono",
+          monospace;
+      }
+      .kpi .l {
+        font-size: 0.78rem;
+        color: var(--ink-soft);
+      }
+      .sim .verdict {
+        margin-top: 12px;
+        padding: 10px;
+        border-radius: 10px;
+        text-align: center;
+        font-weight: 700;
+      }
+      .verdict.good {
+        background: var(--teal-50);
+        color: var(--teal);
+        border: 1px solid #bff0e8;
+      }
+      .verdict.bad {
+        background: var(--rose-50);
+        color: var(--rose);
+        border: 1px solid #f7c3d1;
+      }
+      .good {
+        color: var(--teal);
+      }
+      .warn {
+        color: var(--amber);
+      }
+      .bad {
+        color: var(--rose);
+      }
+      .hit-table td,
+      .hit-table th {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.9rem;
+      }
+      .hit-table tr.active {
+        background: var(--violet-50);
+        outline: 1px solid var(--violet);
+      }
+      .db-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 12px;
+        margin: 18px 0;
+      }
+      .db-cards ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        font-size: 0.92rem;
+      }
+      .db-cards li {
+        padding: 3px 0 3px 20px;
+        position: relative;
+      }
+      .db-cards li.pro::before {
+        content: "+";
+        position: absolute;
+        left: 2px;
+        color: var(--teal);
+        font-weight: 800;
+      }
+      .db-cards li.con::before {
+        content: "−";
+        position: absolute;
+        left: 2px;
+        color: var(--rose);
+        font-weight: 800;
+      }
+      .tag {
+        display: inline-block;
+        font-size: 0.72rem;
+        border: 1px solid var(--line);
+        border-radius: 99px;
+        padding: 1px 8px;
+        margin-left: 6px;
+        color: var(--ink-soft);
+        vertical-align: middle;
+      }
+      svg {
+        display: block;
+        margin: 0 auto;
+        max-width: 100%;
+      }
+      @media print {
+        .sim,
+        svg {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body class="lang-pt">
+    <article class="lesson">
+      <header class="hero">
+        <span class="eyebrow"
+          >⬡ <span data-lang="pt">Conceitos · cache</span
+          ><span data-lang="en">Concepts · caching</span></span
+        >
+        <h1>
+          <span data-lang="pt"
+            >Hits são sempre rápidos. A taxa protege os misses.</span
+          ><span data-lang="en"
+            >Hits are always fast. The hit rate protects the misses.</span
+          >
+        </h1>
+        <p class="lead">
+          <span data-lang="pt"
+            >Um hit custa ~2ms — nunca é o problema. A pergunta real é: quantos
+            <strong>misses</strong> chegam ao banco, e com que carga ele está
+            quando chegam. A taxa de hit é um <strong>dial de carga</strong>, e
+            a fórmula se deriva — não se decora.</span
+          ><span data-lang="en"
+            >A hit costs ~2ms — never the problem. The real question is: how
+            many <strong>misses</strong> reach the DB, and how loaded it is when
+            they do. The hit rate is a <strong>load dial</strong>, and the
+            formula is derived — not memorized.</span
+          >
+        </p>
+      </header>
+      <nav class="concept-nav">
+        <a href="0005-estimation.html"
+          ><span data-lang="pt">← Estimativa</span
+          ><span data-lang="en">← Estimation</span></a
+        ><a href="0003-sql-sandbox.html">SQL</a
+        ><a href="../reference/software-concepts-cheatsheet.html"
+          ><span data-lang="pt">Folha</span><span data-lang="en">Cheat</span></a
+        >
+      </nav>
+
+      <h2 class="section">
+        <span class="num">1</span
+        ><span data-lang="pt">O reframing (a parte que todo mundo erra)</span
+        ><span data-lang="en">The reframe (the part everyone misses)</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >Taxa de hit = requisições servidas do cache ÷ total. 95 de 100
+          redirects acham o mapeamento no cache → 95%. Os outros 5 são
+          <strong>misses</strong> que caem para o banco. Siga a cadeia:</span
+        ><span data-lang="en"
+          >Hit rate = requests served from cache ÷ total. 95 of 100 redirects
+          find the mapping cached → 95%. The other 5 are
+          <strong>misses</strong> that fall through to the DB. Follow the
+          chain:</span
+        >
+      </p>
+      <pre><code>hit rate  →  quanto tráfego chega ao banco  →  carga do banco  →  quão rápido é um miss</code></pre>
+      <div class="callout key">
+        <p>
+          <span data-lang="pt"
+            ><strong>Um cache fraco não ajuda pouco — ele atrapalha.</strong> Se
+            a taxa for baixa, o banco fica sobrecarregado e até os misses ficam
+            lentos. 300ms+ perto de 100% de utilização, via teoria de
+            filas.</span
+          ><span data-lang="en"
+            ><strong>A weak cache doesn't just help less — it hurts.</strong> If
+            the rate is low, the DB gets overloaded and even misses crawl.
+            300ms+ near 100% utilization, by queueing theory.</span
+          >
+        </p>
+      </div>
+
+      <h2 class="section">
+        <span class="num">2</span
+        ><span data-lang="pt">O simulador — URL shortener @ 100k DAU</span
+        ><span data-lang="en">The simulator — URL shortener @ 100k DAU</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >Caso da lição de estimativa: pico de leitura 1.200 QPS contra um
+          banco de ~1.000 QPS. Arraste a taxa de hit e veja a carga do banco
+          mudar. Depois arraste o QPS de pico até 120.000 (o caso de 10M DAU) —
+          e veja a taxa necessária explodir.</span
+        ><span data-lang="en"
+          >Last lesson's case: peak read 1,200 QPS vs a ~1,000 QPS database.
+          Drag the hit rate and watch DB load change. Then drag peak QPS up to
+          120,000 (the 10M DAU case) — and watch the required rate
+          explode.</span
+        >
+      </p>
+      <div class="sim">
+        <div class="sim-controls">
+          <div>
+            <label
+              ><span data-lang="pt">Taxa de hit</span
+              ><span data-lang="en">Cache hit rate</span>
+              <b id="hrVal">50%</b></label
+            >
+            <input type="range" id="hr" min="0" max="100" value="50" step="1" />
+          </div>
+          <div>
+            <label
+              ><span data-lang="pt">QPS de pico (leitura)</span
+              ><span data-lang="en">Peak read QPS</span>
+              <b id="qVal">1.200</b></label
+            >
+            <input
+              type="range"
+              id="q"
+              min="200"
+              max="20000"
+              value="1200"
+              step="100"
+            />
+          </div>
+          <div>
+            <label
+              ><span data-lang="pt">Capacidade do banco (QPS)</span
+              ><span data-lang="en">DB capacity (QPS)</span>
+              <b id="capVal">1.000</b></label
+            >
+            <input
+              type="range"
+              id="cap"
+              min="200"
+              max="20000"
+              value="1000"
+              step="100"
+            />
+          </div>
+        </div>
+        <div class="kpis">
+          <div class="kpi">
+            <span class="v" id="kCache">600</span
+            ><span class="l"
+              ><span data-lang="pt">no cache (~2ms)</span
+              ><span data-lang="en">served by cache (~2ms)</span></span
+            >
+          </div>
+          <div class="kpi">
+            <span class="v" id="kMiss">600</span
+            ><span class="l"
+              ><span data-lang="pt">misses no banco</span
+              ><span data-lang="en">misses hitting the DB</span></span
+            >
+          </div>
+          <div class="kpi">
+            <span class="v" id="kLoad">60%</span
+            ><span class="l"
+              ><span data-lang="pt">utilização do banco</span
+              ><span data-lang="en">DB utilization</span></span
+            >
+          </div>
+          <div class="kpi">
+            <span class="v" id="kLat">~15ms</span
+            ><span class="l"
+              ><span data-lang="pt">latência do miss</span
+              ><span data-lang="en">miss latency</span></span
+            >
+          </div>
+          <div class="kpi">
+            <span class="v" id="kAvg">~9ms</span
+            ><span class="l"
+              ><span data-lang="pt">latência média</span
+              ><span data-lang="en">avg latency</span></span
+            >
+          </div>
+        </div>
+        <div class="verdict good" id="verdict">✅</div>
+        <pre><code id="formula"></code></pre>
+        <p class="sandbox-hint">
+          <span data-lang="pt"
+            >95–99% é realista aqui: tráfego power-law + working set de ~1,5GB
+            cabe na RAM.</span
+          ><span data-lang="en"
+            >95–99% is realistic here: power-law traffic + a ~1.5GB working set
+            fits in RAM.</span
+          >
+        </p>
+      </div>
+
+      <h2 class="section">
+        <span class="num">3</span
+        ><span data-lang="pt">O taco de hockey da latência</span
+        ><span data-lang="en">The latency hockey stick</span>
+      </h2>
+      <svg
+        id="chart"
+        viewBox="0 0 760 300"
+        width="760"
+        height="300"
+        role="img"
+      ></svg>
+      <p>
+        <span data-lang="pt"
+          >Latência do miss vs utilização do banco: plano e rápido até ~50–60%,
+          depois as filas explodem. O ponto vermelho é a configuração atual do
+          simulador.</span
+        ><span data-lang="en"
+          >Miss latency vs DB utilization: flat and snappy until ~50–60%, then
+          queues explode. The red dot is the simulator's current config.</span
+        >
+      </p>
+
+      <h2 class="section">
+        <span class="num">4</span
+        ><span data-lang="pt">Tabela: taxa → carga → latência</span
+        ><span data-lang="en">Table: rate → load → latency</span>
+      </h2>
+      <div class="table-wrap">
+        <table class="hit-table">
+          <thead>
+            <tr>
+              <th>
+                <span data-lang="pt">Taxa</span
+                ><span data-lang="en">Hit rate</span>
+              </th>
+              <th>
+                <span data-lang="pt">Cache (~2ms)</span
+                ><span data-lang="en">Cache (~2ms)</span>
+              </th>
+              <th>
+                <span data-lang="pt">Banco</span
+                ><span data-lang="en">Hits DB</span>
+              </th>
+              <th>
+                <span data-lang="pt">Carga</span
+                ><span data-lang="en">DB load</span>
+              </th>
+              <th>
+                <span data-lang="pt">Latência do miss</span
+                ><span data-lang="en">Miss latency</span>
+              </th>
+              <th>&lt;50ms?</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p>
+        <span data-lang="pt"
+          >0% e 20% <strong>ambos falham</strong> — um cache fraco que não cruza
+          o limiar com folga é pouco melhor que nenhum cache.</span
+        ><span data-lang="en"
+          >0% and 20% <strong>both fail</strong> — a weak cache that doesn't
+          cross the threshold with headroom is barely better than none.</span
+        >
+      </p>
+
+      <h2 class="section">
+        <span class="num">5</span
+        ><span data-lang="pt">MySQL, PostgreSQL ou NoSQL?</span
+        ><span data-lang="en">MySQL, PostgreSQL, or NoSQL?</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >O modelo é simples demais para decidir por você:
+          <code>short_code (PK) → long_url, created_at, user_id, expiry</code> —
+          uma linha, um lookup por PK. Qualquer engine guarda isso. O trade-off
+          está em <strong>escalar leituras</strong>, custo operacional, e o que
+          você abre mão.</span
+        ><span data-lang="en"
+          >The model is too simple to decide for you:
+          <code>short_code (PK) → long_url, created_at, user_id, expiry</code> —
+          one row, one PK lookup per read. Any engine stores that. The trade-off
+          is in <strong>scaling reads</strong>, ops burden, and what you give
+          up.</span
+        >
+      </p>
+      <div class="db-cards">
+        <div class="concept-card">
+          <h3>
+            MySQL
+            <span class="tag"
+              ><span data-lang="pt">padrão chato</span
+              ><span data-lang="en">boring default</span></span
+            >
+          </h3>
+          <ul>
+            <li class="pro">
+              <span data-lang="pt"
+                >Replicação madura (primary → réplicas), enorme pool de
+                ops.</span
+              ><span data-lang="en"
+                >Mature replication (primary → replicas), huge ops talent
+                pool.</span
+              >
+            </li>
+            <li class="pro">
+              <span data-lang="pt"
+                >Lookups por PK são exatamente o que a InnoDB faz de
+                melhor.</span
+              ><span data-lang="en"
+                >PK lookups are exactly what InnoDB does best.</span
+              >
+            </li>
+            <li class="con">
+              <span data-lang="pt"
+                >Otimizador mais fraco que o Postgres para queries
+                não-triviais.</span
+              ><span data-lang="en"
+                >Weaker planner than Postgres for non-trivial queries.</span
+              >
+            </li>
+            <li class="con">
+              <span data-lang="pt"
+                >Recursos mais estreitos (tipos, full-text, JSON).</span
+              ><span data-lang="en"
+                >Narrower features (types, full-text, JSON).</span
+              >
+            </li>
+          </ul>
+        </div>
+        <div class="concept-card">
+          <h3>
+            PostgreSQL
+            <span class="tag"
+              ><span data-lang="pt">melhor padrão hoje</span
+              ><span data-lang="en">best default today</span></span
+            >
+          </h3>
+          <ul>
+            <li class="pro">
+              <span data-lang="pt"
+                >Planner e tipos melhores — paga quando o produto cresce além do
+                redirect (analytics, expiração, metadados JSON).</span
+              ><span data-lang="en"
+                >Better planner and types — pays off when the product grows past
+                redirects (analytics, expiry, JSON metadata).</span
+              >
+            </li>
+            <li class="pro">
+              <span data-lang="pt"
+                >Um banco evita rodar um segundo sistema depois.</span
+              ><span data-lang="en"
+                >One DB avoids running a second system later.</span
+              >
+            </li>
+            <li class="con">
+              <span data-lang="pt"
+                >Replicação historicamente mais manual que a do MySQL.</span
+              ><span data-lang="en"
+                >Replication historically more manual than MySQL's.</span
+              >
+            </li>
+            <li class="con">
+              <span data-lang="pt"
+                >Processo por conexão — precisa de pooler (pgbouncer) em alto
+                volume de conexões.</span
+              ><span data-lang="en"
+                >Process per connection — needs a pooler (pgbouncer) at high
+                connection counts.</span
+              >
+            </li>
+          </ul>
+        </div>
+        <div class="concept-card">
+          <h3>
+            NoSQL
+            <span class="tag"
+              ><span data-lang="pt">escala que você não tem</span
+              ><span data-lang="en">scale you don't have</span></span
+            >
+          </h3>
+          <ul>
+            <li class="pro">
+              <span data-lang="pt"
+                >Escala horizontal nativa: adiciona nós, ganha QPS, sem primary
+                único.</span
+              ><span data-lang="en"
+                >Native horizontal scaling: add nodes, get QPS, no single
+                primary.</span
+              >
+            </li>
+            <li class="pro">
+              <span data-lang="pt"
+                >Padrão key-value (get/put por short_code) cabe perfeito em
+                DynamoDB/Cassandra.</span
+              ><span data-lang="en"
+                >Key-value access (get/put by short_code) fits
+                DynamoDB/Cassandra perfectly.</span
+              >
+            </li>
+            <li class="con">
+              <span data-lang="pt"
+                >Perde transações, joins e SQL ad-hoc — analytics e migrações
+                doem.</span
+              ><span data-lang="en"
+                >Loses transactions, joins, ad-hoc SQL — analytics and
+                migrations hurt.</span
+              >
+            </li>
+            <li class="con">
+              <span data-lang="pt"
+                >Outro sistema para operar (ou pagar); lock-in com Dynamo.
+                <strong>Overkill a 1.200 QPS.</strong></span
+              ><span data-lang="en"
+                >Another system to operate (or pay for); Dynamo lock-in.
+                <strong>Overkill at 1,200 QPS.</strong></span
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout tip">
+        <p>
+          <span data-lang="pt"
+            ><strong>Veredito:</strong> um nó PostgreSQL (ou MySQL) + cache
+            Redis de ~1,5GB na frente → 95–99% de hit, banco quase ocioso, tudo
+            abaixo de 50ms.
+            <strong
+              >Migre para NoSQL quando o pico de leitura superar uma frota SQL
+              replicada + cache</strong
+            >
+            — aproximadamente os problemas de 10M–100M DAU. O cache compra 2–3
+            ordens de magnitude de folga; gaste isso antes de gastar uma
+            migração.</span
+          ><span data-lang="en"
+            ><strong>Verdict:</strong> one PostgreSQL (or MySQL) node + a ~1.5GB
+            Redis cache in front → 95–99% hit, near-idle DB, everything under
+            50ms.
+            <strong
+              >Move to NoSQL when peak reads outgrow a replicated SQL fleet +
+              cache</strong
+            >
+            — roughly the 10M–100M DAU problems. The cache buys 2–3 orders of
+            magnitude of headroom; spend that before spending a migration.</span
+          >
+        </p>
+      </div>
+
+      <h2 class="section">
+        <span class="num">6</span
+        ><span data-lang="pt">O modelo mental em quatro linhas</span
+        ><span data-lang="en">The mental model in four lines</span>
+      </h2>
+      <div class="callout key">
+        <p>
+          <span data-lang="pt"
+            >1. Hits são sempre rápidos (~2ms) — a pergunta protege os
+            <em>misses</em>.<br />
+            2. Miss é rápido só se o banco não está sobrecarregado → taxa é um
+            dial de carga.<br />
+            3. Taxa necessária = <code>1 − (carga_permitida / pico_QPS)</code> —
+            derive, não decore.<br />
+            4. Taxa alcançável vem da skew do tráfego (power law) + tamanho do
+            working set (RAM).</span
+          ><span data-lang="en"
+            >1. Hits are always fast (~2ms) — the question protects the
+            <em>misses</em>.<br />
+            2. A miss is fast only if the DB isn't overloaded → the rate is a
+            load dial.<br />
+            3. Needed rate = <code>1 − (allowed_load / peak_QPS)</code> — derive
+            it, don't memorize.<br />
+            4. Achievable rate comes from traffic skew (power law) + working-set
+            size (RAM).</span
+          >
+        </p>
+      </div>
+    </article>
+
+    <script>
+      // ponytail: latency model is a teaching approximation, not a benchmark — tune constants for realism
+      (() => {
+        const $ = (id) => document.getElementById(id);
+        const lang = () => window.PiI18n?.lang || "pt";
+        const pt = (p, e) => (lang() === "en" ? e : p);
+        const fmt = (n) =>
+          n >= 1000
+            ? Math.round(n).toLocaleString("en-US").replace(/,/g, ".")
+            : Math.round(n * 10) / 10;
+
+        // Latency vs utilization: flat ~10ms to 50%, then 1/(1-u) explosion, capped meltdown
+        const missLatency = (u) =>
+          u >= 1.05
+            ? 2000
+            : u <= 0.5
+              ? 10
+              : Math.min(10 / (1 - Math.min(u, 0.98)), 2000);
+
+        function verdictFor(avg, util) {
+          if (avg < 50)
+            return {
+              cls: "good",
+              txt: pt(
+                "✅ Abaixo de 50ms — banco a " +
+                  Math.round(util * 100) +
+                  "% de carga",
+                "✅ Under 50ms — DB at " + Math.round(util * 100) + "% load",
+              ),
+            };
+          if (util >= 1)
+            return {
+              cls: "bad",
+              txt: pt(
+                "💀 Banco sobrecarregado (" +
+                  Math.round(util * 100) +
+                  "%) — até os misses engasgam",
+                "💀 DB overloaded (" +
+                  Math.round(util * 100) +
+                  "%) — even misses crawl",
+              ),
+            };
+          return {
+            cls: "bad",
+            txt: pt(
+              "❌ Acima de 50ms — banco a " +
+                Math.round(util * 100) +
+                "%, misses lentos",
+              "❌ Over 50ms — DB at " +
+                Math.round(util * 100) +
+                "%, misses slow",
+            ),
+          };
+        }
+
+        function compute() {
+          const hr = +$("hr").value / 100,
+            q = +$("q").value,
+            cap = +$("cap").value;
+          const misses = q * (1 - hr),
+            util = misses / cap,
+            lat = missLatency(util),
+            avg = hr * 2 + (1 - hr) * lat;
+
+          $("hrVal").textContent = Math.round(hr * 100) + "%";
+          $("qVal").textContent = fmt(q);
+          $("capVal").textContent = fmt(cap);
+          $("kCache").textContent = fmt(q * hr);
+          $("kMiss").textContent = fmt(misses);
+          const kl = $("kLoad");
+          kl.textContent = Math.round(util * 100) + "%";
+          kl.className =
+            "v " + (util > 0.9 ? "bad" : util > 0.7 ? "warn" : "good");
+          const kla = $("kLat");
+          kla.textContent =
+            lat >= 1000 ? "≥2s 💀" : "~" + Math.round(lat) + "ms";
+          kla.className =
+            "v " + (lat < 50 ? "good" : lat < 100 ? "warn" : "bad");
+          const kav = $("kAvg");
+          kav.textContent =
+            avg >= 1000 ? "≥1s 💀" : "~" + Math.round(avg) + "ms";
+          kav.className =
+            "v " + (avg < 50 ? "good" : avg < 100 ? "warn" : "bad");
+
+          const v = verdictFor(avg, util);
+          const ve = $("verdict");
+          ve.textContent = v.txt;
+          ve.className = "verdict " + v.cls;
+
+          const allow = cap * 0.5;
+          const need =
+            q <= allow
+              ? pt(
+                  "0% — o banco dá conta sem cache",
+                  "0% — DB fine with no cache",
+                )
+              : Math.ceil((1 - allow / q) * 100) + "%";
+          $("formula").textContent =
+            "needed hit rate = 1 − (allowed_DB_load / peak_QPS) = 1 − (" +
+            fmt(allow) +
+            " / " +
+            fmt(q) +
+            ") = " +
+            need;
+
+          drawChart(util);
+          drawTable(hr);
+        }
+
+        function drawTable(hr) {
+          const q = +$("q").value,
+            cap = +$("cap").value;
+          const tb = document.querySelector(".hit-table tbody");
+          tb.replaceChildren();
+          [0, 20, 50, 70, 90, 95, 99].forEach((p) => {
+            const h = p / 100,
+              misses = q * (1 - h),
+              util = misses / cap,
+              lat = missLatency(util);
+            const ok =
+              util >= 1
+                ? { c: "bad", t: "💀" }
+                : util > 0.9
+                  ? { c: "bad", t: "❌" }
+                  : util > 0.7
+                    ? { c: "warn", t: pt("⚠️ limítrofe", "⚠️ borderline") }
+                    : { c: "good", t: "✅" };
+            const tr = document.createElement("tr");
+            if (Math.round(hr * 100) === p) tr.className = "active";
+            [
+              p + "%" + (p === 0 ? pt(" (sem cache)", " (no cache)") : ""),
+              fmt(q * h),
+              fmt(misses),
+              Math.round(util * 100) + "% (" + ok.c + ")",
+              (lat >= 1000 ? "≥2s" : "~" + Math.round(lat) + "ms") +
+                " (" +
+                ok.c +
+                ")",
+              ok.t + " (" + ok.c + ")",
+            ].forEach((c) => {
+              const td = document.createElement("td");
+              const m = /^(.*) \((good|warn|bad)\)$/.exec(c);
+              if (m) {
+                td.textContent = m[1];
+                td.className = m[2];
+              } else td.textContent = c;
+              tr.appendChild(td);
+            });
+            tb.appendChild(tr);
+          });
+        }
+
+        function drawChart(util) {
+          const W = 760,
+            H = 300,
+            ml = 50,
+            mr = 20,
+            mt = 16,
+            mb = 34;
+          const iw = W - ml - mr,
+            ih = H - mt - mb;
+          const maxLat = 350;
+          const u2x = (u) => ml + u * iw;
+          const l2y = (l) => mt + ih - Math.min(l / maxLat, 1.02) * ih;
+          let pts = "";
+          for (let i = 0; i <= 100; i++) {
+            const u = i / 100;
+            pts +=
+              (i ? "L" : "M") +
+              u2x(u).toFixed(1) +
+              "," +
+              l2y(missLatency(u)).toFixed(1);
+          }
+          const dotY = Math.max(missLatency(util) / maxLat, 0.01);
+          const NS = "http://www.w3.org/2000/svg";
+          const svg = $("chart");
+          svg.replaceChildren();
+          const el = (name, attrs, text) => {
+            const e = document.createElementNS(NS, name);
+            for (const k in attrs) e.setAttribute(k, attrs[k]);
+            if (text !== undefined) e.textContent = text;
+            svg.appendChild(e);
+            return e;
+          };
+          el("rect", {
+            x: u2x(0),
+            y: mt,
+            width: 0.7 * iw,
+            height: ih,
+            fill: "rgba(15,185,164,.07)",
+          });
+          el("rect", {
+            x: u2x(0.7),
+            y: mt,
+            width: 0.2 * iw,
+            height: ih,
+            fill: "rgba(245,158,11,.09)",
+          });
+          el("rect", {
+            x: u2x(0.9),
+            y: mt,
+            width: 0.1 * iw,
+            height: ih,
+            fill: "rgba(239,71,111,.09)",
+          });
+          [0, 50, 70, 90, 100].forEach((u) => {
+            el("line", {
+              x1: u2x(u),
+              y1: mt,
+              x2: u2x(u),
+              y2: mt + ih,
+              stroke: "#e7e5f0",
+              "stroke-dasharray": "3 3",
+            });
+            el(
+              "text",
+              {
+                x: u2x(u),
+                y: H - 14,
+                fill: "#4a4866",
+                "font-size": 11,
+                "text-anchor": "middle",
+              },
+              u + "%",
+            );
+          });
+          [10, 50, 100, 200, 300].forEach((l) => {
+            el("line", {
+              x1: ml,
+              y1: l2y(l),
+              x2: W - mr,
+              y2: l2y(l),
+              stroke: "#e7e5f0",
+              opacity: 0.5,
+            });
+            el(
+              "text",
+              {
+                x: ml - 6,
+                y: l2y(l) + 3,
+                fill: "#4a4866",
+                "font-size": 11,
+                "text-anchor": "end",
+              },
+              l + "ms",
+            );
+          });
+          el("line", {
+            x1: ml,
+            y1: l2y(50),
+            x2: W - mr,
+            y2: l2y(50),
+            stroke: "#3b82f6",
+            "stroke-dasharray": "6 4",
+          });
+          el(
+            "text",
+            {
+              x: W - mr - 4,
+              y: l2y(50) - 5,
+              fill: "#3b82f6",
+              "font-size": 11,
+              "text-anchor": "end",
+            },
+            pt("orçamento de 50ms", "50ms budget"),
+          );
+          el("path", {
+            d: pts,
+            fill: "none",
+            stroke: "#6c4bf0",
+            "stroke-width": 2.5,
+          });
+          el("circle", {
+            cx: u2x(Math.min(util, 1)),
+            cy: mt + ih - dotY * ih,
+            r: 7,
+            fill: "#ef476f",
+            stroke: "#fbfbf8",
+            "stroke-width": 2,
+          });
+          el(
+            "text",
+            { x: ml, y: mt + ih + 26, fill: "#4a4866", "font-size": 12 },
+            pt("utilização do banco →", "DB utilization →"),
+          );
+          el(
+            "text",
+            {
+              x: 14,
+              y: mt + 60,
+              fill: "#4a4866",
+              "font-size": 12,
+              transform: "rotate(-90 14 " + (mt + 60) + ")",
+            },
+            pt("latência do miss →", "miss latency →"),
+          );
+        }
+
+        ["hr", "q", "cap"].forEach((id) =>
+          $(id).addEventListener("input", compute),
+        );
+        compute();
+        window.PiI18n?.on(compute);
+      })();
+    </script>
+  </body>
+</html>

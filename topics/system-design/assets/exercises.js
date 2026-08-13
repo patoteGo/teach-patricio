@@ -8,7 +8,14 @@
 (() => {
 	const en = () => !!(window.PiI18n && PiI18n.lang === "en");
 	const okMsg = () => (en() ? "✓ Correct" : "✓ Correto");
-	const noMsg = (c) => (en() ? "✗ Answer was: " + c : "✗ Resposta: " + c);
+	const noMsg = (item, correct) => {
+		const button = item.querySelector(`.ex-opt[data-pick="${correct}"]`);
+		const label =
+			button
+				?.querySelector(en() ? '[data-lang="en"]' : '[data-lang="pt"]')
+				?.textContent.trim() || correct;
+		return en() ? `✗ Correct answer: ${label}` : `✗ Resposta correta: ${label}`;
+	};
 	const scoreLbl = (r, a) =>
 		en() ? `Score: ${r} / ${a}` : `Acertos: ${r} / ${a}`;
 
@@ -16,7 +23,32 @@
 		const picked = item.dataset.picked;
 		const correct = item.dataset.correct;
 		const ok = picked === correct;
-		return { ok, text: ok ? okMsg() : noMsg(correct) };
+		const pickedButton = item.querySelector(`.ex-opt[data-pick="${picked}"]`);
+		const generic = {
+			f: en()
+				? "It describes behavior the system must provide, so it is functional."
+				: "Descreve um comportamento que o sistema deve oferecer, portanto é funcional.",
+			nf: en()
+				? "It constrains a quality such as latency, capacity, or availability, so it is non-functional."
+				: "Restringe uma qualidade como latência, capacidade ou disponibilidade, portanto é não-funcional.",
+			o: en()
+				? "It does not change the system behavior or quality being designed, so it is out of scope."
+				: "Não altera o comportamento nem a qualidade do sistema em design, portanto está fora do escopo.",
+			d: en()
+				? "A small interface hides substantial implementation complexity, which makes this module deep."
+				: "Uma interface pequena esconde bastante complexidade de implementação, tornando o módulo profundo.",
+			s: en()
+				? "The interface exposes nearly as much complexity as the implementation hides, which makes this module shallow."
+				: "A interface expõe quase tanta complexidade quanto a implementação esconde, tornando o módulo raso.",
+		};
+		const explanation =
+			(en()
+				? pickedButton?.dataset.fbEn || item.dataset.explainEn
+				: pickedButton?.dataset.fbPt || item.dataset.explainPt) ||
+			generic[correct];
+		let text = ok ? okMsg() : noMsg(item, correct);
+		if (explanation) text += ` — ${explanation}`;
+		return { ok, text };
 	}
 	function renderVerdict(item) {
 		const fb = item.querySelector(".ex-fb");

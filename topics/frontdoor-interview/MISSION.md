@@ -1,25 +1,26 @@
-# Mission: Frontdoor / Lob — Senior Software Engineer (contract)
+# Mission: Lob — Senior Software Engineer intro screen (13 August 2026)
 
 ## Why
 
-Intro call with Grace Derksen (Senior Talent Partner at Lob) for a **Frontdoor contract** role
-(Sr Software Engineer, On Demand digital team). The call is a recruiter screen — career,
-communication, contract-fit, and high-level technical. Not a deep technical round.
+30-minute intro call with Grace Derksen, Lob's Senior Technical Talent Partner, for a Senior
+Software Engineer contract labeled “Frontdoor.” Lob is the hiring company; the meaning of
+“Frontdoor” is not public and must be clarified rather than linked to Frontdoor, Inc.
 
 ## Success looks like
 
-- Pass the recruiter screen → advance to a technical/team round.
-- Clarify the contract setup (Lob as vendor? embedded with Frontdoor? remote from LATAM?).
-- Communicate clearly: 60-second pitch, why Frontdoor, logistics (availability, rate, timezone).
+- Pass the recruiter screen and advance to the technical/team round.
+- Deliver a concise pitch connecting React/Node full-stack ownership, operational scale, and reliability.
+- Clarify the Frontdoor team's customer, product surface, technical scope, and success measures.
+- Confirm contract duration, hours, renewal, timezone overlap, rate, and remote-from-Brazil feasibility.
 
 ## Constraints
 
-- Recruiter call — keep it high-level, not deep technical.
-- Don't confuse Lob (direct-mail platform) with Frontdoor (home-services company).
-- Remote from LATAM — confirm feasibility (legal, payroll, security).
-- Contract terms (duration, hours, renewal) — be precise.
+- Recruiter call: stay high-level unless Grace asks for technical depth.
+- Do not mention Frontdoor, Inc. or home warranties unless Grace introduces them.
+- Do not assume the team's stack or oversell AWS/Lambda experience.
+- Tie technologies to customer outcomes and production ownership.
 
-## Out of scope (for now)
+## Out of scope
 
-- Deep technical prep (save for the next round with engineers).
-- Salary negotiation (save for offer stage).
+- Deep technical preparation before the team scope is known.
+- Salary negotiation beyond giving a clear contract-rate expectation.

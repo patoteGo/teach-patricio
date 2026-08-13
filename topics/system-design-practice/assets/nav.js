@@ -89,13 +89,42 @@
 				{
 					f: "0001-draw-and-talk.html",
 					n: "01",
-					t: { pt: "Desenhe e fale", en: "Draw and talk" },
+					t: {
+						pt: "Desenhe e fale (leilão L4)",
+						en: "Draw and talk (auction L4)",
+					},
+				},
+				{
+					f: "0002-the-difficulty-ladder.html",
+					n: "02",
+					t: { pt: "A escada de dificuldade", en: "The difficulty ladder" },
+				},
+				{
+					f: "0003-starter-url-shortener.html",
+					n: "03",
+					t: { pt: "L1 · Encurtador de URL", en: "L1 · URL shortener" },
+				},
+				{
+					f: "0004-starter-onboarding-email.html",
+					n: "04",
+					t: {
+						pt: "L1–2 · Onboarding + email",
+						en: "L1–2 · Onboarding + email",
+					},
+				},
+				{
+					f: "0005-starter-webhook-delivery.html",
+					n: "05",
+					t: { pt: "L2 · Webhook (Lob)", en: "L2 · Webhook (Lob)" },
 				},
 			],
 			extra: [
 				{
 					f: "bidding-concurrency.html",
-					t: { pt: "📖 Concorrência em leilões", en: "📖 Auction concurrency" },
+					t: {
+						pt: "📖 Leilão (referência L4)",
+						en: "📖 Auction (L4 reference)",
+					},
 				},
 			],
 		},
@@ -552,7 +581,10 @@
 				collapse.setAttribute("aria-label", text);
 				collapse.setAttribute("title", text);
 			}
-			tools?.setAttribute("aria-label", L("Ferramentas de estudo", "Study tools"));
+			tools?.setAttribute(
+				"aria-label",
+				L("Ferramentas de estudo", "Study tools"),
+			);
 			status?.setAttribute(
 				"title",
 				sections.length
@@ -566,7 +598,10 @@
 					: L("Recordar", "Recall");
 				recall.setAttribute(
 					"title",
-					L("Oculte frases-chave e tente lembrar", "Hide key phrases and recall them"),
+					L(
+						"Oculte frases-chave e tente lembrar",
+						"Hide key phrases and recall them",
+					),
 				);
 			}
 			if (test) {
@@ -587,7 +622,10 @@
 			targets.forEach((target) =>
 				target.setAttribute(
 					"aria-label",
-					L("Clique para revelar a frase-chave", "Click to reveal the key phrase"),
+					L(
+						"Clique para revelar a frase-chave",
+						"Click to reveal the key phrase",
+					),
 				),
 			);
 		}

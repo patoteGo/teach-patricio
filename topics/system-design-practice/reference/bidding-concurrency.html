@@ -586,7 +586,11 @@
       </div>
       <div class="diagram">
         <div class="diagram-title">
-          Lua CAS — accept or reject a bid atomically
+          <span data-lang="pt"
+            >Lua CAS — aceitar ou rejeitar um lance atomicamente</span
+          ><span data-lang="en"
+            >Lua CAS — accept or reject a bid atomically</span
+          >
         </div>
         <pre
           class="code"
@@ -712,7 +716,10 @@ return 1                                          -- accepted (CAS succeeded)
               </td>
             </tr>
             <tr>
-              <td>Fraude (shill)</td>
+              <td>
+                <span data-lang="pt">Fraude (shill)</span
+                ><span data-lang="en">Fraud (shill)</span>
+              </td>
               <td>
                 <span data-lang="pt">classificador assíncrono</span
                 ><span data-lang="en">async classifier</span>
@@ -1532,18 +1539,33 @@ return redis.call('HGET', KEYS[1], 'winner')        -- exactly one winner
             <span data-lang="pt">Você deve…</span
             ><span data-lang="en">You should…</span>
           </p>
-          <button class="ex-opt" data-pick="a">
+          <button
+            class="ex-opt"
+            data-pick="a"
+            data-fb-pt="A capacidade restante não prevê latência: perto de 100%, a espera cresce de forma não linear e o p99 já violou o SLA."
+            data-fb-en="Remaining capacity does not predict latency: near 100%, queueing grows nonlinearly and p99 has already violated the SLA."
+          >
             <span data-lang="pt">dizer que sim — ainda há 5% de folga.</span
             ><span data-lang="en"
               >say yes — there's 5% headroom left.</span
             ></button
-          ><button class="ex-opt" data-pick="b">
+          ><button
+            class="ex-opt"
+            data-pick="b"
+            data-fb-pt="Correto: o sistema deve operar abaixo do teto; a cauda de latência explode antes de 100%."
+            data-fb-en="Correct: the system must operate below its ceiling; tail latency explodes before 100%."
+          >
             <span data-lang="pt"
               >dizer não — a fila já estourou o SLA por volta de 70–80%.</span
             ><span data-lang="en"
               >say no — the queue already blew past the SLA around 70–80%.</span
             ></button
-          ><button class="ex-opt" data-pick="c">
+          ><button
+            class="ex-opt"
+            data-pick="c"
+            data-fb-pt="Mais conexões só criam mais concorrentes esperando o mesmo lock da linha quente; não aumentam a capacidade do único caminho serial."
+            data-fb-en="More connections only create more contenders waiting on the same hot-row lock; they do not increase the capacity of the single serial path."
+          >
             <span data-lang="pt">aumentar o pool de conexões do banco.</span
             ><span data-lang="en">increase the DB connection pool.</span>
           </button>
@@ -1566,16 +1588,31 @@ return redis.call('HGET', KEYS[1], 'winner')        -- exactly one winner
             <span data-lang="pt">A operação que deve ser atômica é…</span
             ><span data-lang="en">The operation that must be atomic is…</span>
           </p>
-          <button class="ex-opt" data-pick="a">
+          <button
+            class="ex-opt"
+            data-pick="a"
+            data-fb-pt="Kafka distribui eventos depois da decisão; ele não compara o novo lance com o maior atual no caminho crítico."
+            data-fb-en="Kafka distributes events after the decision; it does not compare the new bid with the current highest bid on the critical path."
+          >
             <span data-lang="pt">a publicação do lance no Kafka.</span
             ><span data-lang="en">publishing the bid to Kafka.</span></button
-          ><button class="ex-opt" data-pick="b">
+          ><button
+            class="ex-opt"
+            data-pick="b"
+            data-fb-pt="Correto: ler, comparar e atualizar o maior lance precisa acontecer como uma única operação indivisível."
+            data-fb-en="Correct: reading, comparing, and updating the highest bid must happen as one indivisible operation."
+          >
             <span data-lang="pt"
               >o compare-and-swap do maior lance (chave única).</span
             ><span data-lang="en"
               >the compare-and-swap of the highest bid (single key).</span
             ></button
-          ><button class="ex-opt" data-pick="c">
+          ><button
+            class="ex-opt"
+            data-pick="c"
+            data-fb-pt="Persistir um lance é durabilidade, não decisão: um INSERT isolado não impede dois escritores de aceitarem lances contra o mesmo valor obsoleto."
+            data-fb-en="Persisting a bid provides durability, not arbitration: an isolated INSERT cannot stop two writers accepting bids against the same stale value."
+          >
             <span data-lang="pt">o INSERT do lance no Postgres.</span
             ><span data-lang="en">the INSERT of the bid into Postgres.</span>
           </button>
