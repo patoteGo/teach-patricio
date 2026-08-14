@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Behavioral Interview · Lesson 6 — Fan-out, Decoded</title>
+    <link rel="stylesheet" href="../assets/style.css" />
+    <link rel="stylesheet" href="../assets/dark.css" />
+    <script src="../assets/nav.js" defer></script>
+    <style>
+      .flow { width: 100%; height: auto; display: block; margin: 10px 0; }
+      .flow text { font-family: inherit; }
+      .pulse { fill: #6c4bf0; }
+      .flow .edge { stroke: #6c4bf0; stroke-width: 2; fill: none; marker-end: url(#arr); }
+      .flow .edge.bad { stroke: #fb7185; }
+      .flow .edge.query { stroke: #0fb9a4; stroke-dasharray: 6 4; }
+      .anim-dot { fill: #0fb9a4; }
+      .anim-dot.bad { fill: #fb7185; }
+      .anim-dot.query { fill: #f59e0b; }
+      @keyframes travel { from { offset-distance: 0%; } to { offset-distance: 100%; } }
+      .pathbox { position: relative; border: 1px solid var(--border, #d8d4e8); border-radius: 14px; padding: 16px 18px; margin: 12px 0; }
+      .pathbox h4 { margin-top: 0; }
+      .pathbox .tagline { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; opacity: .7; }
+      table.decoded { width: 100%; border-collapse: collapse; font-size: 15px; }
+      table.decoded td { border-top: 1px solid var(--border, #d8d4e8); padding: 10px 10px; vertical-align: top; }
+      table.decoded td:first-child { white-space: nowrap; font-weight: 700; color: #6c4bf0; width: 8em; }
+      .quiz .opt { display: block; width: 100%; text-align: left; margin: 6px 0; }
+    </style>
+  </head>
+  <body>
+    <article class="lesson">
+      <header class="hero">
+        <span class="eyebrow">⬡ Lesson 06 · Deep dive</span>
+        <h1>Fan-out, decoded:<br />who reads what, and how.</h1>
+        <p class="lead">
+          One grill probe caused confusion: <em>"How did downstream services read this? One big table?"</em>
+          The answer is <strong>two separate paths out of your service</strong> — one you designed for the whole company
+          (the <strong>event fan-out</strong>), one you kept for yourself (the <strong>persisted table</strong>).
+          Confusing them is what makes the model answer feel dense. This lesson separates them, visually, for good.
+        </p>
+        <p class="lesson-nav-top">
+          ↑ Part of the <a href="../MISSION.md">course</a>
+          · prev: <a href="./0005-architecture-grill.html">The Architecture Grill</a> (probe deck)
+          · story source: <a href="../my-stories.md">my-stories.md</a> (Story 1)
+        </p>
+      </header>
+
+      <!-- ============ 1. THE TRAP ============ -->
+      <h2 class="section"><span class="num">1</span>First, the trap: "one big table"</h2>
+      <p class="kicker">
+        The interviewer hands you the lazy answer. Taking it means every service in the company reads
+        <strong>your</strong> database. Watch what that looks like — five teams, one Postgres:
+      </p>
+      <svg class="flow" viewBox="0 0 760 300" role="img" aria-label="Trap architecture: every downstream service querying the ingest service's database directly">
+        <defs>
+          <marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8 z" fill="#fb7185" />
+          </marker>
+        </defs>
+        <!-- DB -->
+        <g>
+          <rect x="300" y="110" width="160" height="80" rx="10" fill="rgba(251,113,133,.12)" stroke="#fb7185" stroke-width="2" />
+          <text x="380" y="142" text-anchor="middle" font-size="15" font-weight="700" fill="#fb7185">Postgres</text>
+          <text x="380" y="162" text-anchor="middle" font-size="12" fill="#fb7185">the "one big table"</text>
+        </g>
+        <!-- consumers -->
+        <g font-size="13" font-weight="600">
+          <rect x="20"  y="20"  width="150" height="40" rx="9" fill="rgba(109,108,180,.15)" stroke="#d8d4e8" /> <text x="95"  y="45"  text-anchor="middle">notifications</text>
+          <rect x="20"  y="85"  width="150" height="40" rx="9" fill="rgba(109,108,180,.15)" stroke="#d8d4e8" /> <text x="95"  y="110" text-anchor="middle">CRM</text>
+          <rect x="20"  y="150" width="150" height="40" rx="9" fill="rgba(109,108,180,.15)" stroke="#d8d4e8" /> <text x="95"  y="175" text-anchor="middle">analytics</text>
+          <rect x="20"  y="215" width="150" height="40" rx="9" fill="rgba(109,108,180,.15)" stroke="#d8d4e8" /> <text x="95"  y="240" text-anchor="middle">refunds</text>
+          <rect x="20"  y="270" width="150" height="40" rx="9" fill="rgba(109,108,180,.15)" stroke="#d8d4e8" /> <text x="95"  y="295" text-anchor="middle">support tool</text>
+        </g>
+        <!-- polling arrows -->
+        <g class="edge bad">
+          <path d="M170,40  C250,40 250,130 298,138" />
+          <path d="M170,105 C240,105 240,145 298,148" />
+          <path d="M170,170 C240,170 240,162 298,155" />
+          <path d="M170,235 C240,235 240,175 298,165" />
+          <path d="M170,290 C250,290 250,180 298,172" />
+        </g>
+        <text x="510" y="120" font-size="13" fill="#fb7185" font-weight="700">poll · poll · poll · poll · poll</text>
+        <text x="510" y="140" font-size="12" fill="#fb7185" opacity=".85">everyone couples to:</text>
+        <text x="510" y="158" font-size="12" fill="#fb7185" opacity=".85">your schema · your load ·</text>
+        <text x="510" y="176" font-size="12" fill="#fb7185" opacity=".85">your migrations · your outages</text>
+      </svg>
+      <div class="grid cols-3" style="margin-top: 6px">
+        <div class="card" style="border-top: 4px solid #fb7185">
+          <h4>Shared dependency</h4>
+          <p>Your DB is now load-bearing for the whole company. A slow query or sale-day write spike on your side becomes everyone's latency.</p>
+        </div>
+        <div class="card" style="border-top: 4px solid #fb7185">
+          <h4>Schema = public API</h4>
+          <p>You can't rename a column without breaking five teams. The "microservice" boundary evaporates — that's a <strong>distributed monolith</strong>.</p>
+        </div>
+        <div class="card" style="border-top: 4px solid #fb7185">
+          <h4>Polling latency</h4>
+          <p>Readers must ask "anything new for order 123?" over and over. Latency = poll interval; cost = wasted queries when nothing changed.</p>
+        </div>
+      </div>
+      <p class="callout">
+        A senior candidate <strong>flinches</strong> at "one big table." The question is bait — the flinch is the answer's opening move.
+      </p>
+
+      <!-- ============ 2. THE REAL DESIGN ============ -->
+      <h2 class="section"><span class="num">2</span>What we built: two paths out</h2>
+      <p class="kicker">
+        The normalized event leaves the service <strong>twice</strong>, for two different audiences.
+        Purple = the ingest you know. Teal = <strong>Path A, push</strong> (real-time fan-out). Amber dashed = <strong>Path B, pull</strong> (queries &amp; audit).
+      </p>
+      <svg class="flow" viewBox="0 0 900 420" role="img" aria-label="Real architecture: partners to SQS to the ingest service, which fans out normalized events to per-consumer queues and persists to Postgres">
+        <defs>
+          <marker id="arr2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8 z" fill="#6c4bf0" />
+          </marker>
+          <marker id="arrT" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8 z" fill="#0fb9a4" />
+          </marker>
+          <marker id="arrA" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8 z" fill="#f59e0b" />
+          </marker>
+        </defs>
+        <!-- partners -->
+        <g font-size="13" font-weight="600">
+          <rect x="20" y="60"  width="140" height="38" rx="9" fill="rgba(109,108,180,.15)" stroke="#d8d4e8" /> <text x="90" y="84"  text-anchor="middle">partner A fmt</text>
+          <rect x="20" y="130" width="140" height="38" rx="9" fill="rgba(109,108,180,.15)" stroke="#d8d4e8" /> <text x="90" y="154" text-anchor="middle">partner B fmt</text>
+          <rect x="20" y="200" width="140" height="38" rx="9" fill="rgba(109,108,180,.15)" stroke="#d8d4e8" /> <text x="90" y="224" text-anchor="middle">partner C fmt</text>
+        </g>
+        <!-- SQS in -->
+        <rect x="230" y="120" width="130" height="60" rx="10" fill="rgba(108,75,240,.12)" stroke="#6c4bf0" stroke-width="2" />
+        <text x="295" y="146" text-anchor="middle" font-size="14" font-weight="700" fill="#6c4bf0">SQS (in)</text>
+        <text x="295" y="164" text-anchor="middle" font-size="11" fill="#6c4bf0">absorb spikes</text>
+        <!-- service -->
+        <rect x="430" y="95" width="180" height="110" rx="10" fill="rgba(108,75,240,.12)" stroke="#6c4bf0" stroke-width="2.5" />
+        <text x="520" y="122" text-anchor="middle" font-size="15" font-weight="700" fill="#6c4bf0">ingest service</text>
+        <text x="520" y="142" text-anchor="middle" font-size="11.5">normalize (N fmts → 1)</text>
+        <text x="520" y="158" text-anchor="middle" font-size="11.5">idempotent upserts</text>
+        <text x="520" y="174" text-anchor="middle" font-size="11.5">publish internal event</text>
+        <!-- fan-out hub -->
+        <circle cx="700" cy="150" r="7" fill="#0fb9a4" />
+        <text x="700" y="132" text-anchor="middle" font-size="11" font-weight="700" fill="#0fb9a4">fan-out</text>
+        <!-- consumer queues + services -->
+        <g font-size="12.5" font-weight="600">
+          <rect x="760" y="20"  width="120" height="44" rx="9" fill="rgba(15,185,164,.10)" stroke="#0fb9a4" /> <text x="820" y="40" text-anchor="middle" fill="#0fb9a4">queue</text><text x="820" y="56" text-anchor="middle">notifications</text>
+          <rect x="760" y="105" width="120" height="44" rx="9" fill="rgba(15,185,164,.10)" stroke="#0fb9a4" /> <text x="820" y="125" text-anchor="middle" fill="#0fb9a4">queue</text><text x="820" y="141" text-anchor="middle">CRM</text>
+          <rect x="760" y="190" width="120" height="44" rx="9" fill="rgba(15,185,164,.10)" stroke="#0fb9a4" /> <text x="820" y="210" text-anchor="middle" fill="#0fb9a4">queue</text><text x="820" y="226" text-anchor="middle">analytics</text>
+          <rect x="760" y="275" width="120" height="44" rx="9" fill="rgba(15,185,164,.10)" stroke="#0fb9a4" /> <text x="820" y="295" text-anchor="middle" fill="#0fb9a4">queue</text><text x="820" y="311" text-anchor="middle">refunds…</text>
+        </g>
+        <!-- Postgres -->
+        <rect x="440" y="320" width="160" height="70" rx="10" fill="rgba(245,158,11,.10)" stroke="#f59e0b" stroke-width="2" />
+        <text x="520" y="348" text-anchor="middle" font-size="14" font-weight="700" fill="#f59e0b">Postgres</text>
+        <text x="520" y="368" text-anchor="middle" font-size="11.5" fill="#f59e0b">package history · audit</text>
+        <!-- readers of the table -->
+        <g font-size="12.5" font-weight="600">
+          <rect x="150" y="330" width="170" height="44" rx="9" fill="rgba(245,158,11,.08)" stroke="#f59e0b" stroke-dasharray="5 4" />
+          <text x="235" y="348" text-anchor="middle">support lookup</text>
+          <text x="235" y="364" text-anchor="middle" font-size="11" opacity=".75">"where has order 123 been?"</text>
+        </g>
+        <!-- edges -->
+        <g stroke="#6c4bf0" stroke-width="2" fill="none" marker-end="url(#arr2)">
+          <path d="M160,79  C200,79 200,140 228,145" />
+          <path d="M160,149 C195,149 195,150 228,150" />
+          <path d="M160,219 C200,219 200,160 228,155" />
+          <path d="M360,150 L428,150" />
+        </g>
+        <g stroke="#0fb9a4" stroke-width="2.5" fill="none" marker-end="url(#arrT)">
+          <path d="M610,150 L693,150" />
+          <path d="M700,150 C740,150 740,42 758,42" />
+          <path d="M700,150 C740,150 740,127 758,127" />
+          <path d="M700,150 C740,150 740,212 758,212" />
+          <path d="M700,150 C740,150 740,297 758,297" />
+        </g>
+        <g stroke="#f59e0b" stroke-width="2" fill="none" stroke-dasharray="6 4" marker-end="url(#arrA)">
+          <path d="M520,205 L520,318" />
+          <path d="M438,355 L322,352" />
+        </g>
+        <!-- labels on edges -->
+        <text x="655" y="140" text-anchor="middle" font-size="10.5" fill="#0fb9a4" font-weight="700">PATH A · PUSH</text>
+        <text x="560" y="270" text-anchor="middle" font-size="10.5" fill="#f59e0b" font-weight="700">PATH B · PULL</text>
+      </svg>
+      <div class="grid cols-2">
+        <div class="pathbox" style="border-top: 4px solid #0fb9a4">
+          <span class="tagline" style="color:#0fb9a4">Path A · the event · push · real-time</span>
+          <h4>"Tell me the moment a package moves."</h4>
+          <p>The service publishes the normalized event; <strong>each downstream service gets its own copy</strong>, delivered to its own queue, pushed the moment it happens. Nobody polls, nobody touches your database, nobody sees a partner format. This path <em>is</em> the "one source of truth" from your pitch.</p>
+        </div>
+        <div class="pathbox" style="border-top: 4px solid #f59e0b">
+          <span class="tagline" style="color:#f59e0b">Path B · the table · pull · queries</span>
+          <h4>"Show me everything that ever happened to order 123."</h4>
+          <p>The service also persists events to Postgres. That table serves <strong>lookups and audit</strong> — support tools, debugging, history. It's yours, behind your service boundary. It is <em>not</em> the company's integration point; it's the memory your service keeps.</p>
+        </div>
+      </div>
+      <p class="callout">
+        <strong>Why this shape wins:</strong> push beats poll for latency; per-consumer queues mean one slow consumer backs up only itself (its own DLQ, its own redelivery — the SQS lessons apply to them too); and your table stays a private implementation detail you can reshape anytime.
+      </p>
+
+      <!-- ============ 3. HOW FAN-OUT WORKS ============ -->
+      <h2 class="section"><span class="num">3</span>The follow-up: "fan-out <em>how</em>, exactly?"</h2>
+      <p class="kicker">
+        One queue can't fan out — with a single SQS queue, consumers are <em>competing</em> (each message goes to exactly one consumer, which is right for <strong>your</strong> ingest, wrong for broadcasting). The standard AWS pattern for "every consumer gets every message" is
+        <a class="cite" href="https://docs.aws.amazon.com/sns/latest/dg/sns-sqs-as-subscriber.html">SNS → one SQS queue per consumer</a> — the "fan-out" pattern:
+      </p>
+      <div class="card">
+        <svg class="flow" viewBox="0 0 760 190" role="img" aria-label="SNS to SQS fan-out pattern: one topic pushes each message to every subscribed queue">
+          <rect x="20" y="75" width="150" height="50" rx="10" fill="rgba(108,75,240,.12)" stroke="#6c4bf0" stroke-width="2" />
+          <text x="95" y="98" text-anchor="middle" font-size="13.5" font-weight="700" fill="#6c4bf0">ingest service</text>
+          <text x="95" y="114" text-anchor="middle" font-size="11">publish(event)</text>
+          <rect x="260" y="75" width="150" height="50" rx="25" fill="rgba(255,255,255,.06)" stroke="#d8d4e8" stroke-width="2" />
+          <text x="335" y="98" text-anchor="middle" font-size="13.5" font-weight="700">SNS topic</text>
+          <text x="335" y="114" text-anchor="middle" font-size="11">broadcasts to all</text>
+          <g font-size="12" font-weight="600">
+            <rect x="520" y="15"  width="180" height="40" rx="9" fill="rgba(15,185,164,.10)" stroke="#0fb9a4" /> <text x="610" y="39"  text-anchor="middle">notifications queue</text>
+            <rect x="520" y="75"  width="180" height="40" rx="9" fill="rgba(15,185,164,.10)" stroke="#0fb9a4" /> <text x="610" y="99"  text-anchor="middle">CRM queue</text>
+            <rect x="520" y="135" width="180" height="40" rx="9" fill="rgba(15,185,164,.10)" stroke="#0fb9a4" /> <text x="610" y="159" text-anchor="middle">analytics queue</text>
+          </g>
+          <g stroke="#0fb9a4" stroke-width="2" fill="none" marker-end="url(#arrT)">
+            <path d="M410,100 C470,100 470,35 518,35" />
+            <path d="M410,100 L518,95" />
+            <path d="M410,100 C470,100 470,155 518,155" />
+          </g>
+          <path d="M170,100 L258,100" stroke="#6c4bf0" stroke-width="2" fill="none" marker-end="url(#arr2)" />
+        </svg>
+        <p style="margin:6px 0 0">
+          Each consumer owns its queue: its own visibility timeouts, its own DLQ, its own retry policy. One consumer falling behind is invisible to the others.
+          If Cencosud's actual mechanism differed (e.g. EventBridge), say that name instead — the <em>shape</em> (broadcast → per-consumer buffer) is what matters.
+        </p>
+      </div>
+
+      <!-- ============ 4. DECODE ============ -->
+      <h2 class="section"><span class="num">4</span>The model answer, sentence by sentence</h2>
+      <table class="decoded">
+        <tr>
+          <td>"Two paths."</td>
+          <td>The frame. It tells the interviewer you're about to separate real-time consumption from query/audit — before they ask. Framing first is the senior move.</td>
+        </tr>
+        <tr>
+          <td>"fanned the normalized event out… each service got its own copy pushed to its own queue"</td>
+          <td><strong>Path A</strong>, concretely: broadcast + per-consumer queue. "Its own copy" and "its own queue" are the two facts that prove it's a real fan-out, not a shared table.</td>
+        </tr>
+        <tr>
+          <td>"nobody polled and nobody touched our database"</td>
+          <td>The anti-trap, stated as a property: no polling latency, no shared dependency. You flinched at "one big table" <em>and</em> named what you did instead.</td>
+        </tr>
+        <tr>
+          <td>"the Postgres table… served the query side — support lookups, audit, package history"</td>
+          <td><strong>Path B</strong>, bounded. The table exists, has a job, and the job is narrow. Listeners of the job description: lookups, audit, history — all query-shaped.</td>
+        </tr>
+        <tr>
+          <td>"the design object… was the internal event schema: one versioned contract"</td>
+          <td>The schema is the public API; the table is an implementation detail. Swap: "the table was ours to change; the schema was public, so it evolved additively only." That's contract ownership — the org-level skill.</td>
+        </tr>
+        <tr>
+          <td>"partner quirks stopped at the normalizer"</td>
+          <td>The payoff sentence. From downstream's point of view there is one format, forever. Partner churn is invisible outside the service.</td>
+        </tr>
+      </table>
+
+      <!-- ============ 5. SAY IT ============ -->
+      <h2 class="section"><span class="num">5</span>30-second interview version</h2>
+      <div class="card">
+        <blockquote style="margin:0; font-size:17px; line-height:1.6">
+          "Two paths. Real-time consumers subscribed to the internal tracking event — the service fanned each normalized event out to every consumer's own queue, so nobody polled and nobody touched our database; one slow consumer backed up only itself. The Postgres table we persisted served the query side: support lookups, audit, package history. And the design object I actually cared about was the event schema — one versioned contract. The table behind it was ours to change; the schema was public, so it evolved additively only."
+        </blockquote>
+      </div>
+
+      <!-- ============ 6. CHECK ============ -->
+      <h2 class="section"><span class="num">6</span>Check yourself</h2>
+      <div class="quiz" id="quiz">
+        <h3>Retrieve from memory — don't scroll up</h3>
+        <div class="q" data-a="2">
+          <p><strong>Why is "downstream services query one big table" a trap answer?</strong></p>
+          <button class="opt">Postgres can't handle more than a few concurrent readers.</button>
+          <button class="opt">It makes your schema and load a shared company dependency, and forces polling.</button>
+          <button class="opt">SQS becomes unnecessary if services read the table directly.</button>
+          <div class="verdict"></div>
+        </div>
+        <div class="q" data-a="1">
+          <p><strong>What does "each service got its own copy" buy you, concretely?</strong></p>
+          <button class="opt">Cheaper SQS messages, because copies are compressed per consumer.</button>
+          <button class="opt">A slow or broken consumer backs up only its own queue — isolation.</button>
+          <button class="opt">Exactly-once delivery across all downstream services.</button>
+          <div class="verdict"></div>
+        </div>
+        <div class="q" data-a="0">
+          <p><strong>Who reads the persisted Postgres table?</strong></p>
+          <button class="opt">The query side: support lookups, audit, package history.</button>
+          <button class="opt">Every downstream service, on a 5-second polling loop.</button>
+          <button class="opt">Nobody — the table is write-only and exists for compliance.</button>
+          <div class="verdict"></div>
+        </div>
+        <div class="q" data-a="2">
+          <p><strong>Why can't a single SQS queue do the fan-out?</strong></p>
+          <button class="opt">SQS queues cannot be read by more than one service.</button>
+          <button class="opt">Fan-out requires FIFO, and this queue was standard.</button>
+          <button class="opt">One queue means competing consumers — each message reaches exactly one of them, not all.</button>
+          <div class="verdict"></div>
+        </div>
+      </div>
+
+      <div class="next-card">
+        <h4>Make it yours</h4>
+        <p>Say the 30-second version out loud twice, then go back to <a href="./0005-architecture-grill.html">the Grill</a> and re-rate the "one big table" probe. Anything still fuzzy — ask the agent to drill you live: it plays interviewer, one follow-up at a time.</p>
+      </div>
+    </article>
+
+    <footer class="lesson-foot">
+      <p>Behavioral Interview · Lesson 6 — Fan-out, Decoded · part of the <a href="../../../index.html">Learning Hub</a></p>
+    </footer>
+
+    <script>
+      document.querySelectorAll("#quiz .q").forEach((q) => {
+        const opts = q.querySelectorAll("button.opt");
+        const verdict = q.querySelector(".verdict");
+        opts.forEach((b, i) =>
+          b.onclick = () => {
+            opts.forEach((o) => o.classList.remove("correct", "wrong"));
+            const ok = i === +q.dataset.a;
+            b.classList.add(ok ? "correct" : "wrong");
+            verdict.textContent = ok ? "✓ Correct." : "✗ Re-read section " + (q.dataset.a === "2" && i === 1 ? "2 — two paths." : i === 0 ? "1 — the trap." : "2 or 3.");
+            verdict.className = "verdict " + (ok ? "ok" : "no");
+          }
+        );
+      });
+    </script>
+  </body>
+</html>

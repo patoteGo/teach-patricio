@@ -410,6 +410,183 @@
 .mcq-fb.bad {
 	color: #b42346;
 }
+/* Kafka-style append-only log simulator */
+.log-sim {
+	padding: 18px;
+	border: 1px solid var(--line);
+	border-radius: 14px;
+	background: var(--paper-2);
+	margin: 18px 0;
+}
+.log-caption {
+	font: 600 0.78rem "JetBrains Mono";
+	color: var(--ink-soft);
+}
+.log-track {
+	display: grid;
+	grid-template-columns: repeat(8, minmax(40px, 1fr));
+	gap: 6px;
+	margin-top: 6px;
+}
+.log-cell {
+	padding: 10px 4px;
+	border: 1px solid var(--line);
+	border-radius: 9px;
+	text-align: center;
+	font: 700 0.78rem "JetBrains Mono";
+	color: var(--ink-soft);
+	background: var(--paper);
+}
+.log-cell.newest {
+	border-color: var(--violet);
+	color: var(--violet);
+	background: var(--violet-50);
+	animation: log-pop 0.4s;
+}
+.log-cell.ghost {
+	border-style: dashed;
+	opacity: 0.35;
+}
+@keyframes log-pop {
+	from {
+		transform: scale(0.6);
+		opacity: 0;
+	}
+}
+.log-mark {
+	display: grid;
+	place-items: center;
+	min-height: 30px;
+	border-radius: 8px;
+	font-size: 0.85rem;
+	color: color-mix(in srgb, var(--ink-soft) 40%, transparent);
+}
+.log-mark.read {
+	color: var(--teal);
+	background: var(--teal-50);
+}
+.log-mark.at {
+	color: var(--amber);
+	background: var(--amber-50);
+	font-weight: 800;
+}
+.log-reader-name {
+	grid-column: 1 / -1;
+	font: 700 0.8rem "Space Grotesk";
+	color: var(--ink);
+}
+/* Redis memory simulator */
+.redis-sim {
+	padding: 18px;
+	border: 1px solid var(--line);
+	border-radius: 14px;
+	background: var(--paper-2);
+	margin: 18px 0;
+}
+.redis-actions {
+	display: flex;
+	gap: 8px;
+	flex-wrap: wrap;
+	margin: 10px 0 14px;
+}
+.redis-actions button {
+	min-height: 44px;
+	padding: 8px 14px;
+	border: 1px solid var(--line);
+	border-radius: 9px;
+	background: var(--violet);
+	color: #fff;
+	font-weight: 700;
+	cursor: pointer;
+}
+.redis-actions button.ghost {
+	background: var(--paper);
+	color: var(--ink);
+}
+.mem-grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 10px;
+	margin: 12px 0;
+}
+.mem-key {
+	padding: 10px;
+	border: 1px solid var(--line);
+	border-radius: 10px;
+	background: var(--paper);
+}
+.mem-key b {
+	display: block;
+	margin-bottom: 8px;
+	color: var(--violet);
+	font: 700 0.8rem "JetBrains Mono";
+}
+.ttl-bar {
+	height: 7px;
+	border-radius: 99px;
+	background: var(--surface-muted);
+	overflow: hidden;
+}
+.ttl-bar span {
+	display: block;
+	height: 100%;
+	background: var(--teal);
+	transition: width 1s linear;
+}
+.ttl-bar span.low {
+	background: var(--amber);
+}
+.mem-key .secs {
+	font: 600 0.7rem "JetBrains Mono";
+	color: var(--ink-soft);
+}
+.mem-empty {
+	grid-column: 1 / -1;
+	padding: 14px;
+	border: 1px dashed var(--line);
+	border-radius: 10px;
+	color: var(--ink-soft);
+	text-align: center;
+}
+.redis-fb {
+	min-height: 46px;
+	padding: 10px 12px;
+	border-radius: 10px;
+	background: var(--surface-muted);
+	font-size: 0.9rem;
+}
+.redis-fb.good {
+	color: #077568;
+}
+.redis-fb.bad {
+	color: #b42346;
+}
+.redis-meter {
+	margin-top: 10px;
+	color: var(--ink-soft);
+	font: 600 0.8rem "JetBrains Mono";
+}
+@media (max-width: 680px) {
+	.mem-grid {
+		grid-template-columns: 1fr;
+	}
+	.log-track {
+		grid-template-columns: repeat(8, 1fr);
+	}
+	.log-cell,
+	.log-mark {
+		font-size: 0.65rem;
+		padding: 6px 2px;
+	}
+}
+@media (prefers-reduced-motion: reduce) {
+	.log-cell.newest {
+		animation: none;
+	}
+	.ttl-bar span {
+		transition: none;
+	}
+}
 /* back-of-the-envelope estimator */
 .estimator {
 	padding: 18px;

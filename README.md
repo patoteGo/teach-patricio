@@ -22,6 +22,32 @@ the auto-generated catalog below.
 > One topic per folder keeps subjects from bleeding together. A topic is fully
 > self-contained — you can lift a single folder out and it still works.
 
+## ☁️ Progress sync (optional)
+
+Interactive lessons (e.g. the
+[Architecture Grill](./topics/behavioral-interview/lessons/0005-architecture-grill.html))
+save their drill results. Locally that's `localStorage` (browser-only). On Vercel,
+results persist across devices/browsers via [`api/progress.js`](./api/progress.js) —
+a ~60-line proxy to a free [Upstash Redis](https://upstash.com) database (plain `fetch`, no SDK).
+
+Why not SQLite or files: Vercel serverless functions have an ephemeral filesystem —
+writes don't survive the invocation.
+
+Setup (once):
+
+1. Create a free Redis database at [upstash.com](https://console.upstash.com) → copy the
+   **REST API** URL and token.
+2. In Vercel → Project → Settings → Environment Variables, add:
+
+   | Variable | Value |
+   |---|---|
+   | `UPSTASH_REDIS_REST_URL` | `https://your-db.upstash.io` |
+   | `UPSTASH_REDIS_REST_TOKEN` | *(REST token)* |
+
+3. Redeploy. The route is already behind the site's password middleware.
+
+Without the env vars the site still works — lessons just keep saving to `localStorage`.
+
 ## 📚 Topics & lessons
 
 The catalog below is **auto-generated** from `topics/*/lessons/` by a GitHub

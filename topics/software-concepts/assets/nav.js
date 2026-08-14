@@ -42,6 +42,18 @@
 			pt: "AWS SQS",
 			en: "AWS SQS",
 		},
+		{
+			file: "0008-apache-kafka.html",
+			n: "08",
+			pt: "Apache Kafka",
+			en: "Apache Kafka",
+		},
+		{
+			file: "0009-redis.html",
+			n: "09",
+			pt: "Redis",
+			en: "Redis",
+		},
 	];
 	const path = location.pathname.replace(/\\/g, "/");
 	const here = path.split("/").pop();

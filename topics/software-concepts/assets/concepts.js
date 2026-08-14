@@ -238,4 +238,216 @@
 		});
 		render();
 	});
+
+	// Kafka-style append-only log simulator: producer appends, readers advance at their own pace
+	document.querySelectorAll("[data-log]").forEach((sim) => {
+		const stage = sim.querySelector("[data-log-stage]");
+		const status = sim.querySelector("[data-log-status]");
+		const readers = [
+			{
+				name: "Grupo A · pagamentos",
+				en: "Group A · payments",
+				offset: 0,
+				chance: 0.9,
+			},
+			{
+				name: "Grupo B · auditoria",
+				en: "Group B · audit",
+				offset: 0,
+				chance: 0.45,
+			},
+		];
+		const CAP = 8;
+		let next = 0;
+		let timer;
+		const mk = (cls, txt) => {
+			const d = document.createElement("span");
+			if (cls) d.className = cls;
+			d.textContent = txt ?? "";
+			return d;
+		};
+		const render = () => {
+			readers.forEach((r) => (r.offset = Math.min(r.offset, next)));
+			stage.replaceChildren();
+			const strip = document.createElement("div");
+			strip.className = "log-track";
+			for (let o = Math.max(0, next - CAP); o < next; o++) {
+				const c = mk("log-cell", o);
+				if (o === next - 1) c.classList.add("newest");
+				strip.append(c);
+			}
+			for (let i = next; i < CAP; i++) strip.append(mk("log-cell ghost"));
+			stage.append(strip);
+			readers.forEach((r) => {
+				const track = document.createElement("div");
+				track.className = "log-track";
+				const label = mk("log-reader-name");
+				track.append(label);
+				for (let o = Math.max(0, next - CAP); o < next; o++) {
+					const at = r.offset === o;
+					const read = r.offset > o;
+					track.append(
+						mk(
+							`log-mark ${read ? "read" : ""} ${at ? "at" : ""}`.trim(),
+							read ? "✓" : at ? "◉" : "·",
+						),
+					);
+				}
+				for (let i = next; i < CAP; i++) track.append(mk("log-mark"));
+				label.textContent = `${L(r.name, r.en)} — offset ${r.offset} · lag ${next - r.offset}`;
+				stage.append(track);
+			});
+			status.textContent = L(
+				`offset máximo: ${next} — cada grupo anda no próprio ritmo`,
+				`max offset: ${next} — each group advances at its own pace`,
+			);
+		};
+		const tick = () => {
+			next++;
+			readers.forEach((r) => {
+				if (r.offset < next && Math.random() < r.chance) r.offset++;
+			});
+			render();
+		};
+		sim.querySelector("[data-log-toggle]").addEventListener("click", (e) => {
+			if (timer) {
+				clearInterval(timer);
+				timer = null;
+				e.currentTarget.textContent = L("▶ Retomar", "▶ Resume");
+			} else {
+				timer = setInterval(tick, 1200);
+				e.currentTarget.textContent = L("⏸ Pausar", "⏸ Pause");
+			}
+		});
+		sim.querySelector("[data-log-reset]").addEventListener("click", () => {
+			next = 0;
+			readers.forEach((r) => (r.offset = 0));
+			render();
+		});
+		timer = setInterval(tick, 1200);
+		render();
+	});
+
+	// Redis memory simulator: GET/SETEX/DEL against keys with live TTLs
+	document.querySelectorAll("[data-redis]").forEach((sim) => {
+		const grid = sim.querySelector("[data-mem]");
+		const fb = sim.querySelector("[data-redis-fb]");
+		const meter = sim.querySelector("[data-redis-meter]");
+		const FOCUS = "user:42";
+		const keys = new Map([
+			[FOCUS, 0],
+			["product:7", 40],
+			["cart:ana", 14],
+		]);
+		let hits = 0;
+		let misses = 0;
+		const render = () => {
+			grid.replaceChildren();
+			if (!keys.size) {
+				const empty = document.createElement("div");
+				empty.className = "mem-empty";
+				empty.textContent = L(
+					"memória vazia — a próxima leitura será miss (e vai buscar no banco)",
+					"empty memory — the next read will miss (and hit the DB)",
+				);
+				grid.append(empty);
+			}
+			keys.forEach((ttl, name) => {
+				const card = document.createElement("div");
+				card.className = "mem-key";
+				const b = document.createElement("b");
+				b.textContent = name;
+				const bar = document.createElement("div");
+				bar.className = "ttl-bar";
+				const fill = document.createElement("span");
+				const pct = Math.max(0, Math.min(100, (ttl / 60) * 100));
+				fill.style.width = `${pct}%`;
+				if (pct < 25) fill.className = "low";
+				bar.append(fill);
+				const secs = document.createElement("span");
+				secs.className = "secs";
+				secs.textContent = `TTL ${ttl}s`;
+				card.append(b, bar, secs);
+				grid.append(card);
+			});
+			const total = hits + misses;
+			const rate = total ? Math.round((hits / total) * 100) : 0;
+			meter.textContent = L(
+				`hits ${hits} · misses ${misses} · hit rate ${rate}% · latência poupada ≈ ${hits * 119} ms`,
+				`hits ${hits} · misses ${misses} · hit rate ${rate}% · latency saved ≈ ${hits * 119} ms`,
+			);
+		};
+		const setFb = (msg, ok) => {
+			fb.className = `redis-fb ${ok ? "good" : "bad"}`;
+			fb.textContent = msg;
+		};
+		const actions = {
+			"[data-get]": () => {
+				if ((keys.get(FOCUS) ?? 0) > 0) {
+					hits++;
+					setFb(
+						L(
+							`GET ${FOCUS} → HIT · ~1 ms · servido da RAM`,
+							`GET ${FOCUS} → HIT · ~1 ms · served from RAM`,
+						),
+						true,
+					);
+				} else {
+					misses++;
+					keys.set(FOCUS, 60);
+					setFb(
+						L(
+							`GET ${FOCUS} → MISS · ~120 ms no banco · cache-aside repõe com SETEX ${FOCUS} 60`,
+							`GET ${FOCUS} → MISS · ~120 ms in the DB · cache-aside refills with SETEX ${FOCUS} 60`,
+						),
+						false,
+					);
+				}
+			},
+			"[data-setex]": () => {
+				keys.set(FOCUS, 60);
+				setFb(
+					L(
+						`SETEX ${FOCUS} 60 → gravado com TTL 60 s`,
+						`SETEX ${FOCUS} 60 → stored with TTL 60 s`,
+					),
+					true,
+				);
+			},
+			"[data-del]": () => {
+				keys.delete(FOCUS);
+				setFb(
+					L(
+						`DEL ${FOCUS} → chave removida da memória`,
+						`DEL ${FOCUS} → key removed from memory`,
+					),
+					true,
+				);
+			},
+		};
+		Object.entries(actions).forEach(([sel, fn]) =>
+			sim.querySelector(sel)?.addEventListener("click", () => {
+				fn();
+				render();
+			}),
+		);
+		setInterval(() => {
+			keys.forEach((ttl, name) => {
+				if (ttl > 0) {
+					if (ttl - 1 <= 0) {
+						keys.delete(name);
+						setFb(
+							L(
+								`${name} expirou — a próxima leitura será miss`,
+								`${name} expired — the next read will miss`,
+							),
+							false,
+						);
+					} else keys.set(name, ttl - 1);
+				}
+			});
+			render();
+		}, 1000);
+		render();
+	});
 })();
