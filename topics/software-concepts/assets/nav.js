@@ -36,6 +36,12 @@
 			pt: "Cache e taxa de hit",
 			en: "Cache hit rate",
 		},
+		{
+			file: "0007-aws-sqs.html",
+			n: "07",
+			pt: "AWS SQS",
+			en: "AWS SQS",
+		},
 	];
 	const path = location.pathname.replace(/\\/g, "/");
 	const here = path.split("/").pop();

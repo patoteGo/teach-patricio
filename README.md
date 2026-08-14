@@ -83,7 +83,7 @@ Action on every push, so it never drifts. (See
 
 ### Practical software concepts
 
-`topics/software-concepts/` · 6 lesson(s)
+`topics/software-concepts/` · 7 lesson(s)
 
 | # | Lesson |
 |---|--------|
@@ -93,6 +93,7 @@ Action on every push, so it never drifts. (See
 | 04 | [Relational keys — PK and FK, the one-to-many](./topics/software-concepts/lessons/0004-relational-keys.html) |
 | 05 | [Estimation — DAU, QPS and why one number is enough](./topics/software-concepts/lessons/0005-estimation.html) |
 | 06 | [Cache — the hit rate is a DB-load dial](./topics/software-concepts/lessons/0006-cache-hit-rate.html) |
+| 07 | [AWS SQS — the queue that decouples](./topics/software-concepts/lessons/0007-aws-sqs.html) |
 
 ### System Design (backend · infra · frontend)
 
@@ -117,7 +118,15 @@ Action on every push, so it never drifts. (See
 | 04 | [Brief L1–2 — Onboarding + email (ClearOne)](./topics/system-design-practice/lessons/0004-starter-onboarding-email.html) |
 | 05 | [Brief L2 — Webhook delivery (Lob)](./topics/system-design-practice/lessons/0005-starter-webhook-delivery.html) |
 
-**Total: 32 lesson(s) across 8 topic(s).**
+### Tooling
+
+`topics/tooling/` · 1 lesson(s)
+
+| # | Lesson |
+|---|--------|
+| 01 | [Vim — the core loop](./topics/tooling/lessons/0001-vim-core-loop.html) |
+
+**Total: 34 lesson(s) across 9 topic(s).**
 <!-- topics:end -->
 
 ## 🗂 Repo map

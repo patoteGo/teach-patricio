@@ -34,6 +34,8 @@ Own the **tracking-event ingest service**: consume those heterogeneous partner e
 
 ### Depth reserve — probes you WILL get
 
+> 🎯 **Drill these interactively:** [Lesson 5 — The Architecture Grill](./lessons/0005-architecture-grill.html) (21 probes with model answers: SQS mechanics, data, scale, tradeoffs, team).
+
 | Probe | Answer |
 |---|---|
 | "How did you measure it?" | New Relic — throughput (rpm), error %, p95/p99, and **SQS queue depth / consumer lag**. (Pin a rough daily figure: ~***M/day, spiking***× on sale days.) |
@@ -81,6 +83,8 @@ Delivered the full new frontend in a few months — a React app the team owned a
 
 ### Depth reserve — probes you WILL get
 
+> 🎯 **Drill these interactively:** [Lesson 5 — The Architecture Grill](./lessons/0005-architecture-grill.html) (21 probes with model answers: SQS mechanics, data, scale, tradeoffs, team).
+
 | Probe | Answer |
 |---|---|
 | "How big was the rebuild?" | A few months; full interface rebuild in React, plus shared FE/BE interface libraries. *[add screen/user count if you have it]* |
@@ -115,6 +119,8 @@ At a **consulting shop like Jahnel** (varied client stacks), *"I struggle outsid
 
 ### Depth reserve — probes you WILL get
 
+> 🎯 **Drill these interactively:** [Lesson 5 — The Architecture Grill](./lessons/0005-architecture-grill.html) (21 probes with model answers: SQS mechanics, data, scale, tradeoffs, team).
+
 | Probe | Answer |
 |---|---|
 | "How exactly do you use AI to ramp?" | Map the unfamiliar codebase, explain idioms, generate test cases to validate my understanding, translate patterns I already know from TS. |
@@ -148,6 +154,8 @@ At a **consulting shop like Jahnel** (varied client stacks), *"I struggle outsid
 2. **Own it. Don't blame commercial.** Never say *"they pressured me into it."* Say: *"the pressure was real, but the decision to ship was mine, and it was wrong."* Blaming others = red flag; owning a bad call under pressure = senior gold.
 
 ### Depth reserve — probes you WILL get
+
+> 🎯 **Drill these interactively:** [Lesson 5 — The Architecture Grill](./lessons/0005-architecture-grill.html) (21 probes with model answers: SQS mechanics, data, scale, tradeoffs, team).
 
 | Probe | Answer |
 |---|---|
@@ -194,6 +202,8 @@ Own full-stack AI features — UI from Figma, the AI plumbing (LangChain + Verce
 A working applied-AI product built from scratch in months, with AI features non-technical users could actually drive via the guided prompt-builder — validated through tight design/founder collaboration.
 
 ### Depth reserve — probes you WILL get
+
+> 🎯 **Drill these interactively:** [Lesson 5 — The Architecture Grill](./lessons/0005-architecture-grill.html) (21 probes with model answers: SQS mechanics, data, scale, tradeoffs, team).
 
 | Probe | Answer |
 |---|---|

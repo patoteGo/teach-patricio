@@ -30,3 +30,5 @@
 ## Session log
 
 - Session 1: Confirmed BLUF (not "Bluff"). Scaffolded topic. Shipping Lesson 1 (BLUF+STAR), the question-bank reference, and the interactive Dojo.
+
+- Session (post-interview debrief): user felt the "proudest project, architecturally" answer didn't land in a real interview (Cencosud ingest). Diagnosis: STAR pitch only covers the *impact* rubric — interviewers also score decision justification, mechanics depth, and team judgment. Shipped Lesson 5 (`0005-architecture-grill.html`, English-only — interview practice language): upgraded architecture pitch (names the 3 decisions upfront as an invitation) + 21-probe grill deck (SQS mechanics, Postgres/data, scale/K8s, architecture tradeoffs, team/org) with reveal + self-rating in localStorage, AWS-docs-cited. **Action for user:** pin real numbers (partner count, batch size, event volume) before drilling — flagged inside the lesson.

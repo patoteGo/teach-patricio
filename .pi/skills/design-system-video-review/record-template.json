@@ -1,0 +1,29 @@
+{
+  "date": "2026-02-24",
+  "slug": "button-states",
+  "exercise": "Button states",
+  "brief": "Build an accessible button component with its variants and states.",
+  "video": "button-states.mp4",
+  "summary": "The recording shows a coherent button family with visible states.",
+  "scores": {
+    "tokens": 7,
+    "component_api_and_composition": 7,
+    "consistency": 8,
+    "states_and_accessibility": 6,
+    "visual_polish": 7
+  },
+  "overall": 7,
+  "evidence": {
+    "tokens": "Visible shared colour and spacing values across variants.",
+    "component_api_and_composition": "Primary and secondary variants are demonstrated.",
+    "consistency": "Typography and spacing remain consistent.",
+    "states_and_accessibility": "Hover is shown; keyboard focus is not visible.",
+    "visual_polish": "Alignment and contrast appear deliberate."
+  },
+  "improvements": [
+    "Show a visible keyboard focus treatment.",
+    "Demonstrate disabled and loading states."
+  ],
+  "next_exercise": "Build an input field with labels, errors, and disabled states.",
+  "limitations": ["The video does not show the implementation or semantic markup."]
+}
