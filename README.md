@@ -88,7 +88,7 @@ Action on every push, so it never drifts. (See
 <!-- topics:start -->
 ### Ace the Senior Fullstack Behavioral Interview
 
-`topics/behavioral-interview/` · 4 lesson(s)
+`topics/behavioral-interview/` · 6 lesson(s)
 
 | # | Lesson |
 |---|--------|
@@ -96,6 +96,8 @@ Action on every push, so it never drifts. (See
 | 02 | [The Dojo](./topics/behavioral-interview/lessons/0002-the-dojo.html) |
 | 03 | [The Pitch](./topics/behavioral-interview/lessons/0003-the-pitch.html) |
 | 04 | [Follow-ups](./topics/behavioral-interview/lessons/0004-follow-ups.html) |
+| 05 | [The Architecture Grill](./topics/behavioral-interview/lessons/0005-architecture-grill.html) |
+| 06 | [Fan-out, Decoded](./topics/behavioral-interview/lessons/0006-fanout-decoded.html) |
 
 ### ClearOne Advantage Senior Full-Stack interview (8 August 2026)
 
@@ -140,7 +142,7 @@ Action on every push, so it never drifts. (See
 
 ### Practical software concepts
 
-`topics/software-concepts/` · 7 lesson(s)
+`topics/software-concepts/` · 9 lesson(s)
 
 | # | Lesson |
 |---|--------|
@@ -151,6 +153,8 @@ Action on every push, so it never drifts. (See
 | 05 | [Estimation — DAU, QPS and why one number is enough](./topics/software-concepts/lessons/0005-estimation.html) |
 | 06 | [Cache — the hit rate is a DB-load dial](./topics/software-concepts/lessons/0006-cache-hit-rate.html) |
 | 07 | [AWS SQS — the queue that decouples](./topics/software-concepts/lessons/0007-aws-sqs.html) |
+| 08 | [Apache Kafka — the log that doesn't delete](./topics/software-concepts/lessons/0008-apache-kafka.html) |
+| 09 | [Redis — memory with a TTL](./topics/software-concepts/lessons/0009-redis.html) |
 
 ### System Design (backend · infra · frontend)
 
@@ -183,7 +187,7 @@ Action on every push, so it never drifts. (See
 |---|--------|
 | 01 | [Vim — the core loop](./topics/tooling/lessons/0001-vim-core-loop.html) |
 
-**Total: 34 lesson(s) across 9 topic(s).**
+**Total: 38 lesson(s) across 9 topic(s).**
 <!-- topics:end -->
 
 ## 🗂 Repo map
