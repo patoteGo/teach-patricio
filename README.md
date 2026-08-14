@@ -48,6 +48,37 @@ Setup (once):
 
 Without the env vars the site still works — lessons just keep saving to `localStorage`.
 
+### Running locally
+
+There are two ways to preview, and only one of them runs the API:
+
+| Command | Static HTML | Middleware (password gate) | `/api/progress` |
+|---|---|---|---|
+| `python3 -m http.server` | ✅ | ❌ never runs | ❌ 404s → lesson falls back to `localStorage` |
+| `vercel dev` | ✅ | ✅ | ✅ hits your real Upstash DB |
+
+**Don't hand-write a `.env`** — pull the variables from Vercel so there's a single
+source of truth (the dashboard) and no copy-paste drift:
+
+```bash
+vercel link                  # once: link this folder to the Vercel project
+vercel env pull .env.local   # writes all 4 vars: APP_PASSWORD, AUTH_TOKEN, UPSTASH_*
+vercel dev                   # → http://localhost:3000
+```
+
+So the order matters: add the two `UPSTASH_*` vars in the Vercel dashboard first
+(next to the existing `APP_PASSWORD` / `AUTH_TOKEN`), then pull.
+
+Notes:
+
+- `vercel dev` serves plain http, but browsers treat `localhost` as trustworthy, so the
+  auth cookie's `Secure` flag still works. If login ever loops locally, that cookie is
+  the first suspect.
+- Ratings made at `localhost:3000` are stored under the same key (`grill-cencosud`) as
+  production — local drills and production share progress.
+- `.env*` files are git-ignored (see [`.gitignore`](./.gitignore)); never commit them —
+  the Upstash token grants full access to the database.
+
 ## 📚 Topics & lessons
 
 The catalog below is **auto-generated** from `topics/*/lessons/` by a GitHub

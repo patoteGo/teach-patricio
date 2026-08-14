@@ -20,3 +20,11 @@ NOTES.local.md
 
 # Vercel project linkage (local `vercel link`; never deploy-relevant)
 .vercel/
+
+# Secrets — Upstash REST token, auth password
+.env
+.env.*
+!.env.example
+
+# tokens
+.env
