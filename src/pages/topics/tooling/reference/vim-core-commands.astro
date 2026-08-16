@@ -1,0 +1,183 @@
+---
+// Migrated verbatim from public/topics/tooling/reference/vim-core-commands.html (URL unchanged: builds to vim-core-commands.html).
+// Body is is:raw: braces/inline scripts/JSON blocks pass through untouched.
+import Lesson from "../../../../layouts/Lesson.astro";
+const titlePt = "Vim — comandos essenciais";
+const titleEn = "Vim — core commands";
+const titleFallback = "Vim — core commands";
+const bodyClass = "lang-pt";
+const viewport = "width=device-width, initial-scale=1.0";
+const assets = [
+	"<link rel=\"stylesheet\" href=\"../assets/style.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/dark.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/i18n.css\" />",
+	"<script src=\"../assets/i18n.js\" defer></script>",
+	"<script src=\"../assets/nav.js\" defer></script>",
+	"<script src=\"../assets/reading-ui.js\" defer></script>",
+];
+
+---
+<Lesson
+	titlePt={titlePt}
+	titleEn={titleEn}
+	titleFallback={titleFallback}
+	bodyClass={bodyClass}
+	viewport={viewport}
+	assets={assets}
+>
+	<Fragment is:raw>
+    <article class="lesson">
+      <header class="hero">
+        <span class="eyebrow"
+          >⬡ Vim · <span data-lang="pt">referência</span
+          ><span data-lang="en">reference</span></span
+        >
+        <h1>
+          <span data-lang="pt">O mínimo que move e edita.</span
+          ><span data-lang="en">The minimum that moves and edits.</span>
+        </h1>
+        <p class="lead">
+          <span data-lang="pt"
+            >Consulte depois de tentar lembrar. Pratique no
+            <code>vimtutor</code>.</span
+          ><span data-lang="en"
+            >Check only after trying to recall. Practice in
+            <code>vimtutor</code>.</span
+          >
+        </p>
+      </header>
+
+      <h2 class="section">
+        <span class="num">1</span><span data-lang="pt">Modos</span
+        ><span data-lang="en">Modes</span>
+      </h2>
+      <div class="grid cols-2">
+        <div class="card">
+          <span class="kbd">Esc</span>
+          <h3>Normal</h3>
+          <p>
+            <span data-lang="pt">Teclas executam comandos.</span
+            ><span data-lang="en">Keys run commands.</span>
+          </p>
+        </div>
+        <div class="card">
+          <span class="kbd">i</span>
+          <h3>Insert</h3>
+          <p>
+            <span data-lang="pt">Teclas inserem texto.</span
+            ><span data-lang="en">Keys insert text.</span>
+          </p>
+        </div>
+      </div>
+
+      <h2 class="section">
+        <span class="num">2</span><span data-lang="pt">Mover</span
+        ><span data-lang="en">Move</span>
+      </h2>
+      <div class="grid cols-4">
+        <div class="card">
+          <span class="kbd">h</span>
+          <p>←</p>
+        </div>
+        <div class="card">
+          <span class="kbd">j</span>
+          <p>↓</p>
+        </div>
+        <div class="card">
+          <span class="kbd">k</span>
+          <p>↑</p>
+        </div>
+        <div class="card">
+          <span class="kbd">l</span>
+          <p>→</p>
+        </div>
+        <div class="card">
+          <span class="kbd">w</span>
+          <p>
+            <span data-lang="pt">próxima palavra</span
+            ><span data-lang="en">next word</span>
+          </p>
+        </div>
+        <div class="card">
+          <span class="kbd">b</span>
+          <p>
+            <span data-lang="pt">palavra anterior</span
+            ><span data-lang="en">previous word</span>
+          </p>
+        </div>
+        <div class="card">
+          <span class="kbd">0</span>
+          <p>
+            <span data-lang="pt">início da linha</span
+            ><span data-lang="en">line start</span>
+          </p>
+        </div>
+        <div class="card">
+          <span class="kbd">$</span>
+          <p>
+            <span data-lang="pt">fim da linha</span
+            ><span data-lang="en">line end</span>
+          </p>
+        </div>
+      </div>
+
+      <h2 class="section">
+        <span class="num">3</span><span data-lang="pt">Editar e sair</span
+        ><span data-lang="en">Edit and leave</span>
+      </h2>
+      <div class="grid cols-2">
+        <div class="card">
+          <h3><span class="kbd">x</span> · <span class="kbd">dd</span></h3>
+          <p>
+            <span data-lang="pt">apagar caractere · linha</span
+            ><span data-lang="en">delete character · line</span>
+          </p>
+        </div>
+        <div class="card">
+          <h3><span class="kbd">u</span> · <span class="kbd">Ctrl-r</span></h3>
+          <p>
+            <span data-lang="pt">desfazer · refazer</span
+            ><span data-lang="en">undo · redo</span>
+          </p>
+        </div>
+        <div class="card">
+          <h3><span class="kbd">:w</span> · <span class="kbd">:q</span></h3>
+          <p>
+            <span data-lang="pt">salvar · sair</span
+            ><span data-lang="en">write · quit</span>
+          </p>
+        </div>
+        <div class="card">
+          <h3><span class="kbd">:wq</span> · <span class="kbd">:q!</span></h3>
+          <p>
+            <span data-lang="pt">salvar e sair · descartar</span
+            ><span data-lang="en">save and quit · discard</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="callout key">
+        <span data-lang="pt"
+          >Perdido?
+          <strong
+            >Pressione <span class="kbd">Esc</span>, pense no objetivo, execute
+            um comando.</strong
+          ></span
+        ><span data-lang="en"
+          >Lost?
+          <strong
+            >Press <span class="kbd">Esc</span>, name the goal, run one
+            command.</strong
+          ></span
+        >
+      </div>
+
+      <footer class="lesson-foot">
+        <a href="../lessons/0001-vim-core-loop.html"
+          >← <span data-lang="pt">Lição e treino</span
+          ><span data-lang="en">Lesson and drill</span></a
+        ><a href="../../../index.html">⬡ Hub</a>
+      </footer>
+    </article>
+  </Fragment>
+</Lesson>

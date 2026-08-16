@@ -1,0 +1,84 @@
+---
+// Migrated verbatim from public/topics/clearone-interview/reference/my-stories.html (URL unchanged: builds to my-stories.html).
+// Body is is:raw: braces/inline scripts/JSON blocks pass through untouched.
+import Lesson from "../../../../layouts/Lesson.astro";
+const titlePt = "Minhas histórias — preview";
+const titleEn = "My stories — preview";
+const titleFallback = "My stories — preview";
+const bodyClass = "lang-pt";
+const htmlLang = "en";
+const viewport = "width=device-width, initial-scale=1.0";
+const assets = [
+	"<link rel=\"stylesheet\" href=\"../assets/style.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/dark.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/i18n.css\" />",
+	"<script src=\"../assets/i18n.js\" defer></script>",
+	"<script src=\"../assets/nav.js\" defer></script>",
+	"<script src=\"https://cdn.jsdelivr.net/npm/marked/marked.min.js\"></script>",
+];
+const pageStyle = "#md-content {\n        max-width: 820px;\n        margin: 0 auto;\n        padding: 0 0 120px;\n        color: var(--ink);\n        font-size: 1rem;\n        line-height: 1.7;\n      }\n      #md-content h1 {\n        font-family: \"Space Grotesk\";\n        font-size: 1.8rem;\n        margin: 40px 0 10px;\n      }\n      #md-content h2 {\n        font-family: \"Space Grotesk\";\n        font-size: 1.35rem;\n        margin: 32px 0 8px;\n        color: var(--violet);\n        border-bottom: 1px solid var(--line);\n        padding-bottom: 6px;\n      }\n      #md-content h3 {\n        font-family: \"Space Grotesk\";\n        font-size: 1.12rem;\n        margin: 20px 0 6px;\n        color: var(--teal);\n      }\n      #md-content p {\n        margin: 10px 0;\n        color: var(--ink-soft);\n      }\n      #md-content strong {\n        color: var(--ink);\n      }\n      #md-content em {\n        color: var(--ink);\n      }\n      #md-content table {\n        width: 100%;\n        border-collapse: collapse;\n        margin: 14px 0;\n        font-size: 0.86rem;\n        display: block;\n        overflow-x: auto;\n      }\n      #md-content th,\n      #md-content td {\n        padding: 8px 12px;\n        border: 1px solid var(--line);\n        text-align: left;\n        vertical-align: top;\n        white-space: normal;\n      }\n      #md-content th {\n        background: var(--violet-50);\n        font-family: \"Space Grotesk\";\n        color: var(--ink);\n      }\n      #md-content td {\n        color: var(--ink-soft);\n      }\n      #md-content blockquote {\n        border-left: 4px solid var(--violet);\n        padding: 8px 16px;\n        margin: 12px 0;\n        background: var(--violet-50);\n        border-radius: 0 8px 8px 0;\n        color: var(--ink);\n      }\n      #md-content code {\n        font-family: \"JetBrains Mono\";\n        background: var(--violet-50);\n        color: var(--violet);\n        padding: 1px 5px;\n        border-radius: 4px;\n        font-size: 0.86em;\n      }\n      #md-content ul,\n      #md-content ol {\n        margin: 8px 0;\n        padding-left: 24px;\n        color: var(--ink-soft);\n      }\n      #md-content li {\n        margin: 4px 0;\n      }\n      #md-content hr {\n        border: 0;\n        border-top: 1px solid var(--line);\n        margin: 24px 0;\n      }\n      #md-fallback {\n        text-align: center;\n        padding: 60px 22px;\n        color: var(--ink-soft);\n      }\n      #md-fallback b {\n        color: var(--amber);\n      }";
+
+---
+<Lesson
+	titlePt={titlePt}
+	titleEn={titleEn}
+	titleFallback={titleFallback}
+	bodyClass={bodyClass}
+	htmlLang={htmlLang}
+	viewport={viewport}
+	assets={assets}
+	pageStyle={pageStyle}
+>
+	<Fragment is:raw>
+    <article class="lesson">
+      <header class="hero">
+        <span class="eyebrow">📖 Reference · Live preview</span>
+        <h1>My stories</h1>
+        <p class="lead">
+          Your behavioral story bank — BLUF + STAR + depth-reserve for every
+          story. Rendered live from
+          <code
+            style="
+              background: rgba(255, 255, 255, 0.18);
+              padding: 1px 6px;
+              border-radius: 5px;
+            "
+            >my-stories.md</code
+          >.
+        </p>
+      </header>
+      <div id="md-content"></div>
+      <div id="md-fallback" style="display: none">
+        <p>⚠️ <b>Can't load the file.</b></p>
+        <p style="margin-top: 8px">
+          This page fetches the markdown at runtime. Open it via
+          <b>Live Server</b> (<code>http://127.0.0.1:5500</code>), not
+          <code>file://</code>.
+        </p>
+      </div>
+    </article>
+    <script>
+      (function () {
+        const target = document.getElementById("md-content");
+        const fallback = document.getElementById("md-fallback");
+        fetch("../../behavioral-interview/my-stories.md")
+          .then(function (r) {
+            if (!r.ok) throw new Error(r.status);
+            return r.text();
+          })
+          .then(function (md) {
+            const html = marked.parse(md);
+            const doc = new DOMParser().parseFromString(html, "text/html");
+            target.replaceChildren.apply(
+              target,
+              Array.from(doc.body.childNodes),
+            );
+          })
+          .catch(function () {
+            target.style.display = "none";
+            fallback.style.display = "block";
+          });
+      })();
+    </script>
+  </Fragment>
+</Lesson>

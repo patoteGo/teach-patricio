@@ -1,0 +1,530 @@
+---
+// Migrated verbatim from public/topics/software-concepts/lessons/0007-aws-sqs.html (URL unchanged: builds to 0007-aws-sqs.html).
+// Body is is:raw: braces/inline scripts/JSON blocks pass through untouched.
+import Lesson from "../../../../layouts/Lesson.astro";
+const titlePt = "AWS SQS — a fila que desacopla";
+const titleEn = "AWS SQS — the queue that decouples";
+const titleFallback = "AWS SQS";
+const bodyClass = "lang-pt";
+const viewport = "width=device-width,initial-scale=1.0";
+const assets = [
+	"<link rel=\"stylesheet\" href=\"../assets/style.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/dark.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/i18n.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/concepts.css\" />",
+	"<script src=\"../assets/i18n.js\" defer></script>",
+	"<script src=\"../assets/nav.js\" defer></script>",
+	"<script src=\"../assets/reading-ui.js\" defer></script>",
+	"<script src=\"../assets/concepts.js\" defer></script>",
+];
+
+---
+<Lesson
+	titlePt={titlePt}
+	titleEn={titleEn}
+	titleFallback={titleFallback}
+	bodyClass={bodyClass}
+	viewport={viewport}
+	assets={assets}
+>
+	<Fragment is:raw>
+    <article class="lesson">
+      <header class="hero">
+        <span class="eyebrow"
+          >⬡ <span data-lang="pt">Conceitos · AWS SQS</span
+          ><span data-lang="en">Concepts · AWS SQS</span></span
+        >
+        <h1>
+          <span data-lang="pt"
+            >A fila não torna nada mais rápido. Torna tudo à prova de
+            queda.</span
+          ><span data-lang="en"
+            >The queue doesn't make anything faster. It makes everything
+            crash-proof.</span
+          >
+        </h1>
+        <p class="lead">
+          <span data-lang="pt"
+            >SQS é um Correio entre seus serviços: o produtor deixa a mensagem e
+            vai embora; o consumidor pega quando puder. Lembre da
+            <a href="0005-estimation.html">estimativa</a>: “fila assíncrona +
+            shard” era o nível de 100M DAU —
+            <strong>esta é a fila</strong>.</span
+          ><span data-lang="en"
+            >SQS is a post office between your services: the producer drops the
+            message and leaves; the consumer picks it up when it can. Remember
+            the <a href="0005-estimation.html">estimation</a> lesson: “async
+            queue + shard” was the 100M-DAU level —
+            <strong>this is the queue</strong>.</span
+          >
+        </p>
+      </header>
+      <nav class="concept-nav">
+        <a href="0006-cache-hit-rate.html"
+          ><span data-lang="pt">← Cache</span
+          ><span data-lang="en">← Cache</span></a
+        ><a href="0005-estimation.html"
+          ><span data-lang="pt">Estimativa</span
+          ><span data-lang="en">Estimation</span></a
+        ><a href="../reference/software-concepts-cheatsheet.html"
+          ><span data-lang="pt">Folha</span><span data-lang="en">Cheat</span></a
+        ><a href="0008-aws-s3.html"
+          ><span data-lang="pt">S3 →</span><span data-lang="en">S3 →</span></a
+        >
+      </nav>
+
+      <h2 class="section">
+        <span class="num">1</span
+        ><span data-lang="pt">O problema que a fila resolve</span
+        ><span data-lang="en">The problem the queue solves</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >Sem fila, quem recebe pedidos tem que aguentar o
+          <strong>pico</strong>: se o checkout chama o e-mail a cada venda, uma
+          Black Friday derruba o serviço de e-mail — e junto o checkout, que
+          esperava a resposta.</span
+        ><span data-lang="en"
+          >Without a queue, the receiver must absorb the <strong>peak</strong>:
+          if checkout calls email-sender on every sale, a Black Friday crushes
+          the email service — and takes checkout down with it, because checkout
+          was waiting on the response.</span
+        >
+      </p>
+      <p>
+        <span data-lang="pt"
+          >Com fila, o produtor <strong>deixa a mensagem em ~10ms</strong> e
+          responde ao usuário. O consumidor processa no ritmo que conseguir. Se
+          cair, reinicia e continua de onde parou.</span
+        ><span data-lang="en"
+          >With a queue, the producer
+          <strong>drops the message in ~10ms</strong> and responds to the user.
+          The consumer processes at whatever pace it can. If it crashes, it
+          restarts and picks up where it left off.</span
+        >
+      </p>
+      <div class="callout key">
+        <p>
+          <span data-lang="pt"
+            ><strong>Fila = amortecimento de pico + desacoplamento.</strong> O
+            pico vira uma fila que esvazia aos poucos, em vez de um serviço que
+            morre. Produtor e consumidor nunca se falam diretamente.</span
+          ><span data-lang="en"
+            ><strong>Queue = peak absorption + decoupling.</strong> The spike
+            becomes a queue that drains slowly, instead of a service that dies.
+            Producer and consumer never talk directly.</span
+          >
+        </p>
+      </div>
+
+      <h2 class="section">
+        <span class="num">2</span
+        ><span data-lang="pt">O modelo mental (3 atores)</span
+        ><span data-lang="en">The mental model (3 actors)</span>
+      </h2>
+      <div class="flow-board" data-flow>
+        <div class="flow-row">
+          <span class="step">1</span>
+          <div>
+            <b
+              ><span data-lang="pt">Produtor → SendMessage</span
+              ><span data-lang="en">Producer → SendMessage</span></b
+            >
+            <p>
+              <span data-lang="pt"
+                >Grava a mensagem na fila (até 256 KB) e sai. Não sabe — nem
+                liga — quem vai processar.</span
+              ><span data-lang="en"
+                >Puts the message in the queue (up to 256 KB) and leaves.
+                Doesn't know — or care — who will process it.</span
+              >
+            </p>
+          </div>
+        </div>
+        <div class="flow-row">
+          <span class="step">2</span>
+          <div>
+            <b
+              ><span data-lang="pt">Fila (SQS) — guarda, não entrega</span
+              ><span data-lang="en">Queue (SQS) — stores, doesn't push</span></b
+            >
+            <p>
+              <span data-lang="pt"
+                >A mensagem fica guardada (até 14 dias). Ninguém é notificado:
+                quem quer mensagem <em>puxa</em> (polling).</span
+              ><span data-lang="en"
+                >The message sits stored (up to 14 days). Nobody is notified:
+                whoever wants a message <em>pulls</em> (polling).</span
+              >
+            </p>
+          </div>
+        </div>
+        <div class="flow-row">
+          <span class="step">3</span>
+          <div>
+            <b
+              ><span data-lang="pt">Consumidor → ReceiveMessage</span
+              ><span data-lang="en">Consumer → ReceiveMessage</span></b
+            >
+            <p>
+              <span data-lang="pt"
+                >Puxa um lote de mensagens e as processa.
+                <strong>Receber ≠ processar</strong> — a mensagem ainda é
+                dele.</span
+              ><span data-lang="en"
+                >Pulls a batch of messages and processes them.
+                <strong>Receiving ≠ processing</strong> — the message is still
+                its responsibility.</span
+              >
+            </p>
+          </div>
+        </div>
+        <div class="flow-row">
+          <span class="step">4</span>
+          <div>
+            <b
+              ><span data-lang="pt">DeleteMessage</span
+              ><span data-lang="en">DeleteMessage</span></b
+            >
+            <p>
+              <span data-lang="pt"
+                >Só depois de processar com sucesso, o consumidor apaga. Se ele
+                morrer antes, a mensagem <strong>volta sozinha</strong>.</span
+              ><span data-lang="en"
+                >Only after successful processing does the consumer delete. If
+                it dies before that, the message
+                <strong>comes back on its own</strong>.</span
+              >
+            </p>
+          </div>
+        </div>
+        <div class="flow-controls">
+          <button type="button" data-next>
+            <span data-lang="pt">Próxima etapa →</span
+            ><span data-lang="en">Next step →</span>
+          </button>
+          <button type="button" data-reset>
+            <span data-lang="pt">Reiniciar</span
+            ><span data-lang="en">Reset</span>
+          </button>
+          <span class="flow-status" data-flow-status></span>
+        </div>
+      </div>
+
+      <h2 class="section">
+        <span class="num">3</span
+        ><span data-lang="pt"
+          >O detalhe que todo mundo erra: visibility timeout</span
+        ><span data-lang="en"
+          >The detail everyone misses: visibility timeout</span
+        >
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >Quando o consumidor puxa uma mensagem, ela não sai da fila — fica
+          <strong>invisível</strong> por um tempo (o
+          <em>visibility timeout</em>, padrão 30s). Se o consumidor processar e
+          apagar, fim. Se ele travar, o timer expira, a mensagem volta a ficar
+          visível e outro consumidor puxa.</span
+        ><span data-lang="en"
+          >When the consumer pulls a message, it doesn't leave the queue — it
+          goes <strong>invisible</strong> for a while (the
+          <em>visibility timeout</em>, default 30s). If the consumer processes
+          and deletes, done. If it hangs, the timer expires, the message becomes
+          visible again, and another consumer pulls it.</span
+        >
+      </p>
+      <div class="callout warn">
+        <p>
+          <span data-lang="pt"
+            ><strong>Consequência direta: entrega “pelo menos uma vez”.</strong>
+            O processamento pode rodar <em>duas vezes</em> (timer curto demais,
+            rede lenta, consumidor lento). Seu consumidor precisa ser
+            <strong>idempotente</strong>: processar a mesma mensagem duas vezes
+            não pode cobrar dois cartões nem enviar dois e-mails.</span
+          ><span data-lang="en"
+            ><strong>Direct consequence: at-least-once delivery.</strong>
+            Processing may run <em>twice</em> (timer too short, slow network,
+            slow consumer). Your consumer must be <strong>idempotent</strong>:
+            processing the same message twice must not charge two cards or send
+            two emails.</span
+          >
+        </p>
+      </div>
+      <p>
+        <span data-lang="pt"
+          >Regra prática: visibility timeout > tempo máximo de processamento
+          (com folga ~6×). E use <em>long polling</em> (WaitTimeSeconds=20): o
+          consumidor espera em vez de pergunta a cada segundo — mais barato e
+          sem fila vazia sendo consultada.</span
+        ><span data-lang="en"
+          >Rule of thumb: visibility timeout > max processing time (with ~6×
+          headroom). And use <em>long polling</em> (WaitTimeSeconds=20): the
+          consumer waits instead of asking every second — cheaper and no empty
+          queue being hammered.</span
+        >
+      </p>
+
+      <h2 class="section">
+        <span class="num">4</span><span data-lang="pt">Standard vs FIFO</span
+        ><span data-lang="en">Standard vs FIFO</span>
+      </h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th></th>
+              <th>Standard</th>
+              <th>FIFO</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <span data-lang="pt">Ordem</span
+                ><span data-lang="en">Order</span>
+              </td>
+              <td>
+                <span data-lang="pt">não garante (chega “quase sempre”)</span
+                ><span data-lang="en">not guaranteed (“usually” in order)</span>
+              </td>
+              <td>
+                <span data-lang="pt">garantida (por MessageGroupId)</span
+                ><span data-lang="en">guaranteed (per MessageGroupId)</span>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="pt">Entrega</span
+                ><span data-lang="en">Delivery</span>
+              </td>
+              <td>
+                <span data-lang="pt">pelo menos uma vez (pode duplicar)</span
+                ><span data-lang="en">at least once (may duplicate)</span>
+              </td>
+              <td>
+                <span data-lang="pt">exatamente uma vez (processamento)</span
+                ><span data-lang="en">exactly once (processing)</span>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="pt">Throughput</span
+                ><span data-lang="en">Throughput</span>
+              </td>
+              <td>
+                <span data-lang="pt">praticamente ilimitado</span
+                ><span data-lang="en">practically unlimited</span>
+              </td>
+              <td>
+                <span data-lang="pt">limitado (~300 msg/s por grupo)</span
+                ><span data-lang="en">limited (~300 msg/s per group)</span>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="pt">Use quando</span
+                ><span data-lang="en">Use when</span>
+              </td>
+              <td>
+                <span data-lang="pt"
+                  >enviar e-mail, gerar thumbnail, 99% dos casos</span
+                ><span data-lang="en"
+                  >send email, generate thumbnail, 99% of cases</span
+                >
+              </td>
+              <td>
+                <span data-lang="pt">ordem importa: débito/conta, registro</span
+                ><span data-lang="en"
+                  >order matters: ledger/account, sign-up sequence</span
+                >
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout tip">
+        <p>
+          <span data-lang="pt"
+            ><strong>Default honesto: Standard.</strong> FIFO é o remédio para
+            “a ordem importa” — se a ordem não importa e você escolheu FIFO,
+            você pagou throughput por nada. Mensagens que falham repetidamente
+            vão para uma <strong>DLQ</strong> (dead-letter queue) em vez de
+            rodar em loop para sempre.</span
+          ><span data-lang="en"
+            ><strong>Honest default: Standard.</strong> FIFO is the cure for
+            “order matters” — if order doesn't matter and you picked FIFO, you
+            paid throughput for nothing. Messages that fail repeatedly go to a
+            <strong>DLQ</strong> (dead-letter queue) instead of looping
+            forever.</span
+          >
+        </p>
+      </div>
+
+      <h2 class="section">
+        <span class="num">5</span
+        ><span data-lang="pt">A jogada de entrevista (30 segundos)</span
+        ><span data-lang="en">The interview move (30 seconds)</span>
+      </h2>
+      <div class="code-stage">
+        <pre><code><span data-lang="pt"><span style="color:#8b88b8">// checkout: registra e segue a vida (~10ms)</span>
+aws sqs send-message \
+  --queue-url $ORDERS_QUEUE \
+  --message-body '{"orderId": 42, "email": "ana@ex.com"}'
+
+<span style="color:#8b88b8">// worker: puxa até 10, processa 20s, apaga</span>
+aws sqs receive-message \
+  --queue-url $ORDERS_QUEUE \
+  --max-number-of-messages 10 \
+  --wait-time-seconds 20
+
+aws sqs delete-message \
+  --queue-url $ORDERS_QUEUE \
+  --receipt-handle $HANDLE</span><span data-lang="en"><span style="color:#8b88b8">// checkout: record and move on (~10ms)</span>
+aws sqs send-message \
+  --queue-url $ORDERS_QUEUE \
+  --message-body '{"orderId": 42, "email": "ana@ex.com"}'
+
+<span style="color:#8b88b8">// worker: pull up to 10, process 20s, delete</span>
+aws sqs receive-message \
+  --queue-url $ORDERS_QUEUE \
+  --max-number-of-messages 10 \
+  --wait-time-seconds 20
+
+aws sqs delete-message \
+  --queue-url $ORDERS_QUEUE \
+  --receipt-handle $HANDLE</span></code></pre>
+      </div>
+      <div class="callout key">
+        <p>
+          <span data-lang="pt"
+            ><strong>Frase que fecha a questão:</strong> “Coloco um SQS entre o
+            checkout e o e-mail: o checkout responde em ~10ms mesmo no pico, o
+            worker escala pelo comprimento da fila (CloudWatch), e se um worker
+            morrer a mensagem volta pelo visibility timeout. Consumidor
+            idempotente + DLQ para as venenosas.”</span
+          ><span data-lang="en"
+            ><strong>The sentence that closes the question:</strong> “I put SQS
+            between checkout and email: checkout responds in ~10ms even at peak,
+            the worker scales on queue depth (CloudWatch), and if a worker dies
+            the message returns via visibility timeout. Idempotent consumer +
+            DLQ for the poisonous ones.”</span
+          >
+        </p>
+      </div>
+
+      <div class="mcq" data-mcq>
+        <p class="mcq-q">
+          <span data-lang="pt"
+            >O worker recebeu a mensagem, travou no meio do processamento e
+            nunca chamou DeleteMessage. O que acontece?</span
+          ><span data-lang="en"
+            >The worker received the message, hung mid-processing, and never
+            called DeleteMessage. What happens?</span
+          >
+        </p>
+        <div class="mcq-opts">
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="A mensagem não sai da fila no Receive — fica invisível. Só o Delete a remove."
+            data-fb-en="The message doesn't leave the queue on Receive — it goes invisible. Only Delete removes it."
+          >
+            <span data-lang="pt">A mensagem se perde</span
+            ><span data-lang="en">The message is lost</span>
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="true"
+            data-fb-pt="Exato: o visibility timeout expira, a mensagem volta a ficar visível e outro worker puxa. Por isso o processamento pode rodar duas vezes — consumidor idempotente."
+            data-fb-en="Exactly: the visibility timeout expires, the message becomes visible again, and another worker pulls it. That's why processing may run twice — idempotent consumer."
+          >
+            <span data-lang="pt"
+              >O visibility timeout expira e outro worker recebe a mesma
+              mensagem</span
+            ><span data-lang="en"
+              >The visibility timeout expires and another worker gets the same
+              message</span
+            >
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="SQS não sabe — e não julga — se o worker travou. Só marca tempo. É você quem apaga."
+            data-fb-en="SQS doesn't know — or judge — that the worker hung. It only counts time. You do the deleting."
+          >
+            <span data-lang="pt"
+              >O SQS detecta o travamento e reinicia o worker</span
+            ><span data-lang="en"
+              >SQS detects the hang and restarts the worker</span
+            >
+          </button>
+        </div>
+        <div class="mcq-fb" data-fb></div>
+      </div>
+
+      <div class="mcq" data-mcq>
+        <p class="mcq-q">
+          <span data-lang="pt"
+            >Sua fila Standard duplicou uma entrega e o cliente recebeu dois
+            e-mails. Culpa do SQS?</span
+          ><span data-lang="en"
+            >Your Standard queue duplicated a delivery and the customer got two
+            emails. SQS's fault?</span
+          >
+        </p>
+        <div class="mcq-opts">
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="Escolher FIFO não elimina a raiz: seu consumidor precisa ser idempotente de qualquer forma (rede também repete)."
+            data-fb-en="Switching to FIFO doesn't fix the root: your consumer needs to be idempotent anyway (networks repeat too)."
+          >
+            <span data-lang="pt">Sim — deveria ter usado FIFO</span
+            ><span data-lang="en">Yes — should have used FIFO</span>
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="true"
+            data-fb-pt="Correto: Standard promete “pelo menos uma vez”, e isso é documentado. O contrato do consumidor é tratar duplicata como normal (chave de idempotência: orderId no banco antes de agir)."
+            data-fb-en="Correct: Standard promises “at least once,” and that's documented. The consumer's contract is to treat duplicates as normal (idempotency key: check orderId in the DB before acting)."
+          >
+            <span data-lang="pt"
+              >Não — duplicata é esperado; consumidor tem que ser
+              idempotente</span
+            ><span data-lang="en"
+              >No — duplicates are expected; the consumer must be
+              idempotent</span
+            >
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="visibility timeout maior reduz duplicatas, mas não garante zero. Idempotência é a única defesa completa."
+            data-fb-en="A longer visibility timeout reduces duplicates, but guarantees nothing. Idempotency is the only complete defense."
+          >
+            <span data-lang="pt"
+              >Sim — configurei o visibility timeout errado</span
+            ><span data-lang="en"
+              >Yes — I configured the visibility timeout wrong</span
+            >
+          </button>
+        </div>
+        <div class="mcq-fb" data-fb></div>
+      </div>
+
+      <p class="cite-line">
+        <span data-lang="pt">Revisão:</span><span data-lang="en">Review:</span>
+        <a href="0005-estimation.html"
+          ><span data-lang="pt">Estimativa (quando a fila se justifica)</span
+          ><span data-lang="en">Estimation (when a queue is justified)</span></a
+        >
+        ·
+        <a
+          href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html"
+          >AWS SQS Developer Guide</a
+        >.
+      </p>
+    </article>
+  </Fragment>
+</Lesson>

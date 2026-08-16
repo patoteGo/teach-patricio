@@ -1,0 +1,633 @@
+---
+// Migrated verbatim from public/topics/software-company/reference/fluxo-de-uma-requisicao.html (URL unchanged: builds to fluxo-de-uma-requisicao.html).
+// Body is is:raw: braces/inline scripts/JSON blocks pass through untouched.
+import Lesson from "../../../../layouts/Lesson.astro";
+const titlePt = "Zapt · Referência — Como uma requisição viaja";
+const titleEn = "Zapt · Reference — How a request travels";
+const titleFallback = "Zapt · Referência — Como uma requisição viaja";
+const bodyClass = "lang-pt";
+const viewport = "width=device-width, initial-scale=1.0";
+const assets = [
+	"<link rel=\"stylesheet\" href=\"../assets/style.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/dark.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/i18n.css\" />",
+	"<script src=\"../assets/i18n.js\" defer></script>",
+	"<script src=\"../assets/nav.js\" defer></script>",
+];
+const pageStyle = ".flow-stage {\n        display: flex;\n        gap: 12px;\n        align-items: flex-start;\n        background: var(--paper-2);\n        border: 1px solid var(--line);\n        border-left: 4px solid var(--violet);\n        border-radius: 12px;\n        padding: 12px 14px;\n        box-shadow: var(--shadow);\n      }\n      .flow-stage .fs-icon {\n        font-size: 1.4rem;\n        line-height: 1.2;\n        flex: none;\n      }\n      .flow-stage b {\n        font-size: 1rem;\n      }\n      .flow-stage .fs-note {\n        font-size: 0.9rem;\n        color: var(--ink-soft);\n        margin-top: 2px;\n      }\n      .flow-arrow {\n        text-align: center;\n        font-size: 1.3rem;\n        color: var(--ink-soft);\n        font-weight: 700;\n        line-height: 1;\n        margin: 4px 0;\n      }\n      .gates {\n        display: flex;\n        flex-direction: column;\n        gap: 0;\n      }\n      .gate {\n        display: flex;\n        align-items: center;\n        gap: 10px;\n        background: var(--amber-50);\n        border: 1px solid #fde2b0;\n        border-radius: 10px;\n        padding: 8px 12px;\n        font-size: 0.9rem;\n      }\n      .gate .gn {\n        font: 700 0.7rem \"JetBrains Mono\";\n        color: var(--amber);\n        background: #fff;\n        border: 1px solid #fde2b0;\n        border-radius: 6px;\n        padding: 2px 6px;\n        flex: none;\n      }\n      .onion {\n        display: grid;\n        gap: 8px;\n      }\n      .layer {\n        border-radius: 10px;\n        padding: 10px 14px;\n        border: 1px solid var(--line);\n        font-size: 0.92rem;\n      }\n      .layer .dep {\n        font: 600 0.72rem \"JetBrains Mono\";\n        color: var(--teal);\n      }";
+
+---
+<Lesson
+	titlePt={titlePt}
+	titleEn={titleEn}
+	titleFallback={titleFallback}
+	bodyClass={bodyClass}
+	viewport={viewport}
+	assets={assets}
+	pageStyle={pageStyle}
+>
+	<Fragment is:raw>
+    <article class="lesson">
+      <header class="hero">
+        <span class="eyebrow"
+          ><span data-lang="pt">⬡ Referência · Zapt</span
+          ><span data-lang="en">⬡ Reference · Zapt</span></span
+        >
+        <h1>
+          <span data-lang="pt">Como uma requisição<br />viaja no Zapt.</span
+          ><span data-lang="en">How a request<br />travels in Zapt.</span>
+        </h1>
+        <p class="lead">
+          <span data-lang="pt"
+            >O mapa que faz o app inteiro fazer sentido. Quando algum pedaço
+            parecer mágico — o cookie, o SSR, o middleware, as camadas — volte
+            aqui. É o caminho completo de um clique até o banco e de
+            volta.</span
+          ><span data-lang="en"
+            >The map that makes the whole app make sense. When some piece feels
+            magical — the cookie, SSR, middleware, the layers — come back here.
+            It's the full path from a click to the database and back.</span
+          >
+        </p>
+      </header>
+
+      <!-- ===== 1. O MAPA COMPLETO ===== -->
+      <h2 class="section">
+        <span class="num">1</span><span data-lang="pt">O mapa completo</span
+        ><span data-lang="en">The full map</span>
+      </h2>
+      <p class="kicker">
+        <span data-lang="pt"
+          >Siga de cima para baixo. Cores = camadas (azul = frontend, cinza =
+          rede, âmbar = middleware, violeta = aplicação/domínio, verde =
+          banco).</span
+        ><span data-lang="en"
+          >Read top to bottom. Colors = layers (blue = frontend, gray = network,
+          amber = middleware, violet = application/domain, green =
+          database).</span
+        >
+      </p>
+
+      <div
+        style="display: flex; flex-direction: column; gap: 0; margin-top: 18px"
+      >
+        <div class="flow-stage" style="border-left-color: #3b82f6">
+          <span class="fs-icon">👤</span>
+          <div>
+            <b>Navegador</b>
+            <div class="fs-note">
+              <span data-lang="pt"
+                >Usuário clica. O cookie de sessão (HttpOnly) vai junto —
+                <em>mesma origem</em>.</span
+              ><span data-lang="en"
+                >User clicks. The session cookie (HttpOnly) goes along —
+                <em>same origin</em>.</span
+              >
+            </div>
+          </div>
+        </div>
+        <div class="flow-arrow">
+          ↓ <span data-lang="pt">cookie anexado pelo browser</span
+          ><span data-lang="en">cookie attached by the browser</span>
+        </div>
+
+        <div class="flow-stage" style="border-left-color: #3b82f6">
+          <span class="fs-icon">🖥️</span>
+          <div>
+            <b>Astro SSR (Node — <code class="inline">@astrojs/node</code>)</b>
+            <div class="fs-note">
+              <span data-lang="pt"
+                >O <em>frontmatter</em> da página roda
+                <strong>no servidor</strong>, a cada request.</span
+              ><span data-lang="en"
+                >The page <em>frontmatter</em> runs
+                <strong>on the server</strong>, every request.</span
+              >
+            </div>
+          </div>
+        </div>
+        <div class="flow-arrow">↓</div>
+
+        <div class="flow-stage" style="border-left-color: #3b82f6">
+          <span class="fs-icon">📨</span>
+          <div>
+            <b><code class="inline">src/lib/api.ts</code></b>
+            <div class="fs-note">
+              <span data-lang="pt"
+                >No servidor, o <code class="inline">fetch</code> do Node
+                <strong>não</strong> envia o cookie do browser. O
+                <code class="inline">api.ts</code> adiciona o header
+                <code class="inline">Cookie:</code> manualmente.</span
+              ><span data-lang="en"
+                >On the server, Node's <code class="inline">fetch</code> does
+                <strong>not</strong> send the browser cookie.
+                <code class="inline">api.ts</code> adds the
+                <code class="inline">Cookie:</code> header manually.</span
+              >
+            </div>
+          </div>
+        </div>
+        <div class="flow-arrow">
+          ↓
+          <span data-lang="pt"
+            >HTTP <code class="inline">/api/...</code> (proxy Vite no dev)</span
+          ><span data-lang="en"
+            >HTTP <code class="inline">/api/...</code> (Vite proxy in dev)</span
+          >
+        </div>
+
+        <div class="flow-stage" style="border-left-color: #f59e0b">
+          <span class="fs-icon">🛡️</span>
+          <div>
+            <b
+              ><span data-lang="pt"
+                >Pipeline de middleware (.NET —
+                <code class="inline">Program.cs</code>)</span
+              ><span data-lang="en"
+                >Middleware pipeline (.NET —
+                <code class="inline">Program.cs</code>)</span
+              ></b
+            >
+            <div class="fs-note">
+              <span data-lang="pt"
+                >ExceptionHandler → CORS → StaticFiles → Authentication →
+                Authorization (a <em>ordem importa</em>, vê seção 4).</span
+              ><span data-lang="en"
+                >ExceptionHandler → CORS → StaticFiles → Authentication →
+                Authorization (<em>order matters</em>, see section 4).</span
+              >
+            </div>
+          </div>
+        </div>
+        <div class="flow-arrow">↓</div>
+
+        <div class="flow-stage" style="border-left-color: #6c4bf0">
+          <span class="fs-icon">🎮</span>
+          <div>
+            <b
+              >Controller
+              <span data-lang="pt"
+                >(ex: <code class="inline">TasksController</code>)</span
+              ><span data-lang="en"
+                >(e.g. <code class="inline">TasksController</code>)</span
+              ></b
+            >
+            <div class="fs-note">
+              <span data-lang="pt"
+                >Recebe a rota, chama o serviço. <strong>Sem</strong>
+                <code class="inline">try/catch</code> — o handler global cuida
+                dos erros.</span
+              ><span data-lang="en"
+                >Receives the route, calls the service. <strong>No</strong>
+                <code class="inline">try/catch</code> — the global handler deals
+                with errors.</span
+              >
+            </div>
+          </div>
+        </div>
+        <div class="flow-arrow">↓</div>
+
+        <div class="flow-stage" style="border-left-color: #6c4bf0">
+          <span class="fs-icon">🧠</span>
+          <div>
+            <b
+              >Service
+              <span data-lang="pt"
+                >(<code class="inline">Application</code>)</span
+              ><span data-lang="en"
+                >(<code class="inline">Application</code>)</span
+              ></b
+            >
+            <div class="fs-note">
+              <span data-lang="pt"
+                >Regras de uso (ex: concluir missão + creditar pontos = uma
+                transação, <em>Unit of Work</em>).</span
+              ><span data-lang="en"
+                >Use-case rules (e.g. complete mission + credit points = one
+                transaction, <em>Unit of Work</em>).</span
+              >
+            </div>
+          </div>
+        </div>
+        <div class="flow-arrow">↓</div>
+
+        <div class="flow-stage" style="border-left-color: #6c4bf0">
+          <span class="fs-icon">🔌</span>
+          <div>
+            <b
+              ><code class="inline">ITaskRepository</code>
+              <span data-lang="pt">(interface)</span
+              ><span data-lang="en">(interface)</span></b
+            >
+            <div class="fs-note">
+              <span data-lang="pt"
+                >O serviço depende da <strong>interface</strong>, não da
+                implementação. É por isso que dá pra trocar EF ↔ InMemory.</span
+              ><span data-lang="en"
+                >The service depends on the <strong>interface</strong>, not the
+                implementation. That's why you can swap EF ↔ InMemory.</span
+              >
+            </div>
+          </div>
+        </div>
+        <div class="flow-arrow">↓</div>
+
+        <div class="flow-stage" style="border-left-color: #0fb9a4">
+          <span class="fs-icon">🗄️</span>
+          <div>
+            <b
+              ><code class="inline">EfTaskRepository</code> → EF Core →
+              SQLite</b
+            >
+            <div class="fs-note">
+              <span data-lang="pt"
+                ><code class="inline">gerenciador.db</code> (arquivo).
+                <code class="inline">SaveChanges()</code> escreve. Fim da
+                ida.</span
+              ><span data-lang="en"
+                ><code class="inline">gerenciador.db</code> (file).
+                <code class="inline">SaveChanges()</code> writes. End of the
+                outbound trip.</span
+              >
+            </div>
+          </div>
+        </div>
+        <div class="flow-arrow">
+          ↩️
+          <span data-lang="pt"
+            >resposta sobe o mesmo caminho (SQL → JSON → HTML → tela)</span
+          ><span data-lang="en"
+            >response climbs back the same way (SQL → JSON → HTML →
+            screen)</span
+          >
+        </div>
+      </div>
+
+      <!-- ===== 2. MESMA ORIGEM ===== -->
+      <h2 class="section">
+        <span class="num">2</span
+        ><span data-lang="pt">Por que "mesma origem" é tudo</span
+        ><span data-lang="en">Why "same origin" is everything</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >O browser só anexa o cookie automaticamente quando o destino é a
+          <strong>mesma origem</strong> (mesmo domínio+porta). É por isso que no
+          <em>dev</em> existe o <strong>proxy do Vite</strong>: ele faz
+          <code class="inline">/api</code> parecer vir do próprio frontend
+          (<code class="inline">localhost:4321</code>), então o cookie vai. Em
+          produção, um <strong>reverse proxy</strong> (nginx/Caddy) faz o mesmo
+          — ou tudo quebra.</span
+        ><span data-lang="en"
+          >The browser only attaches the cookie automatically when the
+          destination is the <strong>same origin</strong> (same domain+port).
+          That's why <em>dev</em> has the <strong>Vite proxy</strong>: it makes
+          <code class="inline">/api</code> look like it comes from the frontend
+          itself (<code class="inline">localhost:4321</code>), so the cookie
+          travels. In production a <strong>reverse proxy</strong> (nginx/Caddy)
+          does the same — or everything breaks.</span
+        >
+      </p>
+      <div class="callout warn">
+        <p>
+          <span data-lang="pt"
+            ><strong
+              >Se um dia separar frontend e API em domínios diferentes:</strong
+            >
+            o cookie para de viajar. Teria que trocar
+            <code class="inline">SameSite=Lax</code> por
+            <code class="inline">None</code> +
+            <code class="inline">Secure</code> (HTTPS). Por isso o design
+            prefere <em>mesma origem</em>.</span
+          ><span data-lang="en"
+            ><strong
+              >If you ever split frontend and API into different
+              domains:</strong
+            >
+            the cookie stops traveling. You'd have to switch
+            <code class="inline">SameSite=Lax</code> to
+            <code class="inline">None</code> +
+            <code class="inline">Secure</code> (HTTPS). That's why the design
+            prefers <em>same origin</em>.</span
+          >
+        </p>
+      </div>
+
+      <!-- ===== 3. SSR COOKIE ===== -->
+      <h2 class="section">
+        <span class="num">3</span
+        ><span data-lang="pt">O truque do SSR: repassar o cookie</span
+        ><span data-lang="en">The SSR trick: forwarding the cookie</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >No servidor (Node), o <code class="inline">fetch</code> é "burro":
+          ele não conhece o browser, não envia o cookie do usuário. Então o
+          <code class="inline">api.ts</code> pega o cookie do pedido original e
+          <strong>cola manualmente</strong> no header ao chamar o .NET.</span
+        ><span data-lang="en"
+          >On the server (Node), <code class="inline">fetch</code> is "dumb": it
+          doesn't know the browser, it doesn't send the user's cookie. So
+          <code class="inline">api.ts</code> takes the cookie from the original
+          request and <strong>pastes it manually</strong> into the header when
+          calling .NET.</span
+        >
+      </p>
+      <pre
+        class="block"
+      ><span class="c">// SSR: Node precisa de URL absoluta + repassa o cookie do browser</span>
+headers: { ...(cookie ? { Cookie: cookie } : {}) }</pre>
+      <div class="callout tip">
+        <p>
+          <span data-lang="pt"
+            ><strong>Exercício ativo:</strong> apague essa linha do
+            <code class="inline">api.ts</code>. Auth quebra nas páginas SSR, mas
+            funciona no cliente (React ilha). Sentiu a diferença?</span
+          ><span data-lang="en"
+            ><strong>Active exercise:</strong> delete that line in
+            <code class="inline">api.ts</code>. Auth breaks on SSR pages but
+            still works on the client (React island). Feel the difference?</span
+          >
+        </p>
+      </div>
+
+      <!-- ===== 4. MIDDLEWARE ORDER ===== -->
+      <h2 class="section">
+        <span class="num">4</span
+        ><span data-lang="pt">O pipeline de middleware (a ordem importa)</span
+        ><span data-lang="en">The middleware pipeline (order matters)</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >Em <code class="inline">Program.cs</code>, cada
+          <code class="inline">Use...()</code> é um "portão" pela qual a
+          requisição passa, <strong>na ordem</strong>. Trocar a ordem quebra
+          coisas:</span
+        ><span data-lang="en"
+          >In <code class="inline">Program.cs</code>, each
+          <code class="inline">Use...()</code> is a "gate" the request passes
+          through, <strong>in order</strong>. Swapping the order breaks
+          things:</span
+        >
+      </p>
+      <div class="gates" style="margin-top: 12px">
+        <div class="gate">
+          <span class="gn">1</span> <b>ExceptionHandler</b> —
+          <span data-lang="pt"
+            >envolve tudo; traduz <code class="inline">DomainException</code> em
+            400.</span
+          ><span data-lang="en"
+            >wraps everything; turns
+            <code class="inline">DomainException</code> into 400.</span
+          >
+        </div>
+        <div class="flow-arrow">↓</div>
+        <div class="gate">
+          <span class="gn">2</span> <b>CORS</b> —
+          <span data-lang="pt">deixa o frontend chamar (com credencial).</span
+          ><span data-lang="en"
+            >lets the frontend call (with credentials).</span
+          >
+        </div>
+        <div class="flow-arrow">↓</div>
+        <div class="gate">
+          <span class="gn">3</span> <b>StaticFiles</b> —
+          <span data-lang="pt"
+            >serve <code class="inline">/uploads/...</code> (fotos de
+            comprovação).</span
+          ><span data-lang="en"
+            >serves <code class="inline">/uploads/...</code> (proof
+            photos).</span
+          >
+        </div>
+        <div class="flow-arrow">↓</div>
+        <div class="gate">
+          <span class="gn">4</span> <b>Authentication</b> —
+          <span data-lang="pt">lê o cookie → "quem é você?".</span
+          ><span data-lang="en">reads the cookie → "who are you?".</span>
+        </div>
+        <div class="flow-arrow">↓</div>
+        <div class="gate">
+          <span class="gn">5</span> <b>Authorization</b> —
+          <span data-lang="pt"
+            >aplica <code class="inline">[Authorize]</code> → "você
+            pode?".</span
+          ><span data-lang="en"
+            >applies <code class="inline">[Authorize]</code> → "are you
+            allowed?".</span
+          >
+        </div>
+        <div class="flow-arrow">↓</div>
+        <div class="gate">
+          <span class="gn">6</span> <b>MapControllers</b> —
+          <span data-lang="pt">finalmente chega no controller.</span
+          ><span data-lang="en">finally reaches the controller.</span>
+        </div>
+      </div>
+      <div class="callout warn">
+        <p>
+          <span data-lang="pt"
+            ><strong>Predict:</strong> e se
+            <code class="inline">UseAuthentication</code> rodasse
+            <em>depois</em> de <code class="inline">MapControllers</code>? O
+            controller rodaria antes do login ser lido — auth nunca se
+            aplica.</span
+          ><span data-lang="en"
+            ><strong>Predict:</strong> what if
+            <code class="inline">UseAuthentication</code> ran <em>after</em>
+            <code class="inline">MapControllers</code>? The controller would run
+            before login is read — auth never applies.</span
+          >
+        </p>
+      </div>
+
+      <!-- ===== 5. LAYERS ===== -->
+      <h2 class="section">
+        <span class="num">5</span
+        ><span data-lang="pt">As camadas — a dependência aponta pra dentro</span
+        ><span data-lang="en">The layers — dependency points inward</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >A regra de ouro do Clean Architecture: as setas de dependência sempre
+          apontam <strong>pra dentro</strong>. O
+          <code class="inline">Core</code> (domínio) não conhece ninguém.</span
+        ><span data-lang="en"
+          >The golden rule of Clean Architecture: dependency arrows always point
+          <strong>inward</strong>. <code class="inline">Core</code> (domain)
+          knows nobody.</span
+        >
+      </p>
+      <div class="onion" style="margin-top: 12px">
+        <div class="layer" style="background: var(--violet-50)">
+          <b>GerenciadorTasksApi</b>
+          <span data-lang="pt"
+            >— controllers, middleware, composição (<code class="inline"
+              >Program.cs</code
+            >).</span
+          ><span data-lang="en"
+            >— controllers, middleware, composition (<code class="inline"
+              >Program.cs</code
+            >).</span
+          >
+          <span class="dep"
+            ><span data-lang="pt">depende de → Application, Infrastructure</span
+            ><span data-lang="en"
+              >depends on → Application, Infrastructure</span
+            ></span
+          >
+        </div>
+        <div class="layer" style="background: var(--teal-50)">
+          <b>Infrastructure</b> — EF Core,
+          <code class="inline">Ef*Repository</code>, BCrypt.
+          <span data-lang="pt">Implementa as interfaces.</span
+          ><span data-lang="en">Implements the interfaces.</span>
+          <span class="dep"
+            ><span data-lang="pt"
+              >depende de → Application (interfaces), Core</span
+            ><span data-lang="en"
+              >depends on → Application (interfaces), Core</span
+            ></span
+          >
+        </div>
+        <div class="layer" style="background: #eef2ff">
+          <b>Application</b> — Services, DTOs,
+          <code class="inline">I*Repository</code>,
+          <code class="inline">IUnitOfWork</code>.
+          <span class="dep"
+            ><span data-lang="pt">depende de → Core</span
+            ><span data-lang="en">depends on → Core</span></span
+          >
+        </div>
+        <div
+          class="layer"
+          style="background: #fff; border: 2px solid var(--violet)"
+        >
+          <b>Core</b>
+          <span data-lang="pt"
+            >— entidades, enums, invariantes,
+            <code class="inline">DomainException</code>.</span
+          ><span data-lang="en"
+            >— entities, enums, invariants,
+            <code class="inline">DomainException</code>.</span
+          >
+          <span class="dep"
+            ><span data-lang="pt">depende de → ninguém 🎯</span
+            ><span data-lang="en">depends on → nobody 🎯</span></span
+          >
+        </div>
+      </div>
+      <div class="callout key">
+        <p>
+          <span data-lang="pt"
+            ><strong>Por que isso importa (o "swap"):</strong> como o
+            <code class="inline">TaskService</code> depende da
+            <em>interface</em> <code class="inline">ITaskRepository</code> (não
+            do EF), você troca <code class="inline">EfTaskRepository</code> por
+            <code class="inline">InMemoryTaskRepository</code> em
+            <code class="inline">Program.cs</code> e o app
+            <em>continua rodando</em>. A abstração te deu esse poder.</span
+          ><span data-lang="en"
+            ><strong>Why it matters (the "swap"):</strong> because
+            <code class="inline">TaskService</code> depends on the
+            <em>interface</em> <code class="inline">ITaskRepository</code> (not
+            EF), you swap <code class="inline">EfTaskRepository</code> for
+            <code class="inline">InMemoryTaskRepository</code> in
+            <code class="inline">Program.cs</code> and the app
+            <em>still runs</em>. The abstraction gave you that power.</span
+          >
+        </p>
+      </div>
+
+      <!-- ===== 6. CAMINHO DE VOLTA + 401 ===== -->
+      <h2 class="section">
+        <span class="num">6</span
+        ><span data-lang="pt">O caminho de volta + o 401</span
+        ><span data-lang="en">The way back + the 401</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >A resposta sobe o mesmo caminho. Atenção ao <strong>401</strong>: o
+          .NET, por padrão, <em>redireciona</em> (302) pra login em
+          não-autenticado — mas isso é pra app MVC. Pra uma
+          <strong>API consumida por fetch</strong>, redirecionar é errado. Por
+          isso o <code class="inline">Program.cs</code> sobrescreve:</span
+        ><span data-lang="en"
+          >The response climbs back the same way. Watch the
+          <strong>401</strong>: by default .NET <em>redirects</em> (302) to
+          login when unauthenticated — but that's for an MVC app. For an
+          <strong>API consumed by fetch</strong>, redirecting is wrong. So
+          <code class="inline">Program.cs</code> overrides it:</span
+        >
+      </p>
+      <pre
+        class="block"
+      ><span class="c"><span data-lang="pt">// API devolve o status puro — não redireciona</span><span data-lang="en">// API returns the raw status — it does not redirect</span></span>
+options.Events.OnRedirectToLogin = ctx =&gt; { ctx.Response.StatusCode = 401; <span class="k">return</span> Task.CompletedTask; };</pre>
+      <p>
+        <span data-lang="pt"
+          >Aí cada camada decide o que fazer com o 401: no
+          <strong>cliente</strong> (React ilha), o
+          <code class="inline">api.ts</code> manda pra
+          <code class="inline">/login</code>. No <strong>SSR</strong>, vira
+          "anônimo" (não quebra a página).
+          <em>Duas camadas, um mesmo evento.</em></span
+        ><span data-lang="en"
+          >Then each layer decides what to do with the 401: on the
+          <strong>client</strong> (React island),
+          <code class="inline">api.ts</code> sends to
+          <code class="inline">/login</code>. In <strong>SSR</strong>, it
+          becomes "anonymous" (doesn't break the page).
+          <em>Two layers, one same event.</em></span
+        >
+      </p>
+
+      <div class="callout tip">
+        <p>
+          <span data-lang="pt"
+            ><strong>Pin this.</strong> Toda vez que um bug parecer "mágico"
+            (auth, cookie, 401, dados sumindo), volte pra este mapa e siga a
+            seta. A mágica acaba.</span
+          ><span data-lang="en"
+            ><strong>Pin this.</strong> Whenever a bug feels "magical" (auth,
+            cookie, 401, vanishing data), come back to this map and follow the
+            arrow. The magic ends.</span
+          >
+        </p>
+      </div>
+
+      <footer class="lesson-foot">
+        <div class="next-card">
+          <span class="lbl"
+            ><span data-lang="pt">📖 Referência</span
+            ><span data-lang="en">📖 Reference</span></span
+          >
+          <div class="t">
+            <span data-lang="pt"
+              >O mapa central do Zapt. Revisite sempre que algo parecer
+              mágico.</span
+            ><span data-lang="en"
+              >The central Zapt map. Revisit whenever something feels
+              magical.</span
+            >
+          </div>
+        </div>
+        <div style="flex: 1 1 260px">
+          <span class="lbl"
+            ><span data-lang="pt">Dúvida?</span
+            ><span data-lang="en">Stuck?</span></span
+          >
+          <div class="t">
+            <span data-lang="pt"
+              >Pergunte ao agente — ele transforma qualquer pedaço deste mapa
+              num exercício ativo.</span
+            ><span data-lang="en"
+              >Ask the agent — it turns any piece of this map into an active
+              exercise.</span
+            >
+          </div>
+        </div>
+      </footer>
+    </article>
+  </Fragment>
+</Lesson>

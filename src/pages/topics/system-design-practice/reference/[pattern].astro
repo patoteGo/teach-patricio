@@ -1,6 +1,5 @@
 ---
 import Reference from "../../../../layouts/Reference.astro";
-import T from "../../../../components/T.astro";
 import P1 from "../../../../components/patterns/p1-the-base-skeleton-crud-api.astro";
 import P2 from "../../../../components/patterns/p2-read-heavy-cache-aside.astro";
 import P3 from "../../../../components/patterns/p3-slow-work-queue-worker.astro";
@@ -41,8 +40,6 @@ export function getStaticPaths() {
 }
 const { i } = Astro.props;
 const p = PATTERNS[i];
-const prev = PATTERNS[i - 1];
-const next = PATTERNS[i + 1];
 const Pattern = p.C;
 ---
 <Reference
@@ -50,19 +47,6 @@ const Pattern = p.C;
   titleEn={`${p.num} · ${p.titleEn} — Repertoire`}
   titleFallback={p.num}
 >
-  <nav class="pattern-nav">
-    <a href="repertoire.html"><i class="ph ph-arrow-left"></i>&nbsp;<T pt="Repertório" en="Repertoire" /></a>
-    <span>
-      {prev && <a href={prev.slug + ".html"}><i class="ph ph-caret-left"></i>&nbsp;{prev.num}</a>}
-      {next && <a href={next.slug + ".html"}>{next.num}&nbsp;<i class="ph ph-caret-right"></i></a>}
-    </span>
-  </nav>
   <Pattern />
 </Reference>
-<style is:inline>
-  .pattern-nav { display: flex; justify-content: space-between; gap: 12px; align-items: center;
-    font: 600 12px/1 "Space Grotesk"; letter-spacing: 0.04em; margin: 0 0 10px; }
-  .pattern-nav a { color: #9ea2b8; text-decoration: none; }
-  .pattern-nav a:hover { color: #eceef6; }
-  .pattern-nav .ph { vertical-align: -0.15em; }
-</style>
+

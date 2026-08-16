@@ -1,0 +1,1119 @@
+---
+// Migrated verbatim from public/topics/system-design/lessons/0004-state-and-boundaries.html (URL unchanged: builds to 0004-state-and-boundaries.html).
+// Body is is:raw: braces/inline scripts/JSON blocks pass through untouched.
+import Lesson from "../../../../layouts/Lesson.astro";
+const titlePt = "System Design · Lição 4 — Estado, acoplamento e módulos profundos";
+const titleEn = "System Design · Lesson 4 — State, coupling & deep modules";
+const titleFallback = "System Design · Lição 4 — Estado, acoplamento e módulos profundos";
+const bodyClass = "lang-pt";
+const viewport = "width=device-width, initial-scale=1.0";
+const assets = [
+	"<link rel=\"stylesheet\" href=\"../assets/style.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/dark.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/i18n.css\" />",
+	"<script src=\"../assets/i18n.js\" defer></script>",
+	"<script src=\"../assets/nav.js\" defer></script>",
+	"<link rel=\"stylesheet\" href=\"../assets/exercises.css\" />",
+	"<script src=\"../assets/exercises.js\" defer></script>",
+];
+
+---
+<Lesson
+	titlePt={titlePt}
+	titleEn={titleEn}
+	titleFallback={titleFallback}
+	bodyClass={bodyClass}
+	viewport={viewport}
+	assets={assets}
+>
+	<Fragment is:raw>
+    <article class="lesson">
+      <header class="hero">
+        <span class="eyebrow"
+          ><span data-lang="pt">⬡ System Design · Fundamentos</span
+          ><span data-lang="en">⬡ System Design · Fundamentals</span></span
+        >
+        <h1>
+          <span data-lang="pt"
+            >Empurre o estado para fora.<br />Corte fronteiras profundas.</span
+          ><span data-lang="en">Push state out.<br />Cut deep boundaries.</span>
+        </h1>
+        <p class="lead">
+          <span data-lang="pt"
+            >Dois movimentos decidem se o seu sistema envelhece bem:
+            <strong>o que guarda estado</strong> e
+            <strong>onde você corta as fronteiras</strong>. Compute stateless
+            escala na horizontal sem cerimônia; módulos profundos escondem
+            complexidade atrás de uma interface estreita. Esta lição fixa os
+            dois reflexos — para que você decida <em>onde mora o estado</em> e
+            <em>onde cortar o sistema</em>.</span
+          ><span data-lang="en"
+            >Two moves decide whether your system ages well:
+            <strong>what holds state</strong> and
+            <strong>where you cut the boundaries</strong>. Stateless compute
+            scales horizontally with zero ceremony; deep modules hide complexity
+            behind a narrow interface. This lesson locks in both reflexes — so
+            you can decide <em>where state lives</em> and
+            <em>where to cut the system</em>.</span
+          >
+          >
+        </p>
+        <p class="lesson-nav-top">
+          ↑ <a href="../MISSION.md">System Design</a> ·
+          <span data-lang="pt">anterior</span><span data-lang="en">prev</span>:
+          <a href="./0003-scale-and-estimation.html"
+            ><span data-lang="pt">Escala e estimativa</span
+            ><span data-lang="en">Scale &amp; estimation</span></a
+          >
+          · <span data-lang="pt">próxima</span><span data-lang="en">next</span>:
+          <em
+            ><span data-lang="pt">Consistência e CAP</span
+            ><span data-lang="en">Consistency &amp; CAP</span></em
+          >
+        </p>
+      </header>
+
+      <!-- ============ 1. TWO MOVES ============ -->
+      <h2 class="section">
+        <span class="num">1</span
+        ><span data-lang="pt">Dois movimentos que envelhecem bem</span
+        ><span data-lang="en">Two moves that age well</span>
+      </h2>
+      <p class="kicker">
+        <span data-lang="pt"
+          >O que guarda estado e onde cortar fronteiras são as duas decisões que
+          mais determinam a longevidade do sistema. Acerte as duas e o resto —
+          escala, mudança, donos de time — fica muito mais fácil.</span
+        ><span data-lang="en"
+          >What holds state and where to cut boundaries are the two decisions
+          that most determine a system's longevity. Get both right and the rest
+          — scaling, change, team ownership — gets far easier.</span
+        >
+      </p>
+
+      <div class="scroll-x" style="margin: 22px 0 8px">
+        <svg
+          viewBox="0 0 760 312"
+          width="100%"
+          style="min-width: 760px"
+          role="img"
+          aria-labelledby="sb-title"
+        >
+          <title
+            id="sb-title"
+            data-pt="Dois movimentos: empurrar estado para fora e cortar fronteiras profundas"
+            data-en="Two moves: push state out and cut deep boundaries"
+          >
+            Estado e fronteiras
+          </title>
+          <defs>
+            <marker
+              id="sbArrow"
+              markerWidth="9"
+              markerHeight="9"
+              refX="6"
+              refY="3"
+              orient="auto"
+            >
+              <path d="M0,0 L6,3 L0,6 Z" fill="#fbbf24" />
+            </marker>
+          </defs>
+
+          <!-- vertical divider -->
+          <line
+            x1="380"
+            y1="16"
+            x2="380"
+            y2="296"
+            stroke="#3a3f55"
+            stroke-width="1.5"
+            stroke-dasharray="4 6"
+          />
+
+          <!-- ===== LEFT: push state out ===== -->
+          <text
+            x="190"
+            y="32"
+            text-anchor="middle"
+            font-family="Space Grotesk"
+            font-size="13"
+            font-weight="700"
+            fill="#eceef6"
+            data-pt="Empurre o estado para fora"
+            data-en="Push state out"
+          >
+            Empurre o estado para fora
+          </text>
+
+          <!-- 3 identical stateless compute boxes -->
+          <g font-family="Space Grotesk" font-size="11" font-weight="700">
+            <rect
+              x="34"
+              y="64"
+              width="74"
+              height="46"
+              rx="9"
+              fill="#0c2a27"
+              stroke="#2dd4bf"
+              stroke-width="1.6"
+            />
+            <text
+              x="71"
+              y="84"
+              text-anchor="middle"
+              fill="#2dd4bf"
+              data-pt="compute"
+              data-en="compute"
+            >
+              compute
+            </text>
+            <text
+              x="71"
+              y="100"
+              text-anchor="middle"
+              font-family="Inter"
+              font-size="9"
+              fill="#9ea2b8"
+              data-pt="stateless"
+              data-en="stateless"
+            >
+              stateless
+            </text>
+
+            <rect
+              x="153"
+              y="64"
+              width="74"
+              height="46"
+              rx="9"
+              fill="#0c2a27"
+              stroke="#2dd4bf"
+              stroke-width="1.6"
+            />
+            <text
+              x="190"
+              y="84"
+              text-anchor="middle"
+              fill="#2dd4bf"
+              data-pt="compute"
+              data-en="compute"
+            >
+              compute
+            </text>
+            <text
+              x="190"
+              y="100"
+              text-anchor="middle"
+              font-family="Inter"
+              font-size="9"
+              fill="#9ea2b8"
+              data-pt="stateless"
+              data-en="stateless"
+            >
+              stateless
+            </text>
+
+            <rect
+              x="272"
+              y="64"
+              width="74"
+              height="46"
+              rx="9"
+              fill="#0c2a27"
+              stroke="#2dd4bf"
+              stroke-width="1.6"
+            />
+            <text
+              x="309"
+              y="84"
+              text-anchor="middle"
+              fill="#2dd4bf"
+              data-pt="compute"
+              data-en="compute"
+            >
+              compute
+            </text>
+            <text
+              x="309"
+              y="100"
+              text-anchor="middle"
+              font-family="Inter"
+              font-size="9"
+              fill="#9ea2b8"
+              data-pt="stateless"
+              data-en="stateless"
+            >
+              stateless
+            </text>
+          </g>
+
+          <!-- arrows: state pushed out → store -->
+          <g stroke="#fbbf24" stroke-width="1.8" fill="none">
+            <path
+              d="M 71 110 C 71 150, 150 168, 175 200"
+              marker-end="url(#sbArrow)"
+            />
+            <path d="M 190 110 L 190 196" marker-end="url(#sbArrow)" />
+            <path
+              d="M 309 110 C 309 150, 230 168, 205 200"
+              marker-end="url(#sbArrow)"
+            />
+          </g>
+          <text
+            x="190"
+            y="148"
+            text-anchor="middle"
+            font-family="Inter"
+            font-size="9.5"
+            fill="#fbbf24"
+            data-pt="estado → fora do compute"
+            data-en="state → out of compute"
+          >
+            estado → fora do compute
+          </text>
+
+          <!-- one stateful store: DB + cache -->
+          <rect
+            x="70"
+            y="206"
+            width="240"
+            height="72"
+            rx="10"
+            fill="#221a3d"
+            stroke="#8b6ff7"
+            stroke-width="2"
+          />
+          <text
+            x="190"
+            y="232"
+            text-anchor="middle"
+            font-family="Space Grotesk"
+            font-size="13"
+            font-weight="700"
+            fill="#8b6ff7"
+            data-pt="store stateful"
+            data-en="stateful store"
+          >
+            store stateful
+          </text>
+          <text
+            x="190"
+            y="252"
+            text-anchor="middle"
+            font-family="Inter"
+            font-size="10"
+            fill="#9ea2b8"
+            data-pt="banco (durável) + cache (rápido)"
+            data-en="database (durable) + cache (fast)"
+          >
+            banco (durável) + cache (rápido)
+          </text>
+          <text
+            x="190"
+            y="295"
+            text-anchor="middle"
+            font-family="Inter"
+            font-size="9.5"
+            fill="#9ea2b8"
+            data-pt="qualquer nó serve qualquer pedido"
+            data-en="any node serves any request"
+          >
+            qualquer nó serve qualquer pedido
+          </text>
+
+          <!-- ===== RIGHT: deep vs shallow ===== -->
+          <text
+            x="570"
+            y="32"
+            text-anchor="middle"
+            font-family="Space Grotesk"
+            font-size="13"
+            font-weight="700"
+            fill="#eceef6"
+            data-pt="Corte fronteiras profundas"
+            data-en="Cut deep boundaries"
+          >
+            Corte fronteiras profundas
+          </text>
+
+          <!-- DEEP module: narrow interface + tall thick impl -->
+          <text
+            x="480"
+            y="58"
+            text-anchor="middle"
+            font-family="Inter"
+            font-size="9"
+            fill="#9ea2b8"
+            data-pt="interface estreita"
+            data-en="narrow interface"
+          >
+            interface estreita
+          </text>
+          <rect x="430" y="64" width="100" height="14" rx="4" fill="#8b6ff7" />
+          <rect
+            x="430"
+            y="78"
+            width="100"
+            height="150"
+            rx="8"
+            fill="#211d33"
+            stroke="#8b6ff7"
+            stroke-width="1.6"
+          />
+          <text
+            x="480"
+            y="156"
+            text-anchor="middle"
+            font-family="Inter"
+            font-size="9.5"
+            fill="#9ea2b8"
+            data-pt="implementação grande"
+            data-en="big implementation"
+          >
+            implementação grande
+          </text>
+          <text
+            x="480"
+            y="250"
+            text-anchor="middle"
+            font-family="Space Grotesk"
+            font-size="11"
+            font-weight="700"
+            fill="#2dd4bf"
+            data-pt="módulo profundo ✓"
+            data-en="deep module ✓"
+          >
+            módulo profundo ✓
+          </text>
+
+          <!-- SHALLOW module: wide interface + thin impl -->
+          <text
+            x="665"
+            y="58"
+            text-anchor="middle"
+            font-family="Inter"
+            font-size="9"
+            fill="#9ea2b8"
+            data-pt="interface larga"
+            data-en="wide interface"
+          >
+            interface larga
+          </text>
+          <rect x="590" y="64" width="150" height="14" rx="4" fill="#fb7185" />
+          <rect
+            x="590"
+            y="78"
+            width="150"
+            height="34"
+            rx="8"
+            fill="#2c1622"
+            stroke="#fb7185"
+            stroke-width="1.6"
+          />
+          <text
+            x="665"
+            y="99"
+            text-anchor="middle"
+            font-family="Inter"
+            font-size="9.5"
+            fill="#9ea2b8"
+            data-pt="implementação rasa"
+            data-en="thin implementation"
+          >
+            implementação rasa
+          </text>
+          <text
+            x="665"
+            y="132"
+            text-anchor="middle"
+            font-family="Space Grotesk"
+            font-size="11"
+            font-weight="700"
+            fill="#fb7185"
+            data-pt="módulo raso ✗"
+            data-en="shallow module ✗"
+          >
+            módulo raso ✗
+          </text>
+        </svg>
+      </div>
+      <p class="cite">
+        <span data-lang="pt">Fontes:</span><span data-lang="en">Sources:</span>
+        <a
+          href="https://web.stanford.edu/~ouster/cgi-bin/book.php"
+          target="_blank"
+          rel="noopener"
+          ><span data-lang="pt">Ousterhout, módulos profundos (cap. 4–5)</span
+          ><span data-lang="en">Ousterhout, deep modules (ch. 4–5)</span></a
+        >
+        ·
+        <a href="https://dataintensive.net" target="_blank" rel="noopener"
+          ><span data-lang="pt">DDIA cap. 1</span
+          ><span data-lang="en">DDIA ch. 1</span></a
+        >.
+      </p>
+
+      <!-- ============ 2. WHAT HOLDS STATE ============ -->
+      <h2 class="section">
+        <span class="num">2</span><span data-lang="pt">O que guarda estado</span
+        ><span data-lang="en">What holds state</span>
+      </h2>
+      <p class="kicker">
+        <span data-lang="pt"
+          >Instância <em>stateless</em> serve qualquer requisição — qualquer nó
+          serve qualquer pedido, então você escala só adicionando nós. Empurre
+          estado <strong>para fora do compute</strong>, para um store. Sessão
+          “sticky” (afinidade) é um cheiro: significa que o estado ainda mora no
+          nó errado.</span
+        ><span data-lang="en"
+          >A <em>stateless</em> instance serves any request — any node serves
+          any request, so you scale just by adding nodes. Push state
+          <strong>out of compute</strong>, into a store. “Sticky” sessions
+          (affinity) are a smell: they mean state still lives on the wrong
+          node.</span
+        >
+      </p>
+
+      <div class="grid cols-2">
+        <div class="card" style="border-left: 4px solid #8b6ff7">
+          <h4>
+            <span data-lang="pt">Banco de dados</span
+            ><span data-lang="en">Database</span>
+          </h4>
+          <p>
+            <span data-lang="pt"
+              ><strong>Durável</strong> — a fonte da verdade. Sobrevive a
+              restart; é onde o estado <em>precisa</em> estar correto.</span
+            ><span data-lang="en"
+              ><strong>Durable</strong> — the source of truth. Survives
+              restarts; where state <em>must</em> be correct.</span
+            >
+          </p>
+        </div>
+        <div class="card" style="border-left: 4px solid #2dd4bf">
+          <h4>Cache</h4>
+          <p>
+            <span data-lang="pt"
+              ><strong>Rápido e volátil</strong> — acelera a leitura. Se sumir,
+              reconstrói a partir do banco; nunca é a verdade.</span
+            ><span data-lang="en"
+              ><strong>Fast and volatile</strong> — speeds up reads. If it
+              vanishes, rebuild from the DB; never the truth.</span
+            >
+          </p>
+        </div>
+        <div class="card" style="border-left: 4px solid #fbbf24">
+          <h4>
+            <span data-lang="pt">Fila de mensagens</span
+            ><span data-lang="en">Message queue</span>
+          </h4>
+          <p>
+            <span data-lang="pt"
+              >Guarda <strong>trabalho pendente</strong> e desacopla em tempo.
+              Bufferiza picos, retenta, controla backpressure.</span
+            ><span data-lang="en"
+              >Holds <strong>pending work</strong> and decouples in time.
+              Buffers spikes, retries, applies backpressure.</span
+            >
+          </p>
+        </div>
+        <div class="card" style="border-left: 4px solid #fb7185">
+          <h4>
+            <span data-lang="pt">Sessão / cliente</span
+            ><span data-lang="en">Session / client</span>
+          </h4>
+          <p>
+            <span data-lang="pt"
+              >Identidade por requisição: store de sessão (Redis), cookie
+              assinado ou token no cliente. Nunca dentro do nó.</span
+            ><span data-lang="en"
+              >Per-request identity: a session store (Redis), signed cookie, or
+              a client token. Never inside the node.</span
+            >
+          </p>
+        </div>
+      </div>
+
+      <pre
+        class="block"
+      ><span class="c"><span data-lang="pt"># estado DENTRO do compute → não escala (morre no restart, preso a um nó)</span><span data-lang="en"># state INSIDE compute → doesn't scale (dies on restart, pinned to a node)</span></span>
+session = {}            <span class="c"><span data-lang="pt"># em memória → exige sessão sticky = cheiro</span><span data-lang="en"># in-memory → forces sticky session = smell</span></span>
+
+<span class="c"><span data-lang="pt"># estado EMPURRADO para fora → qualquer nó serve qualquer pedido</span><span data-lang="en"># state PUSHED out → any node serves any request</span></span>
+session ← Redis / session store   <span class="c"><span data-lang="pt"># compute stateless + store stateful</span><span data-lang="en"># stateless compute + stateful store</span></span></pre>
+      <p class="cite">
+        <span data-lang="pt">Fonte:</span><span data-lang="en">Source:</span>
+        <a href="https://dataintensive.net" target="_blank" rel="noopener"
+          ><span data-lang="pt"
+            >DDIA cap. 1 (estado) e cap. 6 (particionamento)</span
+          ><span data-lang="en"
+            >DDIA ch. 1 (state) and ch. 6 (partitioning)</span
+          ></a
+        >
+        —
+        <span data-lang="pt"
+          >por que réplicas stateless escalam na horizontal com zero
+          cerimônia.</span
+        ><span data-lang="en"
+          >why stateless replicas scale horizontally with zero ceremony.</span
+        >
+      </p>
+
+      <!-- ============ 3. DEEP MODULES ============ -->
+      <h2 class="section">
+        <span class="num">3</span
+        ><span data-lang="pt">Corte módulos profundos, não rasos</span
+        ><span data-lang="en">Cut deep modules, not shallow ones</span>
+      </h2>
+      <p class="kicker">
+        <span data-lang="pt"
+          >Alta coesão, baixo acoplamento. Uma boa fronteira esconde um
+          <strong>módulo profundo</strong> (Ousterhout): interface pequena e
+          simples por cima de uma implementação grande e complexa. Módulos rasos
+          (interface grande, implementação trivial) vazam complexidade e se
+          multiplicam — cada um adiciona uma coisa a aprender e quase nada a
+          esconder.</span
+        ><span data-lang="en"
+          >High cohesion, low coupling. A good boundary hides a
+          <strong>deep module</strong> (Ousterhout): a small, simple interface
+          over a large, complex implementation. Shallow modules (big interface,
+          trivial impl) leak complexity and proliferate — each one adds a thing
+          to learn and hides almost nothing.</span
+        >
+      </p>
+
+      <div class="grid cols-2">
+        <div class="card" style="border-left: 4px solid #2dd4bf">
+          <h4>
+            <span data-lang="pt">Profundo ✓</span
+            ><span data-lang="en">Deep ✓</span>
+          </h4>
+          <p>
+            <span data-lang="pt"
+              >Interface <strong>estreita</strong>, implementação
+              <strong>grande</strong>. Máximo escondido, mínimo exposto.</span
+            ><span data-lang="en"
+              ><strong>Narrow</strong> interface,
+              <strong>large</strong> implementation. Maximum hidden, minimum
+              exposed.</span
+            >
+          </p>
+        </div>
+        <div class="card" style="border-left: 4px solid #fb7185">
+          <h4>
+            <span data-lang="pt">Raso ✗</span
+            ><span data-lang="en">Shallow ✗</span>
+          </h4>
+          <p>
+            <span data-lang="pt"
+              >Interface <strong>larga</strong>, implementação
+              <strong>rasa</strong>. Complexidade vaza — e rasos
+              proliferam.</span
+            ><span data-lang="en"
+              ><strong>Wide</strong> interface,
+              <strong>thin</strong> implementation. Complexity leaks — and
+              shallow ones multiply.</span
+            >
+          </p>
+        </div>
+      </div>
+
+      <pre
+        class="block"
+      ><span class="c"><span data-lang="pt"># módulo PROFUNDO: interface estreita, implementa muito por trás</span><span data-lang="en"># DEEP module: narrow interface, lots implemented behind it</span></span>
+shorten(longURL) → shortURL      <span class="c"><span data-lang="pt"># esconde hash / base62 / colisão / contador</span><span data-lang="en"># hides hash / base62 / collision / counter</span></span>
+
+<span class="c"><span data-lang="pt"># módulo RASO: interface larga, quase nada esconde → complexidade vaza</span><span data-lang="en"># SHALLOW module: wide interface, hides almost nothing → complexity leaks</span></span>
+hash(), encodeBase62(), checkCollision(), incrementCounter(), saveMapping() …</pre>
+      <p class="cite">
+        <span data-lang="pt">Fonte:</span><span data-lang="en">Source:</span>
+        <a
+          href="https://web.stanford.edu/~ouster/cgi-bin/book.php"
+          target="_blank"
+          rel="noopener"
+          ><span data-lang="pt"
+            >Ousterhout, “A Philosophy of Software Design”, cap. 4–5</span
+          ><span data-lang="en"
+            >Ousterhout, “A Philosophy of Software Design”, ch. 4–5</span
+          ></a
+        >.
+      </p>
+
+      <!-- ============ 4. SYNC VS ASYNC ============ -->
+      <h2 class="section">
+        <span class="num">4</span
+        ><span data-lang="pt">Síncrono vs assíncrono: acoplamento no tempo</span
+        ><span data-lang="en"
+          >Synchronous vs asynchronous: coupling in time</span
+        >
+      </h2>
+      <p class="kicker">
+        <span data-lang="pt"
+          >Request/response é mais simples — mas acoplou caller e callee
+          <strong>no tempo</strong>: se o callee cai ou demora, você cai.
+          Eventos/filas <strong>desacoplam no tempo</strong> (consistência
+          eventual, retries, backpressure) ao custo de complexidade. Síncrono
+          quando você precisa da resposta agora; assíncrono quando pode tolerar
+          atraso.</span
+        ><span data-lang="en"
+          >Request/response is simpler — but it couples caller and callee
+          <strong>in time</strong>: if the callee is down or slow, so are you.
+          Events/queues <strong>decouple in time</strong> (eventual consistency,
+          retries, backpressure) at the cost of complexity. Synchronous when you
+          need the answer now; asynchronous when you can tolerate delay.</span
+        >
+      </p>
+
+      <div class="grid cols-2">
+        <div class="card" style="border-left: 4px solid #8b6ff7">
+          <h4>
+            <span data-lang="pt">Síncrono (request/response)</span
+            ><span data-lang="en">Synchronous (request/response)</span>
+          </h4>
+          <p>
+            <span data-lang="pt"
+              >Mais simples; acoplado <strong>no tempo</strong>. Use quando
+              precisa da resposta agora.</span
+            ><span data-lang="en"
+              >Simpler; coupled <strong>in time</strong>. Use when you need the
+              answer now.</span
+            >
+          </p>
+        </div>
+        <div class="card" style="border-left: 4px solid #2dd4bf">
+          <h4>
+            <span data-lang="pt">Assíncrono (eventos/filas)</span
+            ><span data-lang="en">Asynchronous (events/queues)</span>
+          </h4>
+          <p>
+            <span data-lang="pt"
+              >Desacopla no tempo: retries, backpressure, consistência eventual.
+              Custa idempotência e ordem.</span
+            ><span data-lang="en"
+              >Decouples in time: retries, backpressure, eventual consistency.
+              Costs idempotency and ordering.</span
+            >
+          </p>
+        </div>
+      </div>
+
+      <div class="callout key">
+        <p>
+          🗣️
+          <strong
+            ><span data-lang="pt">Nudge: Lei de Conway.</span
+            ><span data-lang="en">Nudge: Conway's Law.</span></strong
+          >
+          <span data-lang="pt"
+            >A arquitetura tende a espelhar a estrutura de comunicação da
+            organização. Desenhe fronteiras que
+            <em>um time consiga donar de ponta a ponta</em> — senão a fronteira
+            não vai durar.</span
+          >
+          <span data-lang="en"
+            >Architecture tends to mirror the org's communication structure.
+            Draw boundaries <em>a team can own end-to-end</em> — otherwise the
+            boundary won't last.</span
+          >
+        </p>
+      </div>
+
+      <p class="cite">
+        <span data-lang="pt">Fonte:</span><span data-lang="en">Source:</span>
+        <a href="https://dataintensive.net" target="_blank" rel="noopener"
+          ><span data-lang="pt">DDIA cap. 11 (stream processing)</span
+          ><span data-lang="en">DDIA ch. 11 (stream processing)</span></a
+        >
+        — <span data-lang="pt">o custo e o ganho de desacoplar em tempo.</span
+        ><span data-lang="en"
+          >the cost and the gain of decoupling in time.</span
+        >
+      </p>
+
+      <!-- ============ 5. QUIZ ============ -->
+      <h2 class="section">
+        <span class="num">★</span
+        ><span data-lang="pt">🧠 Prática ativa: módulo profundo ou raso?</span
+        ><span data-lang="en">🧠 Active practice: deep or shallow module?</span>
+      </h2>
+      <div class="ex classify" id="ex-mod">
+        <p class="ex-prompt">
+          <span data-lang="pt">Classifique cada módulo:</span
+          ><span data-lang="en">Classify each module:</span>
+        </p>
+        <div class="ex-item" data-correct="d">
+          <div class="ex-stem">
+            <span data-lang="pt"
+              ><code>shorten(longURL) → shortURL</code> — esconde hash, base62,
+              colisões.</span
+            ><span data-lang="en"
+              ><code>shorten(longURL) → shortURL</code> — hides hash, base62,
+              collisions.</span
+            >
+          </div>
+          <div class="ex-opts">
+            <button class="ex-opt" data-pick="d">
+              <span data-lang="pt">Profundo</span
+              ><span data-lang="en">Deep</span></button
+            ><button class="ex-opt" data-pick="s">
+              <span data-lang="pt">Raso</span
+              ><span data-lang="en">Shallow</span>
+            </button>
+          </div>
+          <div class="ex-fb"></div>
+        </div>
+        <div class="ex-item" data-correct="s">
+          <div class="ex-stem">
+            <span data-lang="pt"
+              ><code>getConfig(k)</code> — só devolve uma entrada do mapa.</span
+            ><span data-lang="en"
+              ><code>getConfig(k)</code> — just returns a map entry.</span
+            >
+          </div>
+          <div class="ex-opts">
+            <button class="ex-opt" data-pick="d">
+              <span data-lang="pt">Profundo</span
+              ><span data-lang="en">Deep</span></button
+            ><button class="ex-opt" data-pick="s">
+              <span data-lang="pt">Raso</span
+              ><span data-lang="en">Shallow</span>
+            </button>
+          </div>
+          <div class="ex-fb"></div>
+        </div>
+        <div class="ex-item" data-correct="d">
+          <div class="ex-stem">
+            <span data-lang="pt"
+              ><code>save(obj) → id</code> — valida, persiste, indexa, lida com
+              schema.</span
+            ><span data-lang="en"
+              ><code>save(obj) → id</code> — validates, persists, indexes,
+              handles schema.</span
+            >
+          </div>
+          <div class="ex-opts">
+            <button class="ex-opt" data-pick="d">
+              <span data-lang="pt">Profundo</span
+              ><span data-lang="en">Deep</span></button
+            ><button class="ex-opt" data-pick="s">
+              <span data-lang="pt">Raso</span
+              ><span data-lang="en">Shallow</span>
+            </button>
+          </div>
+          <div class="ex-fb"></div>
+        </div>
+        <div class="ex-item" data-correct="s">
+          <div class="ex-stem">
+            <span data-lang="pt"
+              >Uma classe com 5 métodos que só faz
+              <code>return n + 1</code>.</span
+            ><span data-lang="en"
+              >A 5-method class that only does <code>return n + 1</code>.</span
+            >
+          </div>
+          <div class="ex-opts">
+            <button class="ex-opt" data-pick="d">
+              <span data-lang="pt">Profundo</span
+              ><span data-lang="en">Deep</span></button
+            ><button class="ex-opt" data-pick="s">
+              <span data-lang="pt">Raso</span
+              ><span data-lang="en">Shallow</span>
+            </button>
+          </div>
+          <div class="ex-fb"></div>
+        </div>
+        <div class="ex-score"></div>
+      </div>
+
+      <h2 class="section">
+        <span class="num">5</span
+        ><span data-lang="pt">Confira o modelo mental</span
+        ><span data-lang="en">Check the mental model</span>
+      </h2>
+
+      <div class="quiz" id="q1" role="group" aria-labelledby="q1l">
+        <div class="q" id="q1l">
+          <span data-lang="pt"
+            >Q1. O que escala na horizontal sem cerimônia?</span
+          ><span data-lang="en"
+            >Q1. Which scales horizontally with zero ceremony?</span
+          >
+        </div>
+        <div class="options">
+          <button
+            class="opt"
+            data-correct="true"
+            data-fb-pt="Exato: instâncias stateless servem qualquer requisição — escale adicionando nós."
+            data-fb-en="Exact: stateless instances serve any request — scale by adding nodes."
+          >
+            <span data-lang="pt">Compute stateless</span
+            ><span data-lang="en">Stateless compute</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Um banco primário é o ponto stateful; não escala só adicionando nós."
+            data-fb-en="A primary DB is the stateful point; it doesn't scale by just adding nodes."
+          >
+            <span data-lang="pt">Um banco primário único</span
+            ><span data-lang="en">A single primary DB</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Sessões sticky são o cheiro — ainda amarram pedido a um nó com estado."
+            data-fb-en="Sticky sessions are the smell — they still pin a request to a stateful node."
+          >
+            <span data-lang="pt">Sessões sticky</span
+            ><span data-lang="en">Sticky sessions</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Cache em memória no nó é estado local; morre no restart."
+            data-fb-en="In-memory cache on the node is local state; it dies on restart."
+          >
+            <span data-lang="pt">Cache em memória</span
+            ><span data-lang="en">In-memory cache</span>
+          </button>
+        </div>
+        <div class="verdict" aria-live="polite"></div>
+      </div>
+
+      <div class="quiz" id="q2" role="group" aria-labelledby="q2l">
+        <div class="q" id="q2l">
+          <span data-lang="pt"
+            >Q2. Um módulo profundo é melhor descrito como:</span
+          ><span data-lang="en">Q2. A deep module is best described as:</span>
+        </div>
+        <div class="options">
+          <button
+            class="opt"
+            data-correct="true"
+            data-fb-pt="Exato: interface estreita por cima de muita implementação — esconde complexidade."
+            data-fb-en="Exact: narrow interface over lots of implementation — hides complexity."
+          >
+            <span data-lang="pt">Interface pequena, implementação grande</span
+            ><span data-lang="en">Small interface, big implementation</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Isso é um módulo raso: interface grande, quase nada esconde."
+            data-fb-en="That's a shallow module: big interface, hides almost nothing."
+          >
+            <span data-lang="pt">Interface grande, implementação minúscula</span
+            ><span data-lang="en">Big interface, tiny implementation</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Sem interface não há fronteira nem esconderijo de complexidade."
+            data-fb-en="No interface means no boundary, nowhere to hide complexity."
+          >
+            <span data-lang="pt">Nenhuma interface</span
+            ><span data-lang="en">No interface at all</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Muitas interfaces minúsculas tendem a ser rasas e proliferam."
+            data-fb-en="Many tiny interfaces tend to be shallow and proliferate."
+          >
+            <span data-lang="pt">Várias interfaces minúsculas</span
+            ><span data-lang="en">Many tiny interfaces</span>
+          </button>
+        </div>
+        <div class="verdict" aria-live="polite"></div>
+      </div>
+
+      <div class="quiz" id="q3" role="group" aria-labelledby="q3l">
+        <div class="q" id="q3l">
+          <span data-lang="pt"
+            >Q3. Mensageria assíncrona (vs chamadas síncronas) principalmente
+            compra:</span
+          ><span data-lang="en"
+            >Q3. Asynchronous messaging (vs sync calls) mainly buys you:</span
+          >
+        </div>
+        <div class="options">
+          <button
+            class="opt"
+            data-correct="true"
+            data-fb-pt="Exato: filas/eventos desacoplam caller e callee no tempo (retries, backpressure)."
+            data-fb-en="Exact: queues/events decouple caller and callee in time (retries, backpressure)."
+          >
+            <span data-lang="pt">Desacoplamento no tempo</span
+            ><span data-lang="en">Decoupling in time</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Assíncrono costuma dar consistência eventual, mais fraca."
+            data-fb-en="Async usually gives eventual consistency, which is weaker."
+          >
+            <span data-lang="pt">Consistência mais forte</span
+            ><span data-lang="en">Stronger consistency</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Pode até aumentar a latência ponta-a-ponta (fila no caminho)."
+            data-fb-en="It can even raise end-to-end latency (a queue in the path)."
+          >
+            <span data-lang="pt">Menor latência sempre</span
+            ><span data-lang="en">Lower latency always</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Assíncrono adiciona complexidade (idempotência, ordem, DLQ)."
+            data-fb-en="Async adds complexity (idempotency, ordering, DLQ)."
+          >
+            <span data-lang="pt">Código mais simples</span
+            ><span data-lang="en">Simpler code</span>
+          </button>
+        </div>
+        <div class="verdict" aria-live="polite"></div>
+      </div>
+
+      <!-- ============ 6. SOURCE ============ -->
+      <h2 class="section">
+        <span class="num">6</span><span data-lang="pt">Leia isto a seguir</span
+        ><span data-lang="en">Read this next</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          ><strong>Fontes primárias:</strong>
+          <a
+            href="https://web.stanford.edu/~ouster/cgi-bin/book.php"
+            target="_blank"
+            rel="noopener"
+            >Ousterhout, “A Philosophy of Software Design”</a
+          >
+          (módulos profundos) e
+          <a href="https://dataintensive.net" target="_blank" rel="noopener"
+            >DDIA cap. 1 (estado) / cap. 11 (streams)</a
+          >. Juntos, eles transformam “onde corto isso?” numa decisão: empurre o
+          estado para um store e esconda a complexidade atrás de uma interface
+          estreita.</span
+        ><span data-lang="en"
+          ><strong>Primary sources:</strong>
+          <a
+            href="https://web.stanford.edu/~ouster/cgi-bin/book.php"
+            target="_blank"
+            rel="noopener"
+            >Ousterhout, “A Philosophy of Software Design”</a
+          >
+          (deep modules) and
+          <a href="https://dataintensive.net" target="_blank" rel="noopener"
+            >DDIA ch. 1 (state) / ch. 11 (streams)</a
+          >. Together they turn “where do I cut this?” into a decision: push
+          state into a store and hide complexity behind a narrow
+          interface.</span
+        >
+      </p>
+
+      <div class="callout key">
+        <p>
+          🗣️
+          <strong
+            ><span data-lang="pt">Pergunte ao seu professor.</span
+            ><span data-lang="en">Ask your teacher.</span></strong
+          >
+          <span data-lang="pt"
+            >Boas perguntas: <em>“este serviço deveria guardar estado?”</em>,
+            <em>“minha interface é profunda ou rasa?”</em>,
+            <em>“aqui uso síncrono ou fila?”</em></span
+          >
+          <span data-lang="en"
+            >Good questions: <em>“should this service hold state?”</em>,
+            <em>“is my interface deep or shallow?”</em>,
+            <em>“sync or a queue here?”</em></span
+          >
+        </p>
+      </div>
+
+      <footer class="lesson-foot">
+        <div class="next-card">
+          <div class="lbl">
+            <span data-lang="pt">Próxima lição →</span
+            ><span data-lang="en">Next lesson →</span>
+          </div>
+          <div class="t">
+            <a
+              href="./0005-consistency-and-cap.html"
+              style="color: inherit; text-decoration: none"
+              ><span data-lang="pt"
+                >Consistência e CAP: o que você abre mão sob partição</span
+              ><span data-lang="en"
+                >Consistency &amp; CAP: what you give up under partition</span
+              ></a
+            >
+          </div>
+        </div>
+        <div style="flex: 0 1 240px">
+          <div class="lbl">
+            <span data-lang="pt">Revisar</span
+            ><span data-lang="en">Review</span>
+          </div>
+          <p style="margin: 6px 0 0">
+            <a href="./0001-the-design-loop.html"
+              ><span data-lang="pt">Lição 1 · O loop</span
+              ><span data-lang="en">Lesson 1 · The loop</span></a
+            >
+            ·
+            <a href="../RESOURCES.md"
+              ><span data-lang="pt">Recursos</span
+              ><span data-lang="en">Resources</span></a
+            >
+          </p>
+        </div>
+      </footer>
+    </article>
+
+    <script>
+      function verdictFor(btn, quiz) {
+        const correct = btn.dataset.correct === "true";
+        const fb = btn.getAttribute(
+          PiI18n.lang === "en" ? "data-fb-en" : "data-fb-pt",
+        );
+        const fallback =
+          PiI18n.lang === "en" ? "Re-read this section." : "Releia esta seção.";
+        return {
+          ok: correct,
+          text: (correct ? "✓ " : "✗ ") + (fb || fallback),
+        };
+      }
+      function resetQuiz(quiz) {
+        quiz.querySelectorAll(".opt").forEach((b) => {
+          b.classList.remove("correct", "wrong");
+          b.setAttribute("aria-pressed", "false");
+        });
+        const v = quiz.querySelector(".verdict");
+        v.textContent = "";
+        v.className = "verdict";
+      }
+      document.querySelectorAll(".quiz").forEach((quiz) => {
+        quiz.querySelectorAll(".opt").forEach((btn) => {
+          btn.setAttribute("aria-pressed", "false");
+          btn.addEventListener("click", () => {
+            quiz.querySelectorAll(".opt").forEach((b) => {
+              b.classList.remove("correct", "wrong");
+              b.setAttribute("aria-pressed", "false");
+            });
+            const v = verdictFor(btn, quiz);
+            btn.classList.add(v.ok ? "correct" : "wrong");
+            btn.setAttribute("aria-pressed", "true");
+            const verdict = quiz.querySelector(".verdict");
+            verdict.textContent = v.text;
+            verdict.className = "verdict " + (v.ok ? "ok" : "no");
+          });
+        });
+      });
+      document.addEventListener("DOMContentLoaded", () =>
+        PiI18n.on(() => document.querySelectorAll(".quiz").forEach(resetQuiz)),
+      );
+    </script>
+  </Fragment>
+</Lesson>

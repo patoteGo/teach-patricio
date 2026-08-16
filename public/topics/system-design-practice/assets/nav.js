@@ -133,6 +133,113 @@
 						pt: "Repertório: 15 plantas",
 						en: "Repertoire: 15 blueprints",
 					},
+					children: [
+						{
+							f: "p1.html",
+							n: "P1",
+							t: {
+								pt: "O esqueleto base: API CRUD",
+								en: "The base skeleton: CRUD API",
+							},
+						},
+						{
+							f: "p2.html",
+							n: "P2",
+							t: { pt: "Leitura pesada: cache-aside", en: "Read-heavy: cache-aside" },
+						},
+						{
+							f: "p3.html",
+							n: "P3",
+							t: {
+								pt: "Trabalho lento: fila + worker",
+								en: "Slow work: queue + worker",
+							},
+						},
+						{
+							f: "p4.html",
+							n: "P4",
+							t: {
+								pt: "Arquivos grandes: upload + CDN",
+								en: "Large files: upload + CDN",
+							},
+						},
+						{
+							f: "p5.html",
+							n: "P5",
+							t: {
+								pt: "Rate limiter: contador atômico",
+								en: "Rate limiter: atomic counter",
+							},
+						},
+						{
+							f: "p6.html",
+							n: "P6",
+							t: {
+								pt: "Pipeline de mídia: evento do S3",
+								en: "Media pipeline: S3 event",
+							},
+						},
+						{
+							f: "p7.html",
+							n: "P7",
+							t: {
+								pt: "Ranking / top-K: sorted set",
+								en: "Ranking / top-K: sorted set",
+							},
+						},
+						{
+							f: "p8.html",
+							n: "P8",
+							t: { pt: "Feed: fan-out na escrita", en: "Feed: fan-out on write" },
+						},
+						{
+							f: "p9.html",
+							n: "P9",
+							t: {
+								pt: "Tempo real: gateway WebSocket",
+								en: "Real-time: WebSocket gateway",
+							},
+						},
+						{
+							f: "p10.html",
+							n: "P10",
+							t: { pt: "Propagação: CDC via Kafka", en: "Propagation: CDC via Kafka" },
+						},
+						{
+							f: "p11.html",
+							n: "P11",
+							t: {
+								pt: "Analytics: clickstream → S3",
+								en: "Analytics: clickstream → S3",
+							},
+						},
+						{
+							f: "p12.html",
+							n: "P12",
+							t: {
+								pt: "Webhooks de saída: fila por destino",
+								en: "Outgoing webhooks: queue per target",
+							},
+						},
+						{
+							f: "p13.html",
+							n: "P13",
+							t: {
+								pt: "Chave quente: leilão / hot key",
+								en: "Hot key: auction / hot item",
+							},
+						},
+						{
+							f: "p14.html",
+							n: "P14",
+							t: { pt: "Escalar escrita: sharding", en: "Scaling writes: sharding" },
+						},
+						{
+							f: "p15.html",
+							n: "P15",
+							t: { pt: "Global: multi-região", en: "Global: multi-region" },
+						},
+					],
 				},
 				{
 					f: "bidding-concurrency.html",
@@ -246,7 +353,27 @@
   .pn-toggle{display:flex}
   .pi-nav .pn-close{display:block}
   body.pn-has .hero .eyebrow{padding-left:54px}
-}`;
+}
+.pi-nav .pn-group{display:flex;flex-direction:column}
+.pi-nav .pn-row{display:flex;align-items:stretch}
+.pi-nav .pn-row a.pn-link{flex:1}
+.pi-nav .pn-tw{flex:none;width:40px;border:0;background:transparent;color:var(--ink-soft);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.pi-nav .pn-tw:hover{color:var(--ink)}
+.pi-nav .pn-tw .ph{transition:transform .15s;font-size:.8rem}
+.pi-nav .pn-group.open .pn-tw .ph{transform:rotate(90deg)}
+.pi-nav .pn-kids{display:none;flex-direction:column}
+.pi-nav .pn-group.open .pn-kids{display:flex}
+.pi-nav .pn-kids a.pn-link{min-height:36px;padding:6px 18px 6px 40px;font-size:.8rem}
+.pn-pager{position:absolute;top:20px;right:128px;z-index:6;display:inline-flex;gap:2px;padding:3px;border-radius:999px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);backdrop-filter:blur(6px)}
+.pn-pager a{display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:26px;padding:0 8px;border-radius:999px;color:rgba(255,255,255,.85);text-decoration:none;font-size:.95rem}
+.pn-pager a:hover{background:#fff;color:#14132b}
+/* pages without a .hero (pattern pages): pills would hug the raw document top — lower them */
+body.pn-nohero :is(.pn-pager,.langswitch){top:56px}
+@media (max-width:520px){
+  .pn-pager{top:14px;right:116px}
+  body.pn-nohero :is(.pn-pager,.langswitch){top:48px}
+}
+@media print{.pn-pager{display:none}}`;
 	const style = document.createElement("style");
 	style.textContent = CSS;
 	document.head.appendChild(style);
@@ -308,8 +435,45 @@
 			const lbl = document.createElement("span");
 			lbl.className = "pn-l";
 			a.append(ico, lbl);
-			nav.append(a);
-			extraRefs.push({ refLabel, lbl, t: ex.t });
+			const entry = { refLabel, lbl, t: ex.t, kids: [], tw: null, group: null };
+			if (ex.children) {
+				const group = document.createElement("div");
+				group.className = "pn-group";
+				const row = document.createElement("div");
+				row.className = "pn-row";
+				const tw = document.createElement("button");
+				tw.type = "button";
+				tw.className = "pn-tw";
+				const twIco = document.createElement("i");
+				twIco.className = "ph ph-caret-right";
+				tw.append(twIco);
+				tw.addEventListener("click", () => group.classList.toggle("open"));
+				row.append(a, tw);
+				const kids = document.createElement("div");
+				kids.className = "pn-kids";
+				ex.children.forEach((ch) => {
+					const ka = document.createElement("a");
+					ka.className = "pn-link";
+					ka.href = refBase + ch.f;
+					if (here === ch.f) ka.classList.add("active");
+					const num = document.createElement("span");
+					num.className = "pn-n";
+					num.textContent = ch.n;
+					const klbl = document.createElement("span");
+					klbl.className = "pn-l";
+					ka.append(num, klbl);
+					kids.append(ka);
+					entry.kids.push({ lbl: klbl, t: ch.t });
+					if (here === ch.f) group.classList.add("open");
+				});
+				group.append(row, kids);
+				nav.append(group);
+				entry.tw = tw;
+				entry.group = group;
+			} else {
+				nav.append(a);
+			}
+			extraRefs.push(entry);
 		});
 	}
 
@@ -358,6 +522,44 @@
 		backdrop.classList.remove("show");
 	});
 
+	/* Pages without a .hero (pattern pages): the lang pill + pager would hug the
+	   raw document top (no positioned anchor). Flag for CSS to lower them. */
+	if (!document.querySelector(".hero")) document.body.classList.add("pn-nohero");
+
+	/* Prev/next pager on reference pages, next to the lang switch.
+	   Sequence: extra entries with children flattened (repertoire → p1..p15 → auction). */
+	let pager = null;
+	if (inRef) {
+		const seq = [];
+		data.extra.forEach((ex) => {
+			seq.push({ f: ex.f, t: ex.t });
+			(ex.children || []).forEach((ch) => seq.push({ f: ch.f, n: ch.n, t: ch.t }));
+		});
+		const idx = seq.findIndex((s) => s.f === here);
+		if (idx >= 0 && seq.length > 1) {
+			const host =
+				document.querySelector(".hero") ||
+				document.querySelector("article") ||
+				document.body;
+			pager = document.createElement("nav");
+			pager.className = "pn-pager";
+			pager.setAttribute("aria-label", "Reference / Referência");
+			const mk = (s, dir) => {
+				const a = document.createElement("a");
+				a.href = refBase + s.f;
+				const i = document.createElement("i");
+				i.className = "ph ph-caret-" + dir;
+				a.append(i);
+				a._s = s;
+				a._dir = dir;
+				return a;
+			};
+			if (seq[idx - 1]) pager.append(mk(seq[idx - 1], "left"));
+			if (seq[idx + 1]) pager.append(mk(seq[idx + 1], "right"));
+			host.insertBefore(pager, host.firstChild);
+		}
+	}
+
 	const LES_SEC = { pt: "Lições", en: "Lessons" };
 	const REF_SEC = { pt: "Referência", en: "Reference" };
 	const HUB_LBL = { pt: "Hub · todos os tópicos", en: "Hub · all topics" };
@@ -370,6 +572,31 @@
 			extraRefs.forEach((r) => {
 				r.refLabel.textContent = L(REF_SEC);
 				r.lbl.textContent = L(r.t);
+				r.kids.forEach((k) => (k.lbl.textContent = L(k.t)));
+				if (r.tw && r.group) {
+					const open = r.group.classList.contains("open");
+					r.tw.setAttribute("aria-expanded", String(open));
+					r.tw.setAttribute(
+						"aria-label",
+						L(
+							open
+								? { pt: "Recolher plantas", en: "Collapse blueprints" }
+								: { pt: "Expandir plantas", en: "Expand blueprints" },
+						),
+					);
+				}
+			});
+		}
+		if (pager) {
+			pager.querySelectorAll("a").forEach((a) => {
+				const name = (a._s.n ? a._s.n + " · " : "") + L(a._s.t);
+				a.title =
+					(a._dir === "left"
+						? L({ pt: "Anterior", en: "Previous" })
+						: L({ pt: "Próximo", en: "Next" })) +
+					": " +
+					name;
+				a.setAttribute("aria-label", a.title);
 			});
 		}
 		hubLbl.textContent = L(HUB_LBL);

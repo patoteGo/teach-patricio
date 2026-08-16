@@ -1,0 +1,190 @@
+---
+// Migrated verbatim from public/topics/software-concepts/reference/software-concepts-cheatsheet.html (URL unchanged: builds to software-concepts-cheatsheet.html).
+// Body is is:raw: braces/inline scripts/JSON blocks pass through untouched.
+import Lesson from "../../../../layouts/Lesson.astro";
+const titlePt = "Conceitos de software — folha rápida";
+const titleEn = "Software concepts — cheat sheet";
+const titleFallback = "Software concepts cheat sheet";
+const bodyClass = "lang-pt";
+const assets = [
+	"<link rel=\"stylesheet\" href=\"../assets/style.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/dark.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/i18n.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/concepts.css\" />",
+	"<script src=\"../assets/i18n.js\" defer></script>",
+	"<script src=\"../assets/nav.js\" defer></script>",
+	"<script src=\"../assets/reading-ui.js\" defer></script>",
+];
+
+---
+<Lesson
+	titlePt={titlePt}
+	titleEn={titleEn}
+	titleFallback={titleFallback}
+	bodyClass={bodyClass}
+	assets={assets}
+>
+	<Fragment is:raw>
+    <article class="lesson">
+      <header class="hero">
+        <span class="eyebrow"
+          >⬡ <span data-lang="pt">referência</span
+          ><span data-lang="en">reference</span></span
+        >
+        <h1>
+          <span data-lang="pt">Conceitos de software.</span
+          ><span data-lang="en">Software concepts.</span>
+        </h1>
+        <p class="lead">
+          <span data-lang="pt"
+            >A memória comprimida das lições. Imprima ou revise antes de uma
+            entrevista.</span
+          ><span data-lang="en"
+            >The compressed memory of the lessons. Print it or review before an
+            interview.</span
+          >
+        </p>
+      </header>
+      <nav class="concept-nav">
+        <a href="../lessons/0001-sql-foundations.html">SQL</a
+        ><a href="../lessons/0002-oauth-flow.html">OAuth</a
+        ><a href="../lessons/0003-sql-sandbox.html">⌨ Sandbox</a
+        ><a href="../../../index.html">Hub</a>
+      </nav>
+      <h2 class="section"><span class="num">1</span>SQL</h2>
+      <div class="pipeline">
+        <div class="pipe"><code>FROM/JOIN</code></div>
+        <span class="arrow">→</span>
+        <div class="pipe"><code>WHERE</code></div>
+        <span class="arrow">→</span>
+        <div class="pipe"><code>GROUP BY</code></div>
+        <span class="arrow">→</span>
+        <div class="pipe"><code>HAVING</code></div>
+        <span class="arrow">→</span>
+        <div class="pipe"><code>SELECT</code></div>
+        <span class="arrow">→</span>
+        <div class="pipe"><code>ORDER BY</code></div>
+      </div>
+      <div class="code-stage">
+        <pre><code>SELECT c.name, COUNT(*) AS orders, SUM(o.total) AS revenue
+FROM customers c
+JOIN orders o ON o.customer_id = c.id
+WHERE o.status = 'paid'
+GROUP BY c.id, c.name
+HAVING COUNT(*) &gt; 1
+ORDER BY revenue DESC;</code></pre>
+      </div>
+      <div class="mental-model">
+        <div class="concept-card">
+          <h3>JOIN</h3>
+          <p>
+            <span data-lang="pt">Conecta linhas por uma chave.</span
+            ><span data-lang="en">Connects rows by a key.</span>
+          </p>
+        </div>
+        <div class="concept-card">
+          <h3>WHERE</h3>
+          <p>
+            <span data-lang="pt">Filtra linhas antes do grupo.</span
+            ><span data-lang="en">Filters rows before grouping.</span>
+          </p>
+        </div>
+        <div class="concept-card">
+          <h3>HAVING</h3>
+          <p>
+            <span data-lang="pt">Filtra grupos após agregação.</span
+            ><span data-lang="en">Filters groups after aggregation.</span>
+          </p>
+        </div>
+      </div>
+      <h2 class="section"><span class="num">2</span>OAuth 2.0</h2>
+      <div class="actors">
+        <div class="actor">🧑<br /><strong>User</strong></div>
+        <div class="actor">📱<br /><strong>Client</strong></div>
+        <div class="actor">🪪<br /><strong>Auth server</strong></div>
+        <div class="actor">🗄️<br /><strong>API</strong></div>
+      </div>
+      <ol>
+        <li>
+          <strong>Redirect:</strong>
+          <span data-lang="pt"
+            >o cliente envia o usuário ao servidor de autorização com escopo,
+            state e desafio PKCE.</span
+          ><span data-lang="en"
+            >client sends user to authorization server with scope, state, and
+            PKCE challenge.</span
+          >
+        </li>
+        <li>
+          <strong>Consent:</strong>
+          <span data-lang="pt"
+            >o usuário se autentica ali e concede acesso.</span
+          ><span data-lang="en"
+            >user authenticates there and grants access.</span
+          >
+        </li>
+        <li>
+          <strong>Callback:</strong>
+          <span data-lang="pt"
+            >o cliente recebe um código de autorização de curta duração.</span
+          ><span data-lang="en"
+            >client receives a short-lived authorization code.</span
+          >
+        </li>
+        <li>
+          <strong>Exchange:</strong>
+          <span data-lang="pt"
+            >o cliente envia código + verifier PKCE ao endpoint de token.</span
+          ><span data-lang="en"
+            >client sends code + PKCE verifier to token endpoint.</span
+          >
+        </li>
+        <li>
+          <strong>API:</strong>
+          <span data-lang="pt"
+            >o cliente envia o access token com escopo ao servidor de
+            recursos.</span
+          ><span data-lang="en"
+            >client sends scoped access token to resource server.</span
+          >
+        </li>
+      </ol>
+      <div class="security-pair">
+        <div class="concept-card">
+          <h3>OAuth</h3>
+          <p>
+            <span data-lang="pt">Autorização: o que o app pode fazer.</span
+            ><span data-lang="en">Authorization: what the app may do.</span>
+          </p>
+        </div>
+        <div class="concept-card">
+          <h3>OpenID Connect</h3>
+          <p>
+            <span data-lang="pt">Autenticação: quem é o usuário.</span
+            ><span data-lang="en">Authentication: who the user is.</span>
+          </p>
+        </div>
+      </div>
+      <div class="callout key">
+        <p>
+          <strong>PKCE:</strong>
+          <span data-lang="pt"
+            >challenge primeiro, verifier na troca. Código roubado sem verifier
+            é inútil.</span
+          ><span data-lang="en"
+            >challenge first, verifier during exchange. A stolen code without
+            the verifier is useless.</span
+          >
+        </p>
+      </div>
+      <p class="cite-line">
+        <a href="https://www.postgresql.org/docs/current/tutorial.html"
+          >PostgreSQL tutorial</a
+        >
+        · <a href="https://datatracker.ietf.org/doc/html/rfc6749">RFC 6749</a> ·
+        <a href="https://datatracker.ietf.org/doc/html/rfc7636">RFC 7636</a> ·
+        <a href="https://datatracker.ietf.org/doc/html/rfc9700">RFC 9700</a>
+      </p>
+    </article>
+  </Fragment>
+</Lesson>

@@ -1,0 +1,1296 @@
+---
+// Migrated verbatim from public/topics/pi/lessons/0007-packages.html (URL unchanged: builds to 0007-packages.html).
+// Body is is:raw: braces/inline scripts/JSON blocks pass through untouched.
+import Lesson from "../../../../layouts/Lesson.astro";
+const titlePt = "Pi · Lição 7 — Pacotes do Pi";
+const titleEn = "Pi · Lesson 7 — Pi Packages";
+const titleFallback = "Pi · Lição 7 — Pacotes do Pi";
+const bodyClass = "lang-pt";
+const viewport = "width=device-width, initial-scale=1.0";
+const assets = [
+	"<link rel=\"stylesheet\" href=\"../assets/style.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/dark.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/i18n.css\" />",
+	"<script src=\"../assets/i18n.js\" defer></script>",
+	"<script src=\"../assets/nav.js\" defer></script>",
+];
+
+---
+<Lesson
+	titlePt={titlePt}
+	titleEn={titleEn}
+	titleFallback={titleFallback}
+	bodyClass={bodyClass}
+	viewport={viewport}
+	assets={assets}
+>
+	<Fragment is:raw>
+    <article class="lesson">
+      <!-- ===================== HERO ===================== -->
+      <header class="hero">
+        <span class="eyebrow"
+          ><span data-lang="pt">⬡ Lição 07 · Final — Pacotes</span
+          ><span data-lang="en">⬡ Lesson 07 · Finale — Packages</span></span
+        >
+        <h1>
+          <span data-lang="pt"
+            >Empacote.<br />Compartilhe.<br />Instale com segurança.</span
+          ><span data-lang="en"
+            >Bundle it.<br />Share it.<br />Install safely.</span
+          >
+        </h1>
+        <p class="lead">
+          <span data-lang="pt"
+            >Um <strong>pacote do Pi</strong> empacota as quatro primitivas —
+            extensões, skills, prompts, temas — e as distribui via npm ou git. É
+            assim que o Pi escala de “meu setup pessoal” para um toolkit
+            reutilizável e compartilhável. É também onde as apostas de segurança
+            ficam sérias.</span
+          ><span data-lang="en"
+            >A <strong>Pi package</strong> bundles the four primitives —
+            extensions, skills, prompts, themes — and ships them via npm or git.
+            This is how Pi scales from "my personal setup" to a reusable,
+            shareable toolkit. It's also where the security stakes get
+            real.</span
+          >
+        </p>
+        <p class="lesson-nav-top">
+          ↑
+          <a href="../MISSION.md"
+            ><span data-lang="pt">Missão</span
+            ><span data-lang="en">Mission</span></a
+          >
+          · <span data-lang="pt">anterior</span
+          ><span data-lang="en">prev</span>:
+          <a href="./0006-extensions.html"
+            ><span data-lang="pt">Lição 6 · Extensões</span
+            ><span data-lang="en">Lesson 6 · Extensions</span></a
+          >
+          · <span data-lang="pt">ref</span><span data-lang="en">ref</span>:
+          <a href="../reference/pi-glossary.html"
+            ><span data-lang="pt">Glossário</span
+            ><span data-lang="en">Glossary</span></a
+          >
+        </p>
+      </header>
+
+      <!-- ===================== 1. THE BIG PICTURE ===================== -->
+      <h2 class="section">
+        <span class="num">1</span
+        ><span data-lang="pt"
+          >Um pacote = as quatro primitivas, empacotadas</span
+        ><span data-lang="en">A package = the four primitives, bundled</span>
+      </h2>
+      <p class="kicker">
+        <span data-lang="pt"
+          >Você já conheceu cada primitiva nas lições 4–6. Um pacote apenas as
+          encaixa juntas e dá à caixa um nome, uma versão e um canal de
+          distribuição.</span
+        ><span data-lang="en"
+          >You've met each primitive in lessons 4–6. A package just boxes them
+          together and gives the box a name, a version, and a distribution
+          channel.</span
+        >
+      </p>
+
+      <div class="scroll-x" style="margin: 22px 0 8px">
+        <svg
+          viewBox="0 0 820 250"
+          width="100%"
+          role="img"
+          aria-labelledby="s1"
+          style="min-width: 820px"
+        >
+          <title
+            id="s1"
+            data-pt="Um pacote do Pi empacota extensões, skills, prompts, temas; distribuído via npm ou git; instalado global ou no projeto"
+            data-en="A pi package bundles extensions, skills, prompts, themes; distributed via npm or git; installed global or project-local"
+          >
+            Um pacote do Pi empacota extensões, skills, prompts, temas
+          </title>
+          <!-- the package -->
+          <rect
+            x="250"
+            y="40"
+            width="320"
+            height="170"
+            rx="16"
+            fill="#211d33"
+            stroke="#8b6ff7"
+            stroke-width="2.5"
+            stroke-dasharray="7 5"
+          />
+          <text
+            x="410"
+            y="66"
+            text-anchor="middle"
+            font-family="Space Grotesk"
+            font-size="13"
+            font-weight="700"
+            fill="#8b6ff7"
+          >
+            📦 my-pi-toolkit
+          </text>
+          <g font-family="JetBrains Mono" font-size="10.5">
+            <rect
+              x="270"
+              y="84"
+              width="130"
+              height="32"
+              rx="8"
+              fill="#211d33"
+            />
+            <text
+              x="335"
+              y="104"
+              text-anchor="middle"
+              fill="#8b6ff7"
+              font-weight="700"
+            >
+              extensions/
+            </text>
+            <rect
+              x="410"
+              y="84"
+              width="140"
+              height="32"
+              rx="8"
+              fill="#0c2a27"
+            />
+            <text
+              x="480"
+              y="104"
+              text-anchor="middle"
+              fill="#2dd4bf"
+              font-weight="700"
+            >
+              skills/
+            </text>
+            <rect
+              x="270"
+              y="124"
+              width="130"
+              height="32"
+              rx="8"
+              fill="#2b2110"
+            />
+            <text
+              x="335"
+              y="144"
+              text-anchor="middle"
+              fill="#fbbf24"
+              font-weight="700"
+            >
+              prompts/
+            </text>
+            <rect
+              x="410"
+              y="124"
+              width="140"
+              height="32"
+              rx="8"
+              fill="#2c1622"
+            />
+            <text
+              x="480"
+              y="144"
+              text-anchor="middle"
+              fill="#fb7185"
+              font-weight="700"
+            >
+              themes/
+            </text>
+          </g>
+          <text
+            x="410"
+            y="186"
+            text-anchor="middle"
+            font-family="Inter"
+            font-size="10.5"
+            fill="#a0a3b5"
+            data-pt='declarado em package.json sob a chave "pi"'
+            data-en='declared in package.json under the "pi" key'
+          >
+            declarado em package.json sob a chave "pi"
+          </text>
+
+          <!-- distribution arrows -->
+          <path
+            d="M575 100 C 625 100, 640 90, 680 78"
+            fill="none"
+            stroke="#2dd4bf"
+            stroke-width="2.5"
+            marker-end="url(#p1)"
+          />
+          <path
+            d="M575 150 C 625 150, 640 162, 680 174"
+            fill="none"
+            stroke="#60a5fa"
+            stroke-width="2.5"
+            marker-end="url(#p1)"
+          />
+          <defs>
+            <marker
+              id="p1"
+              markerWidth="10"
+              markerHeight="10"
+              refX="7"
+              refY="3"
+              orient="auto"
+            >
+              <path d="M0,0 L7,3 L0,6 Z" fill="#8b6ff7" />
+            </marker>
+          </defs>
+          <rect x="688" y="62" width="110" height="34" rx="9" fill="#2dd4bf" />
+          <text
+            x="743"
+            y="84"
+            text-anchor="middle"
+            font-family="JetBrains Mono"
+            font-size="11"
+            fill="#fff"
+            font-weight="700"
+          >
+            npm
+          </text>
+          <rect x="688" y="156" width="110" height="34" rx="9" fill="#60a5fa" />
+          <text
+            x="743"
+            y="178"
+            text-anchor="middle"
+            font-family="JetBrains Mono"
+            font-size="11"
+            fill="#fff"
+            font-weight="700"
+          >
+            git
+          </text>
+
+          <!-- install destinations -->
+          <path
+            d="M245 110 C 180 110, 150 95, 110 80"
+            fill="none"
+            stroke="#9ea2b8"
+            stroke-width="2"
+            stroke-dasharray="4 4"
+            marker-end="url(#p2)"
+          />
+          <path
+            d="M245 150 C 180 150, 150 168, 110 182"
+            fill="none"
+            stroke="#9ea2b8"
+            stroke-width="2"
+            stroke-dasharray="4 4"
+            marker-end="url(#p2)"
+          />
+          <defs>
+            <marker
+              id="p2"
+              markerWidth="9"
+              markerHeight="9"
+              refX="6"
+              refY="3"
+              orient="auto"
+            >
+              <path d="M0,0 L6,3 L0,6 Z" fill="#9ea2b8" />
+            </marker>
+          </defs>
+          <text
+            x="100"
+            y="64"
+            text-anchor="middle"
+            font-family="JetBrains Mono"
+            font-size="10"
+            fill="#9ea2b8"
+          >
+            ~/.pi/agent/
+          </text>
+          <text
+            x="100"
+            y="78"
+            text-anchor="middle"
+            font-family="Inter"
+            font-size="9.5"
+            fill="#a0a3b5"
+            data-pt="global"
+            data-en="global"
+          >
+            global
+          </text>
+          <text
+            x="100"
+            y="208"
+            text-anchor="middle"
+            font-family="JetBrains Mono"
+            font-size="10"
+            fill="#9ea2b8"
+          >
+            .pi/
+          </text>
+          <text
+            x="100"
+            y="222"
+            text-anchor="middle"
+            font-family="Inter"
+            font-size="9.5"
+            fill="#a0a3b5"
+            data-pt="local do projeto"
+            data-en="project-local"
+          >
+            local do projeto
+          </text>
+        </svg>
+      </div>
+      <div class="callout key">
+        <p>
+          <span data-lang="pt"
+            ><strong>O arco, completo:</strong> as lições 4–6 ensinaram as
+            primitivas. Pacotes as compõem e as tornam portáteis — as mesmas
+            primitivas, agora instaláveis num comando e compartilháveis com
+            qualquer um.</span
+          ><span data-lang="en"
+            ><strong>The arc, completed:</strong> lessons 4–6 taught the
+            primitives. Packages compose them and make them portable — the same
+            primitives, now installable in one command and shareable with
+            anyone.</span
+          >
+        </p>
+      </div>
+
+      <!-- ===================== 2. INSTALL & MANAGE ===================== -->
+      <h2 class="section">
+        <span class="num">2</span
+        ><span data-lang="pt">Instalar &amp; gerenciar</span
+        ><span data-lang="en">Install &amp; manage</span>
+      </h2>
+      <p class="kicker">
+        <span data-lang="pt"
+          >Três tipos de fonte, um comando. O padrão escreve nas configurações
+          de <strong>usuário</strong>; <code class="inline">-l</code> escreve no
+          <strong>projeto</strong> (compartilhável, auto-instalado após
+          confiança).</span
+        ><span data-lang="en"
+          >Three source types, one command. Default writes to
+          <strong>user</strong> settings; <code class="inline">-l</code> writes
+          to <strong>project</strong> (shareable, auto-installed after
+          trust).</span
+        >
+      </p>
+
+      <div class="grid cols-3" style="margin-top: 18px">
+        <div class="card" style="border-top: 4px solid #2dd4bf">
+          <h4>npm</h4>
+          <p class="mono" style="font-size: 0.82rem">
+            npm:@foo/bar<br />npm:@foo/bar@1.2.3
+          </p>
+          <p style="color: var(--ink-soft); font-size: 0.85rem">
+            → <code class="inline">~/.pi/agent/npm/</code>
+          </p>
+        </div>
+        <div class="card" style="border-top: 4px solid #60a5fa">
+          <h4>git</h4>
+          <p class="mono" style="font-size: 0.82rem">
+            git:github.com/u/repo@v1<br />git:git@github.com:u/repo
+          </p>
+          <p style="color: var(--ink-soft); font-size: 0.85rem">
+            →
+            <code class="inline"
+              >~/.pi/agent/git/&lt;host&gt;/&lt;path&gt;</code
+            >
+          </p>
+        </div>
+        <div class="card" style="border-top: 4px solid #fbbf24">
+          <h4>
+            <span data-lang="pt">caminho local</span
+            ><span data-lang="en">local path</span>
+          </h4>
+          <p class="mono" style="font-size: 0.82rem">
+            /abs/path · ./rel/path<br />https://… @ref
+          </p>
+          <p style="color: var(--ink-soft); font-size: 0.85rem">
+            <span data-lang="pt">sem cópia; carregado no lugar</span
+            ><span data-lang="en">no copy; loaded in place</span>
+          </p>
+        </div>
+      </div>
+
+      <pre
+        class="block"
+        style="margin-top: 16px"
+      >pi install npm:@foo/bar@1.0.0      <span class="c"><span data-lang="pt"># versão fixada</span><span data-lang="en"># pinned version</span></span>
+pi install git:github.com/u/repo@v1 <span class="c"><span data-lang="pt"># tag/commit fixado</span><span data-lang="en"># pinned tag/commit</span></span>
+pi -e npm:@foo/bar                 <span class="c"><span data-lang="pt"># teste sem instalar (temp, uma execução)</span><span data-lang="en"># try without installing (temp, one run)</span></span>
+pi install -l git:github.com/u/repo <span class="c"><span data-lang="pt"># -l → configurações do projeto (.pi/)</span><span data-lang="en"># -l → project settings (.pi/)</span></span>
+pi list                            <span class="c"><span data-lang="pt"># mostrar instalados</span><span data-lang="en"># show installed</span></span>
+pi remove npm:@foo/bar
+pi update --all                    <span class="c"><span data-lang="pt"># pi + pacotes + reconciliar refs git fixadas</span><span data-lang="en"># pi + packages + reconcile pinned git refs</span></span>
+pi update npm:@foo/bar             <span class="c"><span data-lang="pt"># atualizar um</span><span data-lang="en"># update one</span></span></pre>
+      <p class="cite">
+        <span data-lang="pt">Fonte:</span><span data-lang="en">Source:</span>
+        <a
+          href="https://pi.dev/docs/latest/packages"
+          target="_blank"
+          rel="noopener"
+          ><span data-lang="pt">Pi docs · Pacotes</span
+          ><span data-lang="en">Pi docs · Packages</span></a
+        >
+        · <span data-lang="pt">navegue em</span
+        ><span data-lang="en">browse at</span>
+        <a href="https://pi.dev/packages" target="_blank" rel="noopener"
+          >pi.dev/packages</a
+        >.
+      </p>
+
+      <!-- ===================== 3. PINNING ===================== -->
+      <h2 class="section">
+        <span class="num">3</span
+        ><span data-lang="pt">Fixação &amp; atualizações</span
+        ><span data-lang="en">Pinning &amp; updates</span>
+      </h2>
+      <p class="kicker">
+        <span data-lang="pt"
+          >Uma versão (<code class="inline">@1.2.3</code>) ou ref (<code
+            class="inline"
+            >@v1</code
+          >) <strong>fixa</strong> um pacote. Pacotes fixados são pulados por
+          <code class="inline">pi update --extensions</code> /
+          <code class="inline">--all</code> — eles não derivam. Para mover um
+          pacote fixado, reinstale num novo ref.</span
+        ><span data-lang="en"
+          >A version (<code class="inline">@1.2.3</code>) or ref (<code
+            class="inline"
+            >@v1</code
+          >) <strong>pins</strong> a package. Pinned packages are skipped by
+          <code class="inline">pi update --extensions</code> /
+          <code class="inline">--all</code> — they don't drift. To move a pinned
+          package, re-install at a new ref.</span
+        >
+      </p>
+
+      <div class="grid cols-2" style="margin-top: 14px">
+        <div class="card" style="border-left: 4px solid #2dd4bf">
+          <h4>
+            📌 <span data-lang="pt">Fixado</span
+            ><span data-lang="en">Pinned</span> <code class="inline">@ref</code>
+          </h4>
+          <p>
+            <span data-lang="pt"
+              >Reproduzível. Atualizações o <strong>pulam</strong>, mas ainda
+              reconciliam o clone para o ref configurado. Mova com
+              <code class="inline">pi install …@new-ref</code>.</span
+            ><span data-lang="en"
+              >Reproducible. Updates <strong>skip</strong> it, but still
+              reconcile the clone to the configured ref. Move with
+              <code class="inline">pi install …@new-ref</code>.</span
+            >
+          </p>
+        </div>
+        <div class="card" style="border-left: 4px solid #9ea2b8">
+          <h4>
+            🌀 <span data-lang="pt">Flutuante (sem ref)</span
+            ><span data-lang="en">Floating (no ref)</span>
+          </h4>
+          <p>
+            <span data-lang="pt"
+              >Mais recente.
+              <code class="inline">pi update --extensions</code> o move para
+              frente. Bom para experimentação, arriscado para trabalho em
+              equipe.</span
+            ><span data-lang="en"
+              >Latest. <code class="inline">pi update --extensions</code> moves
+              it forward. Fine for experimentation, risky for teamwork.</span
+            >
+          </p>
+        </div>
+      </div>
+      <div class="callout tip">
+        <p>
+          <span data-lang="pt"
+            ><strong>Para setups compartilhados/em equipe: fixe.</strong> Um
+            <code class="inline">.pi/settings.json</code> de projeto com
+            <code class="inline">packages</code> fixados significa que cada
+            colega de equipe tem as <em>mesmas</em> capacidades — o Pi
+            auto-instala os faltantes na inicialização, após confiança.</span
+          ><span data-lang="en"
+            ><strong>For shared/team setups: pin.</strong> A project
+            <code class="inline">.pi/settings.json</code> with pinned
+            <code class="inline">packages</code> means every teammate gets the
+            <em>same</em> capabilities — Pi auto-installs missing ones on
+            startup after trust.</span
+          >
+        </p>
+      </div>
+
+      <!-- ===================== 4. CREATING A PACKAGE ===================== -->
+      <h2 class="section">
+        <span class="num">4</span><span data-lang="pt">Criando o seu</span
+        ><span data-lang="en">Creating your own</span>
+      </h2>
+      <p class="kicker">
+        <span data-lang="pt"
+          >Adicione uma chave <code class="inline">pi</code> ao
+          <code class="inline">package.json</code> (ou apenas use diretórios
+          convencionais) e marque-o com <code class="inline">pi-package</code>.
+          Esse é todo o passo de publicação.</span
+        ><span data-lang="en"
+          >Add a <code class="inline">pi</code> key to
+          <code class="inline">package.json</code> (or just use conventional
+          dirs) and tag it <code class="inline">pi-package</code>. That's the
+          whole publishing step.</span
+        >
+      </p>
+
+      <pre class="block"><span class="c">// package.json</span>
+{
+  <span class="s">"name"</span>: <span class="s">"my-pi-toolkit"</span>,
+  <span class="s">"keywords"</span>: [<span class="s">"pi-package"</span>],
+  <span class="s">"pi"</span>: {
+    <span class="s">"extensions"</span>: [<span class="s">"./extensions"</span>],
+    <span class="s">"skills"</span>:     [<span class="s">"./skills"</span>],
+    <span class="s">"prompts"</span>:    [<span class="s">"./prompts"</span>],
+    <span class="s">"themes"</span>:     [<span class="s">"./themes"</span>],
+    <span class="s">"video"</span>: <span class="s">"https://…/demo.mp4"</span>   <span class="c"><span data-lang="pt"># prévia opcional da galeria</span><span data-lang="en"># optional gallery preview</span></span>
+  }
+}</pre>
+
+      <div class="grid cols-2" style="margin-top: 14px">
+        <div class="callout tip" style="margin: 0">
+          <p>
+            <span data-lang="pt"
+              ><strong>Sem manifesto? Auto-descoberta.</strong> Sem uma chave
+              <code class="inline">pi</code>, o Pi carrega de
+              <code class="inline">extensions/</code> (<code class="inline"
+                >.ts/.js</code
+              >), <code class="inline">skills/</code>,
+              <code class="inline">prompts/</code> (<code class="inline"
+                >.md</code
+              >), <code class="inline">themes/</code> (<code class="inline"
+                >.json</code
+              >).</span
+            ><span data-lang="en"
+              ><strong>No manifest? Auto-discover.</strong> Without a
+              <code class="inline">pi</code> key, Pi loads from
+              <code class="inline">extensions/</code> (<code class="inline"
+                >.ts/.js</code
+              >), <code class="inline">skills/</code>,
+              <code class="inline">prompts/</code> (<code class="inline"
+                >.md</code
+              >), <code class="inline">themes/</code> (<code class="inline"
+                >.json</code
+              >).</span
+            >
+          </p>
+        </div>
+        <div class="callout warn" style="margin: 0">
+          <p>
+            <span data-lang="pt"
+              ><strong>Regra de deps:</strong> deps de runtime →
+              <code class="inline">dependencies</code>. Bibliotecas centrais do
+              Pi (<code class="inline">pi-ai</code>,
+              <code class="inline">pi-tui</code>,
+              <code class="inline">typebox</code>…) →
+              <code class="inline">peerDependencies: "*"</code>,
+              <strong>não empacote</strong>.</span
+            ><span data-lang="en"
+              ><strong>Deps rule:</strong> runtime deps →
+              <code class="inline">dependencies</code>. Core Pi libs (<code
+                class="inline"
+                >pi-ai</code
+              >, <code class="inline">pi-tui</code>,
+              <code class="inline">typebox</code>…) →
+              <code class="inline">peerDependencies: "*"</code>,
+              <strong>don't bundle</strong>.</span
+            >
+          </p>
+        </div>
+      </div>
+
+      <!-- ===================== 5. SECURITY ===================== -->
+      <h2 class="section">
+        <span class="num">5</span
+        ><span data-lang="pt">Segurança — leia duas vezes</span
+        ><span data-lang="en">Security — read this twice</span>
+      </h2>
+      <div class="callout warn" style="margin-top: 8px">
+        <p>
+          <span data-lang="pt"
+            ><strong
+              >Pacotes do Pi rodam com seu acesso total ao sistema.</strong
+            >
+            Extensões executam código arbitrário; skills podem instruir o modelo
+            a realizar <em>qualquer</em> ação — incluindo executar binários.
+            <strong
+              >Revise o código-fonte antes de instalar qualquer coisa de
+              terceiros.</strong
+            >
+            Mesma higiene que <code class="inline">npm install</code>, mas o
+            raio de explosão inclui “o modelo seguindo instruções não
+            confiáveis.”</span
+          ><span data-lang="en"
+            ><strong>Pi packages run with your full system access.</strong>
+            Extensions execute arbitrary code; skills can instruct the model to
+            perform <em>any</em> action — including running executables.
+            <strong
+              >Review the source before installing anything third-party.</strong
+            >
+            Same hygiene as <code class="inline">npm install</code>, but the
+            blast radius includes "the model following untrusted
+            instructions."</span
+          >
+        </p>
+      </div>
+
+      <div class="grid cols-3" style="margin-top: 16px">
+        <div
+          class="card"
+          style="border-top: 4px solid #2dd4bf; text-align: center"
+        >
+          <div style="font-size: 30px">🔍</div>
+          <h4 style="text-align: center">
+            <span data-lang="pt">Leia o código</span
+            ><span data-lang="en">Read the code</span>
+          </h4>
+          <p style="text-align: center; font-size: 0.88rem">
+            <span data-lang="pt"
+              >Extensões = TS que você vai executar. Dê uma olhada no entry
+              point + qualquer <code class="inline">child_process</code>/<code
+                class="inline"
+                >fetch</code
+              >.</span
+            ><span data-lang="en"
+              >Extensions = TS you'll execute. Skim the entry point + any
+              <code class="inline">child_process</code>/<code class="inline"
+                >fetch</code
+              >.</span
+            >
+          </p>
+        </div>
+        <div
+          class="card"
+          style="border-top: 4px solid #8b6ff7; text-align: center"
+        >
+          <div style="font-size: 30px">🚪</div>
+          <h4 style="text-align: center">
+            <span data-lang="pt">Confiança controla</span
+            ><span data-lang="en">Trust gates it</span>
+          </h4>
+          <p style="text-align: center; font-size: 0.88rem">
+            <span data-lang="pt"
+              >Pacotes de projeto carregam apenas após o prompt de
+              <a href="./0004-context-files.html">confiança</a>.
+              <code class="inline">/trust</code> salva a decisão.</span
+            ><span data-lang="en"
+              >Project packages load only after the
+              <a href="./0004-context-files.html">trust</a> prompt.
+              <code class="inline">/trust</code> saves the decision.</span
+            >
+          </p>
+        </div>
+        <div
+          class="card"
+          style="border-top: 4px solid #fbbf24; text-align: center"
+        >
+          <div style="font-size: 30px">🧪</div>
+          <h4 style="text-align: center">
+            <span data-lang="pt">Teste antes</span
+            ><span data-lang="en">Try first</span>
+          </h4>
+          <p style="text-align: center; font-size: 0.88rem">
+            <span data-lang="pt"
+              ><code class="inline">pi -e &lt;source&gt;</code> roda-o de um
+              diretório temporário por uma sessão — inspecione antes de
+              confirmar.</span
+            ><span data-lang="en"
+              ><code class="inline">pi -e &lt;source&gt;</code> runs it from a
+              temp dir for one session — inspect before committing.</span
+            >
+          </p>
+        </div>
+      </div>
+
+      <!-- ===================== 6. FILTER & ENABLE ===================== -->
+      <h2 class="section">
+        <span class="num">6</span
+        ><span data-lang="pt">Filtrar &amp; ativar/desativar</span
+        ><span data-lang="en">Filter &amp; enable/disable</span>
+      </h2>
+      <p class="kicker">
+        <span data-lang="pt"
+          >Não quer tudo que um pacote traz? Restrinja com a forma de objeto, ou
+          alterne recursos individuais com
+          <code class="inline">pi config</code>.</span
+        ><span data-lang="en"
+          >Don't want everything a package ships? Narrow it with the object
+          form, or toggle individual resources with
+          <code class="inline">pi config</code>.</span
+        >
+      </p>
+
+      <pre
+        class="block"
+      ><span class="c"><span data-lang="pt">// settings.json — pegue só o que você quer</span><span data-lang="en">// settings.json — take only what you want</span></span>
+{
+  <span class="s">"packages"</span>: [
+    <span class="s">"npm:simple-pkg"</span>,
+    {
+      <span class="s">"source"</span>: <span class="s">"npm:my-package"</span>,
+      <span class="s">"extensions"</span>: [<span class="s">"extensions/*.ts"</span>, <span class="s">"!extensions/legacy.ts"</span>],
+      <span class="s">"skills"</span>: [],                       <span class="c"><span data-lang="pt"># carregar nenhum</span><span data-lang="en"># load none</span></span>
+      <span class="s">"themes"</span>: [<span class="s">"+themes/legacy.json"</span>]    <span class="c"><span data-lang="pt"># forçar inclusão</span><span data-lang="en"># force-include</span></span>
+    }
+  ]
+}</pre>
+      <div class="grid cols-2" style="margin-top: 14px">
+        <div class="card">
+          <span class="sig">pi config</span>
+          <p>
+            <span data-lang="pt"
+              >Ative/desative extensões/skills/prompts/temas.
+              <span class="kbd">Tab</span> alterna global↔projeto;
+              <code class="inline">-l</code> começa no projeto.</span
+            ><span data-lang="en"
+              >Toggle extensions/skills/prompts/themes on or off.
+              <span class="kbd">Tab</span> switches global↔project;
+              <code class="inline">-l</code> starts in project.</span
+            >
+          </p>
+        </div>
+        <div class="card">
+          <span class="sig"
+            ><span data-lang="pt">escopo &amp; dedup</span
+            ><span data-lang="en">scope &amp; dedup</span></span
+          >
+          <p>
+            <span data-lang="pt"
+              >Mesmo pacote em global + projeto?
+              <strong>Projeto vence</strong> — a menos que defina
+              <code class="inline">autoload: false</code>, aí é um delta sobre o
+              global.</span
+            ><span data-lang="en"
+              >Same package in global + project? <strong>Project wins</strong> —
+              unless it sets <code class="inline">autoload: false</code>, then
+              it's a delta over global.</span
+            >
+          </p>
+        </div>
+      </div>
+
+      <!-- ===================== QUIZ ===================== -->
+      <h2 class="section">
+        <span class="num">7</span
+        ><span data-lang="pt">Confira seus instintos</span
+        ><span data-lang="en">Check your instincts</span>
+      </h2>
+
+      <div class="quiz" id="q1" role="group" aria-labelledby="q1l">
+        <div class="q" id="q1l">
+          <span data-lang="pt"
+            >Q1. Por padrão, para onde o
+            <code class="inline">pi install</code> escreve?</span
+          ><span data-lang="en"
+            >Q1. By default, where does
+            <code class="inline">pi install</code> write?</span
+          >
+        </div>
+        <div class="options">
+          <button
+            class="opt"
+            data-correct="true"
+            data-fb-pt="Exato: o padrão é o escopo de usuário (global)."
+            data-fb-en="Exact: the default is the user (global) scope."
+          >
+            <span data-lang="pt">Global do usuário</span
+            ><span data-lang="en">User global</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — isso exige -l."
+            data-fb-en="No — that needs -l."
+          >
+            <span data-lang="pt">Local do projeto</span
+            ><span data-lang="en">Project local</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — temp é o pi -e."
+            data-fb-en="No — temp is pi -e."
+          >
+            <span data-lang="pt">Um diretório temporário</span
+            ><span data-lang="en">A temp dir</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — sempre é salvo em algum lugar."
+            data-fb-en="No — it's always saved somewhere."
+          >
+            <span data-lang="pt">Nenhum lugar salvo</span
+            ><span data-lang="en">Nowhere saved</span>
+          </button>
+        </div>
+        <div class="verdict" aria-live="polite"></div>
+      </div>
+
+      <div class="quiz" id="q2" role="group" aria-labelledby="q2l">
+        <div class="q" id="q2l">
+          <span data-lang="pt"
+            >Q2. Pacotes fixados e
+            <code class="inline">pi update --extensions</code>?</span
+          ><span data-lang="en"
+            >Q2. Pinned packages and
+            <code class="inline">pi update --extensions</code>?</span
+          >
+        </div>
+        <div class="options">
+          <button
+            class="opt"
+            data-correct="true"
+            data-fb-pt="Exato: fixados são pulados, só reconciliados ao ref."
+            data-fb-en="Exact: pinned ones are skipped, only reconciled to the ref."
+          >
+            <span data-lang="pt">Pulam os fixados</span
+            ><span data-lang="en">Skip pinned ones</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — fixados não derivam."
+            data-fb-en="No — pinned ones don't drift."
+          >
+            <span data-lang="pt">Sempre os atualizam</span
+            ><span data-lang="en">Always upgrade them</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — eles ficam."
+            data-fb-en="No — they stay."
+          >
+            <span data-lang="pt">Os deletam inteiramente</span
+            ><span data-lang="en">Delete them entirely</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — a instalação segue intacta."
+            data-fb-en="No — the install stays intact."
+          >
+            <span data-lang="pt">Quebram a instalação</span
+            ><span data-lang="en">Break the install</span>
+          </button>
+        </div>
+        <div class="verdict" aria-live="polite"></div>
+      </div>
+
+      <div class="quiz" id="q3" role="group" aria-labelledby="q3l">
+        <div class="q" id="q3l">
+          <span data-lang="pt"
+            >Q3. Antes de instalar um pacote de terceiros, você deve…</span
+          ><span data-lang="en"
+            >Q3. Before installing a third-party package, you must…</span
+          >
+        </div>
+        <div class="options">
+          <button
+            class="opt"
+            data-correct="true"
+            data-fb-pt="Exato: sempre revise o código-fonte de terceiros."
+            data-fb-en="Exact: always review third-party source."
+          >
+            <span data-lang="pt">Revisar o código-fonte</span
+            ><span data-lang="en">Review source</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — a maioria é grátis; o ponto é revisar."
+            data-fb-en="No — most are free; the point is to review."
+          >
+            <span data-lang="pt">Pagar por uma licença</span
+            ><span data-lang="en">Pay for a license</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — confiança cega não é higiene."
+            data-fb-en="No — blind trust isn't hygiene."
+          >
+            <span data-lang="pt">Confiar no autor</span
+            ><span data-lang="en">Trust the author</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — não há nada para reiniciar."
+            data-fb-en="No — nothing to reboot."
+          >
+            <span data-lang="pt">Reiniciar seu Pi</span
+            ><span data-lang="en">Reboot your Pi</span>
+          </button>
+        </div>
+        <div class="verdict" aria-live="polite"></div>
+      </div>
+
+      <!-- ===================== 8. COURSE COMPLETE ===================== -->
+      <h2 class="section">
+        <span class="num">8</span
+        ><span data-lang="pt">Você terminou o curso 🎉</span
+        ><span data-lang="en">You've finished the course 🎉</span>
+      </h2>
+      <p class="kicker">
+        <span data-lang="pt"
+          >De “o que é o Pi?” a “consigo publicar um pacote.” Aqui está o arco
+          que você acabou de percorrer:</span
+        ><span data-lang="en"
+          >From "what is Pi?" to "I can ship a package." Here's the arc you just
+          walked:</span
+        >
+      </p>
+
+      <div class="scroll-x" style="margin: 18px 0 8px">
+        <svg
+          viewBox="0 0 820 90"
+          width="100%"
+          role="img"
+          aria-labelledby="s2"
+          style="min-width: 820px"
+        >
+          <title
+            id="s2"
+            data-pt="Arco de sete lições, do loop central aos pacotes"
+            data-en="Seven-lesson arc from core loop to packages"
+          >
+            Arco de sete lições, do loop central aos pacotes
+          </title>
+          <line
+            x1="40"
+            y1="45"
+            x2="780"
+            y2="45"
+            stroke="#3a3f55"
+            stroke-width="3"
+          />
+          <g font-family="Space Grotesk" font-size="11" font-weight="700">
+            <circle cx="70" cy="45" r="16" fill="#8b6ff7" />
+            <text x="70" y="50" text-anchor="middle" fill="#fff">1</text>
+            <text
+              x="70"
+              y="80"
+              text-anchor="middle"
+              font-size="9.5"
+              fill="#9ea2b8"
+              font-weight="600"
+              data-pt="loop central"
+              data-en="core loop"
+            >
+              loop central
+            </text>
+            <circle cx="190" cy="45" r="16" fill="#8b6ff7" />
+            <text x="190" y="50" text-anchor="middle" fill="#fff">2</text>
+            <text
+              x="190"
+              y="80"
+              text-anchor="middle"
+              font-size="9.5"
+              fill="#9ea2b8"
+              font-weight="600"
+              data-pt="dirigir TUI"
+              data-en="drive TUI"
+            >
+              dirigir TUI
+            </text>
+            <circle cx="310" cy="45" r="16" fill="#8b6ff7" />
+            <text x="310" y="50" text-anchor="middle" fill="#fff">3</text>
+            <text
+              x="310"
+              y="80"
+              text-anchor="middle"
+              font-size="9.5"
+              fill="#9ea2b8"
+              font-weight="600"
+              data-pt="sessões"
+              data-en="sessions"
+            >
+              sessões
+            </text>
+            <circle cx="430" cy="45" r="16" fill="#2dd4bf" />
+            <text x="430" y="50" text-anchor="middle" fill="#fff">4</text>
+            <text
+              x="430"
+              y="80"
+              text-anchor="middle"
+              font-size="9.5"
+              fill="#9ea2b8"
+              font-weight="600"
+              data-pt="contexto"
+              data-en="context"
+            >
+              contexto
+            </text>
+            <circle cx="550" cy="45" r="16" fill="#2dd4bf" />
+            <text x="550" y="50" text-anchor="middle" fill="#fff">5</text>
+            <text
+              x="550"
+              y="80"
+              text-anchor="middle"
+              font-size="9.5"
+              fill="#9ea2b8"
+              font-weight="600"
+            >
+              skills
+            </text>
+            <circle cx="670" cy="45" r="16" fill="#2dd4bf" />
+            <text x="670" y="50" text-anchor="middle" fill="#fff">6</text>
+            <text
+              x="670"
+              y="80"
+              text-anchor="middle"
+              font-size="9.5"
+              fill="#9ea2b8"
+              font-weight="600"
+              data-pt="extensões"
+              data-en="extensions"
+            >
+              extensões
+            </text>
+            <circle cx="770" cy="45" r="18" fill="#fbbf24" />
+            <text x="770" y="50" text-anchor="middle" fill="#fff">7</text>
+            <text
+              x="770"
+              y="80"
+              text-anchor="middle"
+              font-size="9.5"
+              fill="#fbbf24"
+              font-weight="700"
+              data-pt="pacotes"
+              data-en="packages"
+            >
+              pacotes
+            </text>
+          </g>
+        </svg>
+      </div>
+
+      <div class="callout key">
+        <p>
+          <span data-lang="pt"
+            ><strong>Agora vá buscar sabedoria.</strong> Conhecimento + skills
+            te levam até aqui; <em>sabedoria</em> vem do uso real. O caminho
+            mais rápido: construa uma skill <code class="inline">commit</code>,
+            conecte um <code class="inline">.pi/settings.json</code>, e publique
+            um pequeno pacote. Depois leve à comunidade.</span
+          ><span data-lang="en"
+            ><strong>Now go get wisdom.</strong> Knowledge + skills get you this
+            far; <em>wisdom</em> comes from real use. The fastest path: build a
+            <code class="inline">commit</code> skill, wire a
+            <code class="inline">.pi/settings.json</code>, and ship one small
+            package. Then take it to the community.</span
+          >
+        </p>
+      </div>
+      <div class="grid cols-3" style="margin-top: 14px">
+        <div class="card">
+          <h4>
+            💬 <span data-lang="pt">Comunidade</span
+            ><span data-lang="en">Community</span>
+          </h4>
+          <p>
+            <a
+              href="https://discord.com/invite/3cU7Bz4UPx"
+              target="_blank"
+              rel="noopener"
+              >Pi Discord</a
+            >
+            —
+            <span data-lang="pt"
+              >canal de compartilhamento de pacotes, troubleshooting, crítica de
+              workflow.</span
+            ><span data-lang="en"
+              >package-sharing channel, troubleshooting, workflow
+              critique.</span
+            >
+          </p>
+        </div>
+        <div class="card">
+          <h4>
+            🗂️ <span data-lang="pt">Navegar</span
+            ><span data-lang="en">Browse</span>
+          </h4>
+          <p>
+            <span data-lang="pt">galeria</span
+            ><span data-lang="en">gallery</span>
+            <a href="https://pi.dev/packages" target="_blank" rel="noopener"
+              >pi.dev/packages</a
+            >
+            +
+            <a
+              href="https://www.npmjs.com/search?q=keywords%3Api-package"
+              target="_blank"
+              rel="noopener"
+              >npm <code class="inline">pi-package</code></a
+            >.
+          </p>
+        </div>
+        <div class="card">
+          <h4>
+            📚 <span data-lang="pt">Mine padrões</span
+            ><span data-lang="en">Mine patterns</span>
+          </h4>
+          <p>
+            <a
+              href="https://github.com/anthropics/skills"
+              target="_blank"
+              rel="noopener"
+              >anthropics/skills</a
+            >
+            ·
+            <a
+              href="https://github.com/badlogic/pi-skills"
+              target="_blank"
+              rel="noopener"
+              >badlogic/pi-skills</a
+            >.
+          </p>
+        </div>
+      </div>
+      <p>
+        <span data-lang="pt"><strong>Fonte primária:</strong></span
+        ><span data-lang="en"><strong>Primary source:</strong></span>
+        <a
+          href="https://pi.dev/docs/latest/packages"
+          target="_blank"
+          rel="noopener"
+          ><span data-lang="pt">Pi docs · Pacotes</span
+          ><span data-lang="en">Pi docs · Packages</span></a
+        >.
+      </p>
+
+      <div class="callout tip">
+        <p>
+          🗣️
+          <strong
+            ><span data-lang="pt">Continue perguntando.</span
+            ><span data-lang="en">Keep asking.</span></strong
+          >
+          <span data-lang="pt"
+            >O curso acabou mas o professor não foi embora — “me ajude a
+            publicar meu primeiro pacote”, “audite esta extensão por segurança”,
+            “projete meus dotfiles”. A qualquer hora.</span
+          ><span data-lang="en"
+            >The course is done but the teacher isn't gone — "help me publish my
+            first package", "audit this extension for safety", "design my
+            dotfiles". Anytime.</span
+          >
+        </p>
+      </div>
+
+      <footer class="lesson-foot">
+        <div
+          class="next-card"
+          style="background: linear-gradient(120deg, #2dd4bf, #8b6ff7)"
+        >
+          <div class="lbl" style="color: #fff">
+            <span data-lang="pt">Projeto final →</span
+            ><span data-lang="en">Capstone →</span>
+          </div>
+          <div class="t" style="color: #fff">
+            <span data-lang="pt">Construa seus dotfiles do Pi</span
+            ><span data-lang="en">Build your Pi dotfiles</span>
+          </div>
+          <p
+            style="
+              margin: 8px 0 0;
+              font-size: 0.85rem;
+              color: rgba(255, 255, 255, 0.9);
+            "
+          >
+            <span data-lang="pt"
+              >Um setup global <code style="color: #fff">~/.pi/agent/</code> —
+              suas skills, uma extensão ou duas, um pacote fixado, um
+              <code style="color: #fff">settings.json</code> ajustado. Peça-me
+              para scaffoldá-lo.</span
+            ><span data-lang="en"
+              >A global <code style="color: #fff">~/.pi/agent/</code> setup —
+              your skills, an extension or two, a pinned package, a tuned
+              <code style="color: #fff">settings.json</code>. Ask me to scaffold
+              it.</span
+            >
+          </p>
+        </div>
+        <div style="flex: 0 1 220px">
+          <div class="lbl">
+            <span data-lang="pt">Referência</span
+            ><span data-lang="en">Reference</span>
+          </div>
+          <p style="margin: 6px 0 0">
+            <a href="../reference/pi-glossary.html"
+              ><span data-lang="pt">Glossário do Pi</span
+              ><span data-lang="en">Pi glossary</span></a
+            >
+            ·
+            <a href="../MISSION.md"
+              ><span data-lang="pt">Missão</span
+              ><span data-lang="en">Mission</span></a
+            >
+            ·
+            <a href="../lessons/0001-the-core-loop.html"
+              ><span data-lang="pt">Recomeçar na L1</span
+              ><span data-lang="en">Restart at L1</span></a
+            >
+          </p>
+        </div>
+      </footer>
+    </article>
+
+    <script>
+      // bilingual quiz wiring — data-correct + per-lang feedback
+      function verdictFor(btn, quiz) {
+        const correct = btn.dataset.correct === "true";
+        const fb = btn.getAttribute(
+          PiI18n.lang === "en" ? "data-fb-en" : "data-fb-pt",
+        );
+        const sec = quiz.id.replace("q", "");
+        const fallback =
+          PiI18n.lang === "en"
+            ? "✗ Not quite — re-read section " + sec + "."
+            : "✗ Quase — releia a seção " + sec + ".";
+        return {
+          ok: correct,
+          text: (correct ? "✓ " : "✗ ") + (fb || fallback),
+        };
+      }
+      function resetQuiz(quiz) {
+        quiz.querySelectorAll(".opt").forEach((b) => {
+          b.classList.remove("correct", "wrong");
+          b.setAttribute("aria-pressed", "false");
+        });
+        const v = quiz.querySelector(".verdict");
+        v.textContent = "";
+        v.className = "verdict";
+      }
+      document.querySelectorAll(".quiz").forEach((quiz) => {
+        quiz.querySelectorAll(".opt").forEach((btn) => {
+          btn.setAttribute("aria-pressed", "false");
+          btn.addEventListener("click", () => {
+            quiz.querySelectorAll(".opt").forEach((b) => {
+              b.classList.remove("correct", "wrong");
+              b.setAttribute("aria-pressed", "false");
+            });
+            const v = verdictFor(btn, quiz);
+            btn.classList.add(v.ok ? "correct" : "wrong");
+            btn.setAttribute("aria-pressed", "true");
+            const verdict = quiz.querySelector(".verdict");
+            verdict.textContent = v.text;
+            verdict.className = "verdict " + (v.ok ? "ok" : "no");
+          });
+        });
+      });
+      // re-render in the new language on switch (i18n.js is deferred, so hook DOMContentLoaded)
+      document.addEventListener("DOMContentLoaded", () =>
+        PiI18n.on(() => document.querySelectorAll(".quiz").forEach(resetQuiz)),
+      );
+    </script>
+  </Fragment>
+</Lesson>

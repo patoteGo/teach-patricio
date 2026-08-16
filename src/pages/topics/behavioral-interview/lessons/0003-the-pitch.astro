@@ -1,0 +1,751 @@
+---
+// Migrated verbatim from public/topics/behavioral-interview/lessons/0003-the-pitch.html (URL unchanged: builds to 0003-the-pitch.html).
+// Body is is:raw: braces/inline scripts/JSON blocks pass through untouched.
+import Lesson from "../../../../layouts/Lesson.astro";
+const titlePt = "Behavioral Interview · Lição 3 — O Pitch";
+const titleEn = "Behavioral Interview · Lesson 3 — The Pitch";
+const titleFallback = "Behavioral Interview · Lição 3 — O Pitch";
+const bodyClass = "lang-pt";
+const viewport = "width=device-width, initial-scale=1.0";
+const assets = [
+	"<link rel=\"stylesheet\" href=\"../assets/style.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/dark.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/i18n.css\" />",
+	"<script src=\"../assets/i18n.js\" defer></script>",
+	"<script src=\"../assets/nav.js\" defer></script>",
+];
+
+---
+<Lesson
+	titlePt={titlePt}
+	titleEn={titleEn}
+	titleFallback={titleFallback}
+	bodyClass={bodyClass}
+	viewport={viewport}
+	assets={assets}
+>
+	<Fragment is:raw>
+    <article class="lesson">
+      <header class="hero">
+        <span class="eyebrow"
+          ><span data-lang="pt">⬡ Lição 03 · A abertura</span
+          ><span data-lang="en">⬡ Lesson 03 · The opener</span></span
+        >
+        <h1>
+          <span data-lang="pt">"Me conte<br />sobre você."</span
+          ><span data-lang="en">"Tell me about<br />yourself."</span>
+        </h1>
+        <p class="lead">
+          <span data-lang="pt"
+            >É a primeira coisa que vão perguntar amanhã — e a única resposta
+            que você pode preparar por completo. Acerte e você dita o tom,
+            acalma os nervos, e entrega a eles os follow-ups que você
+            <em>quer</em>. Erre e você passa a hora inteira se recuperando. Aqui
+            está a estrutura de nível sênior.</span
+          ><span data-lang="en"
+            >It's the first thing they'll ask tomorrow — and the one answer you
+            can fully prepare. Nail it and you set the tone, calm your nerves,
+            and hand them the follow-ups you <em>want</em>. Botch it and you
+            spend the hour recovering. Here's the senior-grade structure.</span
+          >
+        </p>
+        <p class="lesson-nav-top">
+          ↑ <span data-lang="pt">Parte de</span
+          ><span data-lang="en">Part of</span>
+          <a href="../MISSION.md"
+            ><span data-lang="pt">Missão</span
+            ><span data-lang="en">Mission</span></a
+          >
+          · <span data-lang="pt">anterior</span
+          ><span data-lang="en">prev</span>:
+          <a href="./0002-the-dojo.html"
+            ><span data-lang="pt">O Dojo</span
+            ><span data-lang="en">The Dojo</span></a
+          >
+          · <span data-lang="pt">próxima</span><span data-lang="en">next</span>:
+          <a href="./0004-follow-ups.html"
+            ><span data-lang="pt">Follow-ups</span
+            ><span data-lang="en">Follow-ups</span></a
+          >
+        </p>
+      </header>
+
+      <!-- ===================== 1. WHY ===================== -->
+      <h2 class="section">
+        <span class="num">1</span
+        ><span data-lang="pt">Por que esta pergunta é ouro</span
+        ><span data-lang="en">Why this question is gold</span>
+      </h2>
+      <p class="kicker">
+        <span data-lang="pt"
+          >Não é small talk. É uma
+          <strong>primeira impressão controlada</strong> — você escolhe a
+          narrativa, os destaques, e o gancho. A maioria dos candidatos
+          improvisa. Você, não.</span
+        ><span data-lang="en"
+          >It's not small talk. It's a
+          <strong>controlled first impression</strong> — you choose the
+          narrative, the highlights, and the hook. Most candidates wing it. You
+          won't.</span
+        >
+      </p>
+      <div class="callout key">
+        <p>
+          <span data-lang="pt"
+            ><strong>O pitch é um grande BLUF.</strong> Sua linha de base
+            profissional, logo de cara — quem você é e o impacto que você gera —
+            e então só o bastante de prova para fazê-los se inclinar. (Veja a
+            <a href="./0001-bluf-star.html">Lição 1</a>.)</span
+          ><span data-lang="en"
+            ><strong>The pitch is one big BLUF.</strong> Your professional
+            bottom line, up front — who you are and the impact you drive — then
+            just enough proof to make them lean in. (See
+            <a href="./0001-bluf-star.html">Lesson 1</a>.)</span
+          >
+        </p>
+      </div>
+
+      <!-- ===================== 2. STRUCTURE ===================== -->
+      <h2 class="section">
+        <span class="num">2</span
+        ><span data-lang="pt">A estrutura: Presente → Passado → Futuro</span
+        ><span data-lang="en">The structure: Present → Past → Future</span>
+      </h2>
+      <p class="kicker">
+        <span data-lang="pt"
+          >Três tempos, ~60–90 segundos no total. Vá do <em>agora</em> para
+          trás, depois para a frente até <em>eles</em>.</span
+        ><span data-lang="en"
+          >Three beats, ~60–90 seconds total. Move from <em>now</em> backward,
+          then forward to <em>them</em>.</span
+        >
+      </p>
+
+      <div class="scroll-x" style="margin: 20px 0 8px">
+        <svg
+          viewBox="0 0 820 200"
+          width="100%"
+          style="min-width: 820px"
+          role="img"
+          aria-labelledby="pitch-aria"
+        >
+          <title
+            id="pitch-aria"
+            data-pt="Estrutura do pitch: Presente, Passado e Futuro fluindo da esquerda para a direita"
+            data-en="Pitch structure: Present, Past, Future flowing left to right"
+          >
+            Estrutura do pitch
+          </title>
+          <defs>
+            <marker
+              id="p"
+              markerWidth="10"
+              markerHeight="10"
+              refX="7"
+              refY="3"
+              orient="auto"
+            >
+              <path d="M0,0 L7,3 L0,6 Z" fill="#8b6ff7" />
+            </marker>
+          </defs>
+          <g font-family="Space Grotesk" font-weight="700">
+            <rect
+              x="20"
+              y="40"
+              width="240"
+              height="120"
+              rx="14"
+              fill="#8b6ff7"
+            />
+            <text
+              x="140"
+              y="74"
+              text-anchor="middle"
+              font-size="15"
+              fill="#fff"
+              data-pt="① PRESENTE"
+              data-en="① PRESENT"
+            >
+              ① PRESENTE
+            </text>
+            <text
+              x="140"
+              y="98"
+              text-anchor="middle"
+              font-family="Inter"
+              font-weight="400"
+              font-size="11"
+              fill="rgba(255,255,255,.92)"
+              data-pt="Quem você é hoje"
+              data-en="Who you are now"
+            >
+              Quem você é hoje
+            </text>
+            <text
+              x="140"
+              y="116"
+              text-family="Inter"
+              font-family="Inter"
+              font-weight="400"
+              font-size="11"
+              fill="rgba(255,255,255,.92)"
+              data-pt="cargo · anos · domínio"
+              data-en="role · years · domain"
+            >
+              cargo · anos · domínio
+            </text>
+            <text
+              x="140"
+              y="138"
+              text-anchor="middle"
+              font-family="JetBrains Mono"
+              font-size="10"
+              fill="rgba(255,255,255,.8)"
+              data-pt="~20s"
+              data-en="~20s"
+            >
+              ~20s
+            </text>
+
+            <rect
+              x="290"
+              y="40"
+              width="240"
+              height="120"
+              rx="14"
+              fill="#2dd4bf"
+            />
+            <text
+              x="410"
+              y="74"
+              text-anchor="middle"
+              font-size="15"
+              fill="#fff"
+              data-pt="② PASSADO"
+              data-en="② PAST"
+            >
+              ② PASSADO
+            </text>
+            <text
+              x="410"
+              y="98"
+              text-anchor="middle"
+              font-family="Inter"
+              font-weight="400"
+              font-size="11"
+              fill="rgba(255,255,255,.92)"
+              data-pt="2–3 destaques"
+              data-en="2–3 highlight beats"
+            >
+              2–3 destaques
+            </text>
+            <text
+              x="410"
+              y="116"
+              text-anchor="middle"
+              font-family="Inter"
+              font-weight="400"
+              font-size="11"
+              fill="rgba(255,255,255,.92)"
+              data-pt="impacto · escopo · stack"
+              data-en="impact · scope · stack"
+            >
+              impacto · escopo · stack
+            </text>
+            <text
+              x="410"
+              y="138"
+              text-anchor="middle"
+              font-family="JetBrains Mono"
+              font-size="10"
+              fill="rgba(255,255,255,.85)"
+              data-pt="~40s"
+              data-en="~40s"
+            >
+              ~40s
+            </text>
+
+            <rect
+              x="560"
+              y="40"
+              width="240"
+              height="120"
+              rx="14"
+              fill="#fbbf24"
+            />
+            <text
+              x="680"
+              y="74"
+              text-anchor="middle"
+              font-size="15"
+              fill="#fff"
+              data-pt="③ FUTURO"
+              data-en="③ FUTURE"
+            >
+              ③ FUTURO
+            </text>
+            <text
+              x="680"
+              y="98"
+              text-anchor="middle"
+              font-family="Inter"
+              font-weight="400"
+              font-size="11"
+              fill="rgba(255,255,255,.92)"
+              data-pt="Por que ESTA vaga"
+              data-en="Why THIS role"
+            >
+              Por que ESTA vaga
+            </text>
+            <text
+              x="680"
+              y="116"
+              text-anchor="middle"
+              font-family="Inter"
+              font-weight="400"
+              font-size="11"
+              fill="rgba(255,255,255,.92)"
+              data-pt="o gancho"
+              data-en="the hook"
+            >
+              o gancho
+            </text>
+            <text
+              x="680"
+              y="138"
+              text-anchor="middle"
+              font-family="JetBrains Mono"
+              font-size="10"
+              fill="rgba(255,255,255,.85)"
+              data-pt="~20s"
+              data-en="~20s"
+            >
+              ~20s
+            </text>
+          </g>
+          <path
+            d="M262 100 L286 100"
+            stroke="#8b6ff7"
+            stroke-width="3"
+            fill="none"
+            marker-end="url(#p)"
+          />
+          <path
+            d="M532 100 L556 100"
+            stroke="#8b6ff7"
+            stroke-width="3"
+            fill="none"
+            marker-end="url(#p)"
+          />
+        </svg>
+      </div>
+
+      <h3>
+        <span data-lang="pt">O modelo (preencha esta noite)</span
+        ><span data-lang="en">The template (fill this in tonight)</span>
+      </h3>
+      <pre
+        class="block"
+      ><span class="c"><span data-lang="pt">// ① PRESENTE — sua linha de base</span><span data-lang="en">// ① PRESENT — your bottom line</span></span>
+<span class="s"><span data-lang="pt">"Sou um engenheiro fullstack sênior — [X] anos de experiência, hoje [cargo] na [empresa],
+focado em [seu domínio: ex. APIs de alto volume + front-ends em React]."</span><span data-lang="en">"I'm a senior fullstack engineer — [X] years in, currently [role] at [company],
+focused on [your domain: e.g. high-throughance APIs + React front-ends]."</span></span>
+
+<span class="c"><span data-lang="pt">// ② PASSADO — 2–3 destaques, cada um com impacto (não uma leitura de currículo)</span><span data-lang="en">// ② PAST — 2–3 beats, each with impact (not a resume recital)</span></span>
+<span class="s"><span data-lang="pt">"Ultimamente tenho [destaque 1: o quê + impacto]. Antes disso [destaque 2].
+Sou conhecido por [sua força-assinatura: escalar X / limpar Y / entregar Z]."</span><span data-lang="en">"Lately I've been [highlight 1: what + impact]. Before that [highlight 2].
+I'm known for [your signature strength: scaling X / cleaning up Y / shipping Z]."</span></span>
+
+<span class="c"><span data-lang="pt">// ③ FUTURO — aponte para ELES</span><span data-lang="en">// ③ FUTURE — point at THEM</span></span>
+<span class="s"><span data-lang="pt">"Agora quero levar isso para [esta empresa] porque [motivo específico
+que prova que você pesquisou sobre eles] — e é exatamente por isso que esta vaga me animou."</span><span data-lang="en">"Now I'm looking to bring that to [this company] because [specific reason
+that proves you researched them] — and that's exactly why this role excited me."</span></span></pre>
+
+      <!-- ===================== 3. SENIOR ===================== -->
+      <h2 class="section">
+        <span class="num">3</span><span data-lang="pt">Faça soar sênior</span
+        ><span data-lang="en">Make it sound senior</span>
+      </h2>
+      <div class="grid cols-2" style="margin-top: 18px">
+        <div class="card" style="border-left: 4px solid #2dd4bf">
+          <h4>
+            <span data-lang="pt">✅ Comece pelo escopo</span
+            ><span data-lang="en">✅ Lead with scope</span>
+          </h4>
+          <p>
+            <span data-lang="pt"
+              >"Engenheiro fullstack sênior, 8 anos, dono de sistemas que servem
+              ~2M requisições/dia." Uma linha carrega senioridade +
+              escala.</span
+            ><span data-lang="en"
+              >"Senior fullstack engineer, 8 years, owning systems that serve
+              ~2M requests/day." One line carries seniority + scale.</span
+            >
+          </p>
+        </div>
+        <div class="card" style="border-left: 4px solid #fb7185">
+          <h4>
+            <span data-lang="pt">❌ Não recite seu currículo</span
+            ><span data-lang="en">❌ Don't recite your resume</span>
+          </h4>
+          <p>
+            <span data-lang="pt"
+              >"Primeiro trabalhei na A, depois B, depois C…" é uma linha do
+              tempo, não um pitch. Eles podem ler seu currículo — dê a
+              <em>forma</em> de você.</span
+            ><span data-lang="en"
+              >"First I worked at A, then B, then C…" is a timeline, not a
+              pitch. They can read your resume — give them the <em>shape</em> of
+              you.</span
+            >
+          </p>
+        </div>
+        <div class="card" style="border-left: 4px solid #8b6ff7">
+          <h4>
+            <span data-lang="pt">✅ Adapte o Futuro para eles</span
+            ><span data-lang="en">✅ Tailor the Future to them</span>
+          </h4>
+          <p>
+            <span data-lang="pt"
+              >Cite algo específico sobre o produto/time/problema
+              <em>deles</em>. Prova que você se importa e fez o dever de casa —
+              sinal enorme.</span
+            ><span data-lang="en"
+              >Name something specific about
+              <em>their</em> product/team/problem. It proves you care and did
+              the homework — huge signal.</span
+            >
+          </p>
+        </div>
+        <div class="card" style="border-left: 4px solid #fbbf24">
+          <h4>
+            <span data-lang="pt">✅ Termine com um gancho</span
+            ><span data-lang="en">✅ End on a hook</span>
+          </h4>
+          <p>
+            <span data-lang="pt"
+              >Termine olhando para frente. Um ótimo "futuro" entrega a eles
+              exatamente o follow-up para o qual você preparou uma
+              história.</span
+            ><span data-lang="en"
+              >Finish forward-looking. A great "future" beat hands them the
+              exact follow-up you prepped a story for.</span
+            >
+          </p>
+        </div>
+      </div>
+      <div class="callout warn">
+        <p>
+          <span data-lang="pt"
+            ><strong>Cronometre.</strong> Mais de 90 segundos e você os perdeu.
+            Diga em voz alta com um cronômetro (use o relógio do
+            <a href="./0002-the-dojo.html">Dojo</a>). Mire 60–75s — enxuto vence
+            completo.</span
+          ><span data-lang="en"
+            ><strong>Time it.</strong> Over 90 seconds and you've lost them. Say
+            it aloud with a timer (use the
+            <a href="./0002-the-dojo.html">Dojo</a> clock). Aim 60–75s — tight
+            beats thorough.</span
+          >
+        </p>
+      </div>
+
+      <!-- ===================== 4. QUIZ ===================== -->
+      <h2 class="section">
+        <span class="num">4</span><span data-lang="pt">Confira seu pitch</span
+        ><span data-lang="en">Check your pitch</span>
+      </h2>
+      <div class="quiz" id="q1" role="group" aria-labelledby="q1l">
+        <div class="q" id="q1l">
+          <span data-lang="pt">Q1. O pitch deve terminar apontando para…</span
+          ><span data-lang="en">Q1. The pitch should end pointing toward…</span>
+        </div>
+        <div class="options">
+          <button
+            class="opt"
+            data-correct="true"
+            data-fb-pt="Exato: termine apontando para a vaga deles."
+            data-fb-en="Exact: end pointing at their role."
+          >
+            <span data-lang="pt">Esta vaga</span
+            ><span data-lang="en">This role</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — o passado é o meio, não o fim."
+            data-fb-en="No — the past is the middle, not the end."
+          >
+            <span data-lang="pt">Seu passado</span
+            ><span data-lang="en">Your past</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — salário é conversa de encerramento, não de abertura."
+            data-fb-en="No — salary is a closing talk, not an opener."
+          >
+            <span data-lang="pt">Seu salário</span
+            ><span data-lang="en">Your salary</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — hobbies não vendem senioridade."
+            data-fb-en="No — hobbies don't sell seniority."
+          >
+            <span data-lang="pt">Seus hobbies</span
+            ><span data-lang="en">Your hobbies</span>
+          </button>
+        </div>
+        <div class="verdict" aria-live="polite"></div>
+      </div>
+      <div class="quiz" id="q2" role="group" aria-labelledby="q2l">
+        <div class="q" id="q2l">
+          <span data-lang="pt">Q2. Quanto tempo deve durar seu pitch?</span
+          ><span data-lang="en">Q2. How long should your pitch run?</span>
+        </div>
+        <div class="options">
+          <button
+            class="opt"
+            data-correct="true"
+            data-fb-pt="Exato: ~60–90s é o ponto certo."
+            data-fb-en="Exact: ~60–90s is the sweet spot."
+          >
+            <span data-lang="pt">Noventa segundos</span
+            ><span data-lang="en">Ninety seconds</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — cinco minutos e você os perdeu."
+            data-fb-en="No — five minutes and you've lost them."
+          >
+            <span data-lang="pt">Cinco minutos inteiros</span
+            ><span data-lang="en">Five whole minutes</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — isso é uma palestra, não um pitch."
+            data-fb-en="No — that's a lecture, not a pitch."
+          >
+            <span data-lang="pt">Trinta minutos inteiros</span
+            ><span data-lang="en">Thirty full minutes</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — uma frase não dá espaço para os destaques."
+            data-fb-en="No — one sentence leaves no room for highlights."
+          >
+            <span data-lang="pt">Uma única frase</span
+            ><span data-lang="en">One single sentence</span>
+          </button>
+        </div>
+        <div class="verdict" aria-live="polite"></div>
+      </div>
+      <div class="quiz" id="q3" role="group" aria-labelledby="q3l">
+        <div class="q" id="q3l">
+          <span data-lang="pt"
+            >Q3. O pitch é melhor tratado como um grande…</span
+          ><span data-lang="en">Q3. The pitch is best treated as one big…</span>
+        </div>
+        <div class="options">
+          <button
+            class="opt"
+            data-correct="true"
+            data-fb-pt="Exato: é um BLUF — sua linha de base, logo de cara."
+            data-fb-en="Exact: it's a BLUF — your bottom line, up front."
+          >
+            <span data-lang="pt">Resumo principal (BLUF)</span
+            ><span data-lang="en">Bottom line</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — recital de currículo é um anti-padrão."
+            data-fb-en="No — resume recital is an anti-pattern."
+          >
+            <span data-lang="pt">Leitura de currículo</span
+            ><span data-lang="en">Resume recital</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — história de vida é enfeite."
+            data-fb-en="No — life story is filler."
+          >
+            <span data-lang="pt">História de vida inteira</span
+            ><span data-lang="en">Full life story</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — salário não abre um pitch."
+            data-fb-en="No — salary doesn't open a pitch."
+          >
+            <span data-lang="pt">Pergunta de salário</span
+            ><span data-lang="en">Salary question</span>
+          </button>
+        </div>
+        <div class="verdict" aria-live="polite"></div>
+      </div>
+
+      <h2 class="section">
+        <span class="num">5</span
+        ><span data-lang="pt">Faça isso esta noite</span
+        ><span data-lang="en">Do this tonight</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          ><strong>Fonte primária:</strong>
+          <a
+            href="https://en.wikipedia.org/wiki/Elevator_pitch"
+            target="_blank"
+            rel="noopener"
+            >Elevator pitch</a
+          >
+          (o mesmo formato "afirmação → prova → direção") +
+          <a
+            href="https://www.indeed.com/career-advice/interviewing/tell-me-about-yourself"
+            target="_blank"
+            rel="noopener"
+            >Indeed — "Tell me about yourself"</a
+          >.</span
+        ><span data-lang="en"
+          ><strong>Primary source:</strong>
+          <a
+            href="https://en.wikipedia.org/wiki/Elevator_pitch"
+            target="_blank"
+            rel="noopener"
+            >Elevator pitch</a
+          >
+          (the same "claim → prove → direct" shape) +
+          <a
+            href="https://www.indeed.com/career-advice/interviewing/tell-me-about-yourself"
+            target="_blank"
+            rel="noopener"
+            >Indeed — "Tell me about yourself"</a
+          >.</span
+        >
+      </p>
+      <p>
+        <span data-lang="pt"
+          ><strong>A jogada:</strong> preencha o modelo acima com os
+          <em>seus</em> detalhes, diga em voz alta 5× até ficar fluido (não
+          decorado), e <strong>cole aqui</strong>. Eu digo se soa sênior, onde
+          arrasta, e que follow-up ele convida.</span
+        ><span data-lang="en"
+          ><strong>The move:</strong> fill in the template above with
+          <em>your</em> details, say it aloud 5× until it's fluid (not
+          memorized), and <strong>paste it here</strong>. I'll tell you if it
+          sounds senior, where it drags, and what follow-up it invites.</span
+        >
+      </p>
+      <div class="callout key">
+        <p>
+          <span data-lang="pt"
+            >🗣️ <strong>Escreva seu pitch comigo agora.</strong> Solte seus
+            anos, stack, um destaque de impacto, e por que você quer esta vaga —
+            eu modelo isso em 60–90 segundos que soam como você no seu melhor
+            dia.</span
+          ><span data-lang="en"
+            >🗣️ <strong>Draft your pitch with me now.</strong> Drop your years,
+            stack, one impact highlight, and why you want this role — I'll shape
+            it into 60–90 seconds that sounds like you on your best day.</span
+          >
+        </p>
+      </div>
+
+      <footer class="lesson-foot">
+        <div class="next-card">
+          <div class="lbl">
+            <span data-lang="pt">Próxima lição →</span
+            ><span data-lang="en">Next →</span>
+          </div>
+          <div class="t">
+            <a href="./0004-follow-ups.html"
+              ><span data-lang="pt">Follow-ups: sobrevivendo à sondagem</span
+              ><span data-lang="en">Follow-ups: surviving the probe</span></a
+            >
+          </div>
+          <p style="margin: 8px 0 0; font-size: 0.85rem">
+            <span data-lang="pt"
+              >O que fazer <em>depois</em> da sua resposta — as perguntas que
+              cavam fundo e separam os seniores.</span
+            ><span data-lang="en"
+              >What to do <em>after</em> your answer — the digging questions
+              that separate seniors.</span
+            >
+          </p>
+        </div>
+        <div style="flex: 0 1 220px">
+          <div class="lbl">
+            <span data-lang="pt">Referência</span
+            ><span data-lang="en">Reference</span>
+          </div>
+          <p style="margin: 6px 0 0">
+            <a href="../reference/question-bank.html"
+              ><span data-lang="pt">Banco de perguntas</span
+              ><span data-lang="en">Question bank</span></a
+            >
+            ·
+            <a href="../MISSION.md"
+              ><span data-lang="pt">Missão</span
+              ><span data-lang="en">Mission</span></a
+            >
+          </p>
+        </div>
+      </footer>
+    </article>
+    <script>
+      // bilingual quiz wiring — data-correct + per-lang feedback
+      function verdictFor(btn, quiz) {
+        const correct = btn.dataset.correct === "true";
+        const fb = btn.getAttribute(
+          PiI18n.lang === "en" ? "data-fb-en" : "data-fb-pt",
+        );
+        const sec = quiz.id.replace("q", "");
+        const fallback =
+          PiI18n.lang === "en"
+            ? "✗ Not quite — re-read section " + sec + "."
+            : "✗ Quase — releia a seção " + sec + ".";
+        return {
+          ok: correct,
+          text: (correct ? "✓ " : "✗ ") + (fb || fallback),
+        };
+      }
+      function resetQuiz(quiz) {
+        quiz.querySelectorAll(".opt").forEach((b) => {
+          b.classList.remove("correct", "wrong");
+          b.setAttribute("aria-pressed", "false");
+        });
+        const v = quiz.querySelector(".verdict");
+        v.textContent = "";
+        v.className = "verdict";
+      }
+      document.querySelectorAll(".quiz").forEach((quiz) => {
+        quiz.querySelectorAll(".opt").forEach((btn) => {
+          btn.setAttribute("aria-pressed", "false");
+          btn.addEventListener("click", () => {
+            quiz.querySelectorAll(".opt").forEach((b) => {
+              b.classList.remove("correct", "wrong");
+              b.setAttribute("aria-pressed", "false");
+            });
+            const v = verdictFor(btn, quiz);
+            btn.classList.add(v.ok ? "correct" : "wrong");
+            btn.setAttribute("aria-pressed", "true");
+            const verdict = quiz.querySelector(".verdict");
+            verdict.textContent = v.text;
+            verdict.className = "verdict " + (v.ok ? "ok" : "no");
+          });
+        });
+      });
+      // re-render in the new language on switch (i18n.js is deferred, so hook DOMContentLoaded)
+      document.addEventListener("DOMContentLoaded", () =>
+        PiI18n.on(() => document.querySelectorAll(".quiz").forEach(resetQuiz)),
+      );
+    </script>
+  </Fragment>
+</Lesson>

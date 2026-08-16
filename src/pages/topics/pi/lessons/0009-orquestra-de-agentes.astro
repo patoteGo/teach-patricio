@@ -1,0 +1,1642 @@
+---
+// Migrated verbatim from public/topics/pi/lessons/0009-orquestra-de-agentes.html (URL unchanged: builds to 0009-orquestra-de-agentes.html).
+// Body is is:raw: braces/inline scripts/JSON blocks pass through untouched.
+import Lesson from "../../../../layouts/Lesson.astro";
+const titlePt = "";
+const titleEn = "";
+const titleFallback = "Orquestra de agentes — um gerente, muitos trabalhadores";
+const bodyClass = "lang-pt";
+const viewport = "width=device-width, initial-scale=1.0";
+const assets = [
+	"<link rel=\"stylesheet\" href=\"../assets/style.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/dark.css\" />",
+	"<script src=\"../assets/nav.js\" defer></script>",
+];
+const pageStyle = "/* ---- language switch ---- */\n      body.lang-pt [data-lang=\"en\"] {\n        display: none !important;\n      }\n      body.lang-en [data-lang=\"pt\"] {\n        display: none !important;\n      }\n      .langswitch {\n        position: absolute;\n        top: 20px;\n        right: 24px;\n        z-index: 6;\n        display: inline-flex;\n        gap: 2px;\n        padding: 3px;\n        border-radius: 999px;\n        background: rgba(255, 255, 255, 0.16);\n        border: 1px solid rgba(255, 255, 255, 0.3);\n        backdrop-filter: blur(6px);\n      }\n      .langswitch button {\n        cursor: pointer;\n        font:\n          700 0.72rem \"Space Grotesk\",\n          sans-serif;\n        letter-spacing: 0.08em;\n        padding: 5px 12px;\n        border: 0;\n        border-radius: 999px;\n        background: transparent;\n        color: rgba(255, 255, 255, 0.85);\n        transition: all 0.14s;\n      }\n      .langswitch button[aria-pressed=\"true\"] {\n        background: #fff;\n        color: #14132b;\n      }\n      @media (max-width: 520px) {\n        .langswitch {\n          top: 14px;\n          right: 16px;\n        }\n      }\n\n      /* ---- lesson-specific dark components ---- */\n      .panel {\n        background: var(--paper-2);\n        border: 1px solid var(--line);\n        border-radius: var(--radius);\n        box-shadow: var(--shadow);\n      }\n\n      .topo {\n        position: relative;\n        margin: 22px 0 8px;\n        padding: 18px;\n        overflow-x: auto;\n      }\n      .topo svg {\n        display: block;\n        min-width: 640px;\n      }\n\n      .patterns {\n        display: grid;\n        grid-template-columns: repeat(2, 1fr);\n        gap: 14px;\n        margin-top: 18px;\n      }\n      .pattern {\n        --accent: var(--violet);\n        padding: 16px;\n        border: 1px solid var(--line);\n        border-top: 4px solid var(--accent);\n        border-radius: var(--radius);\n        background: var(--paper-2);\n        box-shadow: var(--shadow);\n      }\n      .pattern h4 {\n        margin: 0 0 4px;\n        color: var(--accent);\n        font-family: \"Space Grotesk\", sans-serif;\n      }\n      .pattern .when {\n        color: var(--ink);\n        font-weight: 600;\n        font-size: 0.9rem;\n      }\n      .pattern p {\n        margin: 6px 0 0;\n        color: var(--ink-soft);\n        font-size: 0.86rem;\n      }\n      .mini-tl {\n        display: grid;\n        gap: 5px;\n        margin: 12px 0 8px;\n        font-family: \"JetBrains Mono\", monospace;\n        font-size: 0.72rem;\n      }\n      .mini-tl span {\n        padding: 4px 8px;\n        border-radius: 6px;\n        background: rgba(255, 255, 255, 0.04);\n        color: var(--ink-soft);\n        border-left: 3px solid var(--accent);\n      }\n\n      pre.block .a {\n        color: #fbbf24;\n      }\n      pre.block .g {\n        color: #2dd4bf;\n      }\n\n      .sim {\n        padding: 0;\n        overflow: hidden;\n      }\n      .sim-stage {\n        position: relative;\n        height: 360px;\n        background:\n          radial-gradient(\n            60% 50% at 50% 8%,\n            rgba(139, 111, 247, 0.18),\n            transparent 70%\n          ),\n          repeating-linear-gradient(\n            0deg,\n            transparent 0 23px,\n            rgba(255, 255, 255, 0.03) 23px 24px\n          ),\n          repeating-linear-gradient(\n            90deg,\n            transparent 0 23px,\n            rgba(255, 255, 255, 0.03) 23px 24px\n          );\n      }\n      .node {\n        position: absolute;\n        transform: translate(-50%, -50%);\n        display: grid;\n        place-items: center;\n        width: 84px;\n        height: 84px;\n        border-radius: 50%;\n        background: var(--paper-2);\n        border: 2px solid var(--line);\n        color: var(--ink-soft);\n        font:\n          700 0.7rem \"Space Grotesk\",\n          sans-serif;\n        text-align: center;\n        transition:\n          box-shadow 0.3s,\n          border-color 0.3s,\n          color 0.3s,\n          background 0.3s;\n        z-index: 2;\n      }\n      .node small {\n        font:\n          600 0.58rem \"JetBrains Mono\",\n          monospace;\n        opacity: 0.8;\n      }\n      .node.mgr {\n        --accent: var(--violet);\n        top: 16%;\n        left: 50%;\n      }\n      .node.w {\n        top: 78%;\n      }\n      .node.wa {\n        left: 18%;\n      }\n      .node.wb {\n        left: 50%;\n      }\n      .node.wc {\n        left: 82%;\n      }\n      .node.active {\n        border-color: var(--accent);\n        color: var(--accent);\n        background: color-mix(in srgb, var(--accent) 16%, var(--paper-2));\n        box-shadow:\n          0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent),\n          0 0 22px color-mix(in srgb, var(--accent) 55%, transparent);\n      }\n      .node.ask {\n        border-color: var(--amber);\n        color: var(--amber);\n        box-shadow:\n          0 0 0 4px rgba(251, 191, 36, 0.22),\n          0 0 22px rgba(251, 191, 36, 0.5);\n        animation: pulse 0.9s ease-in-out infinite;\n      }\n      .node.busy::after {\n        content: \"···\";\n        position: absolute;\n        bottom: -17px;\n        font:\n          600 0.6rem \"JetBrains Mono\",\n          monospace;\n        color: var(--ink-soft);\n      }\n      @keyframes pulse {\n        50% {\n          transform: translate(-50%, -50%) scale(1.06);\n        }\n      }\n      .bus-line {\n        position: absolute;\n        inset: 0;\n        z-index: 1;\n      }\n      .packet {\n        position: absolute;\n        z-index: 3;\n        transform: translate(-50%, -50%);\n        display: grid;\n        place-items: center;\n        min-width: 20px;\n        height: 20px;\n        padding: 0 5px;\n        border-radius: 999px;\n        background: var(--violet);\n        color: #fff;\n        font:\n          700 0.6rem \"JetBrains Mono\",\n          monospace;\n        transition:\n          left 0.55s ease,\n          top 0.55s ease,\n          opacity 0.25s;\n        opacity: 0;\n        pointer-events: none;\n        box-shadow: 0 0 12px rgba(139, 111, 247, 0.7);\n      }\n      .packet.show {\n        opacity: 1;\n      }\n      .sim-controls {\n        display: flex;\n        flex-wrap: wrap;\n        gap: 8px;\n        padding: 14px 16px;\n        border-top: 1px solid var(--line);\n      }\n      .sim-controls button {\n        cursor: pointer;\n        min-height: 44px;\n        font:\n          600 0.78rem \"Space Grotesk\",\n          sans-serif;\n        padding: 8px 12px;\n        border-radius: 9px;\n        border: 1px solid var(--line);\n        background: var(--paper);\n        color: var(--ink);\n        transition: all 0.14s;\n      }\n      .sim-controls button:hover:not(:disabled) {\n        border-color: var(--violet);\n        color: var(--violet);\n      }\n      .sim-controls button:disabled {\n        opacity: 0.4;\n        cursor: not-allowed;\n      }\n      .sim-log {\n        height: 150px;\n        overflow-y: auto;\n        padding: 12px 16px;\n        border-top: 1px solid var(--line);\n        font-family: \"JetBrains Mono\", monospace;\n        font-size: 0.76rem;\n        line-height: 1.7;\n        background: rgba(0, 0, 0, 0.25);\n      }\n      .sim-log .row {\n        color: var(--ink-soft);\n      }\n      .sim-log .row.in {\n        color: var(--teal);\n      }\n      .sim-log .row.out {\n        color: var(--amber);\n      }\n      .sim-log .row.note {\n        color: var(--blue);\n      }\n\n      .matcher .scene {\n        padding: 14px 16px;\n        border-radius: 10px;\n        background: var(--paper);\n        border: 1px solid var(--line);\n        margin-bottom: 12px;\n      }\n      .matcher .scene .tag {\n        font: 700 0.62rem \"Space Grotesk\";\n        letter-spacing: 0.1em;\n        text-transform: uppercase;\n        color: var(--amber);\n      }\n      .matcher .scene p {\n        margin: 4px 0 0;\n        color: var(--ink);\n      }\n      .matcher .opts {\n        display: grid;\n        grid-template-columns: repeat(2, 1fr);\n        gap: 8px;\n      }\n      .matcher .opts button {\n        cursor: pointer;\n        text-align: left;\n        font: inherit;\n        padding: 10px 12px;\n        border-radius: 9px;\n        border: 1.5px solid var(--line);\n        background: var(--paper-2);\n        color: var(--ink);\n        transition: all 0.14s;\n      }\n      .matcher .opts button:hover:not(:disabled) {\n        border-color: var(--violet);\n      }\n      .matcher .opts button.right {\n        background: var(--teal-50);\n        border-color: var(--teal);\n        color: var(--teal);\n      }\n      .matcher .opts button.wrong {\n        background: var(--rose-50);\n        border-color: var(--rose);\n        color: var(--rose);\n      }\n      .matcher .opts button:disabled {\n        cursor: default;\n      }\n      .matcher .fb {\n        margin-top: 12px;\n        min-height: 1.2em;\n        font-weight: 600;\n        font-size: 0.9rem;\n      }\n      .matcher .fb.ok {\n        color: var(--teal);\n      }\n      .matcher .score {\n        margin-top: 10px;\n        font: 700 0.8rem \"JetBrains Mono\";\n        color: var(--ink-soft);\n      }\n\n      @media (max-width: 720px) {\n        .patterns {\n          grid-template-columns: 1fr;\n        }\n        .matcher .opts {\n          grid-template-columns: 1fr;\n        }\n      }\n      @media print {\n        .langswitch,\n        .sim-stage,\n        .sim-log,\n        .sim-controls,\n        .matcher .opts {\n          display: none;\n        }\n        .topo {\n          overflow: visible;\n        }\n        .topo svg {\n          min-width: 0;\n        }\n      }";
+
+---
+<Lesson
+	titlePt={titlePt}
+	titleEn={titleEn}
+	titleFallback={titleFallback}
+	bodyClass={bodyClass}
+	viewport={viewport}
+	assets={assets}
+	pageStyle={pageStyle}
+>
+	<Fragment is:raw>
+    <article class="lesson">
+      <header class="hero">
+        <div class="langswitch" role="group" aria-label="Language / Idioma">
+          <button type="button" data-go="pt" aria-pressed="true">PT</button>
+          <button type="button" data-go="en" aria-pressed="false">EN</button>
+        </div>
+        <span class="eyebrow"
+          ><span data-lang="pt">⬡ Lição 09 · Multi-agente · 🌙 dark</span
+          ><span data-lang="en">⬡ Lesson 09 · Multi-agent · 🌙 dark</span></span
+        >
+        <h1>
+          <span data-lang="pt">Orquestra de agentes</span
+          ><span data-lang="en">Agent orchestra</span>
+        </h1>
+        <p class="lead">
+          <span data-lang="pt"
+            >Um <strong>gerente</strong> despacha trabalho para vários
+            <strong>trabalhadores</strong> e ouve o que eles dizem. É assim que
+            terminais diferentes “se escutam” no Pi: não por mágica, mas por um
+            <em>barramento de mensagens</em>. Quatro padrões, dois jogos, um
+            mapa.</span
+          ><span data-lang="en"
+            >A <strong>manager</strong> dispatches work to several
+            <strong>workers</strong> and listens to what they say. That’s how
+            different terminals “hear” each other in Pi: not by magic, but
+            through a <em>message bus</em>. Four patterns, two games, one
+            map.</span
+          >
+        </p>
+        <p class="lesson-nav-top">
+          ↑
+          <a href="../MISSION.md"
+            ><span data-lang="pt">Missão</span
+            ><span data-lang="en">Mission</span></a
+          >
+          · <span data-lang="pt">anterior</span
+          ><span data-lang="en">prev</span>:
+          <a href="./0008-o-mapa-dos-agentes.html"
+            ><span data-lang="pt">Lição 8 · O mapa</span
+            ><span data-lang="en">Lesson 8 · The map</span></a
+          >
+          · <span data-lang="pt">relacionada</span
+          ><span data-lang="en">related</span>:
+          <a href="./0006-extensions.html"
+            ><span data-lang="pt">Lição 6 · Extensões</span
+            ><span data-lang="en">Lesson 6 · Extensions</span></a
+          >
+        </p>
+      </header>
+
+      <!-- ============ 1. TOPOLOGY ============ -->
+      <h2 class="section">
+        <span class="num">1</span
+        ><span data-lang="pt">O mapa: quem fala com quem</span
+        ><span data-lang="en">The map: who talks to whom</span>
+      </h2>
+      <p class="kicker">
+        <span data-lang="pt"
+          >No Pi, o <strong>gerente</strong> é a sua sessão principal. Os
+          <strong>trabalhadores</strong> são agentes-filhos que ela cria. Eles
+          se comunicam por um barramento (o <em>intercom</em>): despachos para
+          baixo, resultados e perguntas para cima.</span
+        ><span data-lang="en"
+          >In Pi, the <strong>manager</strong> is your main session. The
+          <strong>workers</strong> are the child agents it creates. They
+          communicate over a bus (the <em>intercom</em>): dispatches go down,
+          results and questions come up.</span
+        >
+      </p>
+
+      <div class="panel topo">
+        <svg
+          viewBox="0 0 720 340"
+          width="100%"
+          role="img"
+          aria-labelledby="t-title t-desc"
+        >
+          <title
+            id="t-title"
+            data-pt="Topologia gerente-trabalhadores"
+            data-en="Manager-workers topology"
+          >
+            Topologia gerente-trabalhadores
+          </title>
+          <desc
+            id="t-desc"
+            data-pt="Gerente no topo, barramento no meio, três trabalhadores embaixo; setas de despacho (baixo), resultado e pergunta (cima)."
+            data-en="Manager at top, bus in the middle, three workers at the bottom; dispatch arrows (down), result and question arrows (up)."
+          >
+            Gerente no topo, barramento no meio, três trabalhadores embaixo;
+            setas de despacho (baixo), resultado e pergunta (cima).
+          </desc>
+          <defs>
+            <marker
+              id="dn"
+              markerWidth="9"
+              markerHeight="9"
+              refX="6"
+              refY="3"
+              orient="auto"
+            >
+              <path d="M0,0 L6,3 L0,6 Z" fill="#8b6ff7" />
+            </marker>
+            <marker
+              id="up"
+              markerWidth="9"
+              markerHeight="9"
+              refX="6"
+              refY="3"
+              orient="auto"
+            >
+              <path d="M0,0 L6,3 L0,6 Z" fill="#2dd4bf" />
+            </marker>
+            <marker
+              id="ask"
+              markerWidth="9"
+              markerHeight="9"
+              refX="6"
+              refY="3"
+              orient="auto"
+            >
+              <path d="M0,0 L6,3 L0,6 Z" fill="#fbbf24" />
+            </marker>
+          </defs>
+
+          <rect
+            x="290"
+            y="22"
+            width="140"
+            height="60"
+            rx="16"
+            fill="#221a3d"
+            stroke="#8b6ff7"
+            stroke-width="2.5"
+          />
+          <text
+            x="360"
+            y="48"
+            text-anchor="middle"
+            font-family="Space Grotesk"
+            font-size="13"
+            font-weight="700"
+            fill="#8b6ff7"
+            data-pt="GERENTE"
+            data-en="MANAGER"
+          >
+            GERENTE
+          </text>
+          <text
+            x="360"
+            y="66"
+            text-anchor="middle"
+            font-family="JetBrains Mono"
+            font-size="10"
+            fill="#9ea2b8"
+            data-pt="sua sessão Pi"
+            data-en="your Pi session"
+          >
+            sua sessão Pi
+          </text>
+
+          <rect
+            x="60"
+            y="150"
+            width="600"
+            height="40"
+            rx="20"
+            fill="#181a26"
+            stroke="#292d40"
+            stroke-width="1.5"
+          />
+          <text
+            x="360"
+            y="175"
+            text-anchor="middle"
+            font-family="Space Grotesk"
+            font-size="12"
+            font-weight="700"
+            fill="#9ea2b8"
+            data-pt="BARRAMENTO · INTERCOM"
+            data-en="BUS · INTERCOM"
+          >
+            BARRAMENTO · INTERCOM
+          </text>
+
+          <g font-family="Space Grotesk" font-size="12" font-weight="700">
+            <rect
+              x="70"
+              y="258"
+              width="130"
+              height="56"
+              rx="14"
+              fill="#0c2a27"
+              stroke="#2dd4bf"
+              stroke-width="2"
+            />
+            <text
+              x="135"
+              y="282"
+              text-anchor="middle"
+              fill="#2dd4bf"
+              data-pt="scout"
+              data-en="scout"
+            >
+              scout
+            </text>
+            <text
+              x="135"
+              y="300"
+              text-anchor="middle"
+              font-family="JetBrains Mono"
+              font-size="9.5"
+              fill="#9ea2b8"
+              data-pt="reconhecimento"
+              data-en="recon"
+            >
+              reconhecimento
+            </text>
+
+            <rect
+              x="295"
+              y="258"
+              width="130"
+              height="56"
+              rx="14"
+              fill="#0c2a27"
+              stroke="#2dd4bf"
+              stroke-width="2"
+            />
+            <text
+              x="360"
+              y="282"
+              text-anchor="middle"
+              fill="#2dd4bf"
+              data-pt="worker"
+              data-en="worker"
+            >
+              worker
+            </text>
+            <text
+              x="360"
+              y="300"
+              text-anchor="middle"
+              font-family="JetBrains Mono"
+              font-size="9.5"
+              fill="#9ea2b8"
+              data-pt="implementa"
+              data-en="implements"
+            >
+              implementa
+            </text>
+
+            <rect
+              x="520"
+              y="258"
+              width="130"
+              height="56"
+              rx="14"
+              fill="#0c2a27"
+              stroke="#2dd4bf"
+              stroke-width="2"
+            />
+            <text
+              x="585"
+              y="282"
+              text-anchor="middle"
+              fill="#2dd4bf"
+              data-pt="reviewer"
+              data-en="reviewer"
+            >
+              reviewer
+            </text>
+            <text
+              x="585"
+              y="300"
+              text-anchor="middle"
+              font-family="JetBrains Mono"
+              font-size="9.5"
+              fill="#9ea2b8"
+              data-pt="valida"
+              data-en="validates"
+            >
+              valida
+            </text>
+          </g>
+
+          <path
+            d="M340 82 C 340 120, 135 120, 135 150"
+            stroke="#8b6ff7"
+            stroke-width="2"
+            fill="none"
+            marker-end="url(#dn)"
+          />
+          <path
+            d="M360 82 V 150"
+            stroke="#8b6ff7"
+            stroke-width="2"
+            fill="none"
+            marker-end="url(#dn)"
+          />
+          <path
+            d="M380 82 C 380 120, 585 120, 585 150"
+            stroke="#8b6ff7"
+            stroke-width="2"
+            fill="none"
+            marker-end="url(#dn)"
+          />
+          <text
+            x="245"
+            y="118"
+            font-family="Inter"
+            font-size="10"
+            font-weight="700"
+            fill="#8b6ff7"
+            data-pt="despacho"
+            data-en="dispatch"
+          >
+            despacho
+          </text>
+
+          <path
+            d="M150 258 C 150 220, 250 215, 300 82"
+            stroke="#2dd4bf"
+            stroke-width="2"
+            fill="none"
+            marker-end="url(#up)"
+          />
+          <path
+            d="M375 258 C 375 220, 380 215, 390 82"
+            stroke="#2dd4bf"
+            stroke-width="2"
+            fill="none"
+            marker-end="url(#up)"
+          />
+          <path
+            d="M570 258 C 570 220, 470 215, 420 82"
+            stroke="#2dd4bf"
+            stroke-width="2"
+            fill="none"
+            marker-end="url(#up)"
+          />
+          <text
+            x="445"
+            y="232"
+            font-family="Inter"
+            font-size="10"
+            font-weight="700"
+            fill="#2dd4bf"
+            data-pt="resultado"
+            data-en="result"
+          >
+            resultado
+          </text>
+
+          <path
+            d="M425 290 C 540 290, 600 210, 420 82"
+            stroke="#fbbf24"
+            stroke-width="2"
+            stroke-dasharray="5 5"
+            fill="none"
+            marker-end="url(#ask)"
+          />
+          <text
+            x="560"
+            y="250"
+            font-family="Inter"
+            font-size="10"
+            font-weight="700"
+            fill="#fbbf24"
+            data-pt="pergunta ✓?"
+            data-en="asks ✓?"
+          >
+            pergunta ✓?
+          </text>
+        </svg>
+      </div>
+
+      <div class="callout key">
+        <p>
+          <span data-lang="pt"
+            ><strong>A sacada:</strong> “terminais se ouvindo” =
+            <em>mensagens numeradas num barramento</em>. O gerente
+            <strong>despacha</strong> (cria um agente-filho com uma tarefa), o
+            trabalhador <strong>devolve</strong> o resultado, e — o mais
+            poderoso — pode <strong>perguntar</strong> ao gerente no meio do
+            trabalho e <em>esperar</em> a resposta. Tudo num único processo
+            Pi.</span
+          ><span data-lang="en"
+            ><strong>The key idea:</strong> “terminals hearing each other” =
+            <em>numbered messages on a bus</em>. The manager
+            <strong>dispatches</strong> (creates a child agent with a task), the
+            worker <strong>returns</strong> the result, and — most powerfully —
+            can <strong>ask</strong> the manager mid-work and <em>wait</em> for
+            the answer. All in a single Pi process.</span
+          >
+        </p>
+      </div>
+      <p class="cite">
+        <span data-lang="pt">Fonte:</span><span data-lang="en">Source:</span>
+        <a
+          href="https://github.com/nicobailon/pi-subagents"
+          target="_blank"
+          rel="noopener"
+          >pi-subagents</a
+        >
+        —
+        <span data-lang="pt"
+          >a extensão que adiciona subagentes, cadeias, paralelismo, async e
+          coordenação por intercom ao Pi.</span
+        ><span data-lang="en"
+          >the extension that adds subagents, chains, parallelism, async and
+          intercom coordination to Pi.</span
+        >
+      </p>
+
+      <!-- ============ 2. FOUR PATTERNS ============ -->
+      <h2 class="section">
+        <span class="num">2</span
+        ><span data-lang="pt">Quatro modos de coordenar</span
+        ><span data-lang="en">Four ways to coordinate</span>
+      </h2>
+      <p class="kicker">
+        <span data-lang="pt"
+          >Toda orquestração é uma combinação destes quatro. Cada um responde a
+          uma pergunta diferente sobre <em>quando</em> cada trabalhador
+          age.</span
+        ><span data-lang="en"
+          >Every orchestration is a mix of these four. Each answers a different
+          question about <em>when</em> each worker acts.</span
+        >
+      </p>
+
+      <div class="patterns">
+        <div class="pattern" style="--accent: #8b6ff7">
+          <h4>
+            <span data-lang="pt">① Cadeia (sequência)</span
+            ><span data-lang="en">① Chain (sequence)</span>
+          </h4>
+          <div class="when">
+            <span data-lang="pt">Cada passo precisa do anterior.</span
+            ><span data-lang="en">Each step needs the previous one.</span>
+          </div>
+          <div class="mini-tl">
+            <span
+              ><span data-lang="pt">gerente → A</span
+              ><span data-lang="en">manager → A</span></span
+            >
+            <span
+              ><span data-lang="pt">A devolve → B</span
+              ><span data-lang="en">A returns → B</span></span
+            >
+            <span
+              ><span data-lang="pt">B devolve → C</span
+              ><span data-lang="en">B returns → C</span></span
+            >
+            <span
+              ><span data-lang="pt">C devolve → gerente</span
+              ><span data-lang="en">C returns → manager</span></span
+            >
+          </div>
+          <p>
+            <span data-lang="pt"
+              >Turnos rígidos. A saída de um vira a entrada do próximo.</span
+            ><span data-lang="en"
+              >Rigid turns. One’s output becomes the next one’s input.</span
+            >
+          </p>
+        </div>
+
+        <div class="pattern" style="--accent: #2dd4bf">
+          <h4>
+            <span data-lang="pt">② Paralelo (leque)</span
+            ><span data-lang="en">② Parallel (fan-out)</span>
+          </h4>
+          <div class="when">
+            <span data-lang="pt">Passos independentes, ao mesmo tempo.</span
+            ><span data-lang="en">Independent steps, at the same time.</span>
+          </div>
+          <div class="mini-tl">
+            <span
+              ><span data-lang="pt">gerente → A, B, C</span
+              ><span data-lang="en">manager → A, B, C</span></span
+            >
+            <span
+              ><span data-lang="pt">todos juntos</span
+              ><span data-lang="en">all together</span></span
+            >
+            <span
+              ><span data-lang="pt">A, B, C → gerente</span
+              ><span data-lang="en">A, B, C → manager</span></span
+            >
+          </div>
+          <p>
+            <span data-lang="pt"
+              >O gerente funde os resultados quando todos terminam.</span
+            ><span data-lang="en"
+              >The manager merges the results when all finish.</span
+            >
+          </p>
+        </div>
+
+        <div class="pattern" style="--accent: #60a5fa">
+          <h4>
+            <span data-lang="pt">③ Assíncrono (segundo plano)</span
+            ><span data-lang="en">③ Async (background)</span>
+          </h4>
+          <div class="when">
+            <span data-lang="pt">Dispare e continue; seja avisado ao fim.</span
+            ><span data-lang="en"
+              >Fire and continue; get notified at the end.</span
+            >
+          </div>
+          <div class="mini-tl">
+            <span
+              ><span data-lang="pt">despacha (bg)</span
+              ><span data-lang="en">dispatch (bg)</span></span
+            >
+            <span
+              ><span data-lang="pt">gerente faz outra coisa</span
+              ><span data-lang="en">manager does other work</span></span
+            >
+            <span
+              ><span data-lang="pt">🔔 notificação</span
+              ><span data-lang="en">🔔 notification</span></span
+            >
+          </div>
+          <p>
+            <span data-lang="pt"
+              >O gerente não bloqueia. Útil para trabalho longo.</span
+            ><span data-lang="en"
+              >The manager doesn’t block. Good for long work.</span
+            >
+          </p>
+        </div>
+
+        <div class="pattern" style="--accent: #fbbf24">
+          <h4>
+            <span data-lang="pt">④ Conversa (intercom)</span
+            ><span data-lang="en">④ Conversation (intercom)</span>
+          </h4>
+          <div class="when">
+            <span data-lang="pt">O trabalhador precisa de uma decisão.</span
+            ><span data-lang="en">The worker needs a decision.</span>
+          </div>
+          <div class="mini-tl">
+            <span
+              ><span data-lang="pt">trabalhador trava</span
+              ><span data-lang="en">worker halts</span></span
+            >
+            <span
+              ><span data-lang="pt">gerente responde</span
+              ><span data-lang="en">manager replies</span></span
+            >
+            <span
+              ><span data-lang="pt">trabalhador retoma</span
+              ><span data-lang="en">worker resumes</span></span
+            >
+          </div>
+          <p>
+            <span data-lang="pt"
+              >É assim que um filho “ouve” o pai — e vice-versa.</span
+            ><span data-lang="en"
+              >This is how a child “hears” its parent — and vice-versa.</span
+            >
+          </p>
+        </div>
+      </div>
+
+      <div class="callout tip">
+        <p>
+          <span data-lang="pt"
+            ><strong>Do eixos para decorar:</strong>
+            <em>sequencial × paralelo</em> (quantos ao mesmo tempo) e
+            <em>síncrono × assíncrono</em> (o gerente espera ou continua). O
+            <em>intercom</em> é ortogonal — funciona em qualquer um dos
+            quatro.</span
+          ><span data-lang="en"
+            ><strong>Two axes to remember:</strong>
+            <em>sequential × parallel</em> (how many at once) and
+            <em>synchronous × asynchronous</em> (manager waits or continues).
+            The <em>intercom</em> is orthogonal — it works in any of the
+            four.</span
+          >
+        </p>
+      </div>
+
+      <!-- ============ 3. INTERCOM ============ -->
+      <h2 class="section">
+        <span class="num">3</span
+        ><span data-lang="pt">Como eles “se ouvem” de verdade</span
+        ><span data-lang="en">How they actually “hear” each other</span>
+      </h2>
+      <p class="kicker">
+        <span data-lang="pt"
+          >O barramento não é telepatia. São duas ferramentas que se cascam: o
+          filho <strong>pergunta</strong>, o pai
+          <strong>responde</strong>.</span
+        ><span data-lang="en"
+          >The bus isn’t telepathy. It’s two tools that pair up: the child
+          <strong>asks</strong>, the parent <strong>replies</strong>.</span
+        >
+      </p>
+
+      <div class="grid cols-2">
+        <div class="card" style="border-top: 4px solid var(--amber)">
+          <h4>
+            <span data-lang="pt">Filho → pai ·</span
+            ><span data-lang="en">Child → parent ·</span>
+            <code class="inline">contact_supervisor</code>
+          </h4>
+          <p>
+            <span data-lang="pt"
+              >O trabalhador trava e envia uma mensagem com um <em>motivo</em>.
+              As razões <code>need_decision</code> e
+              <code>interview_request</code> <strong>bloqueiam</strong>: o filho
+              espera a resposta. <code>progress_update</code> é só um
+              aviso.</span
+            ><span data-lang="en"
+              >The worker halts and sends a message with a <em>reason</em>. The
+              reasons <code>need_decision</code> and
+              <code>interview_request</code> <strong>block</strong>: the child
+              waits for the reply. <code>progress_update</code> is just a
+              notice.</span
+            >
+          </p>
+          <div class="sig">contact_supervisor({ reason, message })</div>
+        </div>
+        <div class="card" style="border-top: 4px solid var(--violet)">
+          <h4>
+            <span data-lang="pt">Pai → filho ·</span
+            ><span data-lang="en">Parent → child ·</span>
+            <code class="inline">subagent_supervisor</code>
+          </h4>
+          <p>
+            <span data-lang="pt"
+              >O gerente vê as perguntas pendentes com
+              <code>action: "pending"</code> e responde com
+              <code>action: "reply"</code>. Também pode
+              <strong>guiar</strong> um filho vivo com <code>steer</code>.</span
+            ><span data-lang="en"
+              >The manager sees pending questions with
+              <code>action: "pending"</code> and replies with
+              <code>action: "reply"</code>. It can also <strong>steer</strong> a
+              live child with <code>steer</code>.</span
+            >
+          </p>
+          <div class="sig">
+            subagent_supervisor({ action: "reply", message })
+          </div>
+        </div>
+      </div>
+
+      <div class="callout warn">
+        <p>
+          <span data-lang="pt"
+            ><strong>Regra de ouro da escrita:</strong> só
+            <em>um</em> trabalhador escreve no mesmo diretório por vez.
+            Paralelize leitura, revisão e pesquisa à vontade — mas a escrita é
+            em fila. (Para escrita paralela real, use
+            <code>worktree: true</code> e isole cada filho numa árvore git
+            separada.)</span
+          ><span data-lang="en"
+            ><strong>Golden rule of writing:</strong> only <em>one</em> worker
+            writes to the same directory at a time. Parallelize reading, review
+            and research freely — but writing is serialized. (For true parallel
+            writes, use <code>worktree: true</code> and isolate each child in a
+            separate git tree.)</span
+          >
+        </p>
+      </div>
+
+      <!-- ============ 4. REAL PI CODE ============ -->
+      <h2 class="section">
+        <span class="num">4</span
+        ><span data-lang="pt">Exemplos reais no Pi</span
+        ><span data-lang="en">Real examples in Pi</span>
+      </h2>
+      <p class="kicker">
+        <span data-lang="pt"
+          >Quatro trechos — um por padrão — usando a ferramenta
+          <code class="inline">subagent()</code> que a extensão
+          <code class="inline">pi-subagents</code> registra.</span
+        ><span data-lang="en"
+          >Four snippets — one per pattern — using the
+          <code class="inline">subagent()</code> tool that the
+          <code class="inline">pi-subagents</code> extension registers.</span
+        >
+      </p>
+
+      <h3>
+        <span data-lang="pt">① Cadeia — reconhecer, planejar, implementar</span
+        ><span data-lang="en">① Chain — scout, plan, implement</span>
+      </h3>
+      <pre class="block"><span class="g">subagent</span>({
+  chain: [
+    { <span class="a">agent</span>: <span class="s">"scout"</span>,   <span class="a">task</span>: <span class="s">"Map the auth flow"</span> },
+    { <span class="a">agent</span>: <span class="s">"planner"</span>, <span class="a">task</span>: <span class="s">"Plan from {previous}"</span> },
+    { <span class="a">agent</span>: <span class="s">"worker"</span>,  <span class="a">task</span>: <span class="s">"Implement the plan from {previous}"</span> }
+  ]
+});</pre>
+
+      <h3>
+        <span data-lang="pt"
+          >② Paralelo — três revisores, ângulos diferentes</span
+        ><span data-lang="en"
+          >② Parallel — three reviewers, different angles</span
+        >
+      </h3>
+      <pre class="block"><span class="g">subagent</span>({
+  tasks: [
+    { <span class="a">agent</span>: <span class="s">"reviewer"</span>, <span class="a">task</span>: <span class="s">"Review correctness & regressions"</span> },
+    { <span class="a">agent</span>: <span class="s">"reviewer"</span>, <span class="a">task</span>: <span class="s">"Review tests & validation"</span> },
+    { <span class="a">agent</span>: <span class="s">"reviewer"</span>, <span class="a">task</span>: <span class="s">"Review simplicity"</span> }
+  ],
+  concurrency: <span class="k">3</span>,
+  context: <span class="s">"fresh"</span>      <span class="c"><span data-lang="pt">// contexto limpo = revisão honesta</span><span data-lang="en">// clean context = honest review</span></span>
+});</pre>
+
+      <h3>
+        <span data-lang="pt">③ Assíncrono — dispare e continue</span
+        ><span data-lang="en">③ Async — fire and continue</span>
+      </h3>
+      <pre
+        class="block"
+      ><span class="g">subagent</span>({ <span class="a">agent</span>: <span class="s">"worker"</span>, <span class="a">task</span>: <span class="s">"Run the test suite"</span>, <span class="a">async</span>: <span class="k">true</span> });
+<span class="c"><span data-lang="pt">// o gerente segue; Pi avisa (🔔) quando o filho terminar</span><span data-lang="en">// the manager keeps going; Pi notifies (🔔) when the child finishes</span></span></pre>
+
+      <h3>
+        <span data-lang="pt">④ Conversa — o filho pergunta, o pai responde</span
+        ><span data-lang="en"
+          >④ Conversation — the child asks, the parent replies</span
+        >
+      </h3>
+      <pre
+        class="block"
+      ><span class="c"><span data-lang="pt">// dentro do trabalhador:</span><span data-lang="en">// inside the worker:</span></span>
+<span class="g">contact_supervisor</span>({
+  reason: <span class="s">"need_decision"</span>,
+  message: <span class="s">"Optimize for readability or performance?"</span>
+});
+
+<span class="c"><span data-lang="pt">// dentro do gerente, a resposta chega assim:</span><span data-lang="en">// inside the manager, the reply arrives like this:</span></span>
+<span class="g">subagent_supervisor</span>({ action: <span class="s">"reply"</span>, message: <span class="s">"Readability."</span> });</pre>
+
+      <div class="callout key">
+        <p>
+          <span data-lang="pt"
+            ><strong>O caminho Pi-nativo (sem extensão):</strong> o Pi puro
+            <em>não</em> tem subagentes por design. A alternativa do autor é
+            <strong>tmux</strong> — abra painéis, rode <code>pi</code> em cada
+            um, e orquestre à mão (ou encadeie com
+            <code>pi --print "..." | pi -p</code>). O
+            <code>pi-subagents</code> é a versão estruturada desse mesmo ideia.
+            <a
+              href="https://mariozechner.at/posts/2025-11-30-pi-coding-agent/"
+              target="_blank"
+              rel="noopener"
+              >Leia o porquê →</a
+            ></span
+          ><span data-lang="en"
+            ><strong>The native Pi path (no extension):</strong> pure Pi has
+            <em>no</em> subagents by design. The author’s alternative is
+            <strong>tmux</strong> — open panes, run <code>pi</code> in each, and
+            orchestrate by hand (or chain with
+            <code>pi --print "..." | pi -p</code>). <code>pi-subagents</code> is
+            the structured version of that same idea.
+            <a
+              href="https://mariozechner.at/posts/2025-11-30-pi-coding-agent/"
+              target="_blank"
+              rel="noopener"
+              >Read why →</a
+            ></span
+          >
+        </p>
+      </div>
+
+      <!-- ============ 5. GAME 1: PATTERN MATCHER ============ -->
+      <h2 class="section">
+        <span class="num">5</span
+        ><span data-lang="pt">Jogo 1 · Escolha o padrão</span
+        ><span data-lang="en">Game 1 · Pick the pattern</span>
+      </h2>
+      <p class="kicker">
+        <span data-lang="pt"
+          >Leia o cenário e escolha o melhor padrão. Acertar constrói o reflexo
+          de <em>decidir a coordenação certa</em>.</span
+        ><span data-lang="en"
+          >Read the scenario and pick the best pattern. Getting it right builds
+          the reflex to <em>choose the right coordination</em>.</span
+        >
+      </p>
+
+      <div class="panel matcher" style="padding: 18px">
+        <div class="scene" id="m-scene">
+          <div class="tag" id="m-tag">—</div>
+          <p id="m-text">—</p>
+        </div>
+        <div class="opts" id="m-opts"></div>
+        <div class="fb" id="m-fb" aria-live="polite"></div>
+        <div class="score" id="m-score">—</div>
+        <div class="sim-controls" style="border: 0; padding: 12px 0 0">
+          <button id="m-next" disabled>
+            <span data-lang="pt">Próximo cenário →</span
+            ><span data-lang="en">Next scenario →</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ============ 6. GAME 2: BUS SIMULATOR ============ -->
+      <h2 class="section">
+        <span class="num">6</span
+        ><span data-lang="pt">Jogo 2 · Simulador do barramento</span
+        ><span data-lang="en">Game 2 · Bus simulator</span>
+      </h2>
+      <p class="kicker">
+        <span data-lang="pt"
+          >Veja as mensagens viajarem. Aperte um padrão e observe quem acende, o
+          que sobe e o que desce. É a imagem de “terminais se ouvindo”.</span
+        ><span data-lang="en"
+          >Watch the messages travel. Press a pattern and see who lights up,
+          what goes up and what goes down. It’s the picture of “terminals
+          hearing each other”.</span
+        >
+      </p>
+
+      <div class="panel sim">
+        <div class="sim-stage" id="stage">
+          <svg
+            class="bus-line"
+            viewBox="0 0 100 100"
+            preserveAspectRatio="none"
+          >
+            <line
+              x1="50"
+              y1="16"
+              x2="18"
+              y2="78"
+              stroke="#292d40"
+              stroke-width="0.4"
+            />
+            <line
+              x1="50"
+              y1="16"
+              x2="50"
+              y2="78"
+              stroke="#292d40"
+              stroke-width="0.4"
+            />
+            <line
+              x1="50"
+              y1="16"
+              x2="82"
+              y2="78"
+              stroke="#292d40"
+              stroke-width="0.4"
+            />
+          </svg>
+          <div class="node mgr" id="n-mgr">
+            <span data-lang="pt">GERENTE</span
+            ><span data-lang="en">MANAGER</span><small>manager</small>
+          </div>
+          <div class="node w wa" id="n-wa">A<small>scout</small></div>
+          <div class="node w wb" id="n-wb">B<small>worker</small></div>
+          <div class="node w wc" id="n-wc">C<small>reviewer</small></div>
+          <div class="packet" id="packet">→</div>
+        </div>
+        <div class="sim-controls" id="sim-controls">
+          <button data-run="chain">
+            <span data-lang="pt">① Cadeia</span
+            ><span data-lang="en">① Chain</span>
+          </button>
+          <button data-run="parallel">
+            <span data-lang="pt">② Paralelo</span
+            ><span data-lang="en">② Parallel</span>
+          </button>
+          <button data-run="async">
+            <span data-lang="pt">③ Assíncrono</span
+            ><span data-lang="en">③ Async</span>
+          </button>
+          <button data-run="ask">
+            <span data-lang="pt">④ Conversa</span
+            ><span data-lang="en">④ Conversation</span>
+          </button>
+          <button data-run="reset" style="margin-left: auto">
+            <span data-lang="pt">↺ limpar</span
+            ><span data-lang="en">↺ clear</span>
+          </button>
+        </div>
+        <div class="sim-log" id="sim-log"></div>
+      </div>
+
+      <!-- ============ 7. QUIZ ============ -->
+      <h2 class="section">
+        <span class="num">7</span><span data-lang="pt">Recupere sem olhar</span
+        ><span data-lang="en">Recall without peeking</span>
+      </h2>
+      <p class="kicker">
+        <span data-lang="pt"
+          >Mesmo número de palavras em cada opção — sem pista pelo
+          tamanho.</span
+        ><span data-lang="en"
+          >Same number of words in each option — no clue from length.</span
+        >
+      </p>
+
+      <div class="quiz" id="q1" role="group" aria-labelledby="q1-label">
+        <div class="q" id="q1-label">
+          <span data-lang="pt"
+            >Q1. Quem realmente cria e despacha o agente trabalhador?</span
+          ><span data-lang="en"
+            >Q1. Who actually creates and dispatches the worker agent?</span
+          >
+        </div>
+        <div class="options">
+          <button
+            class="opt"
+            data-correct="true"
+            data-fb-pt="Exato: a sessão-gerente cria filhos via subagent() e os despacha."
+            data-fb-en="Exact: the manager session creates children via subagent() and dispatches them."
+          >
+            <span data-lang="pt">O gerente</span
+            ><span data-lang="en">The manager</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="O barramento transporta mensagens; não cria nem decide."
+            data-fb-en="The bus carries messages; it doesn’t create or decide."
+          >
+            <span data-lang="pt">O barramento</span
+            ><span data-lang="en">The bus</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="A extensão registra a ferramenta, mas quem dispara é o gerente."
+            data-fb-en="The extension registers the tool, but the manager fires it."
+          >
+            <span data-lang="pt">A extensão</span
+            ><span data-lang="en">The extension</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="O LLM raciocina, mas a orquestração é da sessão-gerente."
+            data-fb-en="The LLM reasons, but orchestration belongs to the manager session."
+          >
+            <span data-lang="pt">O próprio LLM</span
+            ><span data-lang="en">The LLM itself</span>
+          </button>
+        </div>
+        <div class="verdict" aria-live="polite"></div>
+      </div>
+
+      <div class="quiz" id="q2" role="group" aria-labelledby="q2-label">
+        <div class="q" id="q2-label">
+          <span data-lang="pt"
+            >Q2. Um trabalhador trava pedindo uma decisão. Que ferramenta ele
+            usa?</span
+          ><span data-lang="en"
+            >Q2. A worker halts asking for a decision. Which tool does it
+            use?</span
+          >
+        </div>
+        <div class="options">
+          <button
+            class="opt"
+            data-correct="true"
+            data-fb-pt="Exato: o filho pergunta via contact_supervisor e espera a resposta."
+            data-fb-en="Exact: the child asks via contact_supervisor and waits for the reply."
+          >
+            contact_supervisor
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="subagent() despacha um novo filho; não é o canal de pergunta."
+            data-fb-en="subagent() dispatches a new child; it isn’t the question channel."
+          >
+            subagent
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="steer é o gerente guiando um filho vivo, não o filho pedindo."
+            data-fb-en="steer is the manager guiding a live child, not the child asking."
+          >
+            steer
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="worktree isola escrita paralela; não envia perguntas."
+            data-fb-en="worktree isolates parallel writes; it doesn’t send questions."
+          >
+            worktree
+          </button>
+        </div>
+        <div class="verdict" aria-live="polite"></div>
+      </div>
+
+      <div class="quiz" id="q3" role="group" aria-labelledby="q3-label">
+        <div class="q" id="q3-label">
+          <span data-lang="pt"
+            >Q3. Três revisores independentes ao mesmo tempo. Qual padrão?</span
+          ><span data-lang="en"
+            >Q3. Three independent reviewers at the same time. Which
+            pattern?</span
+          >
+        </div>
+        <div class="options">
+          <button
+            class="opt"
+            data-correct="true"
+            data-fb-pt="Exato: tarefas independentes simultâneas = paralelo (leque)."
+            data-fb-en="Exact: independent simultaneous tasks = parallel (fan-out)."
+          >
+            <span data-lang="pt">Paralelo</span
+            ><span data-lang="en">Parallel</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Cadeia é em turnos; revisores não precisam uns dos outros."
+            data-fb-en="Chain is turn-based; reviewers don’t need each other."
+          >
+            <span data-lang="pt">Cadeia</span><span data-lang="en">Chain</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Conversa é para perguntas; aqui não há dependência de decisão."
+            data-fb-en="Conversation is for questions; there’s no decision dependency here."
+          >
+            <span data-lang="pt">Conversa</span
+            ><span data-lang="en">Conversation</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Assíncrono é sobre não-bloquear; não sobre simultaneidade."
+            data-fb-en="Async is about not blocking; not about simultaneity."
+          >
+            <span data-lang="pt">Assíncrono</span
+            ><span data-lang="en">Async</span>
+          </button>
+        </div>
+        <div class="verdict" aria-live="polite"></div>
+      </div>
+
+      <!-- ============ 8. SOURCES ============ -->
+      <h2 class="section">
+        <span class="num">8</span><span data-lang="pt">Fontes primárias</span
+        ><span data-lang="en">Primary sources</span>
+      </h2>
+      <ul class="source-list">
+        <li>
+          <a
+            href="https://github.com/nicobailon/pi-subagents"
+            target="_blank"
+            rel="noopener"
+            ><strong>pi-subagents (GitHub)</strong></a
+          >
+          <p>
+            <span data-lang="pt"
+              >Extensão que adiciona subagentes, cadeias, paralelo, async e
+              intercom ao Pi. Leitura principal desta lição.</span
+            ><span data-lang="en"
+              >Extension that adds subagents, chains, parallel, async and
+              intercom to Pi. The main reading for this lesson.</span
+            >
+          </p>
+        </li>
+        <li>
+          <a
+            href="https://mariozechner.at/posts/2025-11-30-pi-coding-agent/"
+            target="_blank"
+            rel="noopener"
+            ><strong>Mario Zechner — “Pi Coding Agent”</strong></a
+          >
+          <p>
+            <span data-lang="pt"
+              >A seção “No sub-agents”: por que o Pi puro não os tem e como o
+              tmux é a alternativa manual.</span
+            ><span data-lang="en"
+              >The “No sub-agents” section: why pure Pi lacks them and how tmux
+              is the manual alternative.</span
+            >
+          </p>
+        </li>
+        <li>
+          <a href="https://pi.dev/docs/latest" target="_blank" rel="noopener"
+            ><strong
+              >Pi — <span data-lang="pt">documentação oficial</span
+              ><span data-lang="en">official docs</span></strong
+            ></a
+          >
+          <p>
+            <span data-lang="pt"
+              >Modos, sessões e a base sobre a qual a extensão se apoia.</span
+            ><span data-lang="en"
+              >Modes, sessions and the base the extension builds on.</span
+            >
+          </p>
+        </li>
+      </ul>
+
+      <div class="callout key">
+        <p>
+          🗣️
+          <strong
+            ><span data-lang="pt">Pergunte ao seu professor.</span
+            ><span data-lang="en">Ask your teacher.</span></strong
+          >
+          <span data-lang="pt"
+            >Boas perguntas: <em>“como faço dois gerentes se falarem?”</em>,
+            <em>“cadeia vs paralelo — e se misturar?”</em>,
+            <em>“mostre um loop de revisão real com intercom.”</em></span
+          ><span data-lang="en"
+            >Good questions: <em>“how do two managers talk?”</em>,
+            <em>“chain vs parallel — what if I mix?”</em>,
+            <em>“show a real review loop with intercom.”</em></span
+          >
+        </p>
+      </div>
+
+      <footer class="lesson-foot">
+        <div class="next-card">
+          <div class="lbl">
+            <span data-lang="pt">Próximo passo →</span
+            ><span data-lang="en">Next step →</span>
+          </div>
+          <div class="t">
+            <span data-lang="pt">Monte uma orquestra de verdade</span
+            ><span data-lang="en">Build a real orchestra</span>
+          </div>
+          <p style="margin: 8px 0 0; font-size: 0.85rem">
+            <span data-lang="pt"
+              >Peça ao Pi:
+              <code class="inline"
+                >“spawne um reviewer em paralelo pra revisar meu diff”</code
+              >
+              e observe os trabalhadores aparecerem.</span
+            ><span data-lang="en"
+              >Ask Pi:
+              <code class="inline"
+                >“spawn a reviewer in parallel to review my diff”</code
+              >
+              and watch the workers appear.</span
+            >
+          </p>
+        </div>
+        <div style="flex: 0 1 240px">
+          <div class="lbl">
+            <span data-lang="pt">Revisar</span
+            ><span data-lang="en">Review</span>
+          </div>
+          <p style="margin: 6px 0 0">
+            <a href="./0001-the-core-loop.html"
+              ><span data-lang="pt">Lição 1 · Core loop</span
+              ><span data-lang="en">Lesson 1 · Core loop</span></a
+            >
+            ·
+            <a href="./0006-extensions.html"
+              ><span data-lang="pt">Lição 6 · Extensões</span
+              ><span data-lang="en">Lesson 6 · Extensions</span></a
+            >
+            ·
+            <a href="./0008-o-mapa-dos-agentes.html"
+              ><span data-lang="pt">Lição 8 · O mapa</span
+              ><span data-lang="en">Lesson 8 · The map</span></a
+            >
+          </p>
+        </div>
+      </footer>
+    </article>
+
+    <script>
+      /* ===== language engine ===== */
+      const TITLE = {
+        pt: "Orquestra de agentes — um gerente, muitos trabalhadores",
+        en: "Agent orchestra — one manager, many workers",
+      };
+      const store = {
+        get: (k) => {
+          try {
+            return localStorage.getItem(k);
+          } catch {
+            return null;
+          }
+        },
+        set: (k, v) => {
+          try {
+            localStorage.setItem(k, v);
+          } catch {}
+        },
+      };
+      let LANG = store.get("pi-lang") || "pt";
+      function L(o) {
+        return o[LANG];
+      }
+      const __navSubs = [];
+      window.PiI18n = {
+        get lang() {
+          return LANG;
+        },
+        on(fn) {
+          __navSubs.push(fn);
+        },
+        L,
+      };
+      function applyLang(lang) {
+        LANG = lang;
+        document.body.classList.remove("lang-pt", "lang-en");
+        document.body.classList.add("lang-" + lang);
+        document.documentElement.lang = lang === "en" ? "en" : "pt-BR";
+        document.title = TITLE[lang];
+        document.querySelectorAll("svg [data-en]").forEach((t) => {
+          t.textContent = lang === "en" ? t.dataset.en : t.dataset.pt;
+        });
+        document.querySelectorAll(".langswitch button").forEach((b) => {
+          b.setAttribute("aria-pressed", String(b.dataset.go === lang));
+        });
+        store.set("pi-lang", lang);
+        __navSubs.forEach((f) => {
+          try {
+            f();
+          } catch {}
+        });
+        matcher.render();
+        resetQuizzes();
+        sim.reset();
+      }
+      document.querySelectorAll(".langswitch button").forEach((b) => {
+        b.addEventListener("click", () => applyLang(b.dataset.go));
+      });
+
+      /* ===== quizzes (data-correct, bilingual feedback) ===== */
+      function resetQuizzes() {
+        document.querySelectorAll(".quiz").forEach((quiz) => {
+          quiz.querySelectorAll(".opt").forEach((o) => {
+            o.classList.remove("correct", "wrong");
+            o.setAttribute("aria-pressed", "false");
+          });
+          const v = quiz.querySelector(".verdict");
+          v.textContent = "";
+          v.className = "verdict";
+        });
+      }
+      (function wireQuizzes() {
+        document.querySelectorAll(".quiz").forEach((quiz) => {
+          const verdict = quiz.querySelector(".verdict");
+          quiz.querySelectorAll(".opt").forEach((button) => {
+            button.setAttribute("aria-pressed", "false");
+            button.addEventListener("click", () => {
+              quiz.querySelectorAll(".opt").forEach((o) => {
+                o.classList.remove("correct", "wrong");
+                o.setAttribute("aria-pressed", "false");
+              });
+              const correct = button.dataset.correct === "true";
+              button.classList.add(correct ? "correct" : "wrong");
+              button.setAttribute("aria-pressed", "true");
+              const fb = button.getAttribute(
+                LANG === "en" ? "data-fb-en" : "data-fb-pt",
+              );
+              verdict.textContent = (correct ? "✓ " : "✗ ") + fb;
+              verdict.className = "verdict " + (correct ? "ok" : "no");
+            });
+          });
+        });
+      })();
+
+      /* ===== GAME 1: pattern matcher (bilingual data) ===== */
+      const matcher = (function () {
+        const optNames = [
+          { key: "Cadeia", pt: "Cadeia", en: "Chain" },
+          { key: "Paralelo", pt: "Paralelo", en: "Parallel" },
+          { key: "Assíncrono", pt: "Assíncrono", en: "Async" },
+          { key: "Conversa", pt: "Conversa", en: "Conversation" },
+        ];
+        const scenes = [
+          {
+            t: {
+              pt: "Refatorar auth exige mapear o código, depois planejar, depois implementar — cada etapa usa a anterior.",
+              en: "Refactoring auth requires mapping the code, then planning, then implementing — each stage uses the previous.",
+            },
+            a: "Cadeia",
+            why: {
+              pt: "Cada passo depende do anterior → turnos em sequência (chain).",
+              en: "Each step depends on the previous → turns in sequence (chain).",
+            },
+          },
+          {
+            t: {
+              pt: "Quero três revisões independentes (correção, testes, simplicidade) rodando juntas.",
+              en: "I want three independent reviews (correctness, tests, simplicity) running together.",
+            },
+            a: "Paralelo",
+            why: {
+              pt: "Passos independentes simultâneos → paralelo (leque).",
+              en: "Independent simultaneous steps → parallel (fan-out).",
+            },
+          },
+          {
+            t: {
+              pt: "Disparei a suite de testes longa; quero continuar code-review enquanto roda.",
+              en: "I kicked off the long test suite; I want to keep code-reviewing while it runs.",
+            },
+            a: "Assíncrono",
+            why: {
+              pt: "Dispare e continue, seja avisado ao fim → assíncrono (background).",
+              en: "Fire and continue, get notified at the end → async (background).",
+            },
+          },
+          {
+            t: {
+              pt: "O trabalhador encontrou uma escolha de produto e não pode decidir sozinho.",
+              en: "The worker hit a product choice and can’t decide alone.",
+            },
+            a: "Conversa",
+            why: {
+              pt: "O filho precisa de uma decisão do gerente → intercom (ask/reply).",
+              en: "The child needs a decision from the manager → intercom (ask/reply).",
+            },
+          },
+          {
+            t: {
+              pt: "Preciso ler o banco E pesquisar na web, depois cruzar os dois no gerente.",
+              en: "I need to read the database AND research the web, then cross both in the manager.",
+            },
+            a: "Paralelo",
+            why: {
+              pt: "Leitura e pesquisa são independentes; rodam juntas e o gerente funde.",
+              en: "Reading and research are independent; they run together and the manager merges.",
+            },
+          },
+        ];
+        let i = 0,
+          score = 0,
+          answered = 0;
+        const tag = document.getElementById("m-tag");
+        const text = document.getElementById("m-text");
+        const opts = document.getElementById("m-opts");
+        const fb = document.getElementById("m-fb");
+        const scoreEl = document.getElementById("m-score");
+        const next = document.getElementById("m-next");
+
+        function render() {
+          const s = scenes[i];
+          tag.textContent =
+            (LANG === "en" ? "Scenario " : "Cenário ") +
+            (i + 1) +
+            " / " +
+            scenes.length;
+          text.textContent = L(s.t);
+          fb.textContent = "";
+          fb.className = "fb";
+          next.disabled = true;
+          opts.replaceChildren();
+          optNames.forEach((o) => {
+            const b = document.createElement("button");
+            b.textContent = L(o);
+            b.dataset.name = o.key;
+            b.addEventListener("click", () => choose(b, o.key, s));
+            opts.appendChild(b);
+          });
+          scoreEl.textContent =
+            (LANG === "en" ? "Correct: " : "Acertos: ") +
+            score +
+            " / " +
+            answered;
+        }
+        function choose(btn, key, s) {
+          [...opts.children].forEach((c) => (c.disabled = true));
+          answered++;
+          const ok = key === s.a;
+          if (ok) score++;
+          btn.classList.add(ok ? "right" : "wrong");
+          if (!ok) {
+            const right = [...opts.children].find(
+              (c) => c.dataset.name === s.a,
+            );
+            if (right) right.classList.add("right");
+          }
+          fb.textContent = (ok ? "✓ " : "✗ ") + L(s.why);
+          fb.className = "fb " + (ok ? "ok" : "");
+          scoreEl.textContent =
+            (LANG === "en" ? "Correct: " : "Acertos: ") +
+            score +
+            " / " +
+            answered;
+          next.disabled = false;
+        }
+        next.addEventListener("click", () => {
+          i = (i + 1) % scenes.length;
+          if (i === 0 && answered >= scenes.length) {
+            scoreEl.textContent =
+              (LANG === "en"
+                ? "Round complete! Correct: "
+                : "Rodada completa! Acertos: ") +
+              score +
+              " / " +
+              answered +
+              (LANG === "en" ? " — restarting." : " — reiniciando.");
+          }
+          render();
+        });
+        return { render };
+      })();
+
+      /* ===== GAME 2: bus simulator (bilingual log) ===== */
+      const sim = (function () {
+        const mgr = document.getElementById("n-mgr");
+        const wa = document.getElementById("n-wa");
+        const wb = document.getElementById("n-wb");
+        const wc = document.getElementById("n-wc");
+        const packet = document.getElementById("packet");
+        const log = document.getElementById("sim-log");
+        const controls = document.getElementById("sim-controls");
+        let busy = false;
+        const POS = {
+          mgr: { x: 50, y: 16 },
+          wa: { x: 18, y: 78 },
+          wb: { x: 50, y: 78 },
+          wc: { x: 82, y: 78 },
+        };
+        const IDLE = {
+          pt: "~ barramento ocioso. escolha um padrão acima.",
+          en: "~ bus idle. pick a pattern above.",
+        };
+
+        function clearNodes() {
+          [mgr, wa, wb, wc].forEach((n) =>
+            n.classList.remove("active", "ask", "busy"),
+          );
+        }
+        function addRow(text, cls) {
+          const row = document.createElement("div");
+          row.className = "row " + (cls || "");
+          row.textContent = text;
+          log.appendChild(row);
+          log.scrollTop = log.scrollHeight;
+        }
+        function reset() {
+          log.replaceChildren();
+          clearNodes();
+          addRow(L(IDLE));
+        }
+        const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+        async function fly(from, to, label, color) {
+          packet.textContent = label || "→";
+          packet.style.background = color || "var(--violet)";
+          packet.style.left = POS[from].x + "%";
+          packet.style.top = POS[from].y + "%";
+          await wait(40);
+          packet.classList.add("show");
+          await wait(60);
+          packet.style.left = POS[to].x + "%";
+          packet.style.top = POS[to].y + "%";
+          await wait(560);
+          packet.classList.remove("show");
+          await wait(220);
+        }
+        const activate = (node) => node.classList.add("active");
+
+        async function run(mode) {
+          if (busy) return;
+          busy = true;
+          [...controls.children].forEach((b) => (b.disabled = true));
+          clearNodes();
+          log.replaceChildren();
+          mgr.classList.add("active");
+          const M = (o) => L(o);
+
+          if (mode === "chain") {
+            addRow(
+              M({ pt: "gerente inicia cadeia", en: "manager starts chain" }),
+              "in",
+            );
+            await fly("mgr", "wa", "→A", "var(--violet)");
+            activate(wa);
+            addRow(M({ pt: "A devolve resultado", en: "A returns result" }));
+            await fly("wa", "wb", "A→B", "var(--teal)");
+            activate(wb);
+            addRow(M({ pt: "B devolve resultado", en: "B returns result" }));
+            await fly("wb", "wc", "B→C", "var(--teal)");
+            activate(wc);
+            addRow(M({ pt: "C devolve resultado", en: "C returns result" }));
+            await fly("wc", "mgr", "C↑", "var(--teal)");
+            addRow(
+              M({ pt: "gerente sintetiza ✓", en: "manager synthesizes ✓" }),
+              "in",
+            );
+          } else if (mode === "parallel") {
+            addRow(
+              M({
+                pt: "gerente despacha A, B, C juntos",
+                en: "manager dispatches A, B, C together",
+              }),
+              "in",
+            );
+            await Promise.all([
+              fly("mgr", "wa", "→A", "var(--violet)").then(() => activate(wa)),
+              fly("mgr", "wb", "→B", "var(--violet)").then(() => activate(wb)),
+              fly("mgr", "wc", "→C", "var(--violet)").then(() => activate(wc)),
+            ]);
+            addRow(
+              M({
+                pt: "A, B, C trabalham em paralelo",
+                en: "A, B, C work in parallel",
+              }),
+            );
+            await wait(500);
+            await Promise.all([
+              fly("wa", "mgr", "A↑", "var(--teal)"),
+              fly("wb", "mgr", "B↑", "var(--teal)"),
+              fly("wc", "mgr", "C↑", "var(--teal)"),
+            ]);
+            addRow(
+              M({
+                pt: "gerente funde os resultados ✓",
+                en: "manager merges results ✓",
+              }),
+              "in",
+            );
+          } else if (mode === "async") {
+            addRow(
+              M({
+                pt: "gerente despacha em background",
+                en: "manager dispatches in background",
+              }),
+              "in",
+            );
+            mgr.classList.add("busy");
+            await Promise.all([
+              fly("mgr", "wa", "→A", "var(--violet)").then(() => activate(wa)),
+              fly("mgr", "wb", "→B", "var(--violet)").then(() => activate(wb)),
+              fly("mgr", "wc", "→C", "var(--violet)").then(() => activate(wc)),
+            ]);
+            addRow(
+              M({
+                pt: "gerente faz outra coisa…",
+                en: "manager does something else…",
+              }),
+              "note",
+            );
+            await wait(900);
+            await Promise.all([
+              fly("wa", "mgr", "A↑", "var(--teal)"),
+              fly("wb", "mgr", "B↑", "var(--teal)"),
+              fly("wc", "mgr", "C↑", "var(--teal)"),
+            ]);
+            mgr.classList.remove("busy");
+            addRow(
+              M({
+                pt: "🔔 notificação: trabalhadores terminaram",
+                en: "🔔 notification: workers finished",
+              }),
+              "note",
+            );
+            addRow(
+              M({
+                pt: "gerente retoma e sintetiza ✓",
+                en: "manager resumes and synthesizes ✓",
+              }),
+              "in",
+            );
+          } else if (mode === "ask") {
+            addRow(
+              M({ pt: "gerente despacha → B", en: "manager dispatches → B" }),
+              "in",
+            );
+            await fly("mgr", "wb", "→B", "var(--violet)");
+            activate(wb);
+            await wait(500);
+            wb.classList.remove("active");
+            wb.classList.add("ask");
+            addRow(
+              M({
+                pt: "B trava: precisa de decisão",
+                en: "B halts: needs a decision",
+              }),
+              "out",
+            );
+            await fly("wb", "mgr", "?", "var(--amber)");
+            addRow(
+              M({ pt: "gerente responde", en: "manager replies" }),
+              "note",
+            );
+            await fly("mgr", "wb", "↩", "var(--violet)");
+            wb.classList.remove("ask");
+            activate(wb);
+            await wait(400);
+            await fly("wb", "mgr", "B↑", "var(--teal)");
+            addRow(
+              M({ pt: "B retoma e devolve", en: "B resumes and returns" }),
+              "in",
+            );
+          }
+
+          [...controls.children].forEach((b) => (b.disabled = false));
+          busy = false;
+        }
+        controls.addEventListener("click", (e) => {
+          const b = e.target.closest("button[data-run]");
+          if (b) run(b.dataset.run);
+        });
+        return { reset };
+      })();
+
+      /* ===== init ===== */
+      applyLang(LANG);
+    </script>
+  </Fragment>
+</Lesson>

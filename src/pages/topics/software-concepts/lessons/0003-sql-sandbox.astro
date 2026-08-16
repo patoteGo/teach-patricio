@@ -1,0 +1,518 @@
+---
+// Migrated verbatim from public/topics/software-concepts/lessons/0003-sql-sandbox.html (URL unchanged: builds to 0003-sql-sandbox.html).
+// Body is is:raw: braces/inline scripts/JSON blocks pass through untouched.
+import Lesson from "../../../../layouts/Lesson.astro";
+const titlePt = "Sandbox SQL — pratique escrevendo";
+const titleEn = "SQL sandbox — learn by writing";
+const titleFallback = "SQL sandbox";
+const bodyClass = "lang-pt";
+const assets = [
+	"<link rel=\"stylesheet\" href=\"../assets/style.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/dark.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/i18n.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/concepts.css\" />",
+	"<script src=\"../assets/i18n.js\" defer></script>",
+	"<script src=\"../assets/nav.js\" defer></script>",
+	"<script src=\"../assets/reading-ui.js\" defer></script>",
+	"<script src=\"../assets/concepts.js\" defer></script>",
+];
+
+---
+<Lesson
+	titlePt={titlePt}
+	titleEn={titleEn}
+	titleFallback={titleFallback}
+	bodyClass={bodyClass}
+	assets={assets}
+>
+	<Fragment is:raw>
+    <article class="lesson">
+      <header class="hero">
+        <span class="eyebrow"
+          >⬡ SQL · <span data-lang="pt">prática deliberada</span
+          ><span data-lang="en">deliberate practice</span></span
+        >
+        <h1>
+          <span data-lang="pt">Escreva. Verifique. Repita.</span
+          ><span data-lang="en">Write. Check. Repeat.</span>
+        </h1>
+        <p class="lead">
+          <span data-lang="pt"
+            >Sete consultas curtas em ordem de dificuldade. Nada para instalar:
+            escreva SQL e receba feedback imediato.</span
+          ><span data-lang="en"
+            >Seven short queries in increasing difficulty. Nothing to install:
+            write SQL and get immediate feedback.</span
+          >
+        </p>
+      </header>
+      <nav class="concept-nav">
+        <a href="0001-sql-foundations.html">← SQL</a
+        ><a href="0002-oauth-flow.html">OAuth</a
+        ><a href="../reference/software-concepts-cheatsheet.html"
+          ><span data-lang="pt">Folha rápida</span
+          ><span data-lang="en">Cheat sheet</span></a
+        ><a href="../../../index.html">Hub</a>
+      </nav>
+
+      <h2 class="section">
+        <span class="num">1</span><span data-lang="pt">Seu pequeno banco</span
+        ><span data-lang="en">Your tiny database</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >Todos os exercícios usam duas tabelas.
+          <strong
+            >Leia primeiro o resultado pedido, depois escolha cláusulas</strong
+          >.</span
+        ><span data-lang="en"
+          >Every exercise uses two tables.
+          <strong>Read the requested result first, then choose clauses</strong
+          >.</span
+        >
+      </p>
+      <div class="schema">
+        <div class="db-table">
+          <b>customers</b>
+          <div class="db-row"><span>id</span><span>name</span></div>
+          <div class="db-row"><span>1</span><span>Ana</span></div>
+          <div class="db-row"><span>2</span><span>Ben</span></div>
+          <div class="db-row"><span>3</span><span>Cam</span></div>
+        </div>
+        <div class="join-link">id ⟷ customer_id</div>
+        <div class="db-table">
+          <b>orders</b>
+          <div class="db-row"><span>id</span><span>customer_id</span></div>
+          <div class="db-row"><span>status</span><span>total</span></div>
+          <div class="db-row"><span>101 paid</span><span>1 · 120</span></div>
+          <div class="db-row"><span>102 pending</span><span>1 · 80</span></div>
+          <div class="db-row"><span>103 paid</span><span>2 · 240</span></div>
+        </div>
+      </div>
+
+      <h2 class="section">
+        <span class="num">2</span><span data-lang="pt">Sandbox</span
+        ><span data-lang="en">Sandbox</span>
+      </h2>
+      <div class="playground sql-sandbox" data-sql-sandbox>
+        <div class="sandbox-head">
+          <div>
+            <h3 data-question-title></h3>
+            <p data-question-prompt></p>
+          </div>
+          <span class="sandbox-count" data-count></span>
+        </div>
+        <div class="sandbox-schema" data-schema></div>
+        <label for="sql-editor"
+          ><span data-lang="pt">Sua consulta</span
+          ><span data-lang="en">Your query</span></label
+        >
+        <textarea
+          id="sql-editor"
+          spellcheck="false"
+          autocapitalize="off"
+          autocomplete="off"
+          placeholder="SELECT ..."
+        ></textarea>
+        <div class="sandbox-actions">
+          <button class="primary" type="button" data-check-sql>
+            <span data-lang="pt">Executar ⌘↵</span
+            ><span data-lang="en">Run ⌘↵</span></button
+          ><button type="button" data-hint-sql>
+            <span data-lang="pt">Pista</span
+            ><span data-lang="en">Hint</span></button
+          ><button type="button" data-solution-sql>
+            <span data-lang="pt">Mostrar solução</span
+            ><span data-lang="en">Show solution</span></button
+          ><button type="button" data-next-sql>
+            <span data-lang="pt">Próxima →</span
+            ><span data-lang="en">Next →</span>
+          </button>
+        </div>
+        <div class="sandbox-feedback" data-feedback aria-live="polite"></div>
+        <script type="application/json" data-questions>
+          [
+            {
+              "id": "select",
+              "ptTitle": "1 · Escolha colunas",
+              "enTitle": "1 · Choose columns",
+              "ptPrompt": "Mostre id e total de todos os pedidos.",
+              "enPrompt": "Show id and total for every order.",
+              "schema": ["orders(id, customer_id, status, total)"],
+              "answers": ["SELECT id, total FROM orders;"],
+              "ptHint": "Você precisa de SELECT com duas colunas e FROM orders.",
+              "enHint": "You need SELECT with two columns and FROM orders."
+            },
+            {
+              "id": "where",
+              "ptTitle": "2 · Filtre linhas",
+              "enTitle": "2 · Filter rows",
+              "ptPrompt": "Mostre id e total apenas dos pedidos pagos.",
+              "enPrompt": "Show id and total only for paid orders.",
+              "schema": ["orders(id, customer_id, status, total)"],
+              "answers": [
+                "SELECT id, total FROM orders WHERE status = 'paid';",
+                "SELECT id,total FROM orders WHERE status='paid'"
+              ],
+              "ptHint": "Adicione WHERE status = 'paid' depois de FROM.",
+              "enHint": "Add WHERE status = 'paid' after FROM."
+            },
+            {
+              "id": "sort",
+              "ptTitle": "3 · Ordene o resultado",
+              "enTitle": "3 · Sort the result",
+              "ptPrompt": "Mostre id e total dos pedidos, do maior total para o menor.",
+              "enPrompt": "Show order id and total, highest total first.",
+              "schema": ["orders(id, customer_id, status, total)"],
+              "answers": ["SELECT id, total FROM orders ORDER BY total DESC;"],
+              "ptHint": "Use ORDER BY total DESC no final.",
+              "enHint": "Use ORDER BY total DESC at the end."
+            },
+            {
+              "id": "join",
+              "ptTitle": "4 · Combine tabelas",
+              "enTitle": "4 · Join tables",
+              "ptPrompt": "Mostre o nome do cliente e o total de cada pedido.",
+              "enPrompt": "Show the customer name and each order total.",
+              "schema": ["customers(id, name)", "orders(customer_id, total)"],
+              "answers": [
+                "SELECT c.name, o.total FROM customers c JOIN orders o ON o.customer_id = c.id;",
+                "SELECT c.name,o.total FROM customers c JOIN orders o ON c.id=o.customer_id"
+              ],
+              "ptHint": "Dê aliases c/o e conecte o.customer_id = c.id.",
+              "enHint": "Alias as c/o and connect o.customer_id = c.id."
+            },
+            {
+              "id": "count",
+              "ptTitle": "5 · Conte linhas",
+              "enTitle": "5 · Count rows",
+              "ptPrompt": "Conte quantos pedidos existem.",
+              "enPrompt": "Count how many orders exist.",
+              "schema": ["orders(id, customer_id, status, total)"],
+              "answers": [
+                "SELECT COUNT(*) FROM orders;",
+                "SELECT count(*) FROM orders"
+              ],
+              "ptHint": "COUNT(*) agrega todas as linhas em uma resposta.",
+              "enHint": "COUNT(*) aggregates all rows into one answer."
+            },
+            {
+              "id": "group",
+              "ptTitle": "6 · Agrupe e some",
+              "enTitle": "6 · Group and sum",
+              "ptPrompt": "Mostre cada status e a soma total de seus pedidos.",
+              "enPrompt": "Show each status and the sum of its order totals.",
+              "schema": ["orders(status, total)"],
+              "answers": [
+                "SELECT status, SUM(total) FROM orders GROUP BY status;",
+                "SELECT status,sum(total) FROM orders GROUP BY status"
+              ],
+              "ptHint": "Selecione status + SUM(total), depois GROUP BY status.",
+              "enHint": "Select status + SUM(total), then GROUP BY status."
+            },
+            {
+              "id": "having",
+              "ptTitle": "7 · Filtre grupos",
+              "enTitle": "7 · Filter groups",
+              "ptPrompt": "Mostre status com mais de um pedido, junto com sua contagem.",
+              "enPrompt": "Show statuses with more than one order, with their count.",
+              "schema": ["orders(status, total)"],
+              "answers": [
+                "SELECT status, COUNT(*) FROM orders GROUP BY status HAVING COUNT(*) > 1;",
+                "SELECT status,count(*) FROM orders GROUP BY status HAVING count(*)>1"
+              ],
+              "ptHint": "Agrupe por status e filtre COUNT(*) > 1 usando HAVING.",
+              "enHint": "Group by status and filter COUNT(*) > 1 using HAVING."
+            }
+          ]
+        </script>
+      </div>
+
+      <h2 class="section">
+        <span class="num">3</span><span data-lang="pt">Sandbox: JOINs</span
+        ><span data-lang="en">Sandbox: JOINs</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >Mesmo banco de <em>customers</em> e <em>orders</em>. Cinco exercícios
+          só sobre combinar tabelas — faça quando o básico estiver sólido. A
+          tabela <em>orders</em> referencia o cliente via
+          <code>customer_id</code>.</span
+        ><span data-lang="en"
+          >Same <em>customers</em> and <em>orders</em> database. Five exercises
+          purely on combining tables — do these once the basics are solid. The
+          <em>orders</em> table references the customer via
+          <code>customer_id</code>.</span
+        >
+      </p>
+      <div class="playground sql-sandbox" data-sql-sandbox>
+        <div class="sandbox-head">
+          <div>
+            <h3 data-question-title></h3>
+            <p data-question-prompt></p>
+          </div>
+          <span class="sandbox-count" data-count></span>
+        </div>
+        <div class="sandbox-schema" data-schema></div>
+        <label for="sql-editor-join"
+          ><span data-lang="pt">Sua consulta</span
+          ><span data-lang="en">Your query</span></label
+        >
+        <textarea
+          id="sql-editor-join"
+          spellcheck="false"
+          autocapitalize="off"
+          autocomplete="off"
+          placeholder="SELECT ..."
+        ></textarea>
+        <div class="sandbox-actions">
+          <button class="primary" type="button" data-check-sql>
+            <span data-lang="pt">Executar ⌘↵</span
+            ><span data-lang="en">Run ⌘↵</span></button
+          ><button type="button" data-hint-sql>
+            <span data-lang="pt">Pista</span
+            ><span data-lang="en">Hint</span></button
+          ><button type="button" data-solution-sql>
+            <span data-lang="pt">Mostrar solução</span
+            ><span data-lang="en">Show solution</span></button
+          ><button type="button" data-next-sql>
+            <span data-lang="pt">Próxima →</span
+            ><span data-lang="en">Next →</span>
+          </button>
+        </div>
+        <div class="sandbox-feedback" data-feedback aria-live="polite"></div>
+        <script type="application/json" data-questions>
+          [
+            {
+              "id": "j-warmup",
+              "ptTitle": "J1 · Aqueça o JOIN",
+              "enTitle": "J1 · Warm up the JOIN",
+              "ptPrompt": "Mostre o nome do cliente e o total de cada pedido.",
+              "enPrompt": "Show the customer name and each order total.",
+              "schema": ["customers(id, name)", "orders(customer_id, total)"],
+              "answers": [
+                "SELECT c.name, o.total FROM customers c JOIN orders o ON o.customer_id = c.id;",
+                "SELECT customers.name, orders.total FROM customers JOIN orders ON orders.customer_id = customers.id"
+              ],
+              "ptHint": "Alias c/o, conecte o.customer_id = c.id.",
+              "enHint": "Alias as c/o, connect o.customer_id = c.id."
+            },
+            {
+              "id": "j-paid",
+              "ptTitle": "J2 · JOIN com filtro",
+              "enTitle": "J2 · JOIN with filter",
+              "ptPrompt": "Mostre nome do cliente e status, só dos pedidos pagos.",
+              "enPrompt": "Show customer name and status, only for paid orders.",
+              "schema": ["customers(id, name)", "orders(customer_id, status)"],
+              "answers": [
+                "SELECT c.name, o.status FROM customers c JOIN orders o ON o.customer_id = c.id WHERE o.status = 'paid';"
+              ],
+              "ptHint": " Acrescente WHERE o.status = 'paid' depois do ON.",
+              "enHint": " Add WHERE o.status = 'paid' after the ON."
+            },
+            {
+              "id": "j-sort",
+              "ptTitle": "J3 · JOIN e ordem",
+              "enTitle": "J3 · JOIN and sort",
+              "ptPrompt": "Mostre nome e total, do maior total para o menor.",
+              "enPrompt": "Show name and total, highest total first.",
+              "schema": ["customers(id, name)", "orders(customer_id, total)"],
+              "answers": [
+                "SELECT c.name, o.total FROM customers c JOIN orders o ON o.customer_id = c.id ORDER BY o.total DESC;"
+              ],
+              "ptHint": "O JOIN fica igual; termine com ORDER BY o.total DESC.",
+              "enHint": "The JOIN stays the same; finish with ORDER BY o.total DESC."
+            },
+            {
+              "id": "j-left",
+              "ptTitle": "J4 · LEFT JOIN (sem perder ninguém)",
+              "enTitle": "J4 · LEFT JOIN (keep everyone)",
+              "ptPrompt": "Liste todo cliente com seus totais de pedido — incluindo quem não tem pedido (total vira NULL).",
+              "enPrompt": "List every customer with their order totals — including those with no orders (total becomes NULL).",
+              "schema": ["customers(id, name)", "orders(customer_id, total)"],
+              "answers": [
+                "SELECT c.name, o.total FROM customers c LEFT JOIN orders o ON o.customer_id = c.id;"
+              ],
+              "ptHint": "Troque JOIN por LEFT JOIN: a tabela da esquerda (customers) fica completa.",
+              "enHint": "Swap JOIN for LEFT JOIN: the left table (customers) stays complete."
+            },
+            {
+              "id": "j-distinct",
+              "ptTitle": "J5 · JOIN + DISTINCT",
+              "enTitle": "J5 · JOIN + DISTINCT",
+              "ptPrompt": "Mostre o nome de cada cliente que tem ao menos um pedido pago (sem repetir nomes).",
+              "enPrompt": "Show the name of each customer who has at least one paid order (no repeated names).",
+              "schema": ["customers(id, name)", "orders(customer_id, status)"],
+              "answers": [
+                "SELECT DISTINCT c.name FROM customers c JOIN orders o ON o.customer_id = c.id WHERE o.status = 'paid';"
+              ],
+              "ptHint": "SELECT DISTINCT c.name + JOIN + WHERE status='paid' remove duplicatas.",
+              "enHint": "SELECT DISTINCT c.name + JOIN + WHERE status='paid' drops duplicates."
+            }
+          ]
+        </script>
+      </div>
+
+      <h2 class="section">
+        <span class="num">4</span><span data-lang="pt">Sandbox: Agregações</span
+        ><span data-lang="en">Sandbox: Aggregations</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >Cinco exercícios de <code>SUM</code>, <code>AVG</code>,
+          <code>MIN</code>/<code>MAX</code>, <code>GROUP BY</code> e
+          <code>HAVING</code>. Domine depois do JOIN.</span
+        ><span data-lang="en"
+          >Five exercises on <code>SUM</code>, <code>AVG</code>,
+          <code>MIN</code>/<code>MAX</code>, <code>GROUP BY</code>, and
+          <code>HAVING</code>. Master after JOIN.</span
+        >
+      </p>
+      <div class="playground sql-sandbox" data-sql-sandbox>
+        <div class="sandbox-head">
+          <div>
+            <h3 data-question-title></h3>
+            <p data-question-prompt></p>
+          </div>
+          <span class="sandbox-count" data-count></span>
+        </div>
+        <div class="sandbox-schema" data-schema></div>
+        <label for="sql-editor-agg"
+          ><span data-lang="pt">Sua consulta</span
+          ><span data-lang="en">Your query</span></label
+        >
+        <textarea
+          id="sql-editor-agg"
+          spellcheck="false"
+          autocapitalize="off"
+          autocomplete="off"
+          placeholder="SELECT ..."
+        ></textarea>
+        <div class="sandbox-actions">
+          <button class="primary" type="button" data-check-sql>
+            <span data-lang="pt">Executar ⌘↵</span
+            ><span data-lang="en">Run ⌘↵</span></button
+          ><button type="button" data-hint-sql>
+            <span data-lang="pt">Pista</span
+            ><span data-lang="en">Hint</span></button
+          ><button type="button" data-solution-sql>
+            <span data-lang="pt">Mostrar solução</span
+            ><span data-lang="en">Show solution</span></button
+          ><button type="button" data-next-sql>
+            <span data-lang="pt">Próxima →</span
+            ><span data-lang="en">Next →</span>
+          </button>
+        </div>
+        <div class="sandbox-feedback" data-feedback aria-live="polite"></div>
+        <script type="application/json" data-questions>
+          [
+            {
+              "id": "a-sum",
+              "ptTitle": "A1 · Receita total",
+              "enTitle": "A1 · Total revenue",
+              "ptPrompt": "Some o total de todos os pedidos em um único valor.",
+              "enPrompt": "Sum the total of every order into a single value.",
+              "schema": ["orders(total)"],
+              "answers": ["SELECT SUM(total) FROM orders;"],
+              "ptHint": "SELECT SUM(total) FROM orders — uma linha, uma coluna.",
+              "enHint": "SELECT SUM(total) FROM orders — one row, one column."
+            },
+            {
+              "id": "a-avg",
+              "ptTitle": "A2 · Média por grupo",
+              "enTitle": "A2 · Average per group",
+              "ptPrompt": "Mostre cada status e o total médio de seus pedidos.",
+              "enPrompt": "Show each status and the average total of its orders.",
+              "schema": ["orders(status, total)"],
+              "answers": [
+                "SELECT status, AVG(total) FROM orders GROUP BY status;"
+              ],
+              "ptHint": "Como o GROUP BY: status + AVG(total), depois GROUP BY status.",
+              "enHint": "Like GROUP BY: status + AVG(total), then GROUP BY status."
+            },
+            {
+              "id": "a-minmax",
+              "ptTitle": "A3 · Mínimo e máximo",
+              "enTitle": "A3 · Min and max",
+              "ptPrompt": "Mostre o menor e o maior total de pedido (duas colunas, uma linha).",
+              "enPrompt": "Show the smallest and largest order total (two columns, one row).",
+              "schema": ["orders(total)"],
+              "answers": ["SELECT MIN(total), MAX(total) FROM orders;"],
+              "ptHint": "Duas agregações sem GROUP BY: SELECT MIN(total), MAX(total) FROM orders.",
+              "enHint": "Two aggregates, no GROUP BY: SELECT MIN(total), MAX(total) FROM orders."
+            },
+            {
+              "id": "a-having-sum",
+              "ptTitle": "A4 · HAVING com soma",
+              "enTitle": "A4 · HAVING with sum",
+              "ptPrompt": "Mostre os status cuja soma de totais passa de 100.",
+              "enPrompt": "Show the statuses whose sum of totals exceeds 100.",
+              "schema": ["orders(status, total)"],
+              "answers": [
+                "SELECT status FROM orders GROUP BY status HAVING SUM(total) > 100;"
+              ],
+              "ptHint": "GROUP BY status, depois filtre o grupo com HAVING SUM(total) > 100.",
+              "enHint": "GROUP BY status, then filter the group with HAVING SUM(total) > 100."
+            },
+            {
+              "id": "a-per-customer",
+              "ptTitle": "A5 · Duas agregações por grupo",
+              "enTitle": "A5 · Two aggregates per group",
+              "ptPrompt": "Para cada customer_id, mostre quantos pedidos e o total médio.",
+              "enPrompt": "For each customer_id, show how many orders and the average total.",
+              "schema": ["orders(customer_id, total)"],
+              "answers": [
+                "SELECT customer_id, COUNT(*), AVG(total) FROM orders GROUP BY customer_id;"
+              ],
+              "ptHint": "Selecione customer_id + COUNT(*) + AVG(total), depois GROUP BY customer_id.",
+              "enHint": "Select customer_id + COUNT(*) + AVG(total), then GROUP BY customer_id."
+            }
+          ]
+        </script>
+      </div>
+
+      <div class="callout key">
+        <p>
+          <span data-lang="pt"
+            ><strong>Ritual de memória muscular:</strong> faça os sete agora;
+            amanhã repita sem pistas; em três dias explique cada consulta em voz
+            alta.</span
+          ><span data-lang="en"
+            ><strong>Muscle-memory ritual:</strong> do all seven now; repeat
+            tomorrow without hints; in three days explain every query
+            aloud.</span
+          >
+        </p>
+      </div>
+      <div class="callout info">
+        <p>
+          <span data-lang="pt"
+            >O checker aceita apenas variações básicas conhecidas; SQL
+            equivalente pode ser marcado errado.
+            <strong
+              >Se isso acontecer, pergunte ao agente para revisar sua
+              consulta.</strong
+            ></span
+          ><span data-lang="en"
+            >The checker accepts only known basic variations; equivalent SQL may
+            be marked wrong.
+            <strong
+              >If that happens, ask the agent to review your query.</strong
+            ></span
+          >
+        </p>
+      </div>
+      <p class="cite-line">
+        <span data-lang="pt">Revisão:</span><span data-lang="en">Review:</span>
+        <a href="0001-sql-foundations.html"
+          ><span data-lang="pt">Fundamentos SQL</span
+          ><span data-lang="en">SQL foundations</span></a
+        >
+        ·
+        <a href="https://www.postgresql.org/docs/current/tutorial.html"
+          >PostgreSQL tutorial</a
+        >.
+      </p>
+    </article>
+  </Fragment>
+</Lesson>

@@ -1,0 +1,33 @@
+---
+// Shared shell for all topic pages (lesson + reference + hub).
+// Previously each page repeated this head/body boilerplate by hand.
+//
+// assets:   verbatim `<link>` / `<script src>` lines, injected raw into <head>.
+//           Relative hrefs resolve against the final page URL in the browser —
+//           public/topics/**/assets/** files are untouched, URLs are stable.
+// pageStyle: verbatim page-specific CSS (is:inline = unprocessed by Vite).
+// i18n.js swaps <title> and body content at runtime via data-pt/data-en.
+const {
+	titlePt,
+	titleEn,
+	titleFallback,
+	assets = "",
+	pageStyle = "",
+	bodyClass = "lang-pt",
+	htmlLang = "pt-BR",
+	viewport = "width=device-width,initial-scale=1",
+} = Astro.props;
+---
+<!doctype html>
+<html lang={htmlLang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content={viewport} />
+    <title data-pt={titlePt || undefined} data-en={titleEn || undefined}>{titleFallback}</title>
+    <Fragment set:html={assets.join("\n")} />
+    {pageStyle && <style is:inline set:html={pageStyle} />}
+  </head>
+  <body class={bodyClass || undefined}>
+    <slot />
+  </body>
+</html>

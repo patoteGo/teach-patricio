@@ -1,0 +1,1227 @@
+---
+// Migrated verbatim from public/topics/system-design/lessons/0001-the-design-loop.html (URL unchanged: builds to 0001-the-design-loop.html).
+// Body is is:raw: braces/inline scripts/JSON blocks pass through untouched.
+import Lesson from "../../../../layouts/Lesson.astro";
+const titlePt = "System Design · Lição 1 — O loop de design";
+const titleEn = "System Design · Lesson 1 — The Design Loop";
+const titleFallback = "System Design · Lição 1 — O loop de design";
+const bodyClass = "lang-pt";
+const viewport = "width=device-width, initial-scale=1.0";
+const assets = [
+	"<link rel=\"stylesheet\" href=\"../assets/style.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/dark.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/i18n.css\" />",
+	"<script src=\"../assets/i18n.js\" defer></script>",
+	"<script src=\"../assets/nav.js\" defer></script>",
+	"<link rel=\"stylesheet\" href=\"../assets/exercises.css\" />",
+	"<script src=\"../assets/exercises.js\" defer></script>",
+];
+
+---
+<Lesson
+	titlePt={titlePt}
+	titleEn={titleEn}
+	titleFallback={titleFallback}
+	bodyClass={bodyClass}
+	viewport={viewport}
+	assets={assets}
+>
+	<Fragment is:raw>
+    <article class="lesson">
+      <header class="hero">
+        <span class="eyebrow"
+          ><span data-lang="pt">⬡ System Design · Fundamentos</span
+          ><span data-lang="en">⬡ System Design · Fundamentals</span></span
+        >
+        <h1>
+          <span data-lang="pt"
+            >Comece pelos requisitos,<br />não pela solução.</span
+          ><span data-lang="en"
+            >Start with requirements,<br />not the solution.</span
+          >
+        </h1>
+        <p class="lead">
+          <span data-lang="pt"
+            >Todo design de sistema — de entrevista ou de produção — segue o
+            mesmo loop:
+            <strong
+              >clarificar → estimar → esboçar → aprofundar → negociar</strong
+            >. O erro nº 1 é pular direto para a arquitetura. Esta lição fixa o
+            loop e o reflexo de trade-off.</span
+          ><span data-lang="en"
+            >Every system design — interview or production — follows the same
+            loop:
+            <strong>clarify → estimate → sketch → deep-dive → trade off</strong
+            >. The #1 mistake is jumping straight to architecture. This lesson
+            locks in the loop and the tradeoff reflex.</span
+          >
+        </p>
+        <p class="lesson-nav-top">
+          ↑ <span data-lang="pt">Parte do curso</span
+          ><span data-lang="en">Part of the</span>
+          <a href="../MISSION.md">System Design</a> ·
+          <span data-lang="pt">próxima</span><span data-lang="en">next</span>:
+          <em
+            ><span data-lang="pt">As quatro forças</span
+            ><span data-lang="en">The four forces</span></em
+          >
+        </p>
+      </header>
+
+      <!-- ============ 1. THE LOOP ============ -->
+      <h2 class="section">
+        <span class="num">1</span
+        ><span data-lang="pt">O loop (a mesma forma, sempre)</span
+        ><span data-lang="en">The loop (the same shape, every time)</span>
+      </h2>
+      <p class="kicker">
+        <span data-lang="pt"
+          >Quer seja numa entrevista de 45 min ou num design doc de 2 semanas,
+          você percorre estes cinco estágios. O segredo é a <em>ordem</em>:
+          clarificar antes de esboçar.</span
+        ><span data-lang="en"
+          >Whether it's a 45-minute interview or a 2-week design doc, you move
+          through these five stages. The trick is the <em>order</em>: clarify
+          before you sketch.</span
+        >
+      </p>
+
+      <div class="scroll-x" style="margin: 22px 0 8px">
+        <svg
+          viewBox="0 0 460 360"
+          width="100%"
+          style="min-width: 460px"
+          role="img"
+          aria-labelledby="dl-title"
+        >
+          <title
+            id="dl-title"
+            data-pt="O loop de design em cinco estágios"
+            data-en="The design loop in five stages"
+          >
+            O loop de design
+          </title>
+          <defs>
+            <marker
+              id="da"
+              markerWidth="10"
+              markerHeight="10"
+              refX="7"
+              refY="3"
+              orient="auto"
+            >
+              <path d="M0,0 L7,3 L0,6 Z" fill="#8b6ff7" />
+            </marker>
+          </defs>
+          <!-- ring -->
+          <circle
+            cx="230"
+            cy="180"
+            r="120"
+            fill="none"
+            stroke="#3a3f55"
+            stroke-width="2"
+            stroke-dasharray="3 6"
+          />
+          <!-- arcs clockwise between 5 nodes -->
+          <g fill="none" stroke="#8b6ff7" stroke-width="2.4">
+            <path d="M 286 74  A 120 120 0 0 1 350 230" marker-end="url(#da)" />
+            <path d="M 320 274 A 120 120 0 0 1 140 274" marker-end="url(#da)" />
+            <path d="M 110 230 A 120 120 0 0 1 174 74" marker-end="url(#da)" />
+            <path d="M 200 62  A 120 120 0 0 1 260 62" marker-end="url(#da)" />
+          </g>
+          <!-- nodes -->
+          <g font-family="Space Grotesk" font-weight="700" fill="#fff">
+            <circle cx="230" cy="60" r="34" fill="#6c4bf0" />
+            <text x="230" y="68" text-anchor="middle" font-size="20">1</text>
+            <circle cx="350" cy="180" r="34" fill="#6c4bf0" />
+            <text x="350" y="188" text-anchor="middle" font-size="20">2</text>
+            <circle cx="230" cy="300" r="34" fill="#0fb9a4" />
+            <text x="230" y="308" text-anchor="middle" font-size="20">3</text>
+            <circle cx="110" cy="180" r="34" fill="#f59e0b" />
+            <text x="110" y="188" text-anchor="middle" font-size="20">4</text>
+          </g>
+          <!-- node labels -->
+          <g
+            font-family="Inter"
+            font-size="11.5"
+            font-weight="700"
+            fill="#eceef6"
+          >
+            <text
+              x="230"
+              y="36"
+              text-anchor="middle"
+              data-pt="Clarificar"
+              data-en="Clarify"
+            >
+              Clarificar
+            </text>
+            <text
+              x="398"
+              y="184"
+              text-anchor="start"
+              data-pt="Estimar"
+              data-en="Estimate"
+            >
+              Estimar
+            </text>
+            <text
+              x="230"
+              y="338"
+              text-anchor="middle"
+              data-pt="Esboçar"
+              data-en="Sketch"
+            >
+              Esboçar
+            </text>
+            <text
+              x="62"
+              y="184"
+              text-anchor="end"
+              data-pt="Aprofundar"
+              data-en="Deep-dive"
+            >
+              Aprofundar
+            </text>
+          </g>
+          <!-- 5th wraparound callout -->
+          <text
+            x="230"
+            y="186"
+            text-anchor="middle"
+            font-family="Space Grotesk"
+            font-size="12"
+            font-weight="700"
+            fill="#8b6ff7"
+            data-pt="5 · Negociar"
+            data-en="5 · Trade off"
+          >
+            5 · Negociar
+          </text>
+          <text
+            x="230"
+            y="204"
+            text-anchor="middle"
+            font-family="Inter"
+            font-size="10"
+            fill="#9ea2b8"
+            data-pt="o tempo todo"
+            data-en="all the time"
+          >
+            o tempo todo
+          </text>
+        </svg>
+      </div>
+
+      <div class="grid cols-2" style="margin-top: 14px">
+        <div class="card" style="border-left: 4px solid #8b6ff7">
+          <h4>
+            <span data-lang="pt">1 · Clarificar</span
+            ><span data-lang="en">1 · Clarify</span>
+          </h4>
+          <p>
+            <span data-lang="pt"
+              >O que o sistema faz (funcional) e quão bem (não-funcional). Nunca
+              desenhe sem isso.</span
+            ><span data-lang="en"
+              >What the system does (functional) and how well (non-functional).
+              Never design without it.</span
+            >
+          </p>
+        </div>
+        <div class="card" style="border-left: 4px solid #8b6ff7">
+          <h4>
+            <span data-lang="pt">2 · Estimar</span
+            ><span data-lang="en">2 · Estimate</span>
+          </h4>
+          <p>
+            <span data-lang="pt"
+              >Escala: usuários, leituras/escritas, dados, banda. Números
+              orientam os blocos.</span
+            ><span data-lang="en"
+              >Scale: users, reads/writes, data, bandwidth. Numbers drive the
+              blocks.</span
+            >
+          </p>
+        </div>
+        <div class="card" style="border-left: 4px solid #2dd4bf">
+          <h4>
+            <span data-lang="pt">3 · Esboçar</span
+            ><span data-lang="en">3 · Sketch</span>
+          </h4>
+          <p>
+            <span data-lang="pt"
+              >Arquitetura de alto nível: clientes, serviços, dados, filas.
+              Apenas o esqueleto.</span
+            ><span data-lang="en"
+              >High-level architecture: clients, services, data, queues. Just
+              the skeleton.</span
+            >
+          </p>
+        </div>
+        <div class="card" style="border-left: 4px solid #fbbf24">
+          <h4>
+            <span data-lang="pt">4 · Aprofundar</span
+            ><span data-lang="en">4 · Deep-dive</span>
+          </h4>
+          <p>
+            <span data-lang="pt"
+              >Mergulhe no componente mais interessante: esquema de dados,
+              algoritmo, escala.</span
+            ><span data-lang="en"
+              >Zoom into the most interesting component: data schema, algorithm,
+              scaling.</span
+            >
+          </p>
+        </div>
+        <div class="card span-2" style="border-left: 4px solid #fb7185">
+          <h4>
+            <span data-lang="pt">5 · Negociar (o tempo todo)</span
+            ><span data-lang="en">5 · Trade off (all the time)</span>
+          </h4>
+          <p>
+            <span data-lang="pt"
+              >Cada escolha tem um custo. Nomeie a tensão e justifique com
+              números — não com voto.</span
+            ><span data-lang="en"
+              >Every choice has a cost. Name the tension and justify with
+              numbers — not a vote.</span
+            >
+          </p>
+        </div>
+      </div>
+
+      <div class="callout warn">
+        <p>
+          <span data-lang="pt"
+            ><strong>O erro nº 1:</strong> pular para caixinhas e setas antes de
+            saber o que o sistema precisa entregar. Você desenha a coisa errada
+            — rápido.</span
+          ><span data-lang="en"
+            ><strong>The #1 mistake:</strong> jumping to boxes and arrows before
+            you know what the system must deliver. You build the wrong thing —
+            fast.</span
+          >
+        </p>
+      </div>
+
+      <!-- ============ 2. REQUIREMENTS ============ -->
+      <h2 class="section">
+        <span class="num">2</span
+        ><span data-lang="pt">Requisitos: o que faz vs. as “forças”</span
+        ><span data-lang="en">Requirements: what it does vs. the “forces”</span>
+      </h2>
+      <p class="kicker">
+        <span data-lang="pt"
+          >Requisitos <em>funcionais</em> = comportamento. Requisitos
+          <em>não-funcionais</em> = os atributos de qualidade, as forças que vão
+          puxar o design em direções opostas.</span
+        ><span data-lang="en"
+          ><em>Functional</em> requirements = behavior.
+          <em>Non-functional</em> requirements = the quality attributes, the
+          forces that pull the design in opposite directions.</span
+        >
+      </p>
+
+      <div class="scroll-x" style="margin: 18px 0 8px">
+        <svg
+          viewBox="0 0 720 230"
+          width="100%"
+          style="min-width: 720px"
+          role="img"
+          aria-labelledby="ff-title"
+        >
+          <title
+            id="ff-title"
+            data-pt="As cinco forças ao redor do sistema"
+            data-en="The five forces around the system"
+          >
+            As forças
+          </title>
+          <circle
+            cx="360"
+            cy="115"
+            r="56"
+            fill="#211d33"
+            stroke="#8b6ff7"
+            stroke-width="2.5"
+          />
+          <text
+            x="360"
+            y="110"
+            text-anchor="middle"
+            font-family="Space Grotesk"
+            font-size="14"
+            font-weight="700"
+            fill="#eceef6"
+            data-pt="SISTEMA"
+            data-en="SYSTEM"
+          >
+            SISTEMA
+          </text>
+          <text
+            x="360"
+            y="128"
+            text-anchor="middle"
+            font-family="Inter"
+            font-size="10"
+            fill="#9ea2b8"
+            data-pt="em equilíbrio?"
+            data-en="in balance?"
+          >
+            em equilíbrio?
+          </text>
+          <g font-family="Space Grotesk" font-size="11.5" font-weight="700">
+            <g>
+              <rect
+                x="300"
+                y="8"
+                width="120"
+                height="30"
+                rx="15"
+                fill="#0c2a27"
+                stroke="#2dd4bf"
+              />
+              <text
+                x="360"
+                y="27"
+                text-anchor="middle"
+                fill="#2dd4bf"
+                data-pt="Latência"
+                data-en="Latency"
+              >
+                Latência
+              </text>
+            </g>
+            <g>
+              <rect
+                x="300"
+                y="192"
+                width="120"
+                height="30"
+                rx="15"
+                fill="#221a3d"
+                stroke="#8b6ff7"
+              />
+              <text
+                x="360"
+                y="211"
+                text-anchor="middle"
+                fill="#8b6ff7"
+                data-pt="Disponibilidade"
+                data-en="Availability"
+              >
+                Disponibilidade
+              </text>
+            </g>
+            <g>
+              <rect
+                x="560"
+                y="100"
+                width="120"
+                height="30"
+                rx="15"
+                fill="#2b2110"
+                stroke="#fbbf24"
+              />
+              <text
+                x="620"
+                y="119"
+                text-anchor="middle"
+                fill="#fbbf24"
+                data-pt="Custo"
+                data-en="Cost"
+              >
+                Custo
+              </text>
+            </g>
+            <g>
+              <rect
+                x="40"
+                y="100"
+                width="130"
+                height="30"
+                rx="15"
+                fill="#2c1622"
+                stroke="#fb7185"
+              />
+              <text
+                x="105"
+                y="119"
+                text-anchor="middle"
+                fill="#fb7185"
+                data-pt="Consistência"
+                data-en="Consistency"
+              >
+                Consistência
+              </text>
+            </g>
+            <g>
+              <rect
+                x="560"
+                y="180"
+                width="120"
+                height="30"
+                rx="15"
+                fill="#0c2a27"
+                stroke="#2dd4bf"
+              />
+              <text
+                x="620"
+                y="199"
+                text-anchor="middle"
+                fill="#2dd4bf"
+                data-pt="Throughput"
+                data-en="Throughput"
+              >
+                Throughput
+              </text>
+            </g>
+          </g>
+          <g stroke="#3a3f55" stroke-width="1.5" fill="none">
+            <line x1="360" y1="38" x2="360" y2="59" />
+            <line x1="360" y1="171" x2="360" y2="192" />
+            <line x1="560" y1="115" x2="416" y2="115" />
+            <line x1="170" y1="115" x2="304" y2="115" />
+            <line x1="560" y1="195" x2="404" y2="135" />
+          </g>
+        </svg>
+      </div>
+      <p class="cite">
+        <span data-lang="pt">Fonte:</span><span data-lang="en">Source:</span>
+        <a href="https://dataintensive.net" target="_blank" rel="noopener"
+          ><span data-lang="pt">DDIA cap. 1</span
+          ><span data-lang="en">DDIA ch. 1</span></a
+        >
+        —
+        <span data-lang="pt"
+          >três preocupações que todo design equilibra:
+          <strong>confiabilidade, escalabilidade, manutenibilidade</strong
+          >.</span
+        ><span data-lang="en"
+          >three concerns every design balances:
+          <strong>reliability, scalability, maintainability</strong>.</span
+        >
+      </p>
+
+      <!-- ============ 3. ESTIMATE ============ -->
+      <h2 class="section">
+        <span class="num">3</span
+        ><span data-lang="pt">Estime antes de desenhar</span
+        ><span data-lang="en">Estimate before you design</span>
+      </h2>
+      <p class="kicker">
+        <span data-lang="pt"
+          >Números redondos bastam. Eles decidem se você precisa de um cache, um
+          shard, ou nada disso. Decore a <em>tabela de latências</em>: memória
+          ~100 ns, SSD ~100 µs, rede de datacenter ~0,5 ms.</span
+        ><span data-lang="en"
+          >Round numbers are enough. They decide whether you need a cache, a
+          shard, or none of it. Memorize the <em>latency table</em>: memory ~100
+          ns, SSD ~100 µs, datacenter network ~0.5 ms.</span
+        >
+      </p>
+
+      <pre
+        class="block"
+      ><span class="c"><span data-lang="pt"># "Encurtador de URL, 100M URLs, 10k leituras/s"</span><span data-lang="en"># "URL shortener, 100M URLs, 10k reads/s"</span></span>
+<span data-lang="pt">dados  ≈ 100M × 500 bytes  ≈ 50 GB   → cabe num nó? sim, mas replique</span><span data-lang="en">data   ≈ 100M × 500 bytes ≈ 50 GB    → one node? yes, but replicate it</span>
+<span data-lang="pt">leituras:escrita ≈ 100:1               → cache agressivo no caminho de leitura</span><span data-lang="en">read:write       ≈ 100:1               → aggressive cache on the read path</span>
+<span data-lang="pt">IDs curtos ≈ 7 chars base62           → 62⁷ ≈ 3,4 trilhões; sobra folga</span><span data-lang="en">short IDs ≈ 7 chars base62            → 62⁷ ≈ 3.4 trillion; plenty of headroom</span></pre>
+      <p class="cite">
+        <span data-lang="pt">Fonte:</span><span data-lang="en">Source:</span>
+        <a
+          href="https://colin-scott.github.io/personal_website/research/latency_trends.html"
+          target="_blank"
+          rel="noopener"
+          ><span data-lang="pt"
+            >Latency Numbers Every Programmer Should Know</span
+          ><span data-lang="en"
+            >Latency Numbers Every Programmer Should Know</span
+          ></a
+        >.
+      </p>
+
+      <!-- ============ 4. TRADEOFFS ============ -->
+      <h2 class="section">
+        <span class="num">4</span
+        ><span data-lang="pt">Toda escolha é uma balança</span
+        ><span data-lang="en">Every choice is a seesaw</span>
+      </h2>
+      <p class="kicker">
+        <span data-lang="pt"
+          >Não existe bala de prata, só tensões. Nomeie o eixo e diga qual lado
+          você escolheu — e por quê.</span
+        ><span data-lang="en"
+          >There's no silver bullet, only tensions. Name the axis and say which
+          side you picked — and why.</span
+        >
+      </p>
+      <div class="grid cols-2" style="margin-top: 14px">
+        <div class="card">
+          <div class="sig">⇆</div>
+          <h4>
+            Latency <span data-lang="pt">↔</span
+            ><span data-lang="en">↔</span> Throughput
+          </h4>
+          <p>
+            <span data-lang="pt"
+              >Bufferiza para throughput; responde imediato para latência.</span
+            ><span data-lang="en"
+              >Batch for throughput; answer now for latency.</span
+            >
+          </p>
+        </div>
+        <div class="card">
+          <div class="sig">⇆</div>
+          <h4>
+            Consistency <span data-lang="pt">↔</span
+            ><span data-lang="en">↔</span> Availability
+          </h4>
+          <p>
+            <span data-lang="pt"
+              >O eixo do CAP. Bancos: consistente; caches: disponível.</span
+            ><span data-lang="en"
+              >The CAP axis. Databases: consistent; caches: available.</span
+            >
+          </p>
+        </div>
+        <div class="card">
+          <div class="sig">⇆</div>
+          <h4>
+            Cost <span data-lang="pt">↔</span
+            ><span data-lang="en">↔</span> Reliability
+          </h4>
+          <p>
+            <span data-lang="pt"
+              >Cada 9 a mais de disponibilidade custa ~10×. Defina o SLO
+              primeiro.</span
+            ><span data-lang="en"
+              >Each extra nine of availability costs ~10×. Set the SLO
+              first.</span
+            >
+          </p>
+        </div>
+        <div class="card">
+          <div class="sig">⇆</div>
+          <h4>
+            Coupling <span data-lang="pt">↔</span
+            ><span data-lang="en">↔</span> Autonomy
+          </h4>
+          <p>
+            <span data-lang="pt"
+              >Serviços separados ganham autonomia, perdem simplicidade.</span
+            ><span data-lang="en"
+              >Split services for autonomy, lose simplicity.</span
+            >
+          </p>
+        </div>
+      </div>
+      <div class="callout tip">
+        <p>
+          <span data-lang="pt"
+            ><strong>Reflexo de entrevista:</strong> ao propor algo, diga sempre
+            “<em>e o custo é…</em>”. Isso é o que diferencia júnior de
+            sênior.</span
+          ><span data-lang="en"
+            ><strong>Interview reflex:</strong> whenever you propose something,
+            always add “<em>and the cost is…</em>”. That's what separates junior
+            from senior.</span
+          >
+        </p>
+      </div>
+
+      <!-- ============ 5. WORKED EXAMPLE ============ -->
+      <h2 class="section">
+        <span class="num">5</span
+        ><span data-lang="pt">Exemplo aplicado: “Encurtador de URL”</span
+        ><span data-lang="en">Worked example: “URL shortener”</span>
+      </h2>
+      <ol class="trace" style="list-style: none; margin: 18px 0; padding: 0">
+        <li
+          style="
+            --accent: #8b6ff7;
+            display: grid;
+            grid-template-columns: 40px 1fr;
+            gap: 12px;
+            margin-bottom: 12px;
+          "
+        >
+          <span
+            class="step"
+            style="
+              display: grid;
+              place-items: center;
+              width: 40px;
+              height: 40px;
+              border-radius: 50%;
+              background: #8b6ff7;
+              color: #fff;
+              font-weight: 800;
+            "
+            >1</span
+          >
+          <div style="border-left: 3px solid #8b6ff7; padding-left: 12px">
+            <b>Clarify:</b>
+            <span data-lang="pt"
+              >leitura dominante? URLs expiram? analytics? usuários
+              anônimos?</span
+            ><span data-lang="en"
+              >read-heavy? do URLs expire? analytics? anonymous users?</span
+            >
+          </div>
+        </li>
+        <li
+          style="
+            --accent: #8b6ff7;
+            display: grid;
+            grid-template-columns: 40px 1fr;
+            gap: 12px;
+            margin-bottom: 12px;
+          "
+        >
+          <span
+            class="step"
+            style="
+              display: grid;
+              place-items: center;
+              width: 40px;
+              height: 40px;
+              border-radius: 50%;
+              background: #8b6ff7;
+              color: #fff;
+              font-weight: 800;
+            "
+            >2</span
+          >
+          <div style="border-left: 3px solid #8b6ff7; padding-left: 12px">
+            <b>Estimate:</b>
+            <span data-lang="pt"
+              >100M URLs, 10k leituras/s, 100:1 leitura/escrita → 50 GB, cache
+              no caminho de leitura.</span
+            ><span data-lang="en"
+              >100M URLs, 10k reads/s, 100:1 read/write → 50 GB, cache on the
+              read path.</span
+            >
+          </div>
+        </li>
+        <li
+          style="
+            --accent: #2dd4bf;
+            display: grid;
+            grid-template-columns: 40px 1fr;
+            gap: 12px;
+            margin-bottom: 12px;
+          "
+        >
+          <span
+            class="step"
+            style="
+              display: grid;
+              place-items: center;
+              width: 40px;
+              height: 40px;
+              border-radius: 50%;
+              background: #2dd4bf;
+              color: #fff;
+              font-weight: 800;
+            "
+            >3</span
+          >
+          <div style="border-left: 3px solid #2dd4bf; padding-left: 12px">
+            <b>Sketch:</b>
+            <span data-lang="pt"
+              >cliente → API → (cache) → armazenamento KV → redirecionamento
+              301.</span
+            ><span data-lang="en"
+              >client → API → (cache) → KV store → 301 redirect.</span
+            >
+          </div>
+        </li>
+        <li
+          style="
+            --accent: #fbbf24;
+            display: grid;
+            grid-template-columns: 40px 1fr;
+            gap: 12px;
+            margin-bottom: 12px;
+          "
+        >
+          <span
+            class="step"
+            style="
+              display: grid;
+              place-items: center;
+              width: 40px;
+              height: 40px;
+              border-radius: 50%;
+              background: #fbbf24;
+              color: #fff;
+              font-weight: 800;
+            "
+            >4</span
+          >
+          <div style="border-left: 3px solid #fbbf24; padding-left: 12px">
+            <b>Deep-dive:</b>
+            <span data-lang="pt"
+              >geração de ID — contador vs hash; colisões; base62.</span
+            ><span data-lang="en"
+              >ID generation — counter vs hash; collisions; base62.</span
+            >
+          </div>
+        </li>
+        <li
+          style="
+            --accent: #fb7185;
+            display: grid;
+            grid-template-columns: 40px 1fr;
+            gap: 12px;
+          "
+        >
+          <span
+            class="step"
+            style="
+              display: grid;
+              place-items: center;
+              width: 40px;
+              height: 40px;
+              border-radius: 50%;
+              background: #fb7185;
+              color: #fff;
+              font-weight: 800;
+            "
+            >5</span
+          >
+          <div style="border-left: 3px solid #fb7185; padding-left: 12px">
+            <b>Trade off:</b>
+            <span data-lang="pt"
+              >301 (cacheável, barato) vs 302 (rastreável); consistência
+              eventual do cache.</span
+            ><span data-lang="en"
+              >301 (cacheable, cheap) vs 302 (trackable); eventual cache
+              consistency.</span
+            >
+          </div>
+        </li>
+      </ol>
+      <p class="cite">
+        <span data-lang="pt">Exemplo canônico em</span
+        ><span data-lang="en">Canonical walkthrough in</span>
+        <a
+          href="https://bytebytego.com/courses/system-design-interview"
+          target="_blank"
+          rel="noopener"
+          >ByteByteGo · System Design Interview</a
+        >.
+      </p>
+
+      <!-- ============ 6. PRACTICE + QUIZ ============ -->
+      <h2 class="section">
+        <span class="num">★</span
+        ><span data-lang="pt">🧠 Prática ativa: desembale os requisitos</span
+        ><span data-lang="en">🧠 Active practice: unpack the requirements</span>
+      </h2>
+      <div class="ex classify" id="ex-req">
+        <p class="ex-prompt">
+          <span data-lang="pt"
+            >Classifique cada item (para um encurtador de URL):</span
+          ><span data-lang="en">Classify each item (for a URL shortener):</span>
+        </p>
+        <div class="ex-item" data-correct="f">
+          <div class="ex-stem">
+            <span data-lang="pt"
+              >Encurtar uma URL longa num código de 7 chars.</span
+            ><span data-lang="en">Shorten a long URL into a 7-char code.</span>
+          </div>
+          <div class="ex-opts">
+            <button class="ex-opt" data-pick="f">
+              <span data-lang="pt">Funcional</span
+              ><span data-lang="en">Functional</span>
+            </button>
+            <button class="ex-opt" data-pick="nf">
+              <span data-lang="pt">Não-funcional</span
+              ><span data-lang="en">Non-functional</span>
+            </button>
+            <button class="ex-opt" data-pick="o">
+              <span data-lang="pt">Fora do escopo</span
+              ><span data-lang="en">Out of scope</span>
+            </button>
+          </div>
+          <div class="ex-fb"></div>
+        </div>
+        <div class="ex-item" data-correct="nf">
+          <div class="ex-stem">
+            <span data-lang="pt">99,9% dos redirecionamentos têm sucesso.</span
+            ><span data-lang="en">99.9% of redirects succeed.</span>
+          </div>
+          <div class="ex-opts">
+            <button class="ex-opt" data-pick="f">
+              <span data-lang="pt">Funcional</span
+              ><span data-lang="en">Functional</span>
+            </button>
+            <button class="ex-opt" data-pick="nf">
+              <span data-lang="pt">Não-funcional</span
+              ><span data-lang="en">Non-functional</span>
+            </button>
+            <button class="ex-opt" data-pick="o">
+              <span data-lang="pt">Fora do escopo</span
+              ><span data-lang="en">Out of scope</span>
+            </button>
+          </div>
+          <div class="ex-fb"></div>
+        </div>
+        <div class="ex-item" data-correct="o">
+          <div class="ex-stem">
+            <span data-lang="pt">O logo usa o azul da marca.</span
+            ><span data-lang="en">The logo uses brand blue.</span>
+          </div>
+          <div class="ex-opts">
+            <button class="ex-opt" data-pick="f">
+              <span data-lang="pt">Funcional</span
+              ><span data-lang="en">Functional</span>
+            </button>
+            <button class="ex-opt" data-pick="nf">
+              <span data-lang="pt">Não-funcional</span
+              ><span data-lang="en">Non-functional</span>
+            </button>
+            <button class="ex-opt" data-pick="o">
+              <span data-lang="pt">Fora do escopo</span
+              ><span data-lang="en">Out of scope</span>
+            </button>
+          </div>
+          <div class="ex-fb"></div>
+        </div>
+        <div class="ex-item" data-correct="nf">
+          <div class="ex-stem">
+            <span data-lang="pt"
+              >Servir 10k redirecionamentos/s com p99 &lt; 100ms.</span
+            ><span data-lang="en"
+              >Serve 10k redirects/sec at p99 &lt; 100ms.</span
+            >
+          </div>
+          <div class="ex-opts">
+            <button class="ex-opt" data-pick="f">
+              <span data-lang="pt">Funcional</span
+              ><span data-lang="en">Functional</span>
+            </button>
+            <button class="ex-opt" data-pick="nf">
+              <span data-lang="pt">Não-funcional</span
+              ><span data-lang="en">Non-functional</span>
+            </button>
+            <button class="ex-opt" data-pick="o">
+              <span data-lang="pt">Fora do escopo</span
+              ><span data-lang="en">Out of scope</span>
+            </button>
+          </div>
+          <div class="ex-fb"></div>
+        </div>
+        <div class="ex-item" data-correct="f">
+          <div class="ex-stem">
+            <span data-lang="pt"
+              >Usuários podem escolher um apelido customizado.</span
+            ><span data-lang="en">Users can pick a custom alias.</span>
+          </div>
+          <div class="ex-opts">
+            <button class="ex-opt" data-pick="f">
+              <span data-lang="pt">Funcional</span
+              ><span data-lang="en">Functional</span>
+            </button>
+            <button class="ex-opt" data-pick="nf">
+              <span data-lang="pt">Não-funcional</span
+              ><span data-lang="en">Non-functional</span>
+            </button>
+            <button class="ex-opt" data-pick="o">
+              <span data-lang="pt">Fora do escopo</span
+              ><span data-lang="en">Out of scope</span>
+            </button>
+          </div>
+          <div class="ex-fb"></div>
+        </div>
+        <div class="ex-score"></div>
+      </div>
+
+      <h2 class="section">
+        <span class="num">6</span
+        ><span data-lang="pt">Pratique: a pergunta de alto valor</span
+        ><span data-lang="en">Practice: the high-leverage question</span>
+      </h2>
+      <p class="kicker">
+        <span data-lang="pt"
+          >Prompt vago: “Desenhe o Twitter.” Qual pergunta de esclarecimento tem
+          maior alavanca?</span
+        ><span data-lang="en"
+          >Vague prompt: “Design Twitter.” Which clarifying question is
+          highest-leverage?</span
+        >
+      </p>
+
+      <div class="quiz" id="q1" role="group" aria-labelledby="q1l">
+        <div class="q" id="q1l">
+          <span data-lang="pt">Q1. Escolha a pergunta de maior alavanca:</span
+          ><span data-lang="en">Q1. Pick the highest-leverage question:</span>
+        </div>
+        <div class="options">
+          <button
+            class="opt"
+            data-correct="true"
+            data-fb-pt="Exato: a proporção leitura/escrita define o design inteiro."
+            data-fb-en="Exact: read/write ratio shapes the whole design."
+          >
+            <span data-lang="pt">Qual a proporção leitura/escrita?</span
+            ><span data-lang="en">What's the read/write ratio?</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Fonte/tweet é cosmético; não move a arquitetura."
+            data-fb-en="Tweet font is cosmetic; it doesn't move architecture."
+          >
+            <span data-lang="pt">Qual fonte dos tweets?</span
+            ><span data-lang="en">Which font for tweets?</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Recurso favorito é sobre produto, não sobre escala."
+            data-fb-en="Favorite feature is product talk, not scale."
+          >
+            <span data-lang="pt">Qual recurso favorito?</span
+            ><span data-lang="en">What's your favorite feature?</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Framework de FE é detalhe de implementação, não requisito."
+            data-fb-en="FE framework is an implementation detail, not a requirement."
+          >
+            <span data-lang="pt">Usamos React?</span
+            ><span data-lang="en">Should we use React?</span>
+          </button>
+        </div>
+        <div class="verdict" aria-live="polite"></div>
+      </div>
+
+      <div class="quiz" id="q2" role="group" aria-labelledby="q2l">
+        <div class="q" id="q2l">
+          <span data-lang="pt"
+            >Q2. O que você faz PRIMEIRO num design de sistema?</span
+          ><span data-lang="en"
+            >Q2. What do you do FIRST in a system design?</span
+          >
+        </div>
+        <div class="options">
+          <button
+            class="opt"
+            data-correct="true"
+            data-fb-pt="Exato: clarificar antes de esboçar."
+            data-fb-en="Exact: clarify before you sketch."
+          >
+            <span data-lang="pt">Clarificar os requisitos</span
+            ><span data-lang="en">Clarify the requirements</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Banco vem depois dos requisitos e da escala."
+            data-fb-en="The DB comes after requirements and scale."
+          >
+            <span data-lang="pt">Escolher o banco</span
+            ><span data-lang="en">Choose the database</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Esboçar antes de clarificar desenha a coisa errada."
+            data-fb-en="Sketching before clarifying builds the wrong thing."
+          >
+            <span data-lang="pt">Esboçar a arquitetura</span
+            ><span data-lang="en">Sketch the architecture</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Estimar vem depois de saber o que escalar."
+            data-fb-en="Estimating comes after knowing what to scale."
+          >
+            <span data-lang="pt">Estimar o tráfego</span
+            ><span data-lang="en">Estimate the traffic</span>
+          </button>
+        </div>
+        <div class="verdict" aria-live="polite"></div>
+      </div>
+
+      <div class="quiz" id="q3" role="group" aria-labelledby="q3l">
+        <div class="q" id="q3l">
+          <span data-lang="pt"
+            >Q3. Um requisito não-funcional é, na verdade, sobre:</span
+          ><span data-lang="en"
+            >Q3. A non-functional requirement is really about:</span
+          >
+        </div>
+        <div class="options">
+          <button
+            class="opt"
+            data-correct="true"
+            data-fb-pt="Exato: são os atributos de qualidade (as forças)."
+            data-fb-en="Exact: the quality attributes (the forces)."
+          >
+            <span data-lang="pt">Atributos de qualidade</span
+            ><span data-lang="en">Quality attributes</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Recursos do usuário são funcionais, não não-funcionais."
+            data-fb-en="User features are functional, not non-functional."
+          >
+            <span data-lang="pt">Recursos do usuário</span
+            ><span data-lang="en">User features</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Lógica de negócio é funcional."
+            data-fb-en="Business logic is functional."
+          >
+            <span data-lang="pt">Lógica de negócio</span
+            ><span data-lang="en">Business logic</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Endpoints de API são funcionais."
+            data-fb-en="API endpoints are functional."
+          >
+            <span data-lang="pt">Pontos de API</span
+            ><span data-lang="en">API endpoints</span>
+          </button>
+        </div>
+        <div class="verdict" aria-live="polite"></div>
+      </div>
+
+      <!-- ============ 7. SOURCE ============ -->
+      <h2 class="section">
+        <span class="num">7</span><span data-lang="pt">Leia isto a seguir</span
+        ><span data-lang="en">Read this next</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          ><strong>Fonte primária:</strong>
+          <a href="https://dataintensive.net" target="_blank" rel="noopener"
+            >Designing Data-Intensive Applications</a
+          >, capítulo 1 — “Reliability, Scalability, Maintainability”. É o
+          melhor enquadramento das três preocupações que todo design
+          equilibra.</span
+        ><span data-lang="en"
+          ><strong>Primary source:</strong>
+          <a href="https://dataintensive.net" target="_blank" rel="noopener"
+            >Designing Data-Intensive Applications</a
+          >, chapter 1 — “Reliability, Scalability, Maintainability”. It's the
+          best framing of the three concerns every design balances.</span
+        >
+      </p>
+
+      <div class="callout key">
+        <p>
+          🗣️
+          <strong
+            ><span data-lang="pt">Pergunte ao seu professor.</span
+            ><span data-lang="en">Ask your teacher.</span></strong
+          >
+          <span data-lang="pt"
+            >Boas perguntas:
+            <em>“me dê um prompt vago para eu treinar a clarificação”</em>,
+            <em>“quando paro de estimar e começo a desenhar?”</em>,
+            <em>“qual a próxima lição?”</em></span
+          >
+          <span data-lang="en"
+            >Good questions:
+            <em>“give me a vague prompt to practice clarifying”</em>,
+            <em>“when do I stop estimating and start sketching?”</em>,
+            <em>“what's the next lesson?”</em></span
+          >
+        </p>
+      </div>
+
+      <footer class="lesson-foot">
+        <div class="next-card">
+          <div class="lbl">
+            <span data-lang="pt">Próxima lição →</span
+            ><span data-lang="en">Next lesson →</span>
+          </div>
+          <div class="t">
+            <span data-lang="pt"
+              >As quatro forças: latência, throughput, disponibilidade,
+              consistência</span
+            ><span data-lang="en"
+              >The four forces: latency, throughput, availability,
+              consistency</span
+            >
+          </div>
+        </div>
+        <div style="flex: 0 1 240px">
+          <div class="lbl">
+            <span data-lang="pt">Referência</span
+            ><span data-lang="en">Reference</span>
+          </div>
+          <p style="margin: 6px 0 0">
+            <a href="../RESOURCES.md"
+              ><span data-lang="pt">Recursos</span
+              ><span data-lang="en">Resources</span></a
+            >
+            ·
+            <a href="../MISSION.md"
+              ><span data-lang="pt">Missão</span
+              ><span data-lang="en">Mission</span></a
+            >
+          </p>
+        </div>
+      </footer>
+    </article>
+
+    <script>
+      function verdictFor(btn, quiz) {
+        const correct = btn.dataset.correct === "true";
+        const fb = btn.getAttribute(
+          PiI18n.lang === "en" ? "data-fb-en" : "data-fb-pt",
+        );
+        const fallback =
+          PiI18n.lang === "en" ? "Re-read this section." : "Releia esta seção.";
+        return {
+          ok: correct,
+          text: (correct ? "✓ " : "✗ ") + (fb || fallback),
+        };
+      }
+      function resetQuiz(quiz) {
+        quiz.querySelectorAll(".opt").forEach((b) => {
+          b.classList.remove("correct", "wrong");
+          b.setAttribute("aria-pressed", "false");
+        });
+        const v = quiz.querySelector(".verdict");
+        v.textContent = "";
+        v.className = "verdict";
+      }
+      document.querySelectorAll(".quiz").forEach((quiz) => {
+        quiz.querySelectorAll(".opt").forEach((btn) => {
+          btn.setAttribute("aria-pressed", "false");
+          btn.addEventListener("click", () => {
+            quiz.querySelectorAll(".opt").forEach((b) => {
+              b.classList.remove("correct", "wrong");
+              b.setAttribute("aria-pressed", "false");
+            });
+            const v = verdictFor(btn, quiz);
+            btn.classList.add(v.ok ? "correct" : "wrong");
+            btn.setAttribute("aria-pressed", "true");
+            const verdict = quiz.querySelector(".verdict");
+            verdict.textContent = v.text;
+            verdict.className = "verdict " + (v.ok ? "ok" : "no");
+          });
+        });
+      });
+      document.addEventListener("DOMContentLoaded", () =>
+        PiI18n.on(() => document.querySelectorAll(".quiz").forEach(resetQuiz)),
+      );
+    </script>
+  </Fragment>
+</Lesson>

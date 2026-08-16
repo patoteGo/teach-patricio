@@ -1,0 +1,732 @@
+---
+// Migrated verbatim from public/topics/software-concepts/lessons/0005-estimation.html (URL unchanged: builds to 0005-estimation.html).
+// Body is is:raw: braces/inline scripts/JSON blocks pass through untouched.
+import Lesson from "../../../../layouts/Lesson.astro";
+const titlePt = "Estimativa — DAU, QPS e por que um número basta";
+const titleEn = "Estimation — DAU, QPS and why one number is enough";
+const titleFallback = "Estimation";
+const bodyClass = "lang-pt";
+const viewport = "width=device-width,initial-scale=1.0";
+const assets = [
+	"<link rel=\"stylesheet\" href=\"../assets/style.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/dark.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/i18n.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/concepts.css\" />",
+	"<script src=\"../assets/i18n.js\" defer></script>",
+	"<script src=\"../assets/nav.js\" defer></script>",
+	"<script src=\"../assets/reading-ui.js\" defer></script>",
+	"<script src=\"../assets/concepts.js\" defer></script>",
+];
+
+---
+<Lesson
+	titlePt={titlePt}
+	titleEn={titleEn}
+	titleFallback={titleFallback}
+	bodyClass={bodyClass}
+	viewport={viewport}
+	assets={assets}
+>
+	<Fragment is:raw>
+    <article class="lesson">
+      <header class="hero">
+        <span class="eyebrow"
+          >⬡ <span data-lang="pt">Conceitos · estimativa</span
+          ><span data-lang="en">Concepts · estimation</span></span
+        >
+        <h1>
+          <span data-lang="pt">Um número justifica um componente.</span
+          ><span data-lang="en">One number justifies one component.</span>
+        </h1>
+        <p class="lead">
+          <span data-lang="pt"
+            >Você não estimou na entrevista — e por isso não conseguiu defender
+            “um banco só, sem cache”. Estimativa não é matemática fina: é a
+            frase que <strong>compra o direito</strong> de manter o design
+            simples.</span
+          ><span data-lang="en"
+            >You didn't estimate in the interview — so you couldn't defend “one
+            database, no cache.” Estimation isn't fancy math: it's the sentence
+            that <strong>earns you the right</strong> to keep the design
+            simple.</span
+          >
+        </p>
+      </header>
+      <nav class="concept-nav">
+        <a href="0004-relational-keys.html">← Chaves</a
+        ><a href="0001-sql-foundations.html">SQL</a
+        ><a href="../reference/software-concepts-cheatsheet.html"
+          ><span data-lang="pt">Folha</span><span data-lang="en">Cheat</span></a
+        >
+      </nav>
+
+      <h2 class="section">
+        <span class="num">1</span
+        ><span data-lang="pt">O vocabulário (sem mistério)</span
+        ><span data-lang="en">The vocabulary (no mystery)</span>
+      </h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>
+                <span data-lang="pt">Termo</span
+                ><span data-lang="en">Term</span>
+              </th>
+              <th>
+                <span data-lang="pt">Significado</span
+                ><span data-lang="en">Meaning</span>
+              </th>
+              <th>
+                <span data-lang="pt">Exemplo</span
+                ><span data-lang="en">Example</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>DAU</strong></td>
+              <td>
+                <span data-lang="pt">usuários ativos por dia</span
+                ><span data-lang="en">daily active users</span>
+              </td>
+              <td>
+                <span data-lang="pt">100k pessoas usam o app hoje</span
+                ><span data-lang="en">100k people use the app today</span>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>MAU</strong></td>
+              <td>
+                <span data-lang="pt">usuários ativos por mês</span
+                ><span data-lang="en">monthly active users</span>
+              </td>
+              <td>
+                <span data-lang="pt">3M no mês</span
+                ><span data-lang="en">3M in the month</span>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>QPS / RPS</strong></td>
+              <td>
+                <span data-lang="pt">queries/requests por segundo</span
+                ><span data-lang="en">queries/requests per second</span>
+              </td>
+              <td>
+                <span data-lang="pt">“aguento 1k QPS”</span
+                ><span data-lang="en">“I handle 1k QPS”</span>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <strong
+                  ><span data-lang="pt">Read/write ratio</span
+                  ><span data-lang="en">Read/write ratio</span></strong
+                >
+              </td>
+              <td>
+                <span data-lang="pt">leituras vs escritas</span
+                ><span data-lang="en">reads vs writes</span>
+              </td>
+              <td>
+                <span data-lang="pt">100:1 → leitura pesada</span
+                ><span data-lang="en">100:1 → read-heavy</span>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <strong
+                  ><span data-lang="pt">Pico</span
+                  ><span data-lang="en">Peak</span></strong
+                >
+              </td>
+              <td>
+                <span data-lang="pt">tráfego no momento quente</span
+                ><span data-lang="en">traffic at the hot moment</span>
+              </td>
+              <td>
+                <span data-lang="pt">~2–10× a média</span
+                ><span data-lang="en">~2–10× the average</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout key">
+        <p>
+          <span data-lang="pt"
+            ><strong>DAU é só “quantas pessoas usam por dia”.</strong> Tudo
+            deriva dele: multiplique por ações por usuário, divida pelos
+            segundos do dia (86 400), e você tem o QPS médio. É isso.</span
+          ><span data-lang="en"
+            ><strong>DAU is just “how many people use it per day.”</strong>
+            Everything derives from it: multiply by actions per user, divide by
+            the seconds in a day (86,400), and you have the average QPS. That's
+            it.</span
+          >
+        </p>
+      </div>
+
+      <h2 class="section">
+        <span class="num">2</span
+        ><span data-lang="pt">A fórmula de 4 passos</span
+        ><span data-lang="en">The 4-step formula</span>
+      </h2>
+      <div class="code-stage">
+        <pre><code><span data-lang="pt"><span style="color:#8b88b8">// Exemplo: app de tarefas</span>
+DAU          = 100 000
+ações/usuário = 10 <span style="color:#8b88b8">escritas/dia</span>
+leitura/escr = 10×   <span style="color:#8b88b8">(cada escrita gera ~10 leituras)</span>
+
+escritas/dia  = DAU × ações        = 1 000 000
+escritas/s    = 1 000 000 ÷ 86 400 = <span style="color:#5eead4">~12</span>
+leituras/s    = 12 × 10            = <span style="color:#5eead4">~120</span>
+pico (~10×)   = <span style="color:#fbbf24">~120 escritas/s</span></span><span data-lang="en"><span style="color:#8b88b8">// Example: to-do app</span>
+DAU          = 100 000
+actions/user = 10 <span style="color:#8b88b8">writes/day</span>
+read/write   = 10×   <span style="color:#8b88b8">(each write generates ~10 reads)</span>
+
+writes/day   = DAU × actions      = 1 000 000
+writes/s     = 1 000 000 ÷ 86 400 = <span style="color:#5eead4">~12</span>
+reads/s      = 12 × 10            = <span style="color:#5eead4">~120</span>
+peak (~10×)  = <span style="color:#fbbf24">~120 writes/s</span></span></code></pre>
+      </div>
+      <p>
+        <span data-lang="pt"
+          ><strong>Veredito:</strong> um único Postgres sobe ~1 000+ escritas/s
+          sem suar. Você está em ~12.
+          <strong
+            >Conclusão honesta: não precisa de cache, não precisa de
+            shard.</strong
+          >
+          Esse veredito é o que você escreve no quadro.</span
+        ><span data-lang="en"
+          ><strong>Verdict:</strong> a single Postgres handles ~1,000+ writes/s
+          without breaking a sweat. You're at ~12.
+          <strong
+            >Honest conclusion: no cache needed, no sharding needed.</strong
+          >
+          That verdict is what you write on the board.</span
+        >
+      </p>
+
+      <h2 class="section">
+        <span class="num">3</span
+        ><span data-lang="pt">A calculadora (construa intuição)</span
+        ><span data-lang="en">The calculator (build intuition)</span>
+      </h2>
+      <p class="kicker">
+        <span data-lang="pt"
+          >Mexa nos números. Veja em que ponto o design muda de “banco único”
+          para “cache” para “shard”.</span
+        ><span data-lang="en"
+          >Play with the numbers. See at what point the design shifts from
+          “single DB” to “cache” to “shard.”</span
+        >
+      </p>
+      <div class="estimator" data-estimator>
+        <div class="est-grid">
+          <label>DAU <input type="number" data-dau value="100000" /></label>
+          <label
+            ><span data-lang="pt">ações/usuário/dia (escritas)</span
+            ><span data-lang="en">actions/user/day (writes)</span>
+            <input type="number" data-actions value="10"
+          /></label>
+          <label
+            ><span data-lang="pt">fator leitura (× escritas)</span
+            ><span data-lang="en">read factor (× writes)</span>
+            <input type="number" data-readmult value="10"
+          /></label>
+          <label
+            ><span data-lang="pt">bytes por ação</span
+            ><span data-lang="en">bytes per action</span>
+            <input type="number" data-bytes value="200"
+          /></label>
+        </div>
+        <button type="button" data-estimate>
+          <span data-lang="pt">Calcular</span
+          ><span data-lang="en">Calculate</span>
+        </button>
+        <div class="est-out" data-out></div>
+      </div>
+      <div class="callout tip">
+        <p>
+          <span data-lang="pt"><strong>Experiências para tentar:</strong></span
+          ><span data-lang="en"><strong>Try these:</strong></span>
+        </p>
+        <ul style="margin: 6px 0 0">
+          <li>
+            <span data-lang="pt"
+              >DAU = 100k → veja o “banco único sobe”. (seu app de
+              tarefas)</span
+            ><span data-lang="en"
+              >DAU = 100k → see “single DB handles it.” (your todo app)</span
+            >
+          </li>
+          <li>
+            <span data-lang="pt"
+              >DAU = 10M → veja virar “cache nas leituras”.</span
+            ><span data-lang="en"
+              >DAU = 10M → watch it become “cache the reads.”</span
+            >
+          </li>
+          <li>
+            <span data-lang="pt"
+              >DAU = 100M, ações = 50 → “fila + shard”. Agora você sente o
+              porquê do leilão ser nível 4.</span
+            ><span data-lang="en"
+              >DAU = 100M, actions = 50 → “queue + shard”. Now you feel why the
+              auction is level 4.</span
+            >
+          </li>
+        </ul>
+      </div>
+
+      <h2 class="section">
+        <span class="num">4</span
+        ><span data-lang="pt">Referência de capacidades (aproximado)</span
+        ><span data-lang="en">Capacity reference (rough)</span>
+      </h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>
+                <span data-lang="pt">Componente</span
+                ><span data-lang="en">Component</span>
+              </th>
+              <th>
+                <span data-lang="pt">Aguenta (ordem de grandeza)</span
+                ><span data-lang="en">Handles (order of magnitude)</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <span data-lang="pt">Um nó Postgres/MySQL</span
+                ><span data-lang="en">One Postgres/MySQL node</span>
+              </td>
+              <td>
+                <span data-lang="pt"
+                  >~1 000–5 000 escritas/s; muito mais leituras</span
+                ><span data-lang="en"
+                  >~1,000–5,000 writes/s; far more reads</span
+                >
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="pt">Um Redis (cache)</span
+                ><span data-lang="en">One Redis (cache)</span>
+              </td>
+              <td>
+                <span data-lang="pt">~50 000–100 000+ ops/s</span
+                ><span data-lang="en">~50,000–100,000+ ops/s</span>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="pt">Disco / armazenamento</span
+                ><span data-lang="en">Disk / storage</span>
+              </td>
+              <td>
+                <span data-lang="pt">barato: ~1 GB/dia = ~365 GB/ano</span
+                ><span data-lang="en">cheap: ~1 GB/day = ~365 GB/year</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout warn">
+        <p>
+          <span data-lang="pt"
+            ><strong
+              >Esses números são “ordem de grandeza”, não precisos.</strong
+            ></span
+          ><span data-lang="en"
+            ><strong
+              >These numbers are “order of magnitude,” not exact.</strong
+            ></span
+          >
+          <span data-lang="pt"
+            >Em entrevista, o que importa é você dizer “meu pico é ~120/s, um nó
+            leva ~1 000/s, então folga de 8× — não preciso de cache”. A decisão,
+            não a precisão.</span
+          ><span data-lang="en"
+            >In an interview, what matters is saying “my peak is ~120/s, one
+            node takes ~1,000/s, so 8× headroom — no cache needed.” The
+            decision, not the precision.</span
+          >
+        </p>
+      </div>
+
+      <h2 class="section">
+        <span class="num">5</span
+        ><span data-lang="pt">A jogada de entrevista (30 segundos)</span
+        ><span data-lang="en">The interview move (30 seconds)</span>
+      </h2>
+      <div class="callout key">
+        <p>
+          <span data-lang="pt"
+            ><strong
+              >Escreva UMA linha no quadro antes do diagrama:</strong
+            ></span
+          ><span data-lang="en"
+            ><strong
+              >Write ONE line on the board before the diagram:</strong
+            ></span
+          >
+        </p>
+        <p style="margin-top: 6px">
+          <em
+            ><span data-lang="pt"
+              >“100k DAU × 10 ações = ~12 escritas/s — um Postgres leva ~1
+              000/s, então mantenho simples: sem cache, sem shard.”</span
+            ><span data-lang="en"
+              >“100k DAU × 10 actions = ~12 writes/s — a Postgres takes
+              ~1,000/s, so I keep it simple: no cache, no shard.”</span
+            ></em
+          >
+        </p>
+        <p style="margin-top: 6px">
+          <span data-lang="pt"
+            >Essa frase <strong>compra o direito</strong> de não adicionar
+            componentes. Sem ela, o entrevistador pergunta “e se crescer?” e
+            você fica sem defesa.</span
+          ><span data-lang="en"
+            >That sentence <strong>buys you the right</strong> not to add
+            components. Without it, the interviewer asks “what if it grows?” and
+            you have no defense.</span
+          >
+        </p>
+      </div>
+
+      <div class="mcq" data-mcq>
+        <p class="mcq-q">
+          <span data-lang="pt"
+            >Por que estimar NA entrevista, se você não sabe o número
+            exato?</span
+          ><span data-lang="en"
+            >Why estimate IN the interview, if you don't know the exact
+            number?</span
+          >
+        </p>
+        <div class="mcq-opts">
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="Ninguém espera exatidão. Esperam a decisão que sai da ordem de grandeza."
+            data-fb-en="Nobody expects exactness. They expect the decision that comes from the order of magnitude."
+          >
+            <span data-lang="pt">Porque querem o número exato</span
+            ><span data-lang="en">Because they want the exact number</span>
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="true"
+            data-fb-pt="Exato: a estimativa justifica suas escolhas (sem cache, sem shard). É defesa, não exibição."
+            data-fb-en="Correct: the estimate justifies your choices (no cache, no shard). It's defense, not showing off."
+          >
+            <span data-lang="pt"
+              >Porque ela justifica cada componente do design</span
+            ><span data-lang="en"
+              >Because it justifies each part of the design</span
+            >
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="Errar o cálculo não elimina ninguém. Não estimar e não defender o design, sim."
+            data-fb-en="Getting the math wrong doesn't eliminate anyone. Not estimating and not defending the design does."
+          >
+            <span data-lang="pt">Porque errar elimina o candidato</span
+            ><span data-lang="en"
+              >Because getting it wrong eliminates the candidate</span
+            >
+          </button>
+        </div>
+        <div class="mcq-fb" data-fb></div>
+      </div>
+
+      <h2 class="section">
+        <span class="num">6</span
+        ><span data-lang="pt">Sandbox: estime apps de tamanhos diferentes</span
+        ><span data-lang="en">Sandbox: estimate different-size apps</span>
+      </h2>
+      <div class="callout key">
+        <p>
+          <span data-lang="pt"
+            ><strong>Recap em uma linha:</strong> DAU × ações ÷ 86 400 =
+            escritas/s (média); pico ≈ 10×; compare com a tabela do §4 (1 nó
+            Postgres ~1 000 escritas/s). Cache só quando as leituras pesam,
+            shard só quando as escritas transbordam.</span
+          ><span data-lang="en"
+            ><strong>One-line recap:</strong> DAU × actions ÷ 86,400 = writes/s
+            (avg); peak ≈ 10×; compare against the §4 table (1 Postgres node
+            ~1,000 writes/s). Cache only when reads are heavy, shard only when
+            writes overflow.</span
+          >
+        </p>
+      </div>
+      <p class="kicker">
+        <span data-lang="pt"
+          >Cinco cenários em escala crescente. Em cada um, escolha a decisão de
+          design certa — não o número exato.</span
+        ><span data-lang="en"
+          >Five scenarios at increasing scale. In each, pick the right design
+          decision — not the exact number.</span
+        >
+      </p>
+
+      <div class="mcq" data-mcq>
+        <p class="mcq-q">
+          <span data-lang="pt"
+            ><strong
+              >1 · App de tarefas — 100k DAU, 10 escritas/usuário/dia, 10×
+              leituras.</strong
+            >
+            Qual o design honesto?</span
+          ><span data-lang="en"
+            ><strong
+              >1 · To-do app — 100k DAU, 10 writes/user/day, 10× reads.</strong
+            >
+            What's the honest design?</span
+          >
+        </p>
+        <div class="mcq-opts">
+          <button
+            class="mcq-opt"
+            data-correct="true"
+            data-fb-pt="✓ ~12 escritas/s (pico ~120). Um Postgres leva ~1 000/s — folga de 8×. Sem cache, sem shard. Mantenha simples."
+            data-fb-en="✓ ~12 writes/s (peak ~120). One Postgres takes ~1,000/s — 8× headroom. No cache, no shard. Keep it simple."
+          >
+            <span data-lang="pt">Um Postgres, sem cache, sem shard</span
+            ><span data-lang="en">One Postgres, no cache, no shard</span>
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="Leituras são só ~120/s — trivial para o Postgres. Cache aqui só adiciona complexidade sem ganho."
+            data-fb-en="Reads are only ~120/s — trivial for Postgres. A cache here just adds complexity for no gain."
+          >
+            <span data-lang="pt">Adicionar Redis para as leituras</span
+            ><span data-lang="en">Add Redis for the reads</span>
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="São ~12 escritas/s. Shard é para milhares por segundo — exagero gigante."
+            data-fb-en="That's ~12 writes/s. Sharding is for thousands per second — massive overkill."
+          >
+            <span data-lang="pt">Fila + shard das escritas</span
+            ><span data-lang="en">Queue + shard the writes</span>
+          </button>
+        </div>
+        <div class="mcq-fb" data-fb></div>
+      </div>
+
+      <div class="mcq" data-mcq>
+        <p class="mcq-q">
+          <span data-lang="pt"
+            ><strong
+              >2 · Feed social — 10M DAU, 5 escritas/usuário/dia, 100×
+              leituras.</strong
+            >
+            Onde está o limite?</span
+          ><span data-lang="en"
+            ><strong
+              >2 · Social feed — 10M DAU, 5 writes/user/day, 100× reads.</strong
+            >
+            Where's the limit?</span
+          >
+        </p>
+        <div class="mcq-opts">
+          <button
+            class="mcq-opt"
+            data-correct="true"
+            data-fb-pt="✓ Escritas ~579/s (ok), mas leituras ~58 000/s de média esmagam o banco. Cache de leituras resolve o gargalo real."
+            data-fb-en="✓ Writes ~579/s (fine), but reads ~58,000/s average crush the DB. A read cache solves the real bottleneck."
+          >
+            <span data-lang="pt">Cache de leituras com Redis</span
+            ><span data-lang="en">Cache the reads with Redis</span>
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="Escritas até passam (~579/s), mas ~58 000 leituras/s não. Sem cache o banco vira o gargalo."
+            data-fb-en="Writes are fine (~579/s), but ~58,000 reads/s aren't. Without a cache the DB becomes the bottleneck."
+          >
+            <span data-lang="pt">Um Postgres leva tudo</span
+            ><span data-lang="en">One Postgres handles it all</span>
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="Escritas ~579/s estão abaixo do limite de um nó (~1 000/s). Um cache de leitura resolve antes de partir o banco."
+            data-fb-en="Writes ~579/s are below one node's limit (~1,000/s). A read cache fixes it before sharding the DB."
+          >
+            <span data-lang="pt">Shard o banco já</span
+            ><span data-lang="en">Shard the database now</span>
+          </button>
+        </div>
+        <div class="mcq-fb" data-fb></div>
+      </div>
+
+      <div class="mcq" data-mcq>
+        <p class="mcq-q">
+          <span data-lang="pt"
+            ><strong
+              >3 · Mensageiro (tipo WhatsApp) — 100M DAU, 50
+              mensagens/usuário/dia.</strong
+            >
+            Qual a jogada?</span
+          ><span data-lang="en"
+            ><strong
+              >3 · Messenger (WhatsApp-like) — 100M DAU, 50
+              messages/user/day.</strong
+            >
+            What's the move?</span
+          >
+        </p>
+        <div class="mcq-opts">
+          <button
+            class="mcq-opt"
+            data-correct="true"
+            data-fb-pt="✓ ~58 000 escritas/s — 50× o limite de um nó. Fila absorve os picos, shard reparte a carga. Sem os dois, cai."
+            data-fb-en="✓ ~58,000 writes/s — 50× one node's limit. A queue absorbs spikes, sharding splits the load. Without both, it falls over."
+          >
+            <span data-lang="pt">Fila assíncrona + shard das escritas</span
+            ><span data-lang="en">Async queue + shard the writes</span>
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="Cache ajuda leituras, não uma enchente de 58 000 escritas/s. O gargalo aqui é escrita."
+            data-fb-en="A cache helps reads, not a 58,000 writes/s flood. The bottleneck here is writes."
+          >
+            <span data-lang="pt">Basta um Redis cache</span
+            ><span data-lang="en">Just a Redis cache</span>
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="Escalar verticalmente não chega a ~58 000 escritas/s. Precisa repartir (shard) a carga."
+            data-fb-en="Vertical scaling won't reach ~58,000 writes/s. You have to partition (shard) the load."
+          >
+            <span data-lang="pt">Um Postgres maior</span
+            ><span data-lang="en">One bigger Postgres</span>
+          </button>
+        </div>
+        <div class="mcq-fb" data-fb></div>
+      </div>
+
+      <div class="mcq" data-mcq>
+        <p class="mcq-q">
+          <span data-lang="pt"
+            ><strong
+              >4 · App de logs — 1M DAU, 100 eventos/dia, 1 KB cada.</strong
+            >
+            Quanto armazenamento por dia?</span
+          ><span data-lang="en"
+            ><strong
+              >4 · Logging app — 1M DAU, 100 events/day, 1 KB each.</strong
+            >
+            How much storage per day?</span
+          >
+        </p>
+        <div class="mcq-opts">
+          <button
+            class="mcq-opt"
+            data-correct="true"
+            data-fb-pt="✓ 1M × 100 = 100M eventos × 1 KB = 100 GB/dia (~36 TB/ano). Logs antigos podem ir para armazenamento frio."
+            data-fb-en="✓ 1M × 100 = 100M events × 1 KB = 100 GB/day (~36 TB/year). Old logs can move to cold storage."
+          >
+            <span data-lang="pt">~100 GB/dia (~36 TB/ano)</span
+            ><span data-lang="en">~100 GB/day (~36 TB/year)</span>
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="Faltam dois zeros: 100M × 1 KB, não 1M × 1 KB. Recalcule."
+            data-fb-en="You're missing two zeros: 100M × 1 KB, not 1M × 1 KB. Recalculate."
+          >
+            <span data-lang="pt">~1 GB/dia</span
+            ><span data-lang="en">~1 GB/day</span>
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="Isso é ~100× demais. 100M eventos × 1 KB = 100 GB, não 10 TB."
+            data-fb-en="That's ~100× too much. 100M events × 1 KB = 100 GB, not 10 TB."
+          >
+            <span data-lang="pt">~10 TB/dia</span
+            ><span data-lang="en">~10 TB/day</span>
+          </button>
+        </div>
+        <div class="mcq-fb" data-fb></div>
+      </div>
+
+      <div class="mcq" data-mcq>
+        <p class="mcq-q">
+          <span data-lang="pt"
+            >5 · Por que projetar para o <strong>pico (~10×)</strong> e não para
+            a média diária?</span
+          ><span data-lang="en"
+            >5 · Why design for <strong>peak (~10×)</strong> and not the daily
+            average?</span
+          >
+        </p>
+        <div class="mcq-opts">
+          <button
+            class="mcq-opt"
+            data-correct="true"
+            data-fb-pt="✓ O tráfego se concentra em rajadas curtas (horário comercial, lançamento). A média esconde os picos que derrubam o banco."
+            data-fb-en="✓ Traffic clusters in short bursts (business hours, launches). The average hides the spikes that take the DB down."
+          >
+            <span data-lang="pt"
+              >Rajadas curtas sobrecarregam; a média esconde o pico que
+              derruba</span
+            ><span data-lang="en"
+              >Short bursts overload; the average hides the spike that takes it
+              down</span
+            >
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="A média é a parte fácil de calcular. O problema é que ela mente sobre a capacidade."
+            data-fb-en="The average is the easy part to compute. The problem is it lies about capacity."
+          >
+            <span data-lang="pt">A média é difícil de calcular</span
+            ><span data-lang="en">The average is hard to compute</span>
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="Armazenamento cresce com o total (soma), não com o pico. Pico importa para CPU, conexões e taxa de requisição."
+            data-fb-en="Storage grows with the total (sum), not the peak. Peak matters for CPU, connections, and request rate."
+          >
+            <span data-lang="pt">Pico só importa para armazenamento</span
+            ><span data-lang="en">Peak only matters for storage</span>
+          </button>
+        </div>
+        <div class="mcq-fb" data-fb></div>
+      </div>
+      <p class="cite-line">
+        <span data-lang="pt">Voltar para o</span
+        ><span data-lang="en">Back to the</span>
+        <a
+          href="../../system-design-practice/lessons/0002-the-difficulty-ladder.html"
+          ><span data-lang="pt">Dojo (escada)</span
+          ><span data-lang="en">Dojo (ladder)</span></a
+        >
+        ·
+        <a href="0004-relational-keys.html"
+          ><span data-lang="pt">← Chaves</span
+          ><span data-lang="en">← Keys</span></a
+        >
+      </p>
+    </article>
+  </Fragment>
+</Lesson>

@@ -1,0 +1,1174 @@
+---
+// Migrated verbatim from public/topics/behavioral-interview/lessons/0001-bluf-star.html (URL unchanged: builds to 0001-bluf-star.html).
+// Body is is:raw: braces/inline scripts/JSON blocks pass through untouched.
+import Lesson from "../../../../layouts/Lesson.astro";
+const titlePt = "Entrevista Comportamental · Lição 1 — BLUF + STAR";
+const titleEn = "Behavioral Interview · Lesson 1 — BLUF + STAR";
+const titleFallback = "Entrevista Comportamental · Lição 1 — BLUF + STAR";
+const bodyClass = "lang-pt";
+const viewport = "width=device-width, initial-scale=1.0";
+const assets = [
+	"<link rel=\"stylesheet\" href=\"../assets/style.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/dark.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/i18n.css\" />",
+	"<script src=\"../assets/i18n.js\" defer></script>",
+	"<script src=\"../assets/nav.js\" defer></script>",
+];
+
+---
+<Lesson
+	titlePt={titlePt}
+	titleEn={titleEn}
+	titleFallback={titleFallback}
+	bodyClass={bodyClass}
+	viewport={viewport}
+	assets={assets}
+>
+	<Fragment is:raw>
+    <article class="lesson">
+      <!-- ===================== HERO ===================== -->
+      <header class="hero">
+        <span class="eyebrow"
+          ><span data-lang="pt">⬡ Lição 01 · Responda como um sênior</span
+          ><span data-lang="en">⬡ Lesson 01 · Answer like a senior</span></span
+        >
+        <h1>
+          <span data-lang="pt">Comece pela<br />conclusão.</span
+          ><span data-lang="en">Lead with the<br />bottom line.</span>
+        </h1>
+        <p class="lead">
+          <span data-lang="pt"
+            >A maioria dos candidatos esconde o gancho. Seniores não. Um hábito
+            — <strong>BLUF</strong> — faz você soar claro, confiante e
+            respeitoso com o tempo. Encaixe o <strong>STAR</strong> por baixo
+            como prova, e toda resposta acerta. Essa é a única coisa de maior
+            alavancagem que você pode aprender antes de amanhã.</span
+          ><span data-lang="en"
+            >Most candidates bury the punchline. Seniors don't. One habit —
+            <strong>BLUF</strong> — makes you sound clear, confident, and
+            respectful of time. Bolt <strong>STAR</strong> underneath as proof,
+            and every answer hits. This is the single highest-leverage thing you
+            can learn before tomorrow.</span
+          >
+        </p>
+        <p class="lesson-nav-top">
+          ↑ <span data-lang="pt">Parte do curso</span
+          ><span data-lang="en">Part of the</span>
+          <a href="../MISSION.md"
+            ><span data-lang="pt">Missão</span
+            ><span data-lang="en">Mission</span></a
+          >
+          · <span data-lang="pt">próxima</span><span data-lang="en">next</span>:
+          <a href="./0002-the-dojo.html"
+            ><span data-lang="pt">O Dojo (ferramenta de prática)</span
+            ><span data-lang="en">The Dojo (practice tool)</span></a
+          >
+          · <span data-lang="pt">ref.:</span><span data-lang="en">ref:</span>
+          <a href="../reference/question-bank.html"
+            ><span data-lang="pt">Banco de perguntas</span
+            ><span data-lang="en">Question bank</span></a
+          >
+        </p>
+      </header>
+
+      <!-- ===================== 1. WHY BLUF ===================== -->
+      <h2 class="section">
+        <span class="num">1</span
+        ><span data-lang="pt">BLUF — o som de sênior</span
+        ><span data-lang="en">BLUF — the senior sound</span>
+      </h2>
+      <p class="kicker">
+        <span data-lang="pt"
+          ><strong>Bottom Line Up Front.</strong> Um hábito de comunicação
+          militar dos EUA: dê a conclusão primeiro, depois a evidência. Numa
+          entrevista, isso sinaliza
+          <em>eu sei o que importa, não vou desperdiçar seu tempo.</em></span
+        ><span data-lang="en"
+          ><strong>Bottom Line Up Front.</strong> A U.S. military comms habit:
+          give the conclusion first, then the evidence. In an interview it
+          signals <em>I know what matters, I won't waste your time.</em></span
+        >
+      </p>
+
+      <div class="grid cols-2" style="margin-top: 18px">
+        <div class="card" style="border-left: 4px solid #fb7185">
+          <h4>
+            <span data-lang="pt">❌ Enterrando o gancho</span
+            ><span data-lang="en">❌ Burying the lede</span>
+          </h4>
+          <p class="mono" style="font-size: 0.9rem; color: var(--ink)">
+            <span data-lang="pt"
+              >"Bom, a gente tinha esse projeto, aí eu notei que as estatísticas
+              de e-mail estavam estranhas, então comecei a cavar nos logs,
+              e…"</span
+            ><span data-lang="en"
+              >"Well, we had this project, and then I noticed the email stats
+              looked weird, so I started digging into the logs, and…"</span
+            >
+          </p>
+          <p style="color: var(--ink-soft); font-size: 0.88rem">
+            <span data-lang="pt"
+              >O entrevistador espera 90 segundos para descobrir o que você
+              <em>fez</em>. Soa júnior. Soa nervoso.</span
+            ><span data-lang="en"
+              >The interviewer waits 90 seconds to learn what you <em>did</em>.
+              Sounds junior. Sounds nervous.</span
+            >
+          </p>
+        </div>
+        <div class="card" style="border-left: 4px solid #2dd4bf">
+          <h4>
+            <span data-lang="pt">✅ BLUF primeiro</span
+            ><span data-lang="en">✅ BLUF first</span>
+          </h4>
+          <p class="mono" style="font-size: 0.9rem; color: var(--ink)">
+            <span data-lang="pt"
+              >"Tenho mais orgulho de ter consertado um bug nas estatísticas de
+              e-mail — isso restaurou a confiança nos dados do nosso produto e
+              tornou incidentes futuros muito mais rápidos de
+              diagnosticar."</span
+            ><span data-lang="en"
+              >"I'm most proud of fixing an email-statistics bug — it restored
+              trust in our product data and made future incidents far faster to
+              diagnose."</span
+            >
+          </p>
+          <p style="color: var(--ink-soft); font-size: 0.88rem">
+            <span data-lang="pt"
+              >Impacto na primeira frase. O entrevistador agora <em>quer</em> o
+              detalhe. Soa sênior.</span
+            ><span data-lang="en"
+              >Impact in sentence one. The interviewer <em>wants</em> the detail
+              now. Sounds senior.</span
+            >
+          </p>
+        </div>
+      </div>
+      <div class="callout key">
+        <p>
+          <span data-lang="pt"
+            ><strong>A mudança de enquadramento:</strong> não <em>narre</em> uma
+            resposta ("aí eu… e depois…").
+            <strong>Reivindique um resultado, depois prove-o.</strong> Essa
+            ordem é o jogo todo.</span
+          ><span data-lang="en"
+            ><strong>The reframe:</strong> don't <em>narrate</em> an answer ("so
+            then I… and then…").
+            <strong>Claim a result, then prove it.</strong> That ordering is the
+            whole game.</span
+          >
+        </p>
+      </div>
+      <p class="cite">
+        <span data-lang="pt">Fonte:</span><span data-lang="en">Source:</span>
+        <a
+          href="https://en.wikipedia.org/wiki/BLUF_%28communication%29"
+          target="_blank"
+          rel="noopener"
+          >BLUF — Wikipedia</a
+        >
+        · <span data-lang="pt">origem no</span
+        ><span data-lang="en">origin in</span>
+        <a
+          href="https://home.army.mil/wood/application/files/3015/5751/8343/AR_25_50_Army_Correspondence.pdf"
+          target="_blank"
+          rel="noopener"
+          >U.S. Army AR 25-50</a
+        >.
+      </p>
+
+      <!-- ===================== 2. BLUF + STAR ===================== -->
+      <h2 class="section">
+        <span class="num">2</span
+        ><span data-lang="pt">BLUF por cima, STAR por baixo</span
+        ><span data-lang="en">BLUF on top, STAR underneath</span>
+      </h2>
+      <p class="kicker">
+        <span data-lang="pt"
+          >Eles não são rivais — são camadas. BLUF é a
+          <strong>manchete</strong> (1–2 frases). STAR é a
+          <strong>prova</strong> que segue.</span
+        ><span data-lang="en"
+          >They're not rivals — they're layers. BLUF is the
+          <strong>headline</strong> (1–2 sentences). STAR is the
+          <strong>proof</strong> that follows.</span
+        >
+      </p>
+
+      <div class="scroll-x" style="margin: 20px 0 8px">
+        <svg
+          viewBox="0 0 820 280"
+          width="100%"
+          style="min-width: 820px"
+          role="img"
+          aria-labelledby="tBi"
+        >
+          <title
+            id="tBi"
+            data-pt="Manchete BLUF empilhada sobre a prova STAR"
+            data-en="BLUF headline stacked on top of STAR proof"
+          >
+            Manchete BLUF empilhada sobre a prova STAR
+          </title>
+          <!-- BLUF layer -->
+          <rect x="20" y="20" width="780" height="70" rx="14" fill="#8b6ff7" />
+          <text
+            x="44"
+            y="50"
+            font-family="Space Grotesk"
+            font-size="14"
+            font-weight="700"
+            fill="#fff"
+            data-pt="BLUF · a manchete (diga isso primeiro)"
+            data-en="BLUF · the headline (say this first)"
+          >
+            BLUF · a manchete (diga isso primeiro)
+          </text>
+          <text
+            x="44"
+            y="74"
+            font-family="Inter"
+            font-size="12.5"
+            fill="rgba(255,255,255,.95)"
+            data-pt='"O resultado-chave foi ___ — isso ___ (impacto)."'
+            data-en='"The key result was ___ — it ___ (impact)."'
+          >
+            "O resultado-chave foi ___ — isso ___ (impacto)."
+          </text>
+
+          <!-- connector -->
+          <path
+            d="M410 92 L410 118"
+            stroke="#8b6ff7"
+            stroke-width="3"
+            fill="none"
+            marker-end="url(#q1)"
+          />
+          <defs>
+            <marker
+              id="q1"
+              markerWidth="10"
+              markerHeight="10"
+              refX="5"
+              refY="8"
+              orient="auto"
+            >
+              <path d="M0,0 L10,8 L0,16 Z" fill="#8b6ff7" />
+            </marker>
+          </defs>
+          <text
+            x="430"
+            y="112"
+            font-family="Inter"
+            font-size="11"
+            fill="#8b6ff7"
+            font-weight="600"
+            data-pt='"…é assim."'
+            data-en='"…here&apos;s how."'
+          >
+            "…é assim."
+          </text>
+
+          <!-- STAR layer: 4 boxes -->
+          <g font-family="Space Grotesk" font-size="12" font-weight="700">
+            <rect
+              x="20"
+              y="124"
+              width="186"
+              height="146"
+              rx="12"
+              fill="#181a26"
+              stroke="#2dd4bf"
+              stroke-width="2"
+            />
+            <text
+              x="113"
+              y="148"
+              text-anchor="middle"
+              fill="#2dd4bf"
+              data-pt="S — Situação"
+              data-en="S — Situation"
+            >
+              S — Situação
+            </text>
+            <text
+              x="36"
+              y="176"
+              font-family="Inter"
+              font-weight="400"
+              font-size="10.5"
+              fill="#9ea2b8"
+              data-pt="Retries do SendGrid"
+              data-en="SendGrid retries"
+            >
+              Retries do SendGrid
+            </text>
+            <text
+              x="36"
+              y="192"
+              font-family="Inter"
+              font-weight="400"
+              font-size="10.5"
+              fill="#9ea2b8"
+              data-pt="estavam inflando"
+              data-en="were inflating"
+            >
+              estavam inflando
+            </text>
+            <text
+              x="36"
+              y="208"
+              font-family="Inter"
+              font-weight="400"
+              font-size="10.5"
+              fill="#9ea2b8"
+              data-pt="as métricas de campanha."
+              data-en="campaign metrics."
+            >
+              as métricas de campanha.
+            </text>
+
+            <rect
+              x="218"
+              y="124"
+              width="186"
+              height="146"
+              rx="12"
+              fill="#181a26"
+              stroke="#fbbf24"
+              stroke-width="2"
+            />
+            <text
+              x="311"
+              y="148"
+              text-anchor="middle"
+              fill="#fbbf24"
+              data-pt="T — Tarefa"
+              data-en="T — Task"
+            >
+              T — Tarefa
+            </text>
+            <text
+              x="234"
+              y="176"
+              font-family="Inter"
+              font-weight="400"
+              font-size="10.5"
+              fill="#9ea2b8"
+              data-pt="Descobrir por que os números"
+              data-en="Find why numbers"
+            >
+              Descobrir por que os números
+            </text>
+            <text
+              x="234"
+              y="192"
+              font-family="Inter"
+              font-weight="400"
+              font-size="10.5"
+              fill="#9ea2b8"
+              data-pt="estavam errados, e"
+              data-en="were wrong, and"
+            >
+              estavam errados, e
+            </text>
+            <text
+              x="234"
+              y="208"
+              font-family="Inter"
+              font-weight="400"
+              font-size="10.5"
+              fill="#9ea2b8"
+              data-pt="estancar a sangria."
+              data-en="stop the bleeding."
+            >
+              estancar a sangria.
+            </text>
+
+            <rect
+              x="416"
+              y="124"
+              width="186"
+              height="146"
+              rx="12"
+              fill="#181a26"
+              stroke="#8b6ff7"
+              stroke-width="2"
+            />
+            <text
+              x="509"
+              y="148"
+              text-anchor="middle"
+              fill="#8b6ff7"
+              data-pt="A — Ação"
+              data-en="A — Action"
+            >
+              A — Ação
+            </text>
+            <text
+              x="432"
+              y="176"
+              font-family="Inter"
+              font-weight="400"
+              font-size="10.5"
+              fill="#9ea2b8"
+              data-pt="Cavou nos logs →"
+              data-en="Dug into logs →"
+            >
+              Cavou nos logs →
+            </text>
+            <text
+              x="432"
+              y="192"
+              font-family="Inter"
+              font-weight="400"
+              font-size="10.5"
+              fill="#9ea2b8"
+              data-pt="IDs de mensagem"
+              data-en="duplicated message"
+            >
+              IDs de mensagem
+            </text>
+            <text
+              x="432"
+              y="208"
+              font-family="Inter"
+              font-weight="400"
+              font-size="10.5"
+              fill="#9ea2b8"
+              data-pt="duplicados → dedupe,"
+              data-en="IDs → deduped,"
+            >
+              duplicados → dedupe,
+            </text>
+            <text
+              x="432"
+              y="224"
+              font-family="Inter"
+              font-weight="400"
+              font-size="10.5"
+              fill="#9ea2b8"
+              data-pt="adicionou observabilidade."
+              data-en="added observability."
+            >
+              adicionou observabilidade.
+            </text>
+
+            <rect
+              x="614"
+              y="124"
+              width="186"
+              height="146"
+              rx="12"
+              fill="#181a26"
+              stroke="#fb7185"
+              stroke-width="2"
+            />
+            <text
+              x="707"
+              y="148"
+              text-anchor="middle"
+              fill="#fb7185"
+              data-pt="R — Resultado"
+              data-en="R — Result"
+            >
+              R — Resultado
+            </text>
+            <text
+              x="630"
+              y="176"
+              font-family="Inter"
+              font-weight="400"
+              font-size="10.5"
+              fill="#9ea2b8"
+              data-pt="Números corretos;"
+              data-en="Correct numbers;"
+            >
+              Números corretos;
+            </text>
+            <text
+              x="630"
+              y="192"
+              font-family="Inter"
+              font-weight="400"
+              font-size="10.5"
+              fill="#9ea2b8"
+              data-pt="próximo incidente"
+              data-en="next incident"
+            >
+              próximo incidente
+            </text>
+            <text
+              x="630"
+              y="208"
+              font-family="Inter"
+              font-weight="400"
+              font-size="10.5"
+              fill="#9ea2b8"
+              data-pt="diagnosticado em minutos."
+              data-en="diagnosed in minutes."
+            >
+              diagnosticado em minutos.
+            </text>
+          </g>
+        </svg>
+      </div>
+
+      <h3>
+        <span data-lang="pt"
+          >O modelo integrado (decore o formato, não as palavras)</span
+        ><span data-lang="en"
+          >The integrated template (memorize this shape, not words)</span
+        >
+      </h3>
+      <pre class="block"><span class="c">// BLUF</span>
+<span class="k"><span data-lang="pt">Manchete / impacto:</span><span data-lang="en">Headline / impact:</span></span>  <span class="s"><span data-lang="pt">"O resultado-chave foi ___."</span><span data-lang="en">"The key result was ___."</span></span>
+<span class="c">// STAR</span>
+<span class="k"><span data-lang="pt">Contexto:</span><span data-lang="en">Context:</span></span>  <span class="s"><span data-lang="pt">"O problema era ___."</span><span data-lang="en">"The problem was ___."</span></span>
+<span class="k"><span data-lang="pt">Minhas ações:</span><span data-lang="en">My actions:</span></span>  <span class="s"><span data-lang="pt">"Eu pessoalmente ___."</span><span data-lang="en">"I personally ___."</span></span>  <span class="c"><span data-lang="pt"># "eu", não "nós"</span><span data-lang="en"># "I", not "we"</span></span>
+<span class="k"><span data-lang="pt">Resultado:</span><span data-lang="en">Outcome:</span></span>  <span class="s"><span data-lang="pt">"Isso levou a ___."</span><span data-lang="en">"This led to ___."</span></span>  <span class="c"><span data-lang="pt"># um número, se você tiver</span><span data-lang="en"># a number, if you have one</span></span></pre>
+      <div class="callout tip">
+        <p>
+          <span data-lang="pt"
+            ><strong>"Eu", não "nós".</strong> Entrevistadores sênior sondam
+            para separar a contribuição <em>sua</em> da do time. Se tudo foi
+            "nós", eles não conseguem dizer o que <em>você</em> fez. Reivindique
+            sua parte explicitamente, depois dê crédito ao time.</span
+          ><span data-lang="en"
+            ><strong>"I", not "we".</strong> Senior interviewers probe to
+            separate <em>your</em> contribution from the team's. If everything
+            was "we," they can't tell what <em>you</em> did. Claim your piece
+            explicitly, then credit the team.</span
+          >
+        </p>
+      </div>
+
+      <!-- ===================== 3. SOUND NATURAL ===================== -->
+      <h2 class="section">
+        <span class="num">3</span
+        ><span data-lang="pt">Soe natural, não ensaiado</span
+        ><span data-lang="en">Sound natural, not scripted</span>
+      </h2>
+      <p class="kicker">
+        <span data-lang="pt"
+          >Um roteiro é uma armadilha — você trava quando perguntam de um jeito
+          ligeiramente diferente. Esses hábitos te mantêm fluente.</span
+        ><span data-lang="en"
+          >A script is a trap — you freeze when they ask it slightly
+          differently. These habits keep you fluent.</span
+        >
+      </p>
+
+      <div class="grid cols-2" style="margin-top: 18px">
+        <div class="card" style="border-top: 4px solid #2dd4bf">
+          <h4>
+            <span data-lang="pt">📋 Tópicos, não roteiros</span
+            ><span data-lang="en">📋 Bullet points, not scripts</span>
+          </h4>
+          <p>
+            <span data-lang="pt"
+              >Para cada história, anote 4–6 tópicos (os beats do BLUF + STAR).
+              Improvise as palavras. Você nunca vai soar idêntico duas vezes —
+              esse é o objetivo.</span
+            ><span data-lang="en"
+              >For each story, note 4–6 bullets (the BLUF + STAR beats).
+              Improvise the words. You'll never sound identical twice — that's
+              the goal.</span
+            >
+          </p>
+        </div>
+        <div class="card" style="border-top: 4px solid #8b6ff7">
+          <h4>
+            <span data-lang="pt">🗣️ Ensaiar em voz alta</span
+            ><span data-lang="en">🗣️ Rehearse aloud</span>
+          </h4>
+          <p>
+            <span data-lang="pt"
+              >Diga em voz alta, cronometrado em ~90 segundos. O silêncio é OK —
+              pratique
+              <span class="kbd"
+                ><span data-lang="pt">pausa</span
+                ><span data-lang="en">pause</span></span
+              >
+              em vez de
+              <span class="kbd"
+                ><span data-lang="pt">hum</span
+                ><span data-lang="en">um</span></span
+              >. O <a href="./0002-the-dojo.html">Dojo</a> te cronometra.</span
+            ><span data-lang="en"
+              >Say it out loud, timed to ~90 seconds. Silence is fine — practice
+              <span class="kbd"
+                ><span data-lang="pt">pausa</span
+                ><span data-lang="en">pause</span></span
+              >
+              instead of
+              <span class="kbd"
+                ><span data-lang="pt">hum</span
+                ><span data-lang="en">um</span></span
+              >. The <a href="./0002-the-dojo.html">Dojo</a> times you.</span
+            >
+          </p>
+        </div>
+        <div class="card" style="border-top: 4px solid #fbbf24">
+          <h4>
+            <span data-lang="pt">🔢 Números concretos</span
+            ><span data-lang="en">🔢 Concrete numbers</span>
+          </h4>
+          <p>
+            <span data-lang="pt"
+              >"Reduzi a latência p95" → "cortei o p95 de 1,2s para 300ms."
+              Especificidade = credibilidade. Números aproximados batem
+              adjetivos vagos.</span
+            ><span data-lang="en"
+              >"Reduced p95 latency" → "cut p95 from 1.2s to 300ms." Specificity
+              = credibility. Rough numbers beat vague adjectives.</span
+            >
+          </p>
+        </div>
+        <div class="card" style="border-top: 4px solid #fb7185">
+          <h4>
+            <span data-lang="pt">♻️ Uma história → muitas perguntas</span
+            ><span data-lang="en">♻️ One story → many questions</span>
+          </h4>
+          <p>
+            <span data-lang="pt"
+              >5–8 histórias fortes, cada uma flexível, cobrem 80% das
+              perguntas. "Me conte sobre um conflito" e "uma vez em que você
+              discordou do seu PM" podem ser a <em>mesma</em> história, contada
+              de forma diferente.</span
+            ><span data-lang="en"
+              >5–8 strong stories, each flexible, cover 80% of questions. "Tell
+              me about a conflict" and "a time you disagreed with your PM" can
+              be the <em>same</em> story, told differently.</span
+            >
+          </p>
+        </div>
+      </div>
+      <div class="callout warn">
+        <p>
+          <span data-lang="pt"
+            ><strong>Nunca decore frases.</strong> Decore os
+            <em>beats</em> (BLUF + S/T/A/R). Palavras que você gera ao vivo soam
+            como uma pessoa; palavras que você recita soam como uma gravação — e
+            desmoronam no momento em que te interrompem com uma pergunta de
+            continuação.</span
+          ><span data-lang="en"
+            ><strong>Never memorize sentences.</strong> Memorize the
+            <em>beats</em> (BLUF + S/T/A/R). Words you generate live sound like
+            a person; words you recite sound like a recording — and collapse the
+            moment they interrupt with a follow-up.</span
+          >
+        </p>
+      </div>
+
+      <!-- ===================== 4. SENIOR SIGNALS ===================== -->
+      <h2 class="section">
+        <span class="num">4</span
+        ><span data-lang="pt">Os sinais que eles estão realmente avaliando</span
+        ><span data-lang="en">The signals they're actually scoring</span>
+      </h2>
+      <p class="kicker">
+        <span data-lang="pt"
+          >No nível sênior eles não estão checando se você sabe programar —
+          estão checando isto. Garanta que cada história mostre pelo menos
+          um.</span
+        ><span data-lang="en"
+          >At senior level they're not checking if you can code — they're
+          checking these. Make sure each story shows at least one.</span
+        >
+      </p>
+
+      <div class="grid cols-3" style="margin-top: 18px">
+        <div class="card">
+          <h4>
+            <span data-lang="pt">🎯 Posse</span
+            ><span data-lang="en">🎯 Ownership</span>
+          </h4>
+          <p>
+            <span data-lang="pt"
+              >Assumiu responsabilidade de ponta a ponta, não só "a minha
+              parte". Acompanhou até a resolução.</span
+            ><span data-lang="en"
+              >Took responsibility end-to-end, not just "my part." Followed it
+              to resolution.</span
+            >
+          </p>
+        </div>
+        <div class="card">
+          <h4>
+            <span data-lang="pt">📐 Escopo &amp; escala</span
+            ><span data-lang="en">📐 Scope &amp; scale</span>
+          </h4>
+          <p>
+            <span data-lang="pt"
+              >Tamanho do time, usuários, tráfego, raio de explosão. Solte um
+              número que mostre o palco em que você atua.</span
+            ><span data-lang="en"
+              >Team size, users, traffic, blast radius. Drop one number that
+              shows the stage you operate at.</span
+            >
+          </p>
+        </div>
+        <div class="card">
+          <h4>
+            <span data-lang="pt">⚖️ Trade-offs</span
+            ><span data-lang="en">⚖️ Tradeoffs</span>
+          </h4>
+          <p>
+            <span data-lang="pt"
+              >Nomeou o que você abriu mão, não só o que entregou. "Entregamos
+              X; o custo foi Y; eis por que valeu a pena."</span
+            ><span data-lang="en"
+              >Named what you gave up, not just what you shipped. "We shipped X;
+              the cost was Y; here's why it was worth it."</span
+            >
+          </p>
+        </div>
+        <div class="card">
+          <h4>
+            <span data-lang="pt">🤝 Influência</span
+            ><span data-lang="en">🤝 Influence</span>
+          </h4>
+          <p>
+            <span data-lang="pt"
+              >Convenceu sem autoridade — alinhou PM, outros times,
+              liderança.</span
+            ><span data-lang="en"
+              >Convinced without authority — aligned PM, other teams,
+              leadership.</span
+            >
+          </p>
+        </div>
+        <div class="card">
+          <h4>
+            <span data-lang="pt">🌱 Mentoria</span
+            ><span data-lang="en">🌱 Mentorship</span>
+          </h4>
+          <p>
+            <span data-lang="pt"
+              >Elevou as pessoas ao seu redor: code review, pairing, subir o
+              nível de um júnior.</span
+            ><span data-lang="en"
+              >Raised the people around you: code review, pairing, leveling up a
+              junior.</span
+            >
+          </p>
+        </div>
+        <div class="card">
+          <h4>
+            <span data-lang="pt">🌫️ Ambiguidade</span
+            ><span data-lang="en">🌫️ Ambiguity</span>
+          </h4>
+          <p>
+            <span data-lang="pt"
+              >Avançou com informação incompleta — definiu o problema, não só
+              resolveu um já definido.</span
+            ><span data-lang="en"
+              >Moved forward with incomplete info — defined the problem, not
+              just solved a defined one.</span
+            >
+          </p>
+        </div>
+      </div>
+      <p class="cite">
+        <span data-lang="pt">Calibre numa barra dura:</span
+        ><span data-lang="en">Calibrate to a hard bar:</span>
+        <a
+          href="https://www.amazon.jobs/content/en/how-we-hire/sde-iii-interview-prep"
+          target="_blank"
+          rel="noopener"
+          >Amazon SDE-III interview prep</a
+        >
+        —
+        <span data-lang="pt"
+          >eles sondam histórias agressivamente; assuma que seu entrevistador
+          fará o mesmo.</span
+        ><span data-lang="en"
+          >they probe stories aggressively; assume your interviewer will
+          too.</span
+        >
+      </p>
+
+      <!-- ===================== 5. THE BRIDGE ===================== -->
+      <h2 class="section">
+        <span class="num">5</span
+        ><span data-lang="pt">Sem história? Use a ponte</span
+        ><span data-lang="en">No story? Use the Bridge</span>
+      </h2>
+      <p class="kicker">
+        <span data-lang="pt"
+          >Quando uma pergunta cai e você não tem nada — não invente. Desvie com
+          honestidade para uma força adjacente real.</span
+        ><span data-lang="en"
+          >When a question lands and you have nothing — don't invent. Pivot
+          honestly to a real adjacent strength.</span
+        >
+      </p>
+
+      <pre
+        class="block"
+      ><span class="c"><span data-lang="pt">// Reconhecer → Ponte → Aterrissar</span><span data-lang="en">// Acknowledge → Bridge → Land</span></span>
+<span class="s"><span data-lang="pt">"Boa pergunta — eu não peguei exatamente isso."</span><span data-lang="en">"Good question — I haven't hit exactly that."</span></span>  <span class="c"><span data-lang="pt"># honesto, sem blefe</span><span data-lang="en"># honest, no bluff</span></span>
+<span class="s"><span data-lang="pt">"A coisa mais próxima foi [uma história adjacente real]…"</span><span data-lang="en">"The closest thing was [a real adjacent story]…"</span></span>  <span class="c"><span data-lang="pt"># ponte</span><span data-lang="en"># bridge</span></span>
+<span class="s"><span data-lang="pt">"…e o princípio que eu levaria para [a situação deles] é [X]."</span><span data-lang="en">"…and the principle I'd carry into [their situation] is [X]."</span></span>  <span class="c"><span data-lang="pt"># aterrissar</span><span data-lang="en"># land</span></span></pre>
+      <div class="callout warn">
+        <p>
+          <span data-lang="pt"
+            ><strong>Não blefe.</strong> Entrevistadores sênior perguntam
+            <em>"por que você escolheu isso?"</em> e
+            <em>"em que seu colega de time discordou?"</em> Histórias fabricadas
+            desmoronam na segunda pergunta — e isso é uma rejeição silenciosa e
+            instantânea. Honesto + uma ponte sempre vence uma mentira
+            confiante.</span
+          ><span data-lang="en"
+            ><strong>Do not bluff.</strong> Senior interviewers ask
+            <em>"why did you choose that?"</em> and
+            <em>"what did your teammate push back on?"</em> Fabricated stories
+            fall apart on the second question — and that's a quiet, instant
+            reject. Honest + a bridge always beats a confident lie.</span
+          >
+        </p>
+      </div>
+
+      <!-- ===================== QUIZ ===================== -->
+      <h2 class="section">
+        <span class="num">6</span
+        ><span data-lang="pt">Confira seus reflexos</span
+        ><span data-lang="en">Check your reflexes</span>
+      </h2>
+
+      <div class="quiz" id="q1" role="group" aria-labelledby="q1l">
+        <div class="q" id="q1l">
+          <span data-lang="pt"
+            >P1. No BLUF + STAR, o que você diz PRIMEIRO?</span
+          ><span data-lang="en"
+            >Q1. In BLUF + STAR, what do you say FIRST?</span
+          >
+        </div>
+        <div class="options">
+          <button
+            class="opt"
+            data-correct="true"
+            data-fb-pt="Exato: o impacto primeiro — é o BLUF."
+            data-fb-en="Exact: impact first — that's BLUF."
+          >
+            <span data-lang="pt">O impacto</span
+            ><span data-lang="en">The impact</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — o contexto vem depois, na prova."
+            data-fb-en="No — context comes later, in the proof."
+          >
+            <span data-lang="pt">O contexto</span
+            ><span data-lang="en">The context</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — comece pelo resultado, não pelo problema."
+            data-fb-en="No — lead with the result, not the problem."
+          >
+            <span data-lang="pt">O problema</span
+            ><span data-lang="en">The problem</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — seu histórico não é o BLUF."
+            data-fb-en="No — your background isn't the BLUF."
+          >
+            <span data-lang="pt">Seu histórico</span
+            ><span data-lang="en">Your background</span>
+          </button>
+        </div>
+        <div class="verdict" aria-live="polite"></div>
+      </div>
+
+      <div class="quiz" id="q2" role="group" aria-labelledby="q2l">
+        <div class="q" id="q2l">
+          <span data-lang="pt"
+            >P2. Entrevistadores sênior sondam sua história para checar…</span
+          ><span data-lang="en"
+            >Q2. Senior interviewers probe your story to check…</span
+          >
+        </div>
+        <div class="options">
+          <button
+            class="opt"
+            data-correct="true"
+            data-fb-pt="Exato: eles testam se a história é verdadeira."
+            data-fb-en="Exact: they test whether the story is real."
+          >
+            <span data-lang="pt">Se é real</span
+            ><span data-lang="en">It is real</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — eles não estão medindo vocabulário."
+            data-fb-en="No — they aren't measuring vocabulary."
+          >
+            <span data-lang="pt">Seu vocabulário</span
+            ><span data-lang="en">Your vocabulary</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — velocidade não é o foco."
+            data-fb-en="No — speed isn't the focus."
+          >
+            <span data-lang="pt">Sua velocidade de fala</span
+            ><span data-lang="en">Your speaking speed</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — datas não é o que sondam aqui."
+            data-fb-en="No — dates aren't what they probe here."
+          >
+            <span data-lang="pt">As datas do seu currículo</span
+            ><span data-lang="en">Your resume dates</span>
+          </button>
+        </div>
+        <div class="verdict" aria-live="polite"></div>
+      </div>
+
+      <div class="quiz" id="q3" role="group" aria-labelledby="q3l">
+        <div class="q" id="q3l">
+          <span data-lang="pt"
+            >P3. Surge uma pergunta sem história pronta. Melhor jogada?</span
+          ><span data-lang="en"
+            >Q3. A question comes up with no ready story. Best move?</span
+          >
+        </div>
+        <div class="options">
+          <button
+            class="opt"
+            data-correct="true"
+            data-fb-pt="Exato: reconheça e desvie para uma força real."
+            data-fb-en="Exact: acknowledge and bridge to a real strength."
+          >
+            <span data-lang="pt">Desviar com honestidade</span
+            ><span data-lang="en">Bridge honestly</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — blefe desmorona na segunda pergunta."
+            data-fb-en="No — bluffing collapses on the second question."
+          >
+            <span data-lang="pt">Inventar algo</span
+            ><span data-lang="en">Invent something</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — silêncio total custa a vaga."
+            data-fb-en="No — total silence costs you the job."
+          >
+            <span data-lang="pt">Dizer nada</span
+            ><span data-lang="en">Say nothing</span>
+          </button>
+          <button
+            class="opt"
+            data-correct="false"
+            data-fb-pt="Não — desviar bruscamente passa mal."
+            data-fb-en="No — abruptly changing subject reads badly."
+          >
+            <span data-lang="pt">Mudar de assunto</span
+            ><span data-lang="en">Change the subject</span>
+          </button>
+        </div>
+        <div class="verdict" aria-live="polite"></div>
+      </div>
+
+      <!-- ===================== PRIMARY SOURCE + FOOTER ===================== -->
+      <h2 class="section">
+        <span class="num">7</span
+        ><span data-lang="pt">Faça isto hoje à noite</span
+        ><span data-lang="en">Do this tonight</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          ><strong>Fontes primárias:</strong>
+          <a
+            href="https://en.wikipedia.org/wiki/BLUF_%28communication%29"
+            target="_blank"
+            rel="noopener"
+            >BLUF</a
+          >
+          +
+          <a
+            href="https://en.wikipedia.org/wiki/Situation%2C_task%2C_action%2C_result"
+            target="_blank"
+            rel="noopener"
+            >STAR</a
+          >
+          ·
+          <a
+            href="https://www.amazon.jobs/content/en/how-we-hire/sde-iii-interview-prep"
+            target="_blank"
+            rel="noopener"
+            >Amazon SDE-III prep</a
+          >
+          (a barra).</span
+        ><span data-lang="en"
+          ><strong>Primary sources:</strong>
+          <a
+            href="https://en.wikipedia.org/wiki/BLUF_%28communication%29"
+            target="_blank"
+            rel="noopener"
+            >BLUF</a
+          >
+          +
+          <a
+            href="https://en.wikipedia.org/wiki/Situation%2C_task%2C_action%2C_result"
+            target="_blank"
+            rel="noopener"
+            >STAR</a
+          >
+          ·
+          <a
+            href="https://www.amazon.jobs/content/en/how-we-hire/sde-iii-interview-prep"
+            target="_blank"
+            rel="noopener"
+            >Amazon SDE-III prep</a
+          >
+          (the bar).</span
+        >
+      </p>
+      <p>
+        <span data-lang="pt"
+          ><strong>O plano:</strong> 1) Dê uma olhada no
+          <a href="../reference/question-bank.html">banco de perguntas</a> e
+          escolha 5–8 que você consegue mapear para histórias reais. 2) Abra o
+          <a href="./0002-the-dojo.html">Dojo</a>, esboce cada uma como tópicos
+          BLUF+STAR, e diga-as <em>em voz alta</em>, cronometradas. 3) Cole aqui
+          sua resposta mais frágil e eu a treino.</span
+        ><span data-lang="en"
+          ><strong>The plan:</strong> 1) Skim the
+          <a href="../reference/question-bank.html">question bank</a> and pick
+          5–8 you can map to real stories. 2) Open the
+          <a href="./0002-the-dojo.html">Dojo</a>, draft each as BLUF+STAR
+          bullets, and say them <em>out loud</em>, timed. 3) Paste your shakiest
+          answer here and I'll coach it.</span
+        >
+      </p>
+
+      <div class="callout key">
+        <p>
+          🗣️
+          <strong
+            ><span data-lang="pt">Sou seu entrevistador simulado.</span
+            ><span data-lang="en">I'm your mock interviewer.</span></strong
+          >
+          <span data-lang="pt"
+            >Cole qualquer pergunta + seu rascunho de resposta (ou só seus
+            tópicos) e eu te digo: você começou pelo impacto? O "eu" está claro?
+            Tem um número? O que eles vão sondar a seguir? Esse ciclo de
+            feedback é o caminho mais rápido para a fluência.</span
+          ><span data-lang="en"
+            >Paste any question + your draft answer (or just your bullets) and
+            I'll tell you: did you lead with impact? Is "I" clear? Is there a
+            number? What will they probe next? That feedback loop is the fastest
+            path to fluent.</span
+          >
+        </p>
+      </div>
+
+      <footer class="lesson-foot">
+        <div class="next-card">
+          <div class="lbl">
+            <span data-lang="pt">Próxima →</span
+            ><span data-lang="en">Next →</span>
+          </div>
+          <div class="t">
+            <a href="./0002-the-dojo.html"
+              ><span data-lang="pt">O Dojo: pratique até ficar natural</span
+              ><span data-lang="en"
+                >The Dojo: practice until it's natural</span
+              ></a
+            >
+          </div>
+          <p style="margin: 8px 0 0; font-size: 0.85rem">
+            <span data-lang="pt"
+              >Perguntas aleatórias, um construtor BLUF+STAR, um cronômetro e
+              sua própria biblioteca de histórias salva.</span
+            ><span data-lang="en"
+              >Random questions, a BLUF+STAR builder, a timer, and your own
+              saved story library.</span
+            >
+          </p>
+        </div>
+        <div style="flex: 0 1 220px">
+          <div class="lbl">
+            <span data-lang="pt">Referência</span
+            ><span data-lang="en">Reference</span>
+          </div>
+          <p style="margin: 6px 0 0">
+            <a href="../reference/question-bank.html"
+              ><span data-lang="pt">Banco de perguntas</span
+              ><span data-lang="en">Question bank</span></a
+            >
+            ·
+            <a href="../MISSION.md"
+              ><span data-lang="pt">Missão</span
+              ><span data-lang="en">Mission</span></a
+            >
+          </p>
+        </div>
+      </footer>
+    </article>
+
+    <script>
+      // bilingual quiz wiring — data-correct + per-lang feedback
+      function verdictFor(btn, quiz) {
+        const correct = btn.dataset.correct === "true";
+        const fb = btn.getAttribute(
+          PiI18n.lang === "en" ? "data-fb-en" : "data-fb-pt",
+        );
+        const sec = quiz.id.replace("q", "");
+        const fallback =
+          PiI18n.lang === "en"
+            ? "✗ Not quite — re-read section " + sec + "."
+            : "✗ Quase — releia a seção " + sec + ".";
+        return {
+          ok: correct,
+          text: (correct ? "✓ " : "✗ ") + (fb || fallback),
+        };
+      }
+      function resetQuiz(quiz) {
+        quiz.querySelectorAll(".opt").forEach((b) => {
+          b.classList.remove("correct", "wrong");
+          b.setAttribute("aria-pressed", "false");
+        });
+        const v = quiz.querySelector(".verdict");
+        v.textContent = "";
+        v.className = "verdict";
+      }
+      document.querySelectorAll(".quiz").forEach((quiz) => {
+        quiz.querySelectorAll(".opt").forEach((btn) => {
+          btn.setAttribute("aria-pressed", "false");
+          btn.addEventListener("click", () => {
+            quiz.querySelectorAll(".opt").forEach((b) => {
+              b.classList.remove("correct", "wrong");
+              b.setAttribute("aria-pressed", "false");
+            });
+            const v = verdictFor(btn, quiz);
+            btn.classList.add(v.ok ? "correct" : "wrong");
+            btn.setAttribute("aria-pressed", "true");
+            const verdict = quiz.querySelector(".verdict");
+            verdict.textContent = v.text;
+            verdict.className = "verdict " + (v.ok ? "ok" : "no");
+          });
+        });
+      });
+      // re-render in the new language on switch (i18n.js is deferred, so hook DOMContentLoaded)
+      document.addEventListener("DOMContentLoaded", () =>
+        PiI18n.on(() => document.querySelectorAll(".quiz").forEach(resetQuiz)),
+      );
+    </script>
+  </Fragment>
+</Lesson>

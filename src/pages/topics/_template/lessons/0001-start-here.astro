@@ -1,0 +1,84 @@
+---
+// Scaffold for new lessons — copy to src/pages/topics/<topic>/lessons/,
+// fill the {placeholders}, then register per AGENTS.md (nav.js, README, hub, chain).
+// Build URL is unchanged: 0001-start-here.astro → 0001-start-here.html.
+import Lesson from "../../../../layouts/Lesson.astro";
+
+const titlePt = "{Tópico} · Lição 1";
+const titleEn = "{Topic} · Lesson 1";
+const titleFallback = "{Tópico} · Lição 1";
+const assets = [
+	'<link rel="stylesheet" href="../assets/style.css" />',
+	'<link rel="stylesheet" href="../assets/dark.css" />',
+	'<link rel="stylesheet" href="../assets/i18n.css" />',
+	'<script src="../assets/i18n.js" defer></script>',
+	'<script src="../assets/reading-ui.js" defer></script>',
+];
+---
+<Lesson
+	titlePt={titlePt}
+	titleEn={titleEn}
+	titleFallback={titleFallback}
+	assets={assets}
+>
+	<Fragment is:raw>
+    <article class="lesson">
+      <header class="hero">
+        <span class="eyebrow">
+          <span data-lang="pt">⬡ {Tópico} · Fundamentos</span>
+          <span data-lang="en">⬡ {Topic} · Fundamentals</span>
+        </span>
+        <h1>
+          <span data-lang="pt">{Uma promessa clara para esta lição.}</span>
+          <span data-lang="en">{One clear promise for this lesson.}</span>
+        </h1>
+        <p class="lead">
+          <span data-lang="pt">
+            {Explique o resultado da lição. Use
+            <strong>uma frase importante</strong>
+            por parágrafo para permitir leitura rápida.}
+          </span>
+          <span data-lang="en">
+            {Explain the lesson outcome. Use
+            <strong>one important phrase</strong>
+            per paragraph for easy skimming.}
+          </span>
+        </p>
+      </header>
+
+      <h2 class="section">
+        <span class="num">1</span>
+        <span data-lang="pt">{Primeiro conceito}</span>
+        <span data-lang="en">{First concept}</span>
+      </h2>
+      <p class="kicker">
+        <span data-lang="pt">{Contexto curto para orientar a seção.}</span>
+        <span data-lang="en">{Short context that orients the section.}</span>
+      </p>
+      <p>
+        <span data-lang="pt">
+          {Ensine uma ideia por parágrafo e destaque somente
+          <strong>a ideia que deve sobreviver</strong>.}
+        </span>
+        <span data-lang="en">
+          {Teach one idea per paragraph and highlight only
+          <strong>the idea that should survive</strong>.}
+        </span>
+      </p>
+
+      <div class="callout key">
+        <span data-lang="pt">{Resumo ou regra de decisão.}</span>
+        <span data-lang="en">{Summary or decision rule.}</span>
+      </div>
+
+      <footer class="lesson-foot">
+        <span data-lang="pt"
+          >Fontes: <a href="../RESOURCES.md">recursos</a>.</span
+        >
+        <span data-lang="en"
+          >Sources: <a href="../RESOURCES.md">resources</a>.</span
+        >
+      </footer>
+    </article>
+	</Fragment>
+</Lesson>

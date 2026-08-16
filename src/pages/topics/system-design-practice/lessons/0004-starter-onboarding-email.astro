@@ -1,0 +1,443 @@
+---
+// Migrated verbatim from public/topics/system-design-practice/lessons/0004-starter-onboarding-email.html (URL unchanged: builds to 0004-starter-onboarding-email.html).
+// Body is is:raw: braces/inline scripts/JSON blocks pass through untouched.
+import Lesson from "../../../../layouts/Lesson.astro";
+const titlePt = "Brief L1–2 — Onboarding + email (ClearOne)";
+const titleEn = "Brief L1–2 — Onboarding + email (ClearOne)";
+const titleFallback = "Onboarding + email brief";
+const bodyClass = "lang-pt";
+const viewport = "width=device-width,initial-scale=1.0";
+const assets = [
+	"<link rel=\"stylesheet\" href=\"../assets/style.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/dark.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/i18n.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/exercises.css\" />",
+	"<script src=\"../assets/i18n.js\" defer></script>",
+	"<script src=\"../assets/nav.js\" defer></script>",
+	"<script src=\"../assets/exercises.js\" defer></script>",
+];
+
+---
+<Lesson
+	titlePt={titlePt}
+	titleEn={titleEn}
+	titleFallback={titleFallback}
+	bodyClass={bodyClass}
+	viewport={viewport}
+	assets={assets}
+>
+	<Fragment is:raw>
+    <article class="lesson">
+      <header class="hero">
+        <span class="eyebrow"
+          >⬡ Dojo · <span data-lang="pt">Brief L1–2 · ClearOne · 25 min</span
+          ><span data-lang="en">Brief L1–2 · ClearOne · 25 min</span></span
+        >
+        <h1>
+          <span data-lang="pt">Onboarding + email de confirmação.</span
+          ><span data-lang="en">Onboarding + confirmation email.</span>
+        </h1>
+        <p class="lead">
+          <span data-lang="pt"
+            >No nível exato da ClearOne: um formulário React, uma API Node, um
+            banco, e <strong>um passo assíncrono</strong> (enviar email). É o
+            problema que ensina a falar a parte assíncrona sem travar.</span
+          ><span data-lang="en"
+            >Exactly ClearOne's level: a React form, a Node API, a database, and
+            <strong>one async step</strong> (send email). It's the problem that
+            teaches you to talk through the async part without freezing.</span
+          >
+        </p>
+        <p class="lesson-nav-top">
+          ↑
+          <a href="0002-the-difficulty-ladder.html"
+            ><span data-lang="pt">Escada</span
+            ><span data-lang="en">Ladder</span></a
+          >
+          · <span data-lang="pt">próximo:</span
+          ><span data-lang="en">next:</span>
+          <a href="0005-starter-webhook-delivery.html"
+            ><span data-lang="pt">Webhook (Lob)</span
+            ><span data-lang="en">Webhook (Lob)</span></a
+          >
+        </p>
+      </header>
+
+      <div class="callout key">
+        <p>
+          <strong
+            ><span data-lang="pt">O prompt:</span
+            ><span data-lang="en">The prompt:</span></strong
+          >
+          <span data-lang="pt"
+            >“Desenhe o cadastro de um usuário: formulário em várias etapas,
+            salvamos no banco, enviamos um email com link de verificação, o
+            usuário clica e confirma.”</span
+          ><span data-lang="en"
+            >“Design user signup: a multi-step form, we store it, we send an
+            email with a verification link, the user clicks and confirms.”</span
+          >
+        </p>
+      </div>
+
+      <h2 class="section">
+        <span class="num">1</span><span data-lang="pt">Clarifique (2 min)</span
+        ><span data-lang="en">Clarify (2 min)</span>
+      </h2>
+      <ul>
+        <li>
+          <span data-lang="pt"
+            ><strong>Rascunho?</strong> o usuário pode salvar e voltar depois?
+            (se sim, estado “incompleto” no banco).</span
+          ><span data-lang="en"
+            ><strong>Draft?</strong> can the user save and come back? (if yes,
+            an “incomplete” state in the DB).</span
+          >
+        </li>
+        <li>
+          <span data-lang="pt"
+            ><strong>Validação:</strong> email único? senha forte? (índice único
+            no email).</span
+          ><span data-lang="en"
+            ><strong>Validation:</strong> unique email? strong password? (unique
+            index on email).</span
+          >
+        </li>
+        <li>
+          <span data-lang="pt"
+            ><strong>Email:</strong> tem que chegar “agora” ou pode demorar
+            alguns segundos? (pode demorar → assíncrono).</span
+          ><span data-lang="en"
+            ><strong>Email:</strong> must arrive “now” or can it take a few
+            seconds? (can delay → async).</span
+          >
+        </li>
+        <li>
+          <span data-lang="pt"
+            ><strong>Volume:</strong> 100 cadastros/dia? 100k? (muda se precisa
+            de fila).</span
+          ><span data-lang="en"
+            ><strong>Volume:</strong> 100 signups/day? 100k? (changes whether
+            you need a queue).</span
+          >
+        </li>
+      </ul>
+
+      <h2 class="section">
+        <span class="num">2</span
+        ><span data-lang="pt">O modelo de dados (3 min)</span
+        ><span data-lang="en">The data model (3 min)</span>
+      </h2>
+      <div class="code-stage">
+        <pre><code>users(
+  id, email <span style="color:#fbbf24">UNIQUE</span>,
+  password_hash,
+  status <span style="color:#5eead4">-- pending | verified</span>,
+  created_at
+)
+verify_tokens(
+  token <span style="color:#fbbf24">PK</span>,
+  user_id,
+  expires_at,
+  used <span style="color:#5eead4">-- boolean</span>
+)</code></pre>
+      </div>
+      <p>
+        <span data-lang="pt"
+          ><strong>Diga isto:</strong> “O usuário nasce <code>pending</code>. O
+          link carrega um token de uso único com expiração. Quando o token é
+          validado, o usuário vira <code>verified</code>.”</span
+        ><span data-lang="en"
+          ><strong>Say this:</strong> “The user is born <code>pending</code>.
+          The link carries a single-use token with an expiry. When the token is
+          validated, the user becomes <code>verified</code>.”</span
+        >
+      </p>
+
+      <h2 class="section">
+        <span class="num">3</span
+        ><span data-lang="pt"
+          >Desenhe (5 min) — a parte assíncrona é o ponto</span
+        ><span data-lang="en">Draw (5 min) — the async part is the point</span>
+      </h2>
+      <div class="scroll-x" style="margin: 18px 0">
+        <svg
+          viewBox="0 0 720 260"
+          width="100%"
+          style="min-width: 660px"
+          role="img"
+          aria-labelledby="ob-t"
+        >
+          <title
+            id="ob-t"
+            data-pt="React → API Node → DB; API publica email numa fila; worker envia via SES"
+            data-en="React → Node API → DB; API publishes email to a queue; a worker sends via SES"
+          >
+            Onboarding
+          </title>
+          <defs>
+            <marker
+              id="oba"
+              markerWidth="8"
+              markerHeight="8"
+              refX="6"
+              refY="3"
+              orient="auto"
+            >
+              <path d="M0,0 L0,6 L7,3 z" fill="#8b6ff7" />
+            </marker>
+          </defs>
+          <g font-family="Space Grotesk" font-size="12" font-weight="700">
+            <rect
+              x="15"
+              y="100"
+              width="80"
+              height="44"
+              rx="10"
+              fill="#211d33"
+              stroke="#2dd4bf"
+            />
+            <text x="55" y="127" fill="#2dd4bf" text-anchor="middle">
+              React
+            </text>
+            <rect
+              x="150"
+              y="100"
+              width="90"
+              height="44"
+              rx="10"
+              fill="#211d33"
+              stroke="#8b6ff7"
+            />
+            <text x="195" y="127" fill="#8b6ff7" text-anchor="middle">
+              API Node
+            </text>
+            <rect
+              x="300"
+              y="100"
+              width="80"
+              height="44"
+              rx="10"
+              fill="#2a1207"
+              stroke="#f59e0b"
+            />
+            <text x="340" y="127" fill="#fbbf24" text-anchor="middle">DB</text>
+            <rect
+              x="300"
+              y="185"
+              width="90"
+              height="40"
+              rx="9"
+              fill="#0c2a27"
+              stroke="#2dd4bf"
+            />
+            <text x="345" y="210" fill="#2dd4bf" text-anchor="middle">
+              fila
+            </text>
+            <rect
+              x="450"
+              y="185"
+              width="90"
+              height="40"
+              rx="9"
+              fill="#211d33"
+              stroke="#8b6ff7"
+            />
+            <text x="495" y="210" fill="#8b6ff7" text-anchor="middle">
+              worker
+            </text>
+            <rect
+              x="590"
+              y="185"
+              width="100"
+              height="40"
+              rx="9"
+              fill="#2a1207"
+              stroke="#f59e0b"
+            />
+            <text x="640" y="210" fill="#fbbf24" text-anchor="middle">
+              SES/email
+            </text>
+          </g>
+          <g
+            stroke="#8b6ff7"
+            stroke-width="2"
+            fill="none"
+            marker-end="url(#oba)"
+          >
+            <path d="M95 122 H150" />
+            <path d="M240 122 H300" />
+          </g>
+          <g
+            stroke="#2dd4bf"
+            stroke-width="2"
+            fill="none"
+            stroke-dasharray="4 4"
+            marker-end="url(#oba)"
+          >
+            <path d="M195 144 V205 H300" />
+            <path d="M390 205 H450" />
+            <path d="M540 205 H590" />
+          </g>
+        </svg>
+      </div>
+      <p>
+        <span data-lang="pt"
+          ><strong>Narração-chave (a parte que decide a vaga):</strong> “A API
+          grava o usuário e publica o email numa fila, <em>sem esperar</em>. Um
+          worker pega da fila e chama o serviço de email. Assim o cadastro
+          responde rápido mesmo se o email demorar — e se o email falhar, a fila
+          reenvia.”</span
+        ><span data-lang="en"
+          ><strong>Key narration (the part that decides the hire):</strong> “The
+          API stores the user and publishes the email to a queue,
+          <em>without waiting</em>. A worker pulls from the queue and calls the
+          email service. So signup responds fast even if email is slow — and if
+          email fails, the queue retries.”</span
+        >
+      </p>
+      <div class="callout warn">
+        <p>
+          <span data-lang="pt"
+            ><strong>Armadilha clássica (não caia):</strong> chamar o serviço de
+            email <em>síncrono</em> dentro do request. Se o SES cair, o cadastro
+            inteiro falha por causa do email. Async desacopla.</span
+          ><span data-lang="en"
+            ><strong>Classic trap (don't fall):</strong> calling the email
+            service <em>synchronously</em> inside the request. If SES is down,
+            the whole signup fails because of email. Async decouples it.</span
+          >
+        </p>
+      </div>
+
+      <h2 class="section">
+        <span class="num">4</span
+        ><span data-lang="pt">Falhas neste nível (fale 2)</span
+        ><span data-lang="en">Failures at this level (state 2)</span>
+      </h2>
+      <div class="ex classify" id="ex-ob">
+        <div class="ex-head">
+          <h3>
+            <span data-lang="pt"
+              >O usuário clica em “reenviar email” 5×. O que previne spam?</span
+            ><span data-lang="en"
+              >The user clicks “resend email” 5×. What prevents spam?</span
+            >
+          </h3>
+        </div>
+        <div
+          class="ex-item"
+          data-correct="idem"
+          data-explain-pt="Marque o token como usado depois do primeiro envio bem-sucedido; reenvios geram um novo token e invalidam o anterior (idempotência por usuário)."
+          data-explain-en="Mark the token used after the first successful send; resends generate a new token and invalidate the previous one (per-user idempotency)."
+        >
+          <div class="ex-stem">
+            <span data-lang="pt">Como tornar o reenvio seguro?</span
+            ><span data-lang="en">How do you make resend safe?</span>
+          </div>
+          <div class="ex-opts">
+            <button class="ex-opt" data-pick="idem">
+              <span data-lang="pt"
+                >Token de uso único + invalida o anterior</span
+              ><span data-lang="en"
+                >Single-use token + invalidate the previous</span
+              ></button
+            ><button class="ex-opt" data-pick="spam">
+              <span data-lang="pt">Deixa enviar 5× mesmo</span
+              ><span data-lang="en">Let it send 5× anyway</span>
+            </button>
+          </div>
+          <div class="ex-fb"></div>
+        </div>
+      </div>
+      <details>
+        <summary>
+          <span data-lang="pt">Resposta completa (só depois de tentar)</span
+          ><span data-lang="en">Full answer (only after attempting)</span>
+        </summary>
+        <ul>
+          <li>
+            <span data-lang="pt"
+              ><strong>Email assíncrono via fila</strong> (SQS/Redis/queue
+              nativa do serverless) → cadastro rápido, retry automático.</span
+            ><span data-lang="en"
+              ><strong>Async email via a queue</strong> (SQS/Redis/native
+              serverless queue) → fast signup, automatic retry.</span
+            >
+          </li>
+          <li>
+            <span data-lang="pt"
+              ><strong>Idempotência:</strong> token de uso único;
+              <code>used=true</code> depois do clique; expiração (ex.:
+              24h).</span
+            ><span data-lang="en"
+              ><strong>Idempotency:</strong> single-use token;
+              <code>used=true</code> after click; expiry (e.g. 24h).</span
+            >
+          </li>
+          <li>
+            <span data-lang="pt"
+              ><strong>Falhas:</strong> email service fora (fila + retry), token
+              expirado (regera), duplo submit (índice único +
+              idempotência).</span
+            ><span data-lang="en"
+              ><strong>Failures:</strong> email service down (queue + retry),
+              expired token (regenerate), double submit (unique index +
+              idempotency).</span
+            >
+          </li>
+          <li>
+            <span data-lang="pt"
+              ><strong>Stack ClearOne:</strong> React + Node + AWS Lambda +
+              DynamoDB/Postgres + SES. É literalmente a plataforma deles.</span
+            ><span data-lang="en"
+              ><strong>ClearOne stack:</strong> React + Node + AWS Lambda +
+              DynamoDB/Postgres + SES. That's literally their platform.</span
+            >
+          </li>
+        </ul>
+      </details>
+
+      <h2 class="section">
+        <span class="num">5</span
+        ><span data-lang="pt"
+          >Por que este problema importa para a ClearOne</span
+        ><span data-lang="en">Why this problem matters for ClearOne</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >A vaga pede “plataformas de marketing/onboarding/servicing” em React
+          + Node + AWS serverless. Esse brief <strong>é</strong> esse domínio.
+          Se você narrar bem a parte assíncrona, você demonstra exatamente o
+          sênior que eles querem.</span
+        ><span data-lang="en"
+          >The role asks for “marketing/onboarding/servicing platforms” in React
+          + Node + AWS serverless. This brief <strong>is</strong> that domain.
+          If you narrate the async part well, you demonstrate exactly the senior
+          they want.</span
+        >
+      </p>
+      <div class="callout info">
+        <p>
+          <span data-lang="pt"
+            >🗣️ <strong>Pergunte ao agente:</strong> “me dê a versão serverless
+            disso na AWS” ou “como ficaria com Next.js + Supabase?” para alavar
+            ao stack exato.</span
+          ><span data-lang="en"
+            >🗣️ <strong>Ask the agent:</strong> “give me the serverless AWS
+            version” or “how would it look with Next.js + Supabase?” to pin it
+            to the exact stack.</span
+          >
+        </p>
+      </div>
+      <p class="cite">
+        <span data-lang="pt">Próximo (Lob) →</span
+        ><span data-lang="en">Next (Lob) →</span>
+        <a href="0005-starter-webhook-delivery.html"
+          ><span data-lang="pt">Entrega de webhook</span
+          ><span data-lang="en">Webhook delivery</span></a
+        >
+      </p>
+    </article>
+  </Fragment>
+</Lesson>

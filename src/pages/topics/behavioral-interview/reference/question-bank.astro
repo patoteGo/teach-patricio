@@ -1,0 +1,420 @@
+---
+// Migrated verbatim from public/topics/behavioral-interview/reference/question-bank.html (URL unchanged: builds to question-bank.html).
+// Body is is:raw: braces/inline scripts/JSON blocks pass through untouched.
+import Lesson from "../../../../layouts/Lesson.astro";
+const titlePt = "";
+const titleEn = "";
+const titleFallback = "Behavioral Interview · Question Bank";
+const bodyClass = "";
+const htmlLang = "en";
+const viewport = "width=device-width, initial-scale=1.0";
+const assets = [
+	"<link rel=\"stylesheet\" href=\"../assets/style.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/dark.css\" />",
+	"<script src=\"../assets/reading-ui.js\" defer></script>",
+];
+const pageStyle = ".filterbar {\n        position: sticky;\n        top: 0;\n        z-index: 5;\n        display: flex;\n        flex-wrap: wrap;\n        gap: 8px;\n        margin: 0 -22px 18px;\n        padding: 14px 22px;\n        background: color-mix(in srgb, var(--paper) 92%, transparent);\n        backdrop-filter: blur(8px);\n        border-bottom: 1px solid var(--line);\n      }\n      .chip {\n        cursor: pointer;\n        user-select: none;\n        font:\n          600 0.82rem \"Space Grotesk\",\n          sans-serif;\n        padding: 7px 13px;\n        min-height: 44px;\n        border-radius: 999px;\n        border: 1.5px solid var(--line);\n        background: var(--paper-2);\n        color: var(--ink-soft);\n        transition: all 0.14s ease;\n        display: inline-flex;\n        align-items: center;\n        gap: 7px;\n      }\n      .chip .dot {\n        width: 9px;\n        height: 9px;\n        border-radius: 50%;\n        background: currentColor;\n      }\n      .chip:hover {\n        transform: translateY(-1px);\n      }\n      .chip.active {\n        color: #fff;\n        border-color: transparent;\n        box-shadow: var(--shadow);\n      }\n      .chip[data-filter=\"all\"].active {\n        background: var(--ink);\n      }\n      .chip[data-filter=\"own\"].active {\n        background: #6c4bf0;\n      }\n      .chip[data-filter=\"conflict\"].active {\n        background: #ef476f;\n      }\n      .chip[data-filter=\"fail\"].active {\n        background: #f59e0b;\n      }\n      .chip[data-filter=\"ambig\"].active {\n        background: #0fb9a4;\n      }\n      .chip[data-filter=\"deliv\"].active {\n        background: #3b82f6;\n      }\n      .chip[data-filter=\"team\"].active {\n        background: #8b5cf6;\n      }\n      .chip[data-filter=\"stake\"].active {\n        background: #64748b;\n      }\n      .terms {\n        display: grid;\n        grid-template-columns: repeat(2, 1fr);\n        gap: 12px;\n      }\n      @media (max-width: 720px) {\n        .terms {\n          grid-template-columns: 1fr;\n        }\n      }\n      .term {\n        background: var(--paper-2);\n        border: 1px solid var(--line);\n        border-left-width: 4px;\n        border-radius: 12px;\n        padding: 14px 15px 12px;\n        box-shadow: var(--shadow);\n      }\n      .term .head {\n        display: flex;\n        align-items: baseline;\n        gap: 8px;\n        flex-wrap: wrap;\n      }\n      .term .pill {\n        font: 700 0.6rem \"Space Grotesk\";\n        letter-spacing: 0.1em;\n        text-transform: uppercase;\n        padding: 2px 7px;\n        border-radius: 999px;\n        color: #fff;\n        margin-left: auto;\n      }\n      .term p.q {\n        margin: 0 0 6px;\n        font-weight: 600;\n        font-size: 0.96rem;\n        color: var(--ink);\n      }\n      .term p.test {\n        margin: 2px 0;\n        font-size: 0.85rem;\n        color: var(--ink-soft);\n      }\n      .term p.hook {\n        margin: 6px 0 0;\n        font-size: 0.83rem;\n      }\n      .term p.hook b {\n        color: var(--violet);\n      }\n      .term.hide {\n        display: none;\n      }\n      .count {\n        font-size: 0.82rem;\n        color: var(--ink-soft);\n        margin: 0 0 4px;\n      }";
+
+---
+<Lesson
+	titlePt={titlePt}
+	titleEn={titleEn}
+	titleFallback={titleFallback}
+	bodyClass={bodyClass}
+	htmlLang={htmlLang}
+	viewport={viewport}
+	assets={assets}
+	pageStyle={pageStyle}
+>
+	<Fragment is:raw>
+    <article class="lesson">
+      <header class="hero">
+        <span class="eyebrow">📖 Reference · Question bank</span>
+        <h1>Behavioral questions,<br />decoded.</h1>
+        <p class="lead">
+          The questions senior interviewers actually ask — each with
+          <em>what they're really testing</em> and a BLUF hook to start your
+          answer. Pick 5–8 you can map to real stories (see
+          <a href="../lessons/0001-bluf-star.html">Lesson 1</a>), then drill
+          them in the <a href="../lessons/0002-the-dojo.html">Dojo</a>.
+        </p>
+        <p class="lesson-nav-top">
+          ↑ <a href="../MISSION.md">Mission</a> ·
+          <a href="../lessons/0001-bluf-star.html">Lesson 1 · BLUF+STAR</a>
+        </p>
+      </header>
+
+      <div class="filterbar">
+        <span class="chip active" data-filter="all"
+          ><span class="dot"></span>All</span
+        >
+        <span class="chip" data-filter="own" style="color: #6c4bf0"
+          ><span class="dot"></span>Ownership</span
+        >
+        <span class="chip" data-filter="conflict" style="color: #ef476f"
+          ><span class="dot"></span>Conflict</span
+        >
+        <span class="chip" data-filter="fail" style="color: #f59e0b"
+          ><span class="dot"></span>Failure</span
+        >
+        <span class="chip" data-filter="ambig" style="color: #0fb9a4"
+          ><span class="dot"></span>Ambiguity</span
+        >
+        <span class="chip" data-filter="deliv" style="color: #3b82f6"
+          ><span class="dot"></span>Delivery</span
+        >
+        <span class="chip" data-filter="team" style="color: #8b5cf6"
+          ><span class="dot"></span>Mentorship</span
+        >
+        <span class="chip" data-filter="stake" style="color: #64748b"
+          ><span class="dot"></span>Influence</span
+        >
+      </div>
+
+      <p class="count" id="count"></p>
+      <div class="terms" id="terms">
+        <div class="term" data-cat="own" style="border-left-color: #6c4bf0">
+          <div class="head">
+            <span class="pill" style="background: #6c4bf0">Ownership</span>
+          </div>
+          <p class="q">"Tell me about the project you're most proud of."</p>
+          <p class="test">
+            Tests: ownership, impact, what you value. The #1 most-asked. Have a
+            killer ready.
+          </p>
+          <p class="hook">
+            <b>BLUF hook:</b> "I'm most proud of ___ because it ___ (impact in
+            numbers)."
+          </p>
+        </div>
+        <div class="term" data-cat="own" style="border-left-color: #6c4bf0">
+          <div class="head">
+            <span class="pill" style="background: #6c4bf0">Ownership</span>
+          </div>
+          <p class="q">
+            "Tell me about a time you took initiative beyond your role."
+          </p>
+          <p class="test">Tests: proactivity, ownership beyond your lane.</p>
+          <p class="hook">
+            <b>BLUF hook:</b> "I noticed ___ was broken/no one owned it, so I
+            ___."
+          </p>
+        </div>
+        <div class="term" data-cat="own" style="border-left-color: #6c4bf0">
+          <div class="head">
+            <span class="pill" style="background: #6c4bf0">Ownership</span>
+          </div>
+          <p class="q">"Describe something you owned end-to-end."</p>
+          <p class="test">
+            Tests: can you take a thing from problem → shipped → maintained.
+          </p>
+        </div>
+
+        <div
+          class="term"
+          data-cat="conflict"
+          style="border-left-color: #ef476f"
+        >
+          <div class="head">
+            <span class="pill" style="background: #ef476f">Conflict</span>
+          </div>
+          <p class="q">"Tell me about a time you disagreed with a teammate."</p>
+          <p class="test">
+            Tests: ego, listening, how you resolve technical conflict. Avoid "I
+            was right, they were wrong."
+          </p>
+          <p class="hook">
+            <b>BLUF hook:</b> "We disagreed on ___; I ___ (sought
+            data/listened); we landed on ___."
+          </p>
+        </div>
+        <div
+          class="term"
+          data-cat="conflict"
+          style="border-left-color: #ef476f"
+        >
+          <div class="head">
+            <span class="pill" style="background: #ef476f">Conflict</span>
+          </div>
+          <p class="q">
+            "Tell me about a time you disagreed with your manager or PM."
+          </p>
+          <p class="test">
+            Tests: disagree-and-commit, upward communication, respect.
+          </p>
+          <p class="hook">
+            <b>BLUF hook:</b> "I pushed back on ___ with __ (evidence); once
+            decided, I committed fully."
+          </p>
+        </div>
+        <div
+          class="term"
+          data-cat="conflict"
+          style="border-left-color: #ef476f"
+        >
+          <div class="head">
+            <span class="pill" style="background: #ef476f">Conflict</span>
+          </div>
+          <p class="q">
+            "Tell me about a time you had to convince the team of a technical
+            direction."
+          </p>
+          <p class="test">Tests: influence through evidence, not authority.</p>
+        </div>
+
+        <div class="term" data-cat="fail" style="border-left-color: #f59e0b">
+          <div class="head">
+            <span class="pill" style="background: #f59e0b">Failure</span>
+          </div>
+          <p class="q">
+            "Tell me about a time you failed or made a serious mistake."
+          </p>
+          <p class="test">
+            Tests: self-awareness, blame posture, learning. Real failure + real
+            lesson. No "I work too hard."
+          </p>
+          <p class="hook">
+            <b>BLUF hook:</b> "I broke ___; the root cause was ___; here's what
+            I changed so it can't recur."
+          </p>
+        </div>
+        <div class="term" data-cat="fail" style="border-left-color: #f59e0b">
+          <div class="head">
+            <span class="pill" style="background: #f59e0b">Failure</span>
+          </div>
+          <p class="q">
+            "Tell me about a production incident you caused or handled."
+          </p>
+          <p class="test">
+            Tests: incident maturity, blameless post-mortem thinking,
+            observability.
+          </p>
+        </div>
+        <div class="term" data-cat="fail" style="border-left-color: #f59e0b">
+          <div class="head">
+            <span class="pill" style="background: #f59e0b">Failure</span>
+          </div>
+          <p class="q">"Tell me about a project that didn't go as planned."</p>
+          <p class="test">
+            Tests: course-correction, honesty, what you'd do differently.
+          </p>
+        </div>
+
+        <div class="term" data-cat="ambig" style="border-left-color: #0fb9a4">
+          <div class="head">
+            <span class="pill" style="background: #0fb9a4">Ambiguity</span>
+          </div>
+          <p class="q">
+            "Describe a project where the requirements were unclear."
+          </p>
+          <p class="test">
+            Tests: senior-defining skill — can you <em>define</em> the problem,
+            not just solve a defined one?
+          </p>
+          <p class="hook">
+            <b>BLUF hook:</b> "The goal was clear but the path wasn't; I drove
+            clarity by ___ (proto/data/talking to users)."
+          </p>
+        </div>
+        <div class="term" data-cat="ambig" style="border-left-color: #0fb9a4">
+          <div class="head">
+            <span class="pill" style="background: #0fb9a4">Ambiguity</span>
+          </div>
+          <p class="q">
+            "Tell me about a decision you made with incomplete information."
+          </p>
+          <p class="test">
+            Tests: judgment under uncertainty, reversible-vs-irreversible
+            thinking.
+          </p>
+        </div>
+        <div class="term" data-cat="ambig" style="border-left-color: #0fb9a4">
+          <div class="head">
+            <span class="pill" style="background: #0fb9a4">Ambiguity</span>
+          </div>
+          <p class="q">"How do you prioritize competing demands?"</p>
+          <p class="test">
+            Tests: prioritization framework, saying no, stakeholder management.
+          </p>
+        </div>
+
+        <div class="term" data-cat="deliv" style="border-left-color: #3b82f6">
+          <div class="head">
+            <span class="pill" style="background: #3b82f6">Delivery</span>
+          </div>
+          <p class="q">
+            "Tell me about a time you delivered under a tight deadline."
+          </p>
+          <p class="test">
+            Tests: scope management, what you cut, calm under pressure.
+          </p>
+          <p class="hook">
+            <b>BLUF hook:</b> "We shipped ___ on time by ruthlessly cutting ___;
+            the tradeoff was worth it because ___."
+          </p>
+        </div>
+        <div class="term" data-cat="deliv" style="border-left-color: #3b82f6">
+          <div class="head">
+            <span class="pill" style="background: #3b82f6">Delivery</span>
+          </div>
+          <p class="q">
+            "Tell me about a time you had to ship a tradeoff (speed vs
+            quality)."
+          </p>
+          <p class="test">
+            Tests: pragmatic engineering, not perfectionism. Name what you gave
+            up.
+          </p>
+        </div>
+        <div class="term" data-cat="deliv" style="border-left-color: #3b82f6">
+          <div class="head">
+            <span class="pill" style="background: #3b82f6">Delivery</span>
+          </div>
+          <p class="q">
+            "Tell me about a time you improved performance/scalability."
+          </p>
+          <p class="test">Tests: depth, measurement, before/after numbers.</p>
+        </div>
+
+        <div class="term" data-cat="team" style="border-left-color: #8b5cf6">
+          <div class="head">
+            <span class="pill" style="background: #8b5cf6">Mentorship</span>
+          </div>
+          <p class="q">"Tell me about a time you mentored someone."</p>
+          <p class="test">Tests: multiplier effect, seniority, patience.</p>
+          <p class="hook">
+            <b>BLUF hook:</b> "I helped ___ grow from ___ to ___; the team
+            benefit was ___."
+          </p>
+        </div>
+        <div class="term" data-cat="team" style="border-left-color: #8b5cf6">
+          <div class="head">
+            <span class="pill" style="background: #8b5cf6">Mentorship</span>
+          </div>
+          <p class="q">
+            "Tell me about a time you helped a struggling teammate."
+          </p>
+          <p class="test">Tests: empathy + directness, giving hard feedback.</p>
+        </div>
+        <div class="term" data-cat="team" style="border-left-color: #8b5cf6">
+          <div class="head">
+            <span class="pill" style="background: #8b5cf6">Mentorship</span>
+          </div>
+          <p class="q">
+            "Tell me about a time you improved a team process or culture."
+          </p>
+          <p class="test">
+            Tests: systems thinking, lifting the whole team, not just yourself.
+          </p>
+        </div>
+
+        <div class="term" data-cat="stake" style="border-left-color: #64748b">
+          <div class="head">
+            <span class="pill" style="background: #64748b">Influence</span>
+          </div>
+          <p class="q">
+            "Tell me about a time you aligned cross-functional stakeholders."
+          </p>
+          <p class="test">
+            Tests: communication across PM/design/other teams, negotiation.
+          </p>
+        </div>
+        <div class="term" data-cat="stake" style="border-left-color: #64748b">
+          <div class="head">
+            <span class="pill" style="background: #64748b">Influence</span>
+          </div>
+          <p class="q">
+            "Tell me about a time you explained a complex technical issue to
+            non-technical people."
+          </p>
+          <p class="test">
+            Tests: BLUF in the wild — can you make the complex simple?
+          </p>
+          <p class="hook">
+            <b>BLUF hook:</b> Literally lead with the bottom line. This question
+            <em>is</em> the BLUF test.
+          </p>
+        </div>
+        <div class="term" data-cat="stake" style="border-left-color: #64748b">
+          <div class="head">
+            <span class="pill" style="background: #64748b">Influence</span>
+          </div>
+          <p class="q">
+            "Tell me about a time you influenced without authority."
+          </p>
+          <p class="test">
+            Tests: persuasion via data/trust/relationships, not title.
+          </p>
+        </div>
+      </div>
+
+      <div class="callout key" style="margin-top: 22px">
+        <p>
+          <strong>The one-question-from-each-category rule:</strong> if you
+          prepare one strong story for <em>each</em> of these 7 categories, you
+          can answer ~90% of behavioral questions by reframing. Same story,
+          different angle. That's the whole game.
+        </p>
+      </div>
+      <p class="cite">
+        Sources:
+        <a
+          href="https://www.indeed.com/career-advice/interviewing/senior-software-engineer-interview-questions"
+          target="_blank"
+          rel="noopener"
+          >Indeed — Senior SWE questions</a
+        >
+        ·
+        <a
+          href="https://www.amazon.jobs/content/en/how-we-hire/sde-iii-interview-prep"
+          target="_blank"
+          rel="noopener"
+          >Amazon SDE-III prep</a
+        >.
+      </p>
+
+      <footer class="lesson-foot">
+        <div class="next-card">
+          <div class="lbl">Practice →</div>
+          <div class="t">
+            <a href="../lessons/0002-the-dojo.html">The Dojo</a>
+          </div>
+          <p style="margin: 8px 0 0; font-size: 0.85rem">
+            Random question, BLUF+STAR builder, timer, your saved story library.
+          </p>
+        </div>
+        <div>
+          <div class="lbl">Course</div>
+          <p style="margin: 6px 0 0">
+            <a href="../lessons/0001-bluf-star.html">Lesson 1 · BLUF+STAR</a> ·
+            <a href="../MISSION.md">Mission</a>
+          </p>
+        </div>
+      </footer>
+    </article>
+
+    <script>
+      const chips = document.querySelectorAll(".chip"),
+        terms = document.querySelectorAll(".term"),
+        count = document.getElementById("count");
+      function update(n) {
+        count.textContent = n + (n === 1 ? " question" : " questions");
+      }
+      update(terms.length);
+      chips.forEach((chip) =>
+        chip.addEventListener("click", () => {
+          chips.forEach((c) => c.classList.remove("active"));
+          chip.classList.add("active");
+          const f = chip.dataset.filter;
+          let shown = 0;
+          terms.forEach((t) => {
+            const m = f === "all" || t.dataset.cat === f;
+            t.classList.toggle("hide", !m);
+            if (m) shown++;
+          });
+          update(shown);
+        }),
+      );
+    </script>
+  </Fragment>
+</Lesson>

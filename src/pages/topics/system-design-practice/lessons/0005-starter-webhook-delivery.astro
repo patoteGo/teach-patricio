@@ -1,0 +1,499 @@
+---
+// Migrated verbatim from public/topics/system-design-practice/lessons/0005-starter-webhook-delivery.html (URL unchanged: builds to 0005-starter-webhook-delivery.html).
+// Body is is:raw: braces/inline scripts/JSON blocks pass through untouched.
+import Lesson from "../../../../layouts/Lesson.astro";
+const titlePt = "Brief L2 — Entrega de webhook (Lob)";
+const titleEn = "Brief L2 — Webhook delivery (Lob)";
+const titleFallback = "Webhook delivery brief";
+const bodyClass = "lang-pt";
+const viewport = "width=device-width,initial-scale=1.0";
+const assets = [
+	"<link rel=\"stylesheet\" href=\"../assets/style.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/dark.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/i18n.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/exercises.css\" />",
+	"<script src=\"../assets/i18n.js\" defer></script>",
+	"<script src=\"../assets/nav.js\" defer></script>",
+	"<script src=\"../assets/exercises.js\" defer></script>",
+];
+
+---
+<Lesson
+	titlePt={titlePt}
+	titleEn={titleEn}
+	titleFallback={titleFallback}
+	bodyClass={bodyClass}
+	viewport={viewport}
+	assets={assets}
+>
+	<Fragment is:raw>
+    <article class="lesson">
+      <header class="hero">
+        <span class="eyebrow"
+          >⬡ Dojo · <span data-lang="pt">Brief L2 · Lob · 25 min</span
+          ><span data-lang="en">Brief L2 · Lob · 25 min</span></span
+        >
+        <h1>
+          <span data-lang="pt">“Avise-me quando minha carta for entregue.”</span
+          ><span data-lang="en">“Notify me when my letter is delivered.”</span>
+        </h1>
+        <p class="lead">
+          <span data-lang="pt"
+            >O domínio da Lob: um evento acontece (carta entregue), você chama a
+            URL do cliente de forma confiável.
+            <strong
+              >Aqui você aprende retry, idempotência e dead-letter — sem
+              concorrência.</strong
+            ></span
+          ><span data-lang="en"
+            >Lob's domain: an event happens (letter delivered), you call the
+            customer's URL reliably.
+            <strong
+              >Here you learn retry, idempotency, and dead-letter — without
+              concurrency.</strong
+            ></span
+          >
+        </p>
+        <p class="lesson-nav-top">
+          ↑
+          <a href="0002-the-difficulty-ladder.html"
+            ><span data-lang="pt">Escada</span
+            ><span data-lang="en">Ladder</span></a
+          >
+        </p>
+      </header>
+
+      <div class="callout key">
+        <p>
+          <strong
+            ><span data-lang="pt">O prompt:</span
+            ><span data-lang="en">The prompt:</span></strong
+          >
+          <span data-lang="pt"
+            >“Nossos clientes registram uma URL de webhook. Quando o status de
+            uma correspondência muda (enviada, em trânsito, entregue), chamamos
+            essa URL. Como desenhar isso de forma confiável?”</span
+          ><span data-lang="en"
+            >“Our customers register a webhook URL. When a mailpiece's status
+            changes (sent, in transit, delivered), we call that URL. How do you
+            design this reliably?”</span
+          >
+        </p>
+      </div>
+
+      <h2 class="section">
+        <span class="num">1</span><span data-lang="pt">Clarifique (2 min)</span
+        ><span data-lang="en">Clarify (2 min)</span>
+      </h2>
+      <ul>
+        <li>
+          <span data-lang="pt"
+            ><strong>Quantos webhooks?</strong> mil clientes? milhões de
+            eventos?</span
+          ><span data-lang="en"
+            ><strong>How many webhooks?</strong> a thousand customers? millions
+            of events?</span
+          >
+        </li>
+        <li>
+          <span data-lang="pt"
+            ><strong>Retry:</strong> se a URL do cliente cair, tentamos de novo?
+            quantas vezes?</span
+          ><span data-lang="en"
+            ><strong>Retry:</strong> if the customer's URL is down, do we retry?
+            how many times?</span
+          >
+        </li>
+        <li>
+          <span data-lang="pt"
+            ><strong>Ordem:</strong> os eventos precisam chegar em ordem?
+            (geralmente não, mas pergunte).</span
+          ><span data-lang="en"
+            ><strong>Order:</strong> must events arrive in order? (usually no,
+            but ask.)</span
+          >
+        </li>
+        <li>
+          <span data-lang="pt"
+            ><strong>Segurança:</strong> como o cliente sabe que fomos nós?
+            (assinatura HMAC).</span
+          ><span data-lang="en"
+            ><strong>Security:</strong> how does the customer know it's us?
+            (HMAC signature.)</span
+          >
+        </li>
+      </ul>
+
+      <h2 class="section">
+        <span class="num">2</span
+        ><span data-lang="pt">O coração: outbox + worker</span
+        ><span data-lang="en">The core: outbox + worker</span>
+      </h2>
+      <p class="kicker">
+        <span data-lang="pt"
+          >O padrão-chave deste nível:
+          <strong>não chame o webhook síncrono</strong>. Grave o evento numa
+          tabela “outbox”; um worker puxa e entrega.</span
+        ><span data-lang="en"
+          >The key pattern at this level:
+          <strong>don't call the webhook synchronously</strong>. Write the event
+          to an “outbox” table; a worker pulls and delivers.</span
+        >
+      </p>
+      <div class="scroll-x" style="margin: 18px 0">
+        <svg
+          viewBox="0 0 720 240"
+          width="100%"
+          style="min-width: 660px"
+          role="img"
+          aria-labelledby="wh-t"
+        >
+          <title
+            id="wh-t"
+            data-pt="Evento → outbox → worker → POST assinado para o cliente; retry com backoff"
+            data-en="Event → outbox → worker → signed POST to customer; retry with backoff"
+          >
+            Webhook
+          </title>
+          <defs>
+            <marker
+              id="wha"
+              markerWidth="8"
+              markerHeight="8"
+              refX="6"
+              refY="3"
+              orient="auto"
+            >
+              <path d="M0,0 L0,6 L7,3 z" fill="#8b6ff7" />
+            </marker>
+          </defs>
+          <g font-family="Space Grotesk" font-size="12" font-weight="700">
+            <rect
+              x="15"
+              y="95"
+              width="90"
+              height="46"
+              rx="10"
+              fill="#2a1207"
+              stroke="#f59e0b"
+            />
+            <text x="60" y="122" fill="#fbbf24" text-anchor="middle">
+              status do correio
+            </text>
+            <rect
+              x="150"
+              y="95"
+              width="90"
+              height="46"
+              rx="10"
+              fill="#2a1207"
+              stroke="#f59e0b"
+            />
+            <text x="195" y="115" fill="#fbbf24" text-anchor="middle">
+              tabela
+            </text>
+            <text x="195" y="132" fill="#fbbf24" text-anchor="middle">
+              outbox
+            </text>
+            <rect
+              x="290"
+              y="95"
+              width="80"
+              height="46"
+              rx="10"
+              fill="#211d33"
+              stroke="#8b6ff7"
+            />
+            <text x="330" y="122" fill="#8b6ff7" text-anchor="middle">
+              worker
+            </text>
+            <rect
+              x="420"
+              y="95"
+              width="100"
+              height="46"
+              rx="10"
+              fill="#211d33"
+              stroke="#2dd4bf"
+            />
+            <text x="470" y="122" fill="#2dd4bf" text-anchor="middle">
+              URL do cliente
+            </text>
+            <rect
+              x="570"
+              y="95"
+              width="120"
+              height="46"
+              rx="10"
+              fill="#2c1622"
+              stroke="#fb7185"
+            />
+            <text x="630" y="115" fill="#fb7185" text-anchor="middle">
+              dead-letter
+            </text>
+            <text x="630" y="132" fill="#fb7185" text-anchor="middle">
+              (após N falhas)
+            </text>
+          </g>
+          <g
+            stroke="#8b6ff7"
+            stroke-width="2"
+            fill="none"
+            marker-end="url(#wha)"
+          >
+            <path d="M105 118 H150" />
+            <path d="M240 118 H290" />
+            <path d="M370 118 H420" />
+          </g>
+          <g
+            stroke="#fb7185"
+            stroke-width="2"
+            fill="none"
+            stroke-dasharray="4 4"
+            marker-end="url(#wha)"
+          >
+            <path d="M330 141 V185 H630 V141" />
+          </g>
+        </svg>
+      </div>
+      <p>
+        <span data-lang="pt"
+          ><strong>Narração:</strong> “Quando o status muda, gravo uma linha no
+          outbox:
+          <code>(event_id, customer, payload, status=pending, attempts=0)</code
+          >. Um worker puxa os pending, faz um <code>POST</code> assinado para a
+          URL do cliente. Em sucesso, marca delivered. Em falha, incrementa
+          tentativas com backoff; após N, manda pra dead-letter e alerta.”</span
+        ><span data-lang="en"
+          ><strong>Narration:</strong> “When the status changes, I write a row
+          to the outbox:
+          <code>(event_id, customer, payload, status=pending, attempts=0)</code
+          >. A worker pulls pending rows, makes a signed <code>POST</code> to
+          the customer's URL. On success, mark delivered. On failure, increment
+          attempts with backoff; after N, send to dead-letter and alert.”</span
+        >
+      </p>
+
+      <h2 class="section">
+        <span class="num">3</span
+        ><span data-lang="pt">As duas garantias que valem a entrevista</span
+        ><span data-lang="en">The two guarantees that win the interview</span>
+      </h2>
+      <div class="ex classify" id="ex-wh">
+        <div class="ex-head">
+          <h3>
+            <span data-lang="pt">Qual garantia o webhook pode dar?</span
+            ><span data-lang="en">What guarantee can the webhook give?</span>
+          </h3>
+        </div>
+        <div
+          class="ex-item"
+          data-correct="atleast"
+          data-explain-pt="É honesto prometer “pelo menos uma vez” (at-least-once): pode duplicar, então o cliente deduplica por event_id. Prometer “exatamente uma vez” na rede é caro e frágil."
+          data-explain-en="It's honest to promise “at least once”: it may duplicate, so the customer dedupes by event_id. Promising “exactly once” over the network is expensive and fragile."
+        >
+          <div class="ex-stem">
+            <span data-lang="pt">Qual semântica de entrega você promete?</span
+            ><span data-lang="en">What delivery semantics do you promise?</span>
+          </div>
+          <div class="ex-opts">
+            <button class="ex-opt" data-pick="exactly">
+              <span data-lang="pt">Exatamente uma vez</span
+              ><span data-lang="en">Exactly once</span></button
+            ><button class="ex-opt" data-pick="atleast">
+              <span data-lang="pt">Pelo menos uma vez (cliente deduplica)</span
+              ><span data-lang="en">At least once (customer dedupes)</span>
+            </button>
+          </div>
+          <div class="ex-fb"></div>
+        </div>
+      </div>
+      <div class="callout tip">
+        <p>
+          <strong
+            ><span data-lang="pt">Idempotência = a frase que abre portas:</span
+            ><span data-lang="en"
+              >Idempotency = the phrase that opens doors:</span
+            ></strong
+          >
+          <span data-lang="pt"
+            >“Assino o payload com HMAC e incluo um <code>event_id</code>; o
+            cliente deve ser idempotente — se receber o mesmo
+            <code>event_id</code> de novo, ignora.” Dizer isso demonstra
+            maturidade sênior.</span
+          ><span data-lang="en"
+            >“I sign the payload with HMAC and include an <code>event_id</code>;
+            the customer must be idempotent — if it sees the same
+            <code>event_id</code> again, it ignores it.” Saying that signals
+            senior maturity.</span
+          >
+        </p>
+      </div>
+
+      <h2 class="section">
+        <span class="num">4</span
+        ><span data-lang="pt">Falhas neste nível (fale 3)</span
+        ><span data-lang="en">Failures at this level (state 3)</span>
+      </h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>
+                <span data-lang="pt">Falha</span
+                ><span data-lang="en">Failure</span>
+              </th>
+              <th>
+                <span data-lang="pt">Resposta</span
+                ><span data-lang="en">Response</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <span data-lang="pt">URL do cliente fora</span
+                ><span data-lang="en">Customer URL down</span>
+              </td>
+              <td>
+                <span data-lang="pt"
+                  >retry com backoff exponencial (1s, 2s, 4s…)</span
+                ><span data-lang="en"
+                  >retry with exponential backoff (1s, 2s, 4s…)</span
+                >
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="pt">URL sempre quebra (veneno)</span
+                ><span data-lang="en">URL always breaks (poison)</span>
+              </td>
+              <td>
+                <span data-lang="pt"
+                  >após N tentativas → dead-letter + alerta humano</span
+                ><span data-lang="en"
+                  >after N attempts → dead-letter + human alert</span
+                >
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="pt">Entrega duplicada</span
+                ><span data-lang="en">Duplicate delivery</span>
+              </td>
+              <td>
+                <span data-lang="pt">event_id + cliente idempotente</span
+                ><span data-lang="en">event_id + idempotent customer</span>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="pt">Worker cai no meio</span
+                ><span data-lang="en">Worker crashes mid-delivery</span>
+              </td>
+              <td>
+                <span data-lang="pt"
+                  >linha volta a pending; reprocessa (at-least-once)</span
+                ><span data-lang="en"
+                  >row goes back to pending; reprocessed (at-least-once)</span
+                >
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <details>
+        <summary>
+          <span data-lang="pt">Resposta completa (só depois de tentar)</span
+          ><span data-lang="en">Full answer (only after attempting)</span>
+        </summary>
+        <ul>
+          <li>
+            <span data-lang="pt"
+              ><strong>Outbox:</strong> tabela no seu DB grava o evento na mesma
+              transação que muda o status → não perde eventos se o worker
+              cair.</span
+            ><span data-lang="en"
+              ><strong>Outbox:</strong> a table in your DB writes the event in
+              the same transaction that changes status → no lost events if the
+              worker crashes.</span
+            >
+          </li>
+          <li>
+            <span data-lang="pt"
+              ><strong>Worker:</strong> puxa pending, POST assinado, marca
+              delivered/retry. Backoff exponencial com jitter.</span
+            ><span data-lang="en"
+              ><strong>Worker:</strong> pulls pending, signed POST, marks
+              delivered/retry. Exponential backoff with jitter.</span
+            >
+          </li>
+          <li>
+            <span data-lang="pt"
+              ><strong>Segurança:</strong> HMAC no corpo + timestamp; o cliente
+              verifica.</span
+            ><span data-lang="en"
+              ><strong>Security:</strong> HMAC over body + timestamp; the
+              customer verifies.</span
+            >
+          </li>
+          <li>
+            <span data-lang="pt"
+              ><strong>Semântica:</strong> at-least-once. Idempotência pelo
+              event_id. Seja honesto: “exactly-once” na rede não existe de
+              graça.</span
+            ><span data-lang="en"
+              ><strong>Semantics:</strong> at-least-once. Idempotency by
+              event_id. Be honest: “exactly-once” over the network isn't
+              free.</span
+            >
+          </li>
+        </ul>
+      </details>
+
+      <h2 class="section">
+        <span class="num">5</span
+        ><span data-lang="pt">Por que este problema importa para a Lob</span
+        ><span data-lang="en">Why this problem matters for Lob</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >A Lob entrega eventos de correspondência via webhook para 12.000+
+          empresas. Se você desenhar o outbox + worker + retry + idempotência e
+          disser as palavras <strong>“at-least-once”</strong> e
+          <strong>“assinatura HMAC”</strong>, você está falando a língua deles.
+          Isso é o coração do produto.</span
+        ><span data-lang="en"
+          >Lob delivers mail events via webhook to 12,000+ companies. If you
+          draw outbox + worker + retry + idempotency and say the words
+          <strong>“at-least-once”</strong> and
+          <strong>“HMAC signature”</strong>, you're speaking their language.
+          That's the heart of the product.</span
+        >
+      </p>
+      <div class="callout info">
+        <p>
+          <span data-lang="pt"
+            >🗣️ <strong>Pergunte ao agente:</strong> “me dê a versão disso em
+            Node + SQS + Lambda” para alavar ao stack, ou “como fica se eu tiver
+            milhões de webhooks?” para o próximo nível.</span
+          ><span data-lang="en"
+            >🗣️ <strong>Ask the agent:</strong> “give me the Node + SQS + Lambda
+            version” to pin the stack, or “how does it change at millions of
+            webhooks?” for the next level.</span
+          >
+        </p>
+      </div>
+      <p class="cite">
+        <span data-lang="pt">Depois de firme aqui, suba para o</span
+        ><span data-lang="en">Once solid here, climb to the</span>
+        <a href="0001-draw-and-talk.html"
+          ><span data-lang="pt">leilão (L4)</span
+          ><span data-lang="en">auction (L4)</span></a
+        >
+        <span data-lang="pt">— vai parecer muito mais fácil.</span
+        ><span data-lang="en">— it'll feel much easier.</span>
+      </p>
+    </article>
+  </Fragment>
+</Lesson>
