@@ -1,0 +1,300 @@
+---
+import Pattern from "../Pattern.astro";
+import T from "../T.astro";
+---
+
+<!-- P5 · Rate limiter: atomic counter (L2) -->
+<Pattern
+  id="p5"
+  num="P5"
+  lvl={2}
+  titlePt={`Rate limiter: contador atômico`}
+  titleEn={`Rate limiter: atomic counter`}
+  kickerPt={`"Máximo 100 pedidos por minuto por usuário." Redis é uma opção
+            comum e de baixa latência para esse
+            <em>contador compartilhado</em> atômico.`}
+  kickerEn={`"Max 100 requests per minute per user." Redis is a common
+            low-latency store for this atomic <em>shared counter</em>.`}
+  tipPt={`<strong>Fale enquanto desenha:</strong> "Cada pedido roda INCR +
+              EXPIRE atômicos no Redis — o EXPIRE só quando o contador nasce — e
+              o Redis devolve o count. A API decide: passou de 100 no minuto?
+              429, sem tocar o resto do sistema. O Redis é compartilhado — não
+              importa em qual instância o pedido caiu."`}
+  tipEn={`<strong>Say while drawing:</strong> "Each request runs an atomic
+              INCR + EXPIRE in Redis — EXPIRE only when the counter is born —
+              and Redis returns the count. The API decides: over 100 in the
+              minute? 429, without touching the rest of the system. Redis is
+              shared — it doesn't matter which instance got the request."`}
+  whyPt={`<strong>Por quê Redis:</strong> "checar e incrementar" precisa
+              ser <em>uma</em> operação atômica — em duas chamadas separadas,
+              duas instâncias leem 99 ao mesmo tempo e deixam passar 101.
+              Contador em linha do Postgres criaria lock por usuário a cada
+              request. O Lua é mínimo: INCR; se count == 1, EXPIRE — a janela
+              nasce no 1º hit e não reseta a cada request — e o Redis devolve o
+              count; a API decide: ≤ 100 segue, > 100 responde 429 com
+              <em>Retry-After</em> e <em>RateLimit / RateLimit-Policy</em>.
+              <em>Tradeoff pronto:</em> janela fixa permite rajada na virada
+              (200 em torno do limite); janela deslizante evita essa borda, e
+              token bucket troca a borda por uma rajada configurável.`}
+  whyEn={`<strong>Why Redis:</strong> "check and increment" must be
+              <em>one</em> atomic operation — in two separate calls, two
+              instances both read 99 and let 101 through. A counter row in
+              Postgres would create a per-user lock on every request. The Lua is
+              minimal: INCR; if count == 1, EXPIRE — the window is born on the
+              first hit, not reset per request — and Redis returns the count;
+              the API decides: ≤ 100 continues, > 100 answers 429 with
+              <em>Retry-After</em> and <em>RateLimit / RateLimit-Policy</em>.
+              <em>Ready tradeoff:</em> a fixed window permits a boundary burst
+              (200 around the minute edge); a sliding window avoids that edge,
+              while a token bucket replaces it with configurable burst
+              capacity.`}
+>
+  <Fragment slot="dia" set:html={`<svg
+              viewBox="0 0 720 290"
+              width="100%"
+              style="min-width: 620px"
+              role="img"
+              aria-labelledby="p5t"
+            >
+              <title
+                id="p5t"
+                data-pt="Cliente → API ×N → Redis (INCR atômico + EXPIRE só na 1ª contagem); o Redis devolve o count; a API responde 429 acima do limite ou passa ao handler"
+                data-en="Client → API ×N → Redis (atomic INCR + EXPIRE only on the first count); Redis returns the count; the API answers 429 over the limit or passes to the handler"
+              >
+                Rate limiter
+              </title>
+              <defs>
+                <marker
+                  id="m5"
+                  markerWidth="8"
+                  markerHeight="8"
+                  refX="6"
+                  refY="3"
+                  orient="auto"
+                >
+                  <path d="M0,0 L0,6 L7,3 z" fill="#8b6ff7" />
+                </marker>
+                <marker
+                  id="m5r"
+                  markerWidth="8"
+                  markerHeight="8"
+                  refX="6"
+                  refY="3"
+                  orient="auto"
+                >
+                  <path d="M0,0 L0,6 L7,3 z" fill="#ef476f" />
+                </marker>
+              </defs>
+              <g font-family="Space Grotesk" font-size="13" font-weight="700">
+                <rect
+                  x="20"
+                  y="90"
+                  width="90"
+                  height="50"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#2dd4bf"
+                />
+                <text
+                  x="65"
+                  y="119"
+                  fill="#2dd4bf"
+                  text-anchor="middle"
+                  data-pt="Cliente"
+                  data-en="Client"
+                >
+                  Cliente
+                </text>
+                <rect
+                  x="180"
+                  y="90"
+                  width="100"
+                  height="50"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#8b6ff7"
+                />
+                <text x="230" y="119" fill="#8b6ff7" text-anchor="middle">
+                  API ×N
+                </text>
+                <rect
+                  x="430"
+                  y="55"
+                  width="240"
+                  height="88"
+                  rx="10"
+                  fill="#2a0f1c"
+                  stroke="#fb7185"
+                />
+                <text x="550" y="82" fill="#fb7185" text-anchor="middle">
+                  Redis
+                </text>
+                <text
+                  x="550"
+                  y="101"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="11"
+                  data-pt="INCR + EXPIRE no 1º (Lua)"
+                  data-en="INCR + EXPIRE on 1st (Lua)"
+                >
+                  INCR + EXPIRE no 1º (Lua)
+                </text>
+                <text
+                  x="550"
+                  y="118"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="10"
+                >
+                  rate-limit:{userId}:{window}
+                </text>
+                <rect
+                  x="170"
+                  y="225"
+                  width="120"
+                  height="50"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#2dd4bf"
+                />
+                <text
+                  x="230"
+                  y="248"
+                  fill="#2dd4bf"
+                  text-anchor="middle"
+                  data-pt="Handler"
+                  data-en="Handler"
+                >
+                  Handler
+                </text>
+                <text
+                  x="230"
+                  y="264"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="10"
+                  data-pt="resto (P1/P2)"
+                  data-en="rest (P1/P2)"
+                >
+                  resto (P1/P2)
+                </text>
+              </g>
+              <g
+                stroke="#8b6ff7"
+                stroke-width="2"
+                fill="none"
+                marker-end="url(#m5)"
+              >
+                <path d="M110 105 H180" />
+                <path d="M280 100 H430" />
+                <path d="M430 122 H280" />
+                <path d="M230 140 V225" />
+              </g>
+              <g
+                stroke="#ef476f"
+                stroke-width="2"
+                fill="none"
+                stroke-dasharray="4 4"
+                marker-end="url(#m5r)"
+              >
+                <path d="M215 90 C215 40 130 30 95 90" />
+              </g>
+              <text
+                x="145"
+                y="97"
+                font-family="Space Grotesk"
+                font-size="11"
+                fill="#9ea2b8"
+                text-anchor="middle"
+                data-pt="1. request"
+                data-en="1. request"
+              >
+                1. request
+              </text>
+              <text
+                x="355"
+                y="92"
+                font-family="Space Grotesk"
+                font-size="11"
+                fill="#9ea2b8"
+                text-anchor="middle"
+                data-pt="2. INCR + EXPIRE (Lua)"
+                data-en="2. INCR + EXPIRE (Lua)"
+              >
+                2. INCR + EXPIRE (Lua)
+              </text>
+              <text
+                x="355"
+                y="140"
+                font-family="Space Grotesk"
+                font-size="11"
+                fill="#9ea2b8"
+                text-anchor="middle"
+                data-pt="3. count"
+                data-en="3. count"
+              >
+                3. count
+              </text>
+              <text
+                x="155"
+                y="30"
+                font-family="Space Grotesk"
+                font-size="11"
+                fill="#fb7185"
+                text-anchor="middle"
+                data-pt="4. acima do limite → 429"
+                data-en="4. over limit → 429"
+              >
+                4. acima do limite → 429
+              </text>
+              <text
+                x="155"
+                y="46"
+                font-family="Space Grotesk"
+                font-size="10"
+                fill="#9ea2b8"
+                text-anchor="middle"
+              >
+                Retry-After · RateLimit · RateLimit-Policy
+              </text>
+              <text
+                x="242"
+                y="185"
+                font-family="Space Grotesk"
+                font-size="11"
+                fill="#9ea2b8"
+                data-pt="5. abaixo do limite"
+                data-en="5. under the limit"
+              >
+                5. abaixo do limite
+              </text>
+            </svg>`} />
+  <ol slot="order">
+    <Fragment set:html={`<li>`} />
+    <T pt={`Cliente → API ×N`} en={`Client → API ×N`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`Redis à direita: "INCR + EXPIRE no 1º (Lua)", chave
+    rate-limit:{userId}:{window}`} en={`Redis on the right: "INCR + EXPIRE on 1st (Lua)", key
+    rate-limit:{userId}:{window}`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`Setas API ↔ Redis ("INCR + EXPIRE", volta "count") — o Redis
+    conta; quem decide e responde 429 é a API`} en={`Arrows API ↔ Redis ("INCR + EXPIRE", back "count") — Redis
+    counts; the API decides and answers the 429`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`Seta vermelha API → cliente: acima do limite → 429 (com
+    Retry-After, RateLimit e RateLimit-Policy)`} en={`Red arrow API → client: over the limit → 429 (with Retry-After,
+    RateLimit, and RateLimit-Policy)`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`Abaixo do limite → handler (o resto de P1/P2)`} en={`Under the limit → handler (the rest of P1/P2)`} />
+    <Fragment set:html={`</li>`} />
+  </ol>
+  <p class="cite" slot="cite" set:html={`<a
+  href="https://github.com/donnemartin/system-design-primer#rate-limiter"
+  >System Design Primer — rate limiter</a
+>`} />
+</Pattern>

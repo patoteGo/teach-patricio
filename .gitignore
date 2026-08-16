@@ -28,3 +28,7 @@ NOTES.local.md
 
 # tokens
 .env
+# Astro build
+node_modules/
+dist/
+.astro/

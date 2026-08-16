@@ -1,0 +1,580 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title
+      data-pt="AWS S3 — o mapa chave → bytes"
+      data-en="AWS S3 — the key → bytes map"
+    >
+      AWS S3
+    </title>
+    <link rel="stylesheet" href="../assets/style.css" />
+    <link rel="stylesheet" href="../assets/dark.css" />
+    <link rel="stylesheet" href="../assets/i18n.css" />
+    <link rel="stylesheet" href="../assets/concepts.css" />
+    <script src="../assets/i18n.js" defer></script>
+    <script src="../assets/nav.js" defer></script>
+    <script src="../assets/reading-ui.js" defer></script>
+    <script src="../assets/concepts.js" defer></script>
+  </head>
+  <body class="lang-pt">
+    <article class="lesson">
+      <header class="hero">
+        <span class="eyebrow"
+          >⬡ <span data-lang="pt">Conceitos · AWS S3</span
+          ><span data-lang="en">Concepts · AWS S3</span></span
+        >
+        <h1>
+          <span data-lang="pt"
+            >S3 não é um disco. É um mapa gigante chave → bytes que nunca se
+            perde.</span
+          ><span data-lang="en"
+            >S3 isn't a hard drive. It's a giant key → bytes map that never gets
+            lost.</span
+          >
+        </h1>
+        <p class="lead">
+          <span data-lang="pt"
+            >O <a href="0007-aws-sqs.html">SQS</a> guardava mensagens curtas; o
+            S3 guarda <strong>os bytes do sistema</strong>: fotos, backups,
+            logs, sites inteiros. Objeto de até 5&nbsp;TB, durabilidade de 11
+            noves — e uma regra: aqui, <strong>a chave é tudo</strong>.</span
+          ><span data-lang="en"
+            ><a href="0007-aws-sqs.html">SQS</a> stored short messages; S3
+            stores <strong>the system's bytes</strong>: photos, backups, logs,
+            entire websites. Objects up to 5&nbsp;TB, 11-nines durability — and
+            one rule: here, <strong>the key is everything</strong>.</span
+          >
+        </p>
+      </header>
+      <nav class="concept-nav">
+        <a href="0007-aws-sqs.html"
+          ><span data-lang="pt">← SQS</span><span data-lang="en">← SQS</span></a
+        ><a href="0005-estimation.html"
+          ><span data-lang="pt">Estimativa</span
+          ><span data-lang="en">Estimation</span></a
+        ><a href="../reference/software-concepts-cheatsheet.html"
+          ><span data-lang="pt">Folha</span><span data-lang="en">Cheat</span></a
+        ><a href="0009-apache-kafka.html"
+          ><span data-lang="pt">Kafka →</span
+          ><span data-lang="en">Kafka →</span></a
+        >
+      </nav>
+
+      <h2 class="section">
+        <span class="num">1</span
+        ><span data-lang="pt">O problema que o S3 resolve</span
+        ><span data-lang="en">The problem S3 solves</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >Disco de servidor é frágil e limitado: enche, morre, e não cresce
+          sozinho. O S3 é armazenamento de <strong>objetos</strong>: você
+          entrega bytes e uma chave, a AWS replica em várias zonas de
+          disponibilidade, e o armazenamento total é
+          <strong>ilimitado</strong> — não existe “cheio”.</span
+        ><span data-lang="en"
+          >Server disks are fragile and finite: they fill up, they die, they
+          don't grow on their own. S3 is <strong>object</strong> storage: you
+          hand over bytes and a key, AWS replicates across availability zones,
+          and total storage is <strong>unlimited</strong> — “full” doesn't
+          exist.</span
+        >
+      </p>
+      <p>
+        <span data-lang="pt"
+          >Dois vocábulos e pronto: <strong>bucket</strong> (o contêiner, nome
+          global único, criado numa região) e <strong>objeto</strong> (a chave +
+          os bytes + metadados, de 0 a 5&nbsp;TB).</span
+        ><span data-lang="en"
+          >Two words and done: <strong>bucket</strong> (the container, globally
+          unique name, created in one region) and <strong>object</strong> (the
+          key + the bytes + metadata, 0 to 5&nbsp;TB).</span
+        >
+      </p>
+      <div class="callout key">
+        <p>
+          <span data-lang="pt"
+            ><strong>S3 = mapa chave → bytes.</strong> Busca pela chave exata é
+            instantânea; qualquer coisa além disso (listar, buscar, filtrar) é
+            outro serviço, não é para o S3.</span
+          ><span data-lang="en"
+            ><strong>S3 = key → bytes map.</strong> Lookup by exact key is
+            instant; anything beyond that (list, search, filter) is another
+            service's job, not S3's.</span
+          >
+        </p>
+      </div>
+
+      <h2 class="section">
+        <span class="num">2</span
+        ><span data-lang="pt">O modelo mental (4 passos)</span
+        ><span data-lang="en">The mental model (4 steps)</span>
+      </h2>
+      <div class="flow-board" data-flow>
+        <div class="flow-row">
+          <span class="step">1</span>
+          <div>
+            <b
+              ><span data-lang="pt">Criar o bucket</span
+              ><span data-lang="en">Create the bucket</span></b
+            >
+            <p>
+              <span data-lang="pt"
+                >Nome global único (é DNS), mora numa região. Ex.:
+                <code>acme-prod-logs</code>.</span
+              ><span data-lang="en"
+                >Globally unique name (it's DNS), lives in one region. E.g.
+                <code>acme-prod-logs</code>.</span
+              >
+            </p>
+          </div>
+        </div>
+        <div class="flow-row">
+          <span class="step">2</span>
+          <div>
+            <b
+              ><span data-lang="pt">PUT — a chave é o caminho todo</span
+              ><span data-lang="en">PUT — the key is the whole path</span></b
+            >
+            <p>
+              <span data-lang="pt"
+                ><code>fotos/2024/ana.jpg</code> não tem pasta: isso
+                <em>é</em> a chave, uma string só. Sem pastas, sem rename —
+                “mover” é copiar + apagar.</span
+              ><span data-lang="en"
+                ><code>photos/2024/ana.jpg</code> has no folder: that
+                <em>is</em> the key, one plain string. No folders, no rename —
+                “moving” is copy + delete.</span
+              >
+            </p>
+          </div>
+        </div>
+        <div class="flow-row">
+          <span class="step">3</span>
+          <div>
+            <b
+              ><span data-lang="pt">GET pela chave exata — rápido</span
+              ><span data-lang="en">GET by exact key — fast</span></b
+            >
+            <p>
+              <span data-lang="pt"
+                >Busca pela chave completa é o caminho feliz: milhares de GETs
+                por segundo, escala sozinho.</span
+              ><span data-lang="en"
+                >Fetching by the full key is the happy path: thousands of GETs
+                per second, scales on its own.</span
+              >
+            </p>
+          </div>
+        </div>
+        <div class="flow-row">
+          <span class="step">4</span>
+          <div>
+            <b
+              ><span data-lang="pt">LIST por prefixo — o freio</span
+              ><span data-lang="en">LIST by prefix — the brake</span></b
+            >
+            <p>
+              <span data-lang="pt"
+                >Listar devolve
+                <strong>no máx. 1000 chaves por chamada</strong> e pagina. Com
+                milhões de objetos, LIST não é busca — é varredura.</span
+              ><span data-lang="en"
+                >Listing returns <strong>at most 1000 keys per call</strong> and
+                paginates. With millions of objects, LIST isn't search — it's a
+                scan.</span
+              >
+            </p>
+          </div>
+        </div>
+        <div class="flow-controls">
+          <button type="button" data-next>
+            <span data-lang="pt">Próxima etapa →</span
+            ><span data-lang="en">Next step →</span>
+          </button>
+          <button type="button" data-reset>
+            <span data-lang="pt">Reiniciar</span
+            ><span data-lang="en">Reset</span>
+          </button>
+          <span class="flow-status" data-flow-status></span>
+        </div>
+      </div>
+
+      <h2 class="section">
+        <span class="num">3</span
+        ><span data-lang="pt"
+          >O detalhe que todo mundo erra: consistência e os 11 noves</span
+        ><span data-lang="en"
+          >The detail everyone misses: consistency and the 11 nines</span
+        >
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >Resposta antiga de entrevista: “S3 é eventualmente consistente — um
+          GET logo após o PUT pode retornar 404”.
+          <strong>Errado desde dezembro de 2020</strong>: o S3 hoje tem
+          <em>strong read-after-write consistency</em> — PUT e o GET imediato
+          retornam o objeto novo, ponto.</span
+        ><span data-lang="en"
+          >Old interview answer: “S3 is eventually consistent — a GET right
+          after a PUT may 404”. <strong>Wrong since December 2020</strong>: S3
+          now has <em>strong read-after-write consistency</em> — PUT then
+          immediate GET returns the new object, period.</span
+        >
+      </p>
+      <p>
+        <span data-lang="pt"
+          >E os <strong>11 noves de durabilidade</strong> (99,999999999%):
+          guarde 10 milhões de objetos e espere perder 1 a cada 10 mil anos. Mas
+          durabilidade ≠ disponibilidade — o objeto existe, embora o serviço
+          possa estar indisponível ~53&nbsp;min/ano (99,99%).</span
+        ><span data-lang="en"
+          >And the <strong>11 nines of durability</strong> (99.999999999%):
+          store 10 million objects and expect to lose 1 every 10,000 years. But
+          durability ≠ availability — the object exists even while the service
+          may be down ~53&nbsp;min/year (99.99%).</span
+        >
+      </p>
+      <div class="callout warn">
+        <p>
+          <span data-lang="pt"
+            ><strong>S3 não é banco de dados.</strong> Se você precisa listar,
+            filtrar ou consultar metadados no hot path, guarde os metadados num
+            banco (DynamoDB, Postgres) e busque o objeto no S3
+            <em>pela chave exata</em>.</span
+          ><span data-lang="en"
+            ><strong>S3 is not a database.</strong> If you need to list, filter,
+            or query metadata on the hot path, keep metadata in a database
+            (DynamoDB, Postgres) and fetch the S3 object
+            <em>by exact key</em>.</span
+          >
+        </p>
+      </div>
+
+      <h2 class="section">
+        <span class="num">4</span
+        ><span data-lang="pt"
+          >Storage classes: o mesmo mapa, preços diferentes</span
+        ><span data-lang="en">Storage classes: same map, different prices</span>
+      </h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>
+                <span data-lang="pt">Classe</span
+                ><span data-lang="en">Storage class</span>
+              </th>
+              <th>
+                <span data-lang="pt">Melhor para</span
+                ><span data-lang="en">Best for</span>
+              </th>
+              <th>
+                <span data-lang="pt">Acesso</span
+                ><span data-lang="en">Access speed</span>
+              </th>
+              <th>
+                <span data-lang="pt">Detalhe de custo</span
+                ><span data-lang="en">Important cost detail</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Standard</strong></td>
+              <td>
+                <span data-lang="pt">arquivos acessados com frequência</span
+                ><span data-lang="en">frequently accessed files</span>
+              </td>
+              <td>
+                <span data-lang="pt">milissegundos</span
+                ><span data-lang="en">milliseconds</span>
+              </td>
+              <td>
+                <span data-lang="pt"
+                  >armazenamento mais caro; sem taxa de retrieval</span
+                ><span data-lang="en"
+                  >higher storage cost; no retrieval fee</span
+                >
+              </td>
+            </tr>
+            <tr>
+              <td><strong>Standard-IA</strong></td>
+              <td>
+                <span data-lang="pt">acesso raro, mas imediato</span
+                ><span data-lang="en">rare access that must be immediate</span>
+              </td>
+              <td>
+                <span data-lang="pt">milissegundos</span
+                ><span data-lang="en">milliseconds</span>
+              </td>
+              <td>
+                <span data-lang="pt"
+                  >taxa de retrieval; mínimo de 30 dias e 128 KB cobrados</span
+                ><span data-lang="en"
+                  >retrieval fee; 30-day and 128-KB billing minimums</span
+                >
+              </td>
+            </tr>
+            <tr>
+              <td><strong>Glacier Instant Retrieval</strong></td>
+              <td>
+                <span data-lang="pt"
+                  >arquivo acessado ocasionalmente, mas sem espera</span
+                ><span data-lang="en"
+                  >archives occasionally needed immediately</span
+                >
+              </td>
+              <td>
+                <span data-lang="pt">milissegundos</span
+                ><span data-lang="en">milliseconds</span>
+              </td>
+              <td>
+                <span data-lang="pt"
+                  >storage barato, retrieval mais caro; mínimo de 90 dias e 128
+                  KB</span
+                ><span data-lang="en"
+                  >cheap storage, higher retrieval cost; 90-day and 128-KB
+                  minimums</span
+                >
+              </td>
+            </tr>
+            <tr>
+              <td><strong>Glacier Flexible Retrieval</strong></td>
+              <td>
+                <span data-lang="pt"
+                  >backup acessado uma ou duas vezes por ano</span
+                ><span data-lang="en"
+                  >backups accessed once or twice a year</span
+                >
+              </td>
+              <td>
+                <span data-lang="pt">minutos–12 horas; exige restore</span
+                ><span data-lang="en">minutes–12 hours; restore required</span>
+              </td>
+              <td>
+                <span data-lang="pt"
+                  >mínimo de 90 dias; retrieval por tier (bulk é grátis)</span
+                ><span data-lang="en"
+                  >90-day minimum; tiered retrieval (bulk is free)</span
+                >
+              </td>
+            </tr>
+            <tr>
+              <td><strong>Glacier Deep Archive</strong></td>
+              <td>
+                <span data-lang="pt"
+                  >retenção longa, compliance e acesso menor que anual</span
+                ><span data-lang="en"
+                  >long-term retention, compliance, less-than-annual
+                  access</span
+                >
+              </td>
+              <td>
+                <span data-lang="pt"
+                  >Standard: ~12 h (Batch: 9–12); Bulk: ~48 h; exige
+                  restore</span
+                ><span data-lang="en"
+                  >Standard: ~12 h (Batch: 9–12); Bulk: ~48 h; restore
+                  required</span
+                >
+              </td>
+              <td>
+                <span data-lang="pt"
+                  >menor custo de storage; mínimo de 180 dias</span
+                ><span data-lang="en"
+                  >lowest storage cost; 180-day minimum</span
+                >
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout tip">
+        <p>
+          <span data-lang="pt"
+            ><strong>Default honesto: Standard + lifecycle.</strong> Lifecycle
+            move objetos por idade, não por último acesso: por exemplo, depois
+            de 90 dias para IA e 365 para Glacier. Se o padrão de acesso é
+            desconhecido ou muda, avalie Intelligent-Tiering (com taxa de
+            monitoração por objeto).</span
+          ><span data-lang="en"
+            ><strong>Honest default: Standard + lifecycle.</strong> Lifecycle
+            transitions use object age, not last-access time: for example, move
+            to IA after 90 days and Glacier after 365. For unknown or changing
+            access patterns, consider Intelligent-Tiering (with a per-object
+            monitoring fee).</span
+          >
+        </p>
+      </div>
+      <p class="cite">
+        <a
+          href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/storage-class-intro.html"
+          >AWS — S3 storage classes</a
+        >
+        ·
+        <a
+          href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/glacier-storage-classes.html"
+          >AWS — Glacier retrieval classes</a
+        >
+      </p>
+
+      <h2 class="section">
+        <span class="num">5</span
+        ><span data-lang="pt">A jogada de entrevista (30 segundos)</span
+        ><span data-lang="en">The interview move (30 seconds)</span>
+      </h2>
+      <div class="code-stage">
+        <pre><code><span data-lang="pt"><span style="color:#8b88b8">// bucket + objeto: a chave é o caminho todo</span>
+aws s3 cp foto.jpg s3://acme-fotos/2024/ana.jpg
+
+<span style="color:#8b88b8">// download privado sem vazar credenciais</span>
+aws s3 presign s3://acme-fotos/2024/ana.jpg --expires-in 300
+
+<span style="color:#8b88b8">// site estático: o S3 serve, o CloudFront acelera</span>
+aws s3 website s3://acme-site --index-document index.html</span><span data-lang="en"><span style="color:#8b88b8">// bucket + object: the key is the whole path</span>
+aws s3 cp photo.jpg s3://acme-photos/2024/ana.jpg
+
+<span style="color:#8b88b8">// private download without leaking credentials</span>
+aws s3 presign s3://acme-photos/2024/ana.jpg --expires-in 300
+
+<span style="color:#8b88b8">// static site: S3 serves, CloudFront accelerates</span>
+aws s3 website s3://acme-site --index-document index.html</span></code></pre>
+      </div>
+      <div class="callout key">
+        <p>
+          <span data-lang="pt"
+            ><strong>Frase que fecha a questão:</strong> “Estático no S3 com
+            CloudFront na frente, uploads por presigned URL (meu app não vira
+            gargalo de bytes), metadados no banco e objeto buscado pela chave,
+            lifecycle mandando o frio para o Glacier. Onze noves de durabilidade
+            e consistência forte desde 2020.”</span
+          ><span data-lang="en"
+            ><strong>The sentence that closes the question:</strong> “Static
+            assets on S3 with CloudFront in front, uploads via presigned URL (my
+            app never becomes the byte bottleneck), metadata in a database and
+            objects fetched by key, lifecycle moving cold data to Glacier.
+            Eleven nines of durability and strong consistency since 2020.”</span
+          >
+        </p>
+      </div>
+
+      <div class="mcq" data-mcq>
+        <p class="mcq-q">
+          <span data-lang="pt"
+            >Seu app fez PUT do objeto e, milissegundos depois, um GET da mesma
+            chave. O que o GET retorna?</span
+          ><span data-lang="en"
+            >Your app PUT an object and, milliseconds later, GETs the same key.
+            What does the GET return?</span
+          >
+        </p>
+        <div class="mcq-opts">
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="Essa era a resposta até 2020. O S3 hoje é fortemente consistente em PUTs e DELETEs — responder 'eventual' data a resposta."
+            data-fb-en="That was the answer until 2020. S3 today is strongly consistent for PUTs and DELETEs — answering 'eventual' dates you."
+          >
+            <span data-lang="pt"
+              >Pode dar 404 — o S3 é eventualmente consistente</span
+            ><span data-lang="en">Might 404 — S3 is eventually consistent</span>
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="true"
+            data-fb-pt="Exato: strong read-after-write consistency desde dezembro de 2020. PUT → GET imediato devolve o objeto novo, sem exceção documentada."
+            data-fb-en="Exactly: strong read-after-write consistency since December 2020. PUT → immediate GET returns the new object, no documented exception."
+          >
+            <span data-lang="pt"
+              >O objeto recém-escrito — consistência forte</span
+            ><span data-lang="en"
+              >The freshly written object — strong consistency</span
+            >
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="A consistência forte vale em todas as regiões desde o anúncio de 2020. Não é um recurso regional."
+            data-fb-en="Strong consistency applies in all regions since the 2020 announcement. It's not a regional feature."
+          >
+            <span data-lang="pt"
+              >Depende da região em que o bucket foi criado</span
+            ><span data-lang="en">Depends on the bucket's region</span>
+          </button>
+        </div>
+        <div class="mcq-fb" data-fb></div>
+      </div>
+
+      <div class="mcq" data-mcq>
+        <p class="mcq-q">
+          <span data-lang="pt"
+            >O time usa o S3 como “banco de fotos”: cada página lista o prefixo
+            <code>fotos/2024/</code> — 1 milhão de objetos. O que
+            acontece?</span
+          ><span data-lang="en"
+            >The team uses S3 as a “photo database”: every page lists the prefix
+            <code>photos/2024/</code> — 1 million objects. What happens?</span
+          >
+        </p>
+        <div class="mcq-opts">
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="O S3 escala para leitura por chave, não para varredura. Mais prefixos não conserta uma LIST no hot path."
+            data-fb-en="S3 scales for reads by key, not for scans. More prefixes don't fix a LIST on the hot path."
+          >
+            <span data-lang="pt">Nada — o S3 escala infinito, é só esperar</span
+            ><span data-lang="en"
+              >Nothing — S3 scales infinitely, just wait</span
+            >
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="true"
+            data-fb-pt="Correto: LIST pagina em blocos de até 1000 chaves — centenas de chamadas por página. Guarde os metadados no banco, gere a chave exata, e faça GET."
+            data-fb-en="Correct: LIST paginates in blocks of up to 1000 keys — hundreds of calls per page. Keep metadata in a database, produce the exact key, and GET."
+          >
+            <span data-lang="pt"
+              >Cada página vira centenas de LISTs — metadados vão para um
+              banco</span
+            ><span data-lang="en"
+              >Each page becomes hundreds of LISTs — metadata belongs in a
+              database</span
+            >
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="Buckets não resolvem: o gargalo é varrer chaves, não o número de contêineres."
+            data-fb-en="Buckets don't help: the bottleneck is scanning keys, not the number of containers."
+          >
+            <span data-lang="pt">Basta dividir em mais buckets menores</span
+            ><span data-lang="en">Just split into more, smaller buckets</span>
+          </button>
+        </div>
+        <div class="mcq-fb" data-fb></div>
+      </div>
+
+      <p class="cite-line">
+        <span data-lang="pt">Revisão:</span><span data-lang="en">Review:</span>
+        <a href="0007-aws-sqs.html"
+          ><span data-lang="pt">SQS (mensagens curtas vs. bytes grandes)</span
+          ><span data-lang="en">SQS (short messages vs. big bytes)</span></a
+        >
+        ·
+        <a
+          href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html"
+          >AWS S3 User Guide</a
+        >
+        ·
+        <a
+          href="https://aws.amazon.com/blogs/aws/amazon-s3-update-strong-read-after-write-consistency/"
+          >strong consistency announcement</a
+        >.
+      </p>
+    </article>
+  </body>
+</html>

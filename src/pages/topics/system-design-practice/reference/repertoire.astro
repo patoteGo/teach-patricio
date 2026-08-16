@@ -1,0 +1,324 @@
+---
+import Reference from "../../../../layouts/Reference.astro";
+import T from "../../../../components/T.astro";
+---
+<Reference
+  titlePt="System Design Dojo · Repertório — 15 plantas prontas"
+  titleEn="System Design Dojo · Repertoire — 15 ready-made blueprints"
+  titleFallback="Repertoire"
+>
+
+  <Fragment set:html={`<header class="hero">
+  <span class="eyebrow"
+    >`} />
+  <T pt={`<i class="ph ph-hexagon"></i> System Design Dojo · Referência de repertório`} en={`<i class="ph ph-hexagon"></i> System Design Dojo · Repertoire reference`} />
+  <Fragment set:html={`</span
+        >
+        <h1>`} />
+  <T pt={`15 plantas prontas.<br />Copie, esconda, redesenhe.`} en={`15 ready-made blueprints.<br />Copy, hide, redraw.`} />
+  <Fragment set:html={`</h1>
+<p class="lead">`} />
+  <T pt={`Estas são as <strong>armaduras de partida</strong> que cobrem a
+            maioria dos prompts de entrevista — do simples ao difícil, com as
+            ferramentas de sempre (Redis, Kafka, SQS, S3) e
+            <em>por que cada uma</em>. O objetivo não é decorar a resposta
+            "perfeita": é ter <em>memória muscular</em> para desenhar cada uma
+            em <strong>menos de 3 minutos</strong>, e depois <em>adaptar</em> ao
+            prompt. O aquecimento está na
+            <a href="../lessons/0006-warmup-copy-recall.html">lição de warmup</a
+            >.`} en={`These are the <strong>starting skeletons</strong> that cover most
+            interview prompts — simple to hard, with the usual tools (Redis,
+            Kafka, SQS, S3) and <em>why each one</em>. The goal is not to
+            memorize the "perfect" answer: it is <em>muscle memory</em> to draw
+            each one in <strong>under 3 minutes</strong>, then <em>adapt</em> to
+            the prompt. The warmup drill lives in the
+            <a href="../lessons/0006-warmup-copy-recall.html">warmup lesson</a
+            >.`} />
+  <Fragment set:html={`</p>
+<p class="lesson-nav-top">
+  ↑ <a href="../MISSION.md">Dojo</a> ·
+  <a href="../lessons/0006-warmup-copy-recall.html"
+    >`} />
+  <T pt={`aquecimento`} en={`warmup`} />
+  <Fragment set:html={`</a
+          >
+        </p>
+      </header>
+
+      <h2 class="section">
+        <span class="num">§</span
+        >`} />
+  <T pt={`O canivete: por que cada ferramenta`} en={`The toolkit: why each tool`} />
+  <Fragment set:html={`</h2>
+<p class="kicker">`} />
+  <T pt={`A pergunta que decide o desenho inteiro: "por que EU escolhi isso?".
+          Decore esta tabela — ela responde.`} en={`The question that decides the whole design: "why did I choose this?".
+          Memorize this table — it answers.`} />
+  <Fragment set:html={`</p>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>`} />
+  <T pt={`Ferramenta`} en={`Tool`} />
+  <Fragment set:html={`</th>
+<th>`} />
+  <T pt={`É`} en={`Is`} />
+  <Fragment set:html={`</th>
+<th>`} />
+  <T pt={`Use quando`} en={`Use when`} />
+  <Fragment set:html={`</th>
+<th>`} />
+  <T pt={`Não use quando`} en={`Don't use when`} />
+  <Fragment set:html={`</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td><strong>LB</strong></td>
+    <td>`} />
+  <T pt={`distribuidor de tráfego`} en={`traffic spreader`} />
+  <Fragment set:html={`</td>
+<td>`} />
+  <T pt={`qualquer API multi-instância`} en={`any multi-instance API`} />
+  <Fragment set:html={`</td>
+<td>`} />
+  <T pt={`rotear por região (aí é GeoDNS)`} en={`routing by region (that's GeoDNS)`} />
+  <Fragment set:html={`</td>
+</tr>
+<tr>
+  <td><strong>Postgres</strong></td>
+  <td>`} />
+  <T pt={`estado transacional ACID`} en={`ACID transactional state`} />
+  <Fragment set:html={`</td>
+<td>`} />
+  <T pt={`fonte da verdade, relações`} en={`source of truth, relations`} />
+  <Fragment set:html={`</td>
+<td>`} />
+  <T pt={`bytes grandes, filas de alta taxa`} en={`large blobs, high-rate queues`} />
+  <Fragment set:html={`</td>
+</tr>
+<tr>
+  <td><strong>Redis</strong></td>
+  <td>`} />
+  <T pt={`estado em memória, operações atômicas`} en={`in-memory state, atomic ops`} />
+  <Fragment set:html={`</td>
+<td>`} />
+  <T pt={`cache, contadores, locks, rankings, presença`} en={`cache, counters, locks, rankings, presence`} />
+  <Fragment set:html={`</td>
+<td>`} />
+  <T pt={`fonte da verdade, consultas complexas`} en={`source of truth, complex queries`} />
+  <Fragment set:html={`</td>
+</tr>
+<tr>
+  <td><strong>Kafka</strong></td>
+  <td>`} />
+  <T pt={`log de eventos ordenado, replicável`} en={`ordered, replicable event log`} />
+  <Fragment set:html={`</td>
+<td>`} />
+  <T pt={`alta taxa, vários consumidores independentes, replay`} en={`high rate, independent consumers, replay`} />
+  <Fragment set:html={`</td>
+<td>`} />
+  <T pt={`fila simples de trabalho com retry por mensagem`} en={`simple work queue with per-message retry`} />
+  <Fragment set:html={`</td>
+</tr>
+<tr>
+  <td><strong>SQS</strong></td>
+  <td>`} />
+  <T pt={`fila gerenciada, at-least-once, DLQ`} en={`managed queue, at-least-once, DLQ`} />
+  <Fragment set:html={`</td>
+<td>`} />
+  <T pt={`desacoplar trabalho lento, retry + DLQ por destino`} en={`decouple slow work, per-target retry + DLQ`} />
+  <Fragment set:html={`</td>
+<td>`} />
+  <T pt={`ordenação estrita, múltiplos consumidores do mesmo
+                  stream`} en={`strict ordering, multiple consumers of one stream`} />
+  <Fragment set:html={`</td>
+</tr>
+<tr>
+  <td><strong>S3</strong></td>
+  <td>`} />
+  <T pt={`armazenamento de objetos escalável e durável`} en={`scalable, durable object storage`} />
+  <Fragment set:html={`</td>
+<td>`} />
+  <T pt={`arquivos grandes, dados brutos, assets estáticos`} en={`large files, raw data, static assets`} />
+  <Fragment set:html={`</td>
+<td>`} />
+  <T pt={`busca de registros no hot path, transações multiobjeto`} en={`hot-path record lookup, multi-object transactions`} />
+  <Fragment set:html={`</td>
+</tr>
+<tr>
+  <td><strong>CDN</strong></td>
+  <td>`} />
+  <T pt={`cache na borda, perto do usuário`} en={`edge cache, near the user`} />
+  <Fragment set:html={`</td>
+<td>`} />
+  <T pt={`conteúdo estático/quase-estático`} en={`static / semi-static content`} />
+  <Fragment set:html={`</td>
+<td>`} />
+  <T pt={`conteúdo personalizado por usuário`} en={`per-user personalized content`} />
+  <Fragment set:html={`</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div class="callout key">
+  <p>`} />
+  <T pt={`<strong>Kafka vs SQS em uma frase:</strong> Kafka é um
+            <em>log</em> — os eventos ficam lá e vários grupos leem, cada um no
+            seu ritmo, e dá pra <em>reprocessar o passado</em>. SQS é uma
+            <em>fila</em> — a mensagem some quando consumida, mas cada mensagem
+            tem <em>retry, timeout e DLQ</em> próprios. Trabalho com falha por
+            destino → SQS. Stream de eventos que outros também consomem →
+            Kafka.`} en={`<strong>Kafka vs SQS in one line:</strong> Kafka is a
+            <em>log</em> — events stay there, multiple groups read at their own
+            pace, and you can <em>replay the past</em>. SQS is a
+            <em>queue</em> — the message disappears when consumed, but each
+            message has its own <em>retry, timeout and DLQ</em>. Work that fails
+            per target → SQS. An event stream others also consume → Kafka.`} />
+  <Fragment set:html={`</p>
+</div>
+
+<h2 class="section">
+  <span class="num">§</span
+  >`} />
+  <T pt={`O mapa: sinal no prompt → planta`} en={`The map: prompt signal → blueprint`} />
+  <Fragment set:html={`</h2>
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>`} />
+  <T pt={`Se o prompt disser…`} en={`If the prompt says…`} />
+  <Fragment set:html={`</th>
+<th>`} />
+  <T pt={`Planta`} en={`Blueprint`} />
+  <Fragment set:html={`</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td>`} />
+  <T pt={`"CRUD", "salvar e listar", "cadastro de usuários"`} en={`"CRUD", "save and list", "user registry"`} />
+  <Fragment set:html={`</td>
+  <td><a href="p1.html">P1</a></td>
+</tr>
+<tr>
+  <td>`} />
+  <T pt={`"muito mais leituras", "100:1", "página popular"`} en={`"far more reads", "100:1", "popular page"`} />
+  <Fragment set:html={`</td>
+  <td><a href="p2.html">P2</a></td>
+</tr>
+<tr>
+  <td>`} />
+  <T pt={`"enviar email", "processar em background", "demora 30s"`} en={`"send email", "background processing", "takes 30s"`} />
+  <Fragment set:html={`</td>
+  <td><a href="p3.html">P3</a></td>
+</tr>
+<tr>
+  <td>`} />
+  <T pt={`"upload de vídeo/foto", "arquivos grandes"`} en={`"video/photo upload", "large files"`} />
+  <Fragment set:html={`</td>
+  <td><a href="p4.html">P4</a></td>
+</tr>
+<tr>
+  <td>`} />
+  <T pt={`"limitar abusos", "100 req/s por usuário", "429"`} en={`"limit abuse", "100 req/s per user", "429"`} />
+  <Fragment set:html={`</td>
+  <td><a href="p5.html">P5</a></td>
+</tr>
+<tr>
+  <td>`} />
+  <T pt={`"redimensionar", "transcodificar", "gerar versões"`} en={`"resize", "transcode", "generate versions"`} />
+  <Fragment set:html={`</td>
+  <td><a href="p6.html">P6</a></td>
+</tr>
+<tr>
+  <td>`} />
+  <T pt={`"ranking", "top 10", "placar"`} en={`"ranking", "top 10", "scoreboard"`} />
+  <Fragment set:html={`</td>
+  <td><a href="p7.html">P7</a></td>
+</tr>
+<tr>
+  <td>`} />
+  <T pt={`"feed", "timeline", "seguidores"`} en={`"feed", "timeline", "followers"`} />
+  <Fragment set:html={`</td>
+  <td><a href="p8.html">P8</a></td>
+</tr>
+<tr>
+  <td>`} />
+  <T pt={`"chat", "tempo real", "notificação push"`} en={`"chat", "real-time", "push notification"`} />
+  <Fragment set:html={`</td>
+  <td><a href="p9.html">P9</a></td>
+</tr>
+<tr>
+  <td>`} />
+  <T pt={`"manter busca/cache sincronizado", "quando o dado muda"`} en={`"keep search/cache in sync", "when data changes"`} />
+  <Fragment set:html={`</td>
+  <td><a href="p10.html">P10</a></td>
+</tr>
+<tr>
+  <td>`} />
+  <T pt={`"analytics", "cliques", "métricas em tempo real"`} en={`"analytics", "clicks", "real-time metrics"`} />
+  <Fragment set:html={`</td>
+  <td><a href="p11.html">P11</a></td>
+</tr>
+<tr>
+  <td>`} />
+  <T pt={`"webhook pra terceiros", "entregar mesmo se o destino
+                  falhar"`} en={`"webhooks to third parties", "deliver even when targets
+                  fail"`} />
+  <Fragment set:html={`</td>
+  <td><a href="p12.html">P12</a></td>
+</tr>
+<tr>
+  <td>`} />
+  <T pt={`"lance", "estoque", "muitos cliques numa chave só"`} en={`"bid", "stock", "many clicks on one key"`} />
+  <Fragment set:html={`</td>
+  <td><a href="p13.html">P13</a></td>
+</tr>
+<tr>
+  <td>`} />
+  <T pt={`"escrita demais pra um banco", "shardar"`} en={`"too many writes for one DB", "shard it"`} />
+  <Fragment set:html={`</td>
+  <td><a href="p14.html">P14</a></td>
+</tr>
+<tr>
+  <td>`} />
+  <T pt={`"usuários no mundo todo", "latência global"`} en={`"users worldwide", "global latency"`} />
+  <Fragment set:html={`</td>
+        <td><a href="p15.html">P15</a></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div class="callout key">
+  <p>`} />
+  <T pt={`<strong>Como usar cada planta:</strong> copie o diagrama uma vez
+            (traça a <em>ordem de desenho</em>), clique em <em>esconder</em>,
+            redesenhe de memória, compare. A ordem importa mais que a geometria
+            — ela vira o seu roteiro de fala na entrevista.`} en={`<strong>How to use each blueprint:</strong> copy the diagram once
+            (trace the <em>draw order</em>), hit <em>hide</em>, redraw from
+            memory, compare. The order matters more than geometry — it becomes
+            your speaking script in the interview.`} />
+  <Fragment set:html={`</p>
+</div>`} />
+
+  <Fragment set:html={`<div class="callout key">
+  <p>`} />
+  <T pt={`<i class="ph ph-chat-circle-dots"></i> <strong>Pergunte ao agente:</strong> "me dá uma variação do P8
+            com fan-out na leitura" ou "onde o P6 encaixa no P4?" — o repertório
+            cresce combinando plantas.`} en={`<i class="ph ph-chat-circle-dots"></i> <strong>Ask the agent:</strong> "give me a P8 variation with
+            fan-out on read" or "where does P6 slot into P4?" — the repertoire
+            grows by combining blueprints.`} />
+  <Fragment set:html={`</p>
+</div>
+<p class="cite">`} />
+  <T pt={`Aquecimento de 10 min com estas plantas →`} en={`10-minute warmup with these blueprints →`} />
+  <Fragment set:html={`<a href="../lessons/0006-warmup-copy-recall.html"
+  >`} />
+  <T pt={`lição de warmup copy-recall`} en={`copy-recall warmup lesson`} />
+  <Fragment set:html={`</a
+        >
+      </p>`} />
+</Reference>

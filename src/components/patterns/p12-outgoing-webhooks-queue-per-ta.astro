@@ -1,0 +1,319 @@
+---
+import Pattern from "../Pattern.astro";
+import T from "../T.astro";
+---
+
+<!-- P12 · Outgoing webhooks: queue per target (L4) -->
+<Pattern
+  id="p12"
+  num="P12"
+  lvl={4}
+  titlePt={`Webhooks de saída: fila por endpoint`}
+  titleEn={`Outgoing webhooks: queue per endpoint`}
+  kickerPt={`Entregar em HTTP de terceiros que
+            <em>falham, atrasam e quebram</em>. O segredo: isolar cada
+            endpoint.`}
+  kickerEn={`Delivering over HTTP to third parties that
+            <em>fail, stall and break</em>. The trick: isolate each
+            endpoint.`}
+  tipPt={`<strong>Fale enquanto desenha:</strong> "Um evento pode ter N
+              assinantes — o entregador cria um job de entrega <em>por
+              endpoint</em>, um por fila. O worker assina com o secret HMAC do
+              endpoint e faz o POST. 2xx? Apaga a mensagem. Falhou? Deixa sem
+              ack e ela reaparece após o visibility timeout — o backoff é do
+              worker, ajustando visibility/delay. No maxReceiveCount o SQS
+              redrive à DLQ. Fila própria + limite de concorrência/rate por
+              endpoint: um cliente fora do ar não esgota os workers. Assine
+              timestamp + eventId + payload e rejeite replay."`}
+  tipEn={`<strong>Say while drawing:</strong> "One event may have N
+              subscribers — the delivery service creates a delivery job
+              <em>per endpoint</em>, one per queue. The worker signs with the
+              endpoint's HMAC secret and sends the POST. 2xx? Delete the
+              message. Failure? Leave it unacknowledged and it reappears after
+              the visibility timeout — backoff is worker-controlled, adjusting
+              visibility/delay. At maxReceiveCount SQS redrives to the DLQ.
+              Own queue plus per-endpoint concurrency/rate limits: one outage
+              can't exhaust every worker. HMAC-sign timestamp + eventId +
+              payload, and reject replays."`}
+  whyPt={`<strong>Por quê SQS e não Kafka:</strong> a falha é
+              <em>por mensagem, por endpoint</em>. SQS fornece visibility
+              timeout e redrive para DLQ; o backoff é definido pela aplicação.
+              Filas por endpoint + limites de concorrência isolam falhas.
+              <em>Tradeoff:</em> pool compartilhado de workers enfraquece o
+              isolamento — endpoint A pode consumir toda a capacidade; use
+              limites de concorrência/rate ou capacidade reservada por
+              endpoint. DLQ por endpoint, ou preserve endpointId, tentativas e
+              erro numa DLQ compartilhada. At-least-once → o receptor tolera
+              duplicata via eventId (delivery ID); HMAC autentica, timestamp +
+              eventId evitam replay.`}
+  whyEn={`<strong>Why SQS, not Kafka:</strong> failure is
+              <em>per message, per endpoint</em>. SQS provides visibility
+              timeout and DLQ redrive; the application defines backoff timing.
+              Per-endpoint queues plus concurrency limits isolate failures.
+              <em>Tradeoff:</em> a shared worker pool weakens isolation —
+              endpoint A can consume all capacity; use per-endpoint
+              concurrency/rate limits or reserved capacity. Prefer a DLQ per
+              endpoint, or preserve endpointId, attempt count and error in a
+              shared DLQ. At-least-once means the receiver deduplicates by
+              eventId (delivery ID); HMAC authenticates, while timestamp +
+              eventId prevent replay.`}
+>
+  <Fragment slot="dia" set:html={`<svg
+              viewBox="0 0 720 290"
+              width="100%"
+              style="min-width: 650px"
+              role="img"
+              aria-labelledby="p12t"
+            >
+              <title
+                id="p12t"
+                data-pt="Eventos → serviço de entrega cria um job por endpoint assinado → filas SQS por endpoint → workers assinam HMAC + POST; 2xx → ack; falha → backoff via visibility; maxReceiveCount → DLQ"
+                data-en="Events → delivery service creates one job per subscribed endpoint → per-endpoint SQS queues → workers sign HMAC + POST; 2xx → ack; failure → backoff via visibility; maxReceiveCount → DLQ"
+              >
+                Webhooks out
+              </title>
+              <defs>
+                <marker
+                  id="m12"
+                  markerWidth="8"
+                  markerHeight="8"
+                  refX="6"
+                  refY="3"
+                  orient="auto"
+                >
+                  <path d="M0,0 L0,6 L7,3 z" fill="#8b6ff7" />
+                </marker>
+              </defs>
+              <g font-family="Space Grotesk" font-size="13" font-weight="700">
+                <rect
+                  x="20"
+                  y="60"
+                  width="100"
+                  height="50"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#8b6ff7"
+                />
+                <text
+                  x="70"
+                  y="89"
+                  fill="#8b6ff7"
+                  text-anchor="middle"
+                  data-pt="Eventos"
+                  data-en="Events"
+                >
+                  Eventos
+                </text>
+                <rect
+                  x="180"
+                  y="60"
+                  width="120"
+                  height="50"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#8b6ff7"
+                />
+                <text
+                  x="240"
+                  y="82"
+                  fill="#8b6ff7"
+                  text-anchor="middle"
+                  data-pt="Entregador"
+                  data-en="Delivery"
+                >
+                  Entregador
+                </text>
+                <text
+                  x="240"
+                  y="98"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="10"
+                  data-pt="1 entrega por endpoint"
+                  data-en="delivery per endpoint"
+                >
+                  1 entrega por endpoint
+                </text>
+                <rect
+                  x="390"
+                  y="20"
+                  width="110"
+                  height="46"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#fb7185"
+                />
+                <text x="445" y="41" fill="#fb7185" text-anchor="middle">
+                  SQS
+                </text>
+                <text
+                  x="445"
+                  y="57"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="10"
+                  data-pt="endpoint A"
+                  data-en="endpoint A"
+                >
+                  endpoint A
+                </text>
+                <rect
+                  x="390"
+                  y="90"
+                  width="110"
+                  height="46"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#fb7185"
+                />
+                <text x="445" y="111" fill="#fb7185" text-anchor="middle">
+                  SQS
+                </text>
+                <text
+                  x="445"
+                  y="127"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="10"
+                  data-pt="endpoint B"
+                  data-en="endpoint B"
+                >
+                  endpoint B
+                </text>
+                <rect
+                  x="390"
+                  y="160"
+                  width="110"
+                  height="46"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#fb7185"
+                />
+                <text x="445" y="181" fill="#fb7185" text-anchor="middle">
+                  SQS
+                </text>
+                <text
+                  x="445"
+                  y="197"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="10"
+                  data-pt="endpoint C"
+                  data-en="endpoint C"
+                >
+                  endpoint C
+                </text>
+                <rect
+                  x="560"
+                  y="90"
+                  width="100"
+                  height="50"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#8b6ff7"
+                />
+                <text
+                  x="610"
+                  y="112"
+                  fill="#8b6ff7"
+                  text-anchor="middle"
+                  data-pt="Workers"
+                  data-en="Workers"
+                >
+                  Workers
+                </text>
+                <text
+                  x="610"
+                  y="128"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="10"
+                  data-pt="HMAC + POST · 2xx → ack"
+                  data-en="HMAC + POST · 2xx → ack"
+                >
+                  HMAC + POST · 2xx → ack
+                </text>
+                <rect
+                  x="560"
+                  y="20"
+                  width="100"
+                  height="46"
+                  rx="10"
+                  fill="#2a1207"
+                  stroke="#f59e0b"
+                />
+                <text x="610" y="41" fill="#fbbf24" text-anchor="middle">
+                  DLQ
+                </text>
+                <text
+                  x="610"
+                  y="57"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="10"
+                  data-pt="mortos"
+                  data-en="dead"
+                >
+                  mortos
+                </text>
+              </g>
+              <g
+                stroke="#8b6ff7"
+                stroke-width="2"
+                fill="none"
+                marker-end="url(#m12)"
+              >
+                <path d="M120 85 H180" />
+                <path d="M300 75 C340 60 350 45 390 42" />
+                <path d="M300 85 H390" />
+                <path d="M300 95 C340 115 350 175 390 180" />
+                <path d="M500 44 C530 55 540 90 560 100" />
+                <path d="M500 112 H560" />
+                <path d="M500 182 C530 170 540 140 560 130" />
+              </g>
+              <g
+                stroke="#fbbf24"
+                stroke-width="2"
+                fill="none"
+                stroke-dasharray="4 4"
+                marker-end="url(#m12)"
+              >
+                <path d="M500 38 C520 35 540 38 560 40" />
+                <path d="M500 105 C530 95 540 60 560 50" />
+                <path d="M500 175 C535 140 545 75 575 65" />
+              </g>
+            </svg>`} />
+  <ol slot="order">
+    <Fragment set:html={`<li>`} />
+    <T pt={`Eventos → entregador (resolve assinaturas; <em>uma entrega por
+    endpoint</em>)`} en={`Events → delivery service (resolves subscriptions;
+    <em>one delivery per endpoint</em>)`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`Uma fila SQS <em>por endpoint</em> (A, B, C — desenhe duas ou
+    três)`} en={`One SQS queue <em>per endpoint</em> (A, B, C — draw two or
+    three)`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`Workers; setas de cada fila → workers: assinam com o HMAC do
+    endpoint + POST; 2xx → delete/ack; falha → fica unack, backoff via
+    visibility/delay; concorrência e rate limit por endpoint`} en={`Workers; arrows from every queue → workers: sign with the
+    endpoint's HMAC + POST; 2xx → delete/ack; failure → left unack, backoff
+    via visibility/delay; per-endpoint concurrency and rate limits`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`DLQ ao lado; setas pontilhadas filas → DLQ
+    ("maxReceiveCount") — idealmente uma DLQ por endpoint`} en={`DLQ beside; dashed arrows queues → DLQ
+    ("maxReceiveCount") — ideally one DLQ per endpoint`} />
+    <Fragment set:html={`</li>`} />
+  </ol>
+  <p class="cite" slot="cite" set:html={`<a href="../lessons/0005-starter-webhook-delivery.html"
+  ><span data-lang="pt">Brief L2 — webhooks (Lob)</span
+  ><span data-lang="en">Brief L2 — webhooks (Lob)</span></a
+>
+·
+<a
+  href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dead-letter-queues.html"
+  >AWS — DLQ</a
+>`} />
+</Pattern>

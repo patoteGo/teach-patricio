@@ -1,0 +1,375 @@
+---
+import Pattern from "../Pattern.astro";
+import T from "../T.astro";
+---
+
+<!-- P13 · Hot key: auction / hot item (L4) -->
+<Pattern
+  id="p13"
+  num="P13"
+  lvl={4}
+  titlePt={`Chave quente: leilão / hot key`}
+  titleEn={`Hot key: auction / hot item`}
+  kickerPt={`Muitos escritores <em>na mesma chave</em>. O banco não aguenta a
+            tempestade — o caminho quente vai pra memória.`}
+  kickerEn={`Many writers <em>on the same key</em>. The DB can't take the storm
+            — the hot path goes in-memory.`}
+  tipPt={`<strong>Fale enquanto desenha:</strong> "A contenção inteira mora
+              numa chave só — o item do leilão. Lance e fechamento são dois
+              scripts Lua: o do lance verifica aberto + prazo e adiciona; o do
+              fechamento faz OPEN→CLOSED só se aberto e captura o vencedor.
+              O resultado vai pro Postgres com constraint única por leilão,
+              e um outbox transacional publica a notificação."`}
+  tipEn={`<strong>Say while drawing:</strong> "All contention lives on one
+              key — the auction item. Bid and close are two Lua scripts: the
+              bid script checks open + deadline then adds; the close script
+              flips OPEN→CLOSED only if open and captures the winner. The
+              result lands in Postgres with a unique per-auction constraint,
+              and a transactional outbox publishes the notification."`}
+  warnPt={`<strong>ZADD sozinho não basta:</strong> o lance precisa de um
+              script Lua atômico — verifica aberto, verifica prazo, adiciona,
+              rejeita depois do fechamento. O fechamento também é Lua:
+              OPEN→CLOSED só se aberto; dois fechadores simultâneos, só um
+              vence. <strong>Postgres + fila = escrita dupla:</strong> se o
+              fechador grava e morre antes de publicar, ninguém é notificado —
+              grave resultado + evento outbox <em>na mesma transação</em> e um
+              worker publica na fila. Score em <strong>centavos
+              inteiros</strong> (dinheiro nunca é float), tie-break determinístico
+              (ex.: menor ts no empate), e <code>UNIQUE(auction_id)</code> no
+              Postgres para impedir dois vencedores.
+              <strong>O Redis virou ponto único do caminho quente</strong>: AOF
+              reduz perda, não garante zero perda. Se auditoria ou perda zero
+              for requisito, persista cada lance aceito antes de confirmar.
+              <a href="bidding-concurrency.html"
+                >Referência completa de concorrência no leilão →</a
+              >`}
+  warnEn={`<strong>ZADD alone is not enough:</strong> a bid needs an atomic
+              Lua script — verify open, verify deadline, add, reject after
+              closure. Closing is Lua too: OPEN→CLOSED only if open; with two
+              concurrent closers, exactly one wins.
+              <strong>Postgres + queue = dual write:</strong> if the closer
+              commits then crashes before publishing, the winner exists but
+              nobody is notified — write result + outbox event <em>in one
+              transaction</em> and let a worker publish to the queue. Score in
+              <strong>integer cents</strong> (money is never a float),
+              deterministic tie-break (e.g. earliest timestamp on ties), and
+              <code>UNIQUE(auction_id)</code> in Postgres to prevent two
+              winner records.
+              <strong>Redis is now the single point of the hot path</strong>:
+              AOF reduces loss but does not guarantee zero loss. If auditability
+              or zero loss is required, durably persist every accepted bid
+              before acknowledging it.
+              <a href="bidding-concurrency.html"
+                >Full auction-concurrency reference →</a
+              >`}
+>
+  <Fragment slot="dia" set:html={`<svg
+              viewBox="0 0 720 260"
+              width="100%"
+              style="min-width: 640px"
+              role="img"
+              aria-labelledby="p13t"
+            >
+              <title
+                id="p13t"
+                data-pt="Clientes → API → Redis (Lua atômico por lance); fechador executa Lua OPEN→CLOSED e captura o vencedor; Postgres grava resultado + evento outbox numa transação; worker do outbox publica na fila"
+                data-en="Clients → API → Redis (atomic Lua per bid); closer runs an OPEN→CLOSED Lua script and captures the winner; Postgres stores result + outbox event in one transaction; outbox worker publishes to the queue"
+              >
+                Hot key
+              </title>
+              <defs>
+                <marker
+                  id="m13"
+                  markerWidth="8"
+                  markerHeight="8"
+                  refX="6"
+                  refY="3"
+                  orient="auto"
+                >
+                  <path d="M0,0 L0,6 L7,3 z" fill="#8b6ff7" />
+                </marker>
+              </defs>
+              <g font-family="Space Grotesk" font-size="13" font-weight="700">
+                <rect
+                  x="20"
+                  y="60"
+                  width="110"
+                  height="60"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#2dd4bf"
+                />
+                <text
+                  x="75"
+                  y="86"
+                  fill="#2dd4bf"
+                  text-anchor="middle"
+                  data-pt="Lances"
+                  data-en="Bids"
+                >
+                  Lances
+                </text>
+                <text
+                  x="75"
+                  y="103"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="10"
+                >
+                  50k / 3s
+                </text>
+                <rect
+                  x="200"
+                  y="60"
+                  width="90"
+                  height="60"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#8b6ff7"
+                />
+                <text x="245" y="86" fill="#8b6ff7" text-anchor="middle">
+                  API
+                </text>
+                <text
+                  x="245"
+                  y="103"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="10"
+                  data-pt="só valida"
+                  data-en="validate only"
+                >
+                  só valida
+                </text>
+                <rect
+                  x="380"
+                  y="40"
+                  width="140"
+                  height="70"
+                  rx="10"
+                  fill="#2a0f1c"
+                  stroke="#fb7185"
+                />
+                <text x="450" y="68" fill="#fb7185" text-anchor="middle">
+                  Redis
+                </text>
+                <text
+                  x="450"
+                  y="86"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="11"
+                  data-pt="atômico (Lua)"
+                  data-en="atomic (Lua)"
+                >
+                  atômico (Lua)
+                </text>
+                <text
+                  x="450"
+                  y="103"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="10"
+                  data-pt="centavos inteiros"
+                  data-en="integer cents"
+                >
+                  centavos inteiros
+                </text>
+                <rect
+                  x="380"
+                  y="170"
+                  width="140"
+                  height="60"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#8b6ff7"
+                />
+                <text
+                  x="450"
+                  y="196"
+                  fill="#8b6ff7"
+                  text-anchor="middle"
+                  data-pt="Fechador"
+                  data-en="Closer"
+                >
+                  Fechador
+                </text>
+                <text
+                  x="450"
+                  y="212"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="11"
+                  data-pt="Lua: OPEN→CLOSED"
+                  data-en="Lua: OPEN→CLOSED"
+                >
+                  Lua: OPEN→CLOSED
+                </text>
+                <rect
+                  x="600"
+                  y="40"
+                  width="90"
+                  height="60"
+                  rx="10"
+                  fill="#2a1207"
+                  stroke="#f59e0b"
+                />
+                <text x="645" y="66" fill="#fbbf24" text-anchor="middle">
+                  Postgres
+                </text>
+                <text
+                  x="645"
+                  y="82"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="10"
+                  data-pt="resultado + outbox"
+                  data-en="result + outbox"
+                >
+                  resultado + outbox
+                </text>
+                <text
+                  x="645"
+                  y="98"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="9"
+                  data-pt="UNIQUE(auction_id)"
+                  data-en="UNIQUE(auction_id)"
+                >
+                  UNIQUE(auction_id)
+                </text>
+                <rect
+                  x="600"
+                  y="170"
+                  width="90"
+                  height="60"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#fb7185"
+                />
+                <text
+                  x="645"
+                  y="196"
+                  fill="#fb7185"
+                  text-anchor="middle"
+                  data-pt="Fila"
+                  data-en="Queue"
+                >
+                  Fila
+                </text>
+                <text
+                  x="645"
+                  y="212"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="10"
+                  data-pt="notifica"
+                  data-en="notify"
+                >
+                  notifica
+                </text>
+                <text
+                  x="645"
+                  y="226"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="9"
+                  data-pt="worker outbox"
+                  data-en="outbox worker"
+                >
+                  worker outbox
+                </text>
+              </g>
+              <g
+                stroke="#8b6ff7"
+                stroke-width="2"
+                fill="none"
+                marker-end="url(#m13)"
+              >
+                <path d="M130 90 H200" />
+                <path d="M290 90 C330 90 340 80 380 75" />
+                <path d="M520 190 C560 180 570 100 600 80" />
+              </g>
+              <g
+                stroke="#fb7185"
+                stroke-width="2"
+                fill="none"
+                stroke-dasharray="4 4"
+                marker-end="url(#m13)"
+              >
+                <path d="M645 105 C645 130 645 140 645 165" />
+              </g>
+              <text
+                x="712"
+                y="140"
+                font-family="Space Grotesk"
+                font-size="10"
+                fill="#9ea2b8"
+                text-anchor="middle"
+                transform="rotate(90 712 140)"
+                data-pt="outbox"
+                data-en="outbox"
+              >
+                outbox
+              </text>
+              <g
+                stroke="#fbbf24"
+                stroke-width="2"
+                fill="none"
+                stroke-dasharray="4 4"
+                marker-end="url(#m13)"
+              >
+                <path d="M440 170 V110" />
+                <path d="M460 110 V170" />
+              </g>
+              <text
+                x="330"
+                y="70"
+                font-family="Space Grotesk"
+                font-size="11"
+                fill="#9ea2b8"
+                text-anchor="middle"
+                data-pt="tempestade"
+                data-en="storm"
+              >
+                tempestade
+              </text>
+              <text
+                x="462"
+                y="145"
+                font-family="Space Grotesk"
+                font-size="11"
+                fill="#9ea2b8"
+                data-pt="fecha"
+                data-en="closes"
+              >
+                fecha
+              </text>
+            </svg>`} />
+  <ol slot="order">
+    <Fragment set:html={`<li>`} />
+    <T pt={`Lances → API (desenhe a tempestade: 50k em 3s)`} en={`Bids → API (draw the storm: 50k in 3s)`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`Redis ao lado; seta API → Redis ("script Lua atômico: aberto?
+    prazo? adiciona; rejeita após fechamento — sem lock no banco")`} en={`Redis beside it; arrow API → Redis ("atomic Lua script: open?
+    deadline? add; reject after close — no DB lock")`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`Fechador embaixo; ele executa um script Lua que muda OPEN→CLOSED
+    só se aberto, lê o maior lance e grava o vencedor no Redis`} en={`Closer below; it runs one Lua script that flips OPEN→CLOSED only
+    if open, reads the highest bid, and records the winner in Redis`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`Postgres; seta fechador → Postgres ("mesma transação: resultado
+    + evento outbox; UNIQUE(auction_id) garante um vencedor")`} en={`Postgres; arrow closer → Postgres ("one transaction: result +
+    outbox event; UNIQUE(auction_id) guarantees one winner")`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`Fila de notificação; seta Postgres → fila via worker do outbox
+    ("sem escrita dupla: o evento é commitado junto com o resultado")`} en={`Notification queue; arrow Postgres → queue via outbox worker
+    ("no dual write: the event is committed with the result")`} />
+    <Fragment set:html={`</li>`} />
+  </ol>
+</Pattern>

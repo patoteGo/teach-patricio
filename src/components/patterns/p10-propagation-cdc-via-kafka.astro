@@ -1,0 +1,328 @@
+---
+import Pattern from "../Pattern.astro";
+import T from "../T.astro";
+---
+
+<!-- P10 · Propagation: CDC via Kafka (L3) -->
+<Pattern
+  id="p10"
+  num="P10"
+  lvl={3}
+  titlePt={`Propagação: CDC via Kafka`}
+  titleEn={`Propagation: CDC via Kafka`}
+  kickerPt={`"Quando o preço muda, invalida o cache, reindexa a busca, avisa o
+            analytics." Não dê dois writes — <em>derive</em> do banco.`}
+  kickerEn={`"When the price changes, invalidate the cache, reindex search,
+            notify analytics." Don't do two writes — <em>derive</em> from the
+            DB.`}
+  tipPt={`<strong>Fale enquanto desenha:</strong> "O serviço grava
+              <em>uma vez</em> no Postgres. O CDC captura a mudança do próprio
+              banco e publica no Kafka. Cada consumidor — cache, busca,
+              analytics — se atualiza sozinho, no seu ritmo, e pode
+              <em>reprocessar o histórico</em> se reconstruir."`}
+  tipEn={`<strong>Say while drawing:</strong> "The service writes
+              <em>once</em> to Postgres. CDC captures the change from the DB
+              itself and publishes to Kafka. Each consumer — cache, search,
+              analytics — updates itself at its own pace and can
+              <em>replay history</em> when rebuilt."`}
+  whyPt={`<strong>Por quê CDC e não dois writes:</strong> uma transação
+              local comum do Postgres não inclui atomicamente uma publicação
+              separada no Kafka; o Debezium lê o WAL (write-ahead log) e resolve
+              esse dual-write. Mas CDC puro emite eventos de baixo nível por
+              linha — para eventos de domínio como
+              <code>ProductPriceChanged</code>, use <em>outbox transacional</em>:
+              a mesma transação grava a linha de negócio <em>e</em> a linha de
+              outbox, e o Debezium publica a tabela de outbox.
+              <em>Por quê Kafka:</em> grupos independentes leem o mesmo stream;
+              eventos com a mesma chave vão para a mesma partição, e a ordem é
+              garantida <em>dentro de cada partição</em> (não no tópico inteiro).
+              Entrega é at-least-once: consumidores precisam ser
+              <em>idempotentes</em>, pois um evento pode chegar de novo.
+              Registros podem ser reprocessados enquanto retidos. SQS não é log
+              retido; para fan-out use SNS/EventBridge + filas separadas.`}
+  whyEn={`<strong>Why CDC, not two writes:</strong> an ordinary local
+              PostgreSQL transaction does not atomically include a separate
+              Kafka publish; Debezium reads the WAL (write-ahead log) and
+              solves that dual write. But raw CDC emits low-level row-change
+              events — for clean domain events like
+              <code>ProductPriceChanged</code>, use a <em>transactional
+              outbox</em>: the same transaction writes the business row
+              <em>and</em> the outbox row, and Debezium publishes the outbox
+              table.
+              <em>Why Kafka:</em> independent groups read the same stream;
+              events with the same key go to the same partition, and order is
+              guaranteed <em>within each partition</em> (not across the whole
+              topic). Delivery is at-least-once: consumers must be
+              <em>idempotent</em>, since an event may be processed again.
+              Records can be replayed while retained. SQS is not a retained
+              log; use SNS/EventBridge plus separate queues for fan-out.`}
+>
+  <Fragment slot="dia" set:html={`<svg
+              viewBox="0 0 720 300"
+              width="100%"
+              style="min-width: 650px"
+              role="img"
+              aria-labelledby="p10t"
+            >
+              <title
+                id="p10t"
+                data-pt="Serviço grava no Postgres; Debezium lê o WAL e publica no Kafka; consumidores invalidam cache, reindexam busca, sink connector alimenta o warehouse"
+                data-en="Service writes to Postgres; Debezium reads the WAL and publishes to Kafka; consumers invalidate cache, reindex search, a sink connector feeds the warehouse"
+              >
+                CDC pipeline
+              </title>
+              <defs>
+                <marker
+                  id="m10"
+                  markerWidth="8"
+                  markerHeight="8"
+                  refX="6"
+                  refY="3"
+                  orient="auto"
+                >
+                  <path d="M0,0 L0,6 L7,3 z" fill="#8b6ff7" />
+                </marker>
+              </defs>
+              <g font-family="Space Grotesk" font-size="13" font-weight="700">
+                <rect
+                  x="20"
+                  y="40"
+                  width="90"
+                  height="50"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#8b6ff7"
+                />
+                <text
+                  x="65"
+                  y="69"
+                  fill="#8b6ff7"
+                  text-anchor="middle"
+                  data-pt="Serviço"
+                  data-en="Service"
+                >
+                  Serviço
+                </text>
+                <rect
+                  x="180"
+                  y="40"
+                  width="120"
+                  height="50"
+                  rx="10"
+                  fill="#2a1207"
+                  stroke="#f59e0b"
+                />
+                <text x="240" y="62" fill="#fbbf24" text-anchor="middle">
+                  Postgres
+                </text>
+                <text
+                  x="240"
+                  y="78"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="10"
+                  data-pt="fonte da verdade"
+                  data-en="source of truth"
+                >
+                  fonte da verdade
+                </text>
+                <rect
+                  x="180"
+                  y="140"
+                  width="120"
+                  height="50"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#2dd4bf"
+                />
+                <text x="240" y="160" fill="#2dd4bf" text-anchor="middle">
+                  Debezium
+                </text>
+                <text
+                  x="240"
+                  y="176"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="10"
+                  data-pt="CDC"
+                  data-en="CDC"
+                >
+                  CDC
+                </text>
+                <rect
+                  x="380"
+                  y="120"
+                  width="130"
+                  height="90"
+                  rx="10"
+                  fill="#2a0f1c"
+                  stroke="#fb7185"
+                />
+                <text x="445" y="155" fill="#fb7185" text-anchor="middle">
+                  Kafka
+                </text>
+                <text
+                  x="445"
+                  y="175"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="11"
+                  data-pt="topic · mudanças"
+                  data-en="topic · changes"
+                >
+                  topic · mudanças
+                </text>
+                <text
+                  x="445"
+                  y="187"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="11"
+                  data-pt="partição por chave"
+                  data-en="partitioned by key"
+                >
+                  partição por chave
+                </text>
+                <text
+                  x="445"
+                  y="202"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="11"
+                  data-pt="ordem na partição"
+                  data-en="ordered in partition"
+                >
+                  ordem na partição
+                </text>
+                <rect
+                  x="590"
+                  y="20"
+                  width="110"
+                  height="46"
+                  rx="10"
+                  fill="#0c2a27"
+                  stroke="#2dd4bf"
+                />
+                <text
+                  x="645"
+                  y="41"
+                  fill="#2dd4bf"
+                  text-anchor="middle"
+                  data-pt="Invalida"
+                  data-en="Invalidate"
+                >
+                  Invalida
+                </text>
+                <text
+                  x="645"
+                  y="57"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="10"
+                  data-pt="cache Redis"
+                  data-en="Redis cache"
+                >
+                  cache Redis
+                </text>
+                <rect
+                  x="590"
+                  y="90"
+                  width="110"
+                  height="46"
+                  rx="10"
+                  fill="#0c2a27"
+                  stroke="#2dd4bf"
+                />
+                <text
+                  x="645"
+                  y="111"
+                  fill="#2dd4bf"
+                  text-anchor="middle"
+                  data-pt="Índice"
+                  data-en="Index"
+                >
+                  Índice
+                </text>
+                <text
+                  x="645"
+                  y="127"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="10"
+                  data-pt="busca"
+                  data-en="search"
+                >
+                  busca
+                </text>
+                <rect
+                  x="590"
+                  y="160"
+                  width="110"
+                  height="46"
+                  rx="10"
+                  fill="#0c2a27"
+                  stroke="#2dd4bf"
+                />
+                <text x="645" y="181" fill="#2dd4bf" text-anchor="middle">
+                  Analytics
+                </text>
+                <text
+                  x="645"
+                  y="197"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="10"
+                  data-pt="sink connector"
+                  data-en="sink connector"
+                >
+                  sink connector
+                </text>
+              </g>
+              <g
+                stroke="#8b6ff7"
+                stroke-width="2"
+                fill="none"
+                marker-end="url(#m10)"
+              >
+                <path d="M110 65 H180" />
+                <path d="M240 90 C240 110 240 115 240 140" />
+                <path d="M300 160 C340 158 350 155 380 155" />
+                <path d="M510 135 C550 120 560 55 590 45" />
+                <path d="M510 155 C550 152 560 125 590 118" />
+                <path d="M510 170 C550 175 560 185 590 188" />
+              </g>
+              <text
+                x="310"
+                y="120"
+                font-family="Space Grotesk"
+                font-size="11"
+                fill="#9ea2b8"
+                data-pt="WAL"
+                data-en="WAL"
+              >
+                WAL
+              </text>
+            </svg>`} />
+  <ol slot="order">
+    <Fragment set:html={`<li>`} />
+    <T pt={`Serviço → Postgres (só UM write)`} en={`Service → Postgres (ONE write only)`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`Debezium/CDC embaixo do DB; seta DB → CDC ("lê o WAL — write-ahead
+    log")`} en={`Debezium/CDC below the DB; arrow DB → CDC ("reads the WAL —
+    write-ahead log")`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`Kafka ao lado; seta CDC → Kafka ("publica as mudanças")`} en={`Kafka beside it; arrow CDC → Kafka ("publishes the
+    changes")`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`Consumidores à direita (serviços/conectores que leem o tópico):
+    invalida cache, índice de busca, sink de analytics — três setas saindo`} en={`Consumers on the right (services/connectors reading the topic):
+    cache invalidator, search indexer, analytics sink — three arrows out`} />
+    <Fragment set:html={`</li>`} />
+  </ol>
+  <p class="cite" slot="cite" set:html={`<a href="https://debezium.io/documentation/"
+  >Debezium — change data capture</a
+>`} />
+</Pattern>

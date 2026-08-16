@@ -1,0 +1,8 @@
+---
+// Bilingual text — kills the paired-span tax.
+// Renders the exact <span data-lang> pair that assets/i18n.css (visibility)
+// and assets/i18n.js (runtime swap) already understand. Zero new runtime.
+// pt/en accept HTML (authored, trusted content — not user input).
+const { pt, en } = Astro.props;
+---
+<span data-lang="pt" set:html={pt}></span><span data-lang="en" set:html={en}></span>

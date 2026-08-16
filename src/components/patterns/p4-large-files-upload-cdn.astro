@@ -1,0 +1,361 @@
+---
+import Pattern from "../Pattern.astro";
+import T from "../T.astro";
+---
+
+<!-- P4 · Large files: upload + CDN (L2) -->
+<Pattern
+  id="p4"
+  num="P4"
+  lvl={2}
+  titlePt={`Arquivos grandes: upload + CDN`}
+  titleEn={`Large files: upload + CDN`}
+  kickerPt={`Vídeo, foto, PDF. A carga grande do upload vai direto ao object
+            storage, sem passar pela API.`}
+  kickerEn={`Video, photo, PDF. The bulk upload payload goes directly to object
+            storage, bypassing the application API.`}
+  tipPt={`<strong>Fale enquanto desenha:</strong> "A API cria um registro
+              pending e devolve uma URL assinada <em>pro autor</em>. O payload
+              grande vai <em>direto</em> pro S3; o evento do S3 confirma a
+              chegada. Quem assiste pede à CDN: no hit a borda responde; no miss
+              ela busca no S3, cacheia e entrega perto do usuário."`}
+  tipEn={`<strong>Say while drawing:</strong> "The API creates a pending
+              record and returns a signed URL <em>to the author</em>. The bulk
+              payload goes <em>straight</em> to S3; the S3 event confirms its
+              arrival. Viewers ask the CDN: on a hit the edge answers; on a miss
+              it fetches from S3, caches, and delivers close to the user."`}
+  whyPt={`<strong>Por quê S3 e CDN:</strong> S3 escala sem pré-provisionar
+              armazenamento e é projetado para durabilidade — guardar vídeo em
+              disco de servidor (ou BLOB no Postgres) é caro e frágil. CDN
+              porque o mesmo vídeo é baixado milhões de vezes: servir da origem
+              queima banda e adiciona latência; a borda responde perto do
+              usuário. <em>E o processamento?</em> S3 emite evento → fila →
+              worker (planta P6). <em>Detalhes de produção:</em> a API cria
+              metadados e regras de acesso no DB antes do upload; arquivos muito
+              grandes usam <em>multipart upload</em>; a requisição pré-assinada
+              expira rápido, restringe método + key e assina headers
+              obrigatórios, como content-type; conteúdo privado: o espectador
+              pede uma <em>URL/cookie assinado</em> à API <em>antes</em> de ir à
+              CDN. No plano de dados a CDN nunca fala com a API — a origem dela
+              é o S3; a API só autoriza (URLs assinadas) e invalida cache
+              (purge). Para conteúdo dinâmico, a origem da CDN pode ser a
+              própria API.`}
+  whyEn={`<strong>Why S3 and CDN:</strong> S3 scales without
+              pre-provisioning storage and is designed for durability — keeping
+              video on server disk (or a Postgres BLOB) is costly and fragile.
+              CDN because the same video is downloaded millions of times:
+              serving from origin burns bandwidth and adds latency; the edge
+              answers close to the user. <em>And processing?</em> S3 emits an
+              event → queue → worker (blueprint P6).
+              <em>Production details:</em> the API creates metadata and access
+              rules before upload; very large files use
+              <em>multipart upload</em>; the presigned request expires quickly,
+              scopes method + key, and signs required headers such as content
+              type; private content: the viewer asks the API for a
+              <em>signed CDN URL/cookie</em> <em>before</em> hitting the CDN. In
+              the data plane the CDN never talks to the API — its origin is S3;
+              the API only authorizes (signed URLs) and purges the cache. For
+              dynamic content, the CDN's origin can be the API itself.`}
+>
+  <Fragment slot="dia" set:html={`<svg
+              viewBox="0 0 720 250"
+              width="100%"
+              style="min-width: 620px"
+              role="img"
+              aria-labelledby="p4t"
+            >
+              <title
+                id="p4t"
+                data-pt="Autor pede URL assinada; a API cria o registro de mídia pendente no DB e devolve a URL; o autor faz upload direto no S3; espectadores pedem à CDN, que busca no S3 só no cache miss"
+                data-en="Author asks for a signed URL; the API creates a pending media record in the DB and returns the URL; the author uploads directly to S3; viewers ask the CDN, which fetches from S3 only on a cache miss"
+              >
+                Upload + CDN
+              </title>
+              <defs>
+                <marker
+                  id="m4"
+                  markerWidth="8"
+                  markerHeight="8"
+                  refX="6"
+                  refY="3"
+                  orient="auto"
+                >
+                  <path d="M0,0 L0,6 L7,3 z" fill="#8b6ff7" />
+                </marker>
+              </defs>
+              <g font-family="Space Grotesk" font-size="13" font-weight="700">
+                <rect
+                  x="20"
+                  y="30"
+                  width="90"
+                  height="50"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#2dd4bf"
+                />
+                <text
+                  x="65"
+                  y="59"
+                  fill="#2dd4bf"
+                  text-anchor="middle"
+                  data-pt="Autor"
+                  data-en="Author"
+                >
+                  Autor
+                </text>
+                <rect
+                  x="170"
+                  y="30"
+                  width="90"
+                  height="50"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#8b6ff7"
+                />
+                <text x="215" y="59" fill="#8b6ff7" text-anchor="middle">
+                  API
+                </text>
+                <rect
+                  x="150"
+                  y="190"
+                  width="130"
+                  height="46"
+                  rx="10"
+                  fill="#2a1207"
+                  stroke="#f59e0b"
+                />
+                <text
+                  x="215"
+                  y="210"
+                  fill="#fbbf24"
+                  text-anchor="middle"
+                  data-pt="DB · metadados"
+                  data-en="DB · metadata"
+                >
+                  DB · metadados
+                </text>
+                <text
+                  x="215"
+                  y="226"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="11"
+                  data-pt="nunca bytes"
+                  data-en="never bytes"
+                >
+                  nunca bytes
+                </text>
+                <rect
+                  x="360"
+                  y="120"
+                  width="150"
+                  height="50"
+                  rx="10"
+                  fill="#2a1207"
+                  stroke="#f59e0b"
+                />
+                <text x="435" y="149" fill="#fbbf24" text-anchor="middle">
+                  S3
+                </text>
+                <rect
+                  x="590"
+                  y="120"
+                  width="90"
+                  height="50"
+                  rx="10"
+                  fill="#0c2a27"
+                  stroke="#2dd4bf"
+                />
+                <text x="635" y="149" fill="#2dd4bf" text-anchor="middle">
+                  CDN
+                </text>
+                <rect
+                  x="560"
+                  y="30"
+                  width="130"
+                  height="50"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#2dd4bf"
+                />
+                <text
+                  x="625"
+                  y="59"
+                  fill="#2dd4bf"
+                  text-anchor="middle"
+                  data-pt="Espectadores"
+                  data-en="Viewers"
+                >
+                  Espectadores
+                </text>
+              </g>
+              <g
+                stroke="#8b6ff7"
+                stroke-width="2"
+                fill="none"
+                marker-end="url(#m4)"
+              >
+                <path d="M110 43 H170" />
+                <path d="M65 80 C65 130 250 145 360 145" />
+                <path d="M225 80 V190" />
+                <path d="M205 190 V80" />
+                <path d="M608 80 C602 95 606 108 616 120" />
+                <path d="M590 147 H510" />
+                <path d="M510 160 H590" />
+                <path d="M650 120 C660 105 656 92 644 80" />
+              </g>
+              <g
+                stroke="#fbbf24"
+                stroke-width="2"
+                fill="none"
+                stroke-dasharray="4 4"
+                marker-end="url(#m4)"
+              >
+                <path d="M170 67 H110" />
+              </g>
+              <text
+                x="120"
+                y="40"
+                font-family="Space Grotesk"
+                font-size="11"
+                fill="#9ea2b8"
+                data-pt="1. pede URL"
+                data-en="1. ask URL"
+              >
+                1. pede URL
+              </text>
+              <text
+                x="140"
+                y="95"
+                font-family="Space Grotesk"
+                font-size="11"
+                fill="#9ea2b8"
+                text-anchor="middle"
+                data-pt="4. URL assinada"
+                data-en="4. signed URL"
+              >
+                4. URL assinada
+              </text>
+              <text
+                x="190"
+                y="182"
+                font-family="Space Grotesk"
+                font-size="11"
+                fill="#9ea2b8"
+                data-pt="5. upload direto"
+                data-en="5. direct upload"
+              >
+                5. upload direto
+              </text>
+              <text
+                x="262"
+                y="162"
+                font-family="Space Grotesk"
+                font-size="11"
+                fill="#9ea2b8"
+                text-anchor="middle"
+                data-pt="2. cria pending"
+                data-en="2. create pending"
+              >
+                2. cria pending
+              </text>
+              <text
+                x="168"
+                y="162"
+                font-family="Space Grotesk"
+                font-size="11"
+                fill="#9ea2b8"
+                text-anchor="middle"
+                data-pt="3. mediaId"
+                data-en="3. mediaId"
+              >
+                3. mediaId
+              </text>
+              <text
+                x="588"
+                y="104"
+                font-family="Space Grotesk"
+                font-size="11"
+                fill="#9ea2b8"
+                text-anchor="end"
+                data-pt="6. pede"
+                data-en="6. fetch"
+              >
+                6. pede
+              </text>
+              <text
+                x="550"
+                y="141"
+                font-family="Space Grotesk"
+                font-size="11"
+                fill="#9ea2b8"
+                text-anchor="middle"
+                data-pt="7. miss"
+                data-en="7. miss"
+              >
+                7. miss
+              </text>
+              <text
+                x="550"
+                y="176"
+                font-family="Space Grotesk"
+                font-size="11"
+                fill="#9ea2b8"
+                text-anchor="middle"
+                data-pt="8. objeto"
+                data-en="8. object"
+              >
+                8. objeto
+              </text>
+              <text
+                x="664"
+                y="104"
+                font-family="Space Grotesk"
+                font-size="11"
+                fill="#9ea2b8"
+                data-pt="9. entrega"
+                data-en="9. deliver"
+              >
+                9. entrega
+              </text>
+            </svg>`} />
+  <ol slot="order">
+    <Fragment set:html={`<li>`} />
+    <T pt={`Autor → API (seta 1: "pede URL")`} en={`Author → API (arrow 1: "ask URL")`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`API → DB: cria o registro de mídia <em>pending</em> com dono, key
+    e content-type; DB → API devolve o mediaId`} en={`API → DB: create the <em>pending</em> media record with owner,
+    key, and content type; DB → API returns the mediaId`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`Seta pontilhada API → <em>autor</em> ("URL assinada") — volta pra
+    quem vai subir, não pro espectador`} en={`Dashed arrow API → <em>author</em> ("signed URL") — it returns to
+    whoever uploads, not to the viewer`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`S3; seta autor → S3 ("upload direto") — o payload grande não
+    passa pela API; o evento do S3 confirma a chegada e inicia
+    P6`} en={`S3; arrow author → S3 ("direct upload") — the bulk payload
+    bypasses the API; the S3 event confirms arrival and starts
+    P6`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`CDN; espectadores → CDN ("pede arquivo")`} en={`CDN; viewers → CDN ("fetch file")`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`Par <em>só no cache miss</em>: CDN → S3 ("busca origem") e S3 →
+    CDN ("objeto") — no hit a borda responde na hora, sem tocar no
+    S3`} en={`Pair <em>only on a cache miss</em>: CDN → S3 ("fetch origin") and
+    S3 → CDN ("object") — on a hit the edge answers instantly, never
+    touching S3`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`CDN → espectadores ("entrega e cacheia na borda")`} en={`CDN → viewers ("deliver and cache at the edge")`} />
+    <Fragment set:html={`</li>`} />
+  </ol>
+  <p class="cite" slot="cite" set:html={`<a
+  href="https://github.com/donnemartin/system-design-primer#content-delivery-network"
+  >System Design Primer — CDN</a
+>`} />
+</Pattern>

@@ -1,0 +1,166 @@
+---
+import Pattern from "../Pattern.astro";
+import T from "../T.astro";
+---
+
+<!-- P1 · The base skeleton: CRUD API (L1) -->
+<Pattern
+  id="p1"
+  num="P1"
+  lvl={1}
+  titlePt={`O esqueleto base: API CRUD`}
+  titleEn={`The base skeleton: CRUD API`}
+  kickerPt={`Muitos designs CRUD começam aqui. Em escala modesta, isso pode ser
+            suficiente.`}
+  kickerEn={`Many CRUD designs start here. At modest scale, this may be
+            sufficient.`}
+  tipPt={`<strong>Fale enquanto desenha:</strong> "Quando preciso de várias
+              instâncias, o load balancer distribui tráfego e verifica saúde.
+              Estado compartilhado fora da API deixa qualquer instância atender
+              qualquer pedido; adicionar instâncias escala o tier da API."`}
+  tipEn={`<strong>Say while drawing:</strong> "When multiple instances are
+              needed, the load balancer distributes traffic and checks health.
+              Shared state outside the API makes instances interchangeable;
+              adding instances scales the API tier."`}
+  whyPt={`<strong>Por quê:</strong> <em>LB</em> distribui tráfego e remove
+              instâncias sem saúde. <em>API stateless</em> simplifica escala e
+              failover; afinidade de sessão existe, mas cria acoplamento com uma
+              instância. <em>Um Postgres só</em> porque em L1 pode bastar —
+              ACID, chato, confiável. Dizer "ainda não preciso de mais" também é
+              uma decisão de design.`}
+  whyEn={`<strong>Why:</strong> <em>LB</em> distributes traffic and removes
+              unhealthy instances. A <em>stateless API</em> simplifies scaling
+              and failover; session affinity exists, but couples a client to an
+              instance. <em>One Postgres</em> may be enough at L1 — ACID,
+              boring, reliable. Saying "I don't need more yet" is also a design
+              decision.`}
+>
+  <Fragment slot="dia" set:html={`<svg
+              viewBox="0 0 720 170"
+              width="100%"
+              style="min-width: 620px"
+              role="img"
+              aria-labelledby="p1t"
+            >
+              <title
+                id="p1t"
+                data-pt="Cliente → Load Balancer → API ×N → banco de dados"
+                data-en="Client → Load Balancer → API ×N → database"
+              >
+                CRUD skeleton
+              </title>
+              <defs>
+                <marker
+                  id="m1"
+                  markerWidth="8"
+                  markerHeight="8"
+                  refX="6"
+                  refY="3"
+                  orient="auto"
+                >
+                  <path d="M0,0 L0,6 L7,3 z" fill="#8b6ff7" />
+                </marker>
+              </defs>
+              <g font-family="Space Grotesk" font-size="13" font-weight="700">
+                <rect
+                  x="20"
+                  y="60"
+                  width="90"
+                  height="50"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#2dd4bf"
+                />
+                <text
+                  x="65"
+                  y="89"
+                  fill="#2dd4bf"
+                  text-anchor="middle"
+                  data-pt="Cliente"
+                  data-en="Client"
+                >
+                  Cliente
+                </text>
+                <rect
+                  x="180"
+                  y="60"
+                  width="90"
+                  height="50"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#fbbf24"
+                />
+                <text x="225" y="89" fill="#fbbf24" text-anchor="middle">
+                  LB
+                </text>
+                <rect
+                  x="340"
+                  y="60"
+                  width="100"
+                  height="50"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#8b6ff7"
+                />
+                <text
+                  x="390"
+                  y="89"
+                  fill="#8b6ff7"
+                  text-anchor="middle"
+                  data-pt="API ×N"
+                  data-en="API ×N"
+                >
+                  API ×N
+                </text>
+                <rect
+                  x="570"
+                  y="60"
+                  width="110"
+                  height="50"
+                  rx="10"
+                  fill="#2a1207"
+                  stroke="#f59e0b"
+                />
+                <text x="625" y="89" fill="#fbbf24" text-anchor="middle">
+                  Postgres
+                </text>
+              </g>
+              <g
+                stroke="#8b6ff7"
+                stroke-width="2"
+                fill="none"
+                marker-end="url(#m1)"
+              >
+                <path d="M110 85 H180" />
+                <path d="M270 85 H340" />
+                <path d="M440 85 H570" />
+              </g>
+              <text
+                x="505"
+                y="75"
+                font-family="Space Grotesk"
+                font-size="11"
+                fill="#9ea2b8"
+                text-anchor="middle"
+                data-pt="ler + gravar"
+                data-en="read + write"
+              >
+                ler + gravar
+              </text>
+            </svg>`} />
+  <ol slot="order">
+    <Fragment set:html={`<li>`} />
+    <T pt={`Cliente (caixa à esquerda)`} en={`Client (box on the left)`} />
+    <Fragment set:html={`</li>
+<li>LB</li>
+<li>`} />
+    <T pt={`API ×N (diga "stateless")`} en={`API ×N (say "stateless")`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`Postgres`} en={`Postgres`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`Setas: cliente → LB → API → DB`} en={`Arrows: client → LB → API → DB`} />
+    <Fragment set:html={`</li>`} />
+  </ol>
+</Pattern>

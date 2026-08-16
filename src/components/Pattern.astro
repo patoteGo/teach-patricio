@@ -1,0 +1,97 @@
+---
+// One blueprint of the repertoire: title, kicker, hide-toggle, diagram, draw
+// order, tip/info/warn callouts, optional comparison table + cite.
+// Used by [pattern].astro (p1.html .. p15.html). Carries its own page CSS.
+import T from "./T.astro";
+
+const { id, num, lvl, titlePt, titleEn, kickerPt, kickerEn, tipPt, tipEn, whyPt, whyEn, warnPt, warnEn } = Astro.props;
+const box = "h" + id;
+---
+<section class="pattern" id={id}>
+  <h2 class="section">
+    <span class="num">{num}</span>
+    <T pt={titlePt} en={titleEn} />
+    <span class:list={["lvl", lvl === 5 && "l5"]}>L{lvl}</span>
+  </h2>
+  <p class="kicker"><T pt={kickerPt} en={kickerEn} /></p>
+  <input type="checkbox" id={box} class="hidebox" />
+  <label for={box} class="hidetoggle">
+    <span class="lbl-hide"><T pt='<i class="ph ph-eye-slash"></i> esconder · redesenhe de memória' en='<i class="ph ph-eye-slash"></i> hide · redraw from memory' /></span>
+    <span class="lbl-show"><T pt='<i class="ph ph-eye"></i> mostrar o diagrama' en='<i class="ph ph-eye"></i> show the diagram' /></span>
+  </label>
+  <div class="dia">
+    <div class="scroll-x" style="margin: 18px 0"><slot name="dia" /></div>
+  </div>
+  <h3><T pt="Ordem de desenho" en="Draw order" /></h3>
+  <slot name="order" />
+  <slot name="extra" />
+  <div class="callout tip"><p><T pt={tipPt} en={tipEn} /></p></div>
+  {whyPt && <div class="callout info"><p><T pt={whyPt} en={whyEn} /></p></div>}
+  {warnPt && <div class="callout warn"><p><T pt={warnPt} en={warnEn} /></p></div>}
+  <slot name="cite" />
+</section>
+
+<style is:inline>
+  /* recall toggle: hide the diagram, redraw from memory */
+  .hidebox {
+    display: none;
+  }
+  label.hidetoggle {
+    display: inline-block;
+    cursor: pointer;
+    font: 600 12px/1 "Space Grotesk";
+    letter-spacing: 0.04em;
+    padding: 7px 12px;
+    border: 1px solid #3a3f55;
+    border-radius: 999px;
+    color: #9ea2b8;
+    margin: 6px 0 0;
+  }
+  label.hidetoggle:hover {
+    border-color: #8b6ff7;
+    color: #eceef6;
+  }
+  .hidetoggle .ph {
+    vertical-align: -0.15em;
+  }
+  .hidebox:checked ~ .dia svg {
+    visibility: hidden;
+  }
+  .hidebox:checked ~ .dia {
+    outline: 2px dashed #3a3f55;
+    outline-offset: 8px;
+    border-radius: 8px;
+  }
+  .hidebox:checked + .hidetoggle .lbl-hide {
+    display: none;
+  }
+  .hidebox:not(:checked) + .hidetoggle .lbl-show {
+    display: none;
+  }
+  .pattern h3 {
+    font: 700 13px/1.4 "Space Grotesk";
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #9ea2b8;
+    margin: 22px 0 6px;
+  }
+  .pattern ol {
+    margin: 0 0 4px 22px;
+  }
+  .pattern ol li {
+    margin: 4px 0;
+  }
+  .lvl {
+    display: inline-block;
+    font: 700 11px/1 "Space Grotesk";
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: #6c4bf0;
+    color: #fff;
+    vertical-align: middle;
+    margin-left: 10px;
+  }
+  .lvl.l5 {
+    background: #ef476f;
+  }
+</style>

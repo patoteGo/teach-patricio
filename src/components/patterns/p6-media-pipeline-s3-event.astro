@@ -1,0 +1,569 @@
+---
+import Pattern from "../Pattern.astro";
+import T from "../T.astro";
+---
+
+<!-- P6 · Media pipeline: S3 event (L2) -->
+<Pattern
+  id="p6"
+  num="P6"
+  lvl={2}
+  titlePt={`Pipeline de mídia: evento do S3`}
+  titleEn={`Media pipeline: S3 event`}
+  kickerPt={`Thumbnail, transcodificação, extração de metadados — P4 no upload,
+            P3 no processamento, colados por um <em>evento do S3</em>.`}
+  kickerEn={`Thumbnails, transcoding, metadata extraction — P4 on upload, P3 on
+            processing, glued by an <em>S3 event</em>.`}
+  tipPt={`<strong>Fale enquanto desenha:</strong> "O S3 publica um evento
+              com metadados — incluindo bucket + key, não os bytes. O worker faz
+              poll, baixa o original, gera as versões, grava noutro bucket,
+              atualiza status + metadados no DB e só então deleta a mensagem.
+              Sem delete, ela reaparece após o timeout e, no maxReceiveCount,
+              vai à DLQ. A CDN serve hit direto; no miss busca as versões no S3.
+              Depois de emitir a URL pré-assinada, a API fica fora do data path
+              de mídia."`}
+  tipEn={`<strong>Say while drawing:</strong> "S3 publishes an event with
+              metadata — including bucket + key, not the bytes. The worker
+              polls, GETs the original, generates versions, writes them to
+              another bucket, updates status + metadata in the DB, and only then
+              deletes the message. Without deletion it reappears after the
+              timeout and, at maxReceiveCount, moves to the DLQ. The CDN serves
+              a hit directly; on a miss it fetches versions from S3. After
+              issuing the presigned URL, the API is outside the media data
+              path."`}
+  whyPt={`<strong>Por quê S3-evento + SQS:</strong> o gatilho é o
+              <em>arquivo chegar</em>, não uma chamada da API — então quem avisa
+              é o próprio S3. SQS no meio porque transcodificação falha por
+              arquivo (retry) e tem picos (upload em massa) — a fila absorve o
+              pico; a DLQ estaciona mensagens que excedem o maxReceiveCount para
+              inspeção. <em>Em produção:</em> worker idempotente com source
+              versionId/ETag (ou keys imutáveis), outputs determinísticos e
+              transições de status seguras; <em>timeout de visibilidade</em>
+              maior que a transcodificação, ou estendido por heartbeat; status
+              <em>uploaded → processing → ready/failed</em> no DB. O cliente
+              pode consultar um endpoint de status até a versão existir.`}
+  whyEn={`<strong>Why S3-event + SQS:</strong> the trigger is
+              <em>the file arriving</em>, not an API call — so S3 announces it.
+              SQS absorbs bulk-upload bursts; the DLQ parks messages that exceed
+              maxReceiveCount for inspection. <em>In production:</em> make the
+              worker idempotent with source versionId/ETag (or immutable keys),
+              deterministic outputs, and safe status transitions; use a
+              <em>visibility timeout</em> longer than the transcode or extend it
+              with a heartbeat; keep
+              <em>uploaded → processing → ready/failed</em> in the DB. The
+              client can poll a status endpoint until the version exists.`}
+>
+  <Fragment slot="dia" set:html={`<svg
+              viewBox="0 0 720 370"
+              width="100%"
+              style="min-width: 640px"
+              role="img"
+              aria-labelledby="p6t"
+            >
+              <title
+                id="p6t"
+                data-pt="Autor → S3 originais (upload com URL pré-assinada); S3 emite ObjectCreated → SQS; workers fazem poll, usam bucket + key para baixar o original, gravam versões, atualizam status + metadados no DB e deletam a mensagem; sem delete, ela reaparece e no maxReceiveCount vai à DLQ; usuários buscam pela CDN — no cache miss a CDN busca no S3 versões"
+                data-en="Author → S3 originals (upload with a presigned URL); S3 emits ObjectCreated → SQS; workers poll, use bucket + key to GET the original, write versions, update status + metadata in the DB, and delete the message; without deletion it reappears and at maxReceiveCount moves to the DLQ; users fetch via the CDN — on a cache miss the CDN pulls from S3 versions"
+              >
+                Media pipeline
+              </title>
+              <defs>
+                <marker
+                  id="m6"
+                  markerWidth="8"
+                  markerHeight="8"
+                  refX="6"
+                  refY="3"
+                  orient="auto"
+                >
+                  <path d="M0,0 L0,6 L7,3 z" fill="#8b6ff7" />
+                </marker>
+              </defs>
+              <g font-family="Space Grotesk" font-size="13" font-weight="700">
+                <rect
+                  x="20"
+                  y="30"
+                  width="90"
+                  height="50"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#2dd4bf"
+                />
+                <text
+                  x="65"
+                  y="59"
+                  fill="#2dd4bf"
+                  text-anchor="middle"
+                  data-pt="Autor"
+                  data-en="Author"
+                >
+                  Autor
+                </text>
+                <rect
+                  x="170"
+                  y="30"
+                  width="100"
+                  height="50"
+                  rx="10"
+                  fill="#2a1207"
+                  stroke="#f59e0b"
+                />
+                <text x="220" y="53" fill="#fbbf24" text-anchor="middle">
+                  S3
+                </text>
+                <text
+                  x="220"
+                  y="70"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="10"
+                  data-pt="originais"
+                  data-en="originals"
+                >
+                  originais
+                </text>
+                <rect
+                  x="350"
+                  y="30"
+                  width="120"
+                  height="50"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#fb7185"
+                />
+                <text x="410" y="53" fill="#fb7185" text-anchor="middle">
+                  SQS
+                </text>
+                <text
+                  x="410"
+                  y="70"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="10"
+                  data-pt="evento do S3"
+                  data-en="S3 event"
+                >
+                  evento do S3
+                </text>
+                <rect
+                  x="560"
+                  y="30"
+                  width="110"
+                  height="50"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#8b6ff7"
+                />
+                <text
+                  x="615"
+                  y="53"
+                  fill="#8b6ff7"
+                  text-anchor="middle"
+                  data-pt="Workers"
+                  data-en="Workers"
+                >
+                  Workers
+                </text>
+                <text
+                  x="615"
+                  y="70"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="10"
+                >
+                  ffmpeg
+                </text>
+                <rect
+                  x="352"
+                  y="130"
+                  width="116"
+                  height="34"
+                  rx="8"
+                  fill="#2a0f1c"
+                  stroke="#fb7185"
+                />
+                <text x="410" y="147" fill="#fb7185" text-anchor="middle">
+                  DLQ
+                </text>
+                <text
+                  x="410"
+                  y="158"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="9"
+                  data-pt="maxReceiveCount"
+                  data-en="maxReceiveCount"
+                >
+                  maxReceiveCount
+                </text>
+                <rect
+                  x="60"
+                  y="285"
+                  width="110"
+                  height="50"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#2dd4bf"
+                />
+                <text
+                  x="115"
+                  y="314"
+                  fill="#2dd4bf"
+                  text-anchor="middle"
+                  data-pt="Usuários"
+                  data-en="Users"
+                >
+                  Usuários
+                </text>
+                <rect
+                  x="290"
+                  y="285"
+                  width="100"
+                  height="50"
+                  rx="10"
+                  fill="#0c2a27"
+                  stroke="#2dd4bf"
+                />
+                <text x="340" y="314" fill="#2dd4bf" text-anchor="middle">
+                  CDN
+                </text>
+                <rect
+                  x="480"
+                  y="285"
+                  width="130"
+                  height="50"
+                  rx="10"
+                  fill="#2a1207"
+                  stroke="#f59e0b"
+                />
+                <text x="545" y="308" fill="#fbbf24" text-anchor="middle">
+                  S3
+                </text>
+                <text
+                  x="545"
+                  y="325"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="10"
+                  data-pt="versões"
+                  data-en="versions"
+                >
+                  versões
+                </text>
+                <rect
+                  x="625"
+                  y="285"
+                  width="90"
+                  height="50"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#8b6ff7"
+                />
+                <text x="670" y="307" fill="#8b6ff7" text-anchor="middle">
+                  DB
+                </text>
+                <text
+                  x="670"
+                  y="324"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="9"
+                  data-pt="status + metadados"
+                  data-en="status + metadata"
+                >
+                  status + metadados
+                </text>
+              </g>
+              <g
+                stroke="#8b6ff7"
+                stroke-width="2"
+                fill="none"
+                marker-end="url(#m6)"
+              >
+                <path d="M110 55 H170" />
+                <path d="M270 55 H350" />
+                <path d="M560 45 H470" />
+                <path d="M470 68 H560" />
+                <path d="M595 84 C500 215 330 215 240 84" />
+                <path d="M225 84 C310 240 480 240 620 84" />
+                <path d="M640 84 C640 175 545 205 540 285" />
+                <path d="M665 84 C685 180 705 225 705 285" />
+                <path d="M170 303 H290" />
+                <path d="M480 323 H390" />
+                <path d="M290 321 H170" />
+              </g>
+              <g
+                stroke="#fbbf24"
+                stroke-width="2"
+                fill="none"
+                stroke-dasharray="4 4"
+                marker-end="url(#m6)"
+              >
+                <path d="M560 78 C535 92 495 92 470 78" />
+              </g>
+              <g
+                stroke="#fb7185"
+                stroke-width="2"
+                fill="none"
+                stroke-dasharray="4 4"
+                marker-end="url(#m6)"
+              >
+                <path d="M400 82 V130" />
+              </g>
+              <g
+                stroke="#2dd4bf"
+                stroke-width="2"
+                fill="none"
+                stroke-dasharray="4 4"
+                marker-end="url(#m6)"
+              >
+                <path d="M390 300 H480" />
+              </g>
+              <text
+                x="140"
+                y="43"
+                font-family="Space Grotesk"
+                font-size="10"
+                fill="#9ea2b8"
+                text-anchor="middle"
+                data-pt="1. upload"
+                data-en="1. upload"
+              >
+                1. upload
+              </text>
+              <text
+                x="65"
+                y="102"
+                font-family="Space Grotesk"
+                font-size="9"
+                fill="#9ea2b8"
+                text-anchor="middle"
+                data-pt="URL pré-assinada (P4)"
+                data-en="presigned URL (P4)"
+              >
+                URL pré-assinada (P4)
+              </text>
+              <text
+                x="310"
+                y="20"
+                font-family="Space Grotesk"
+                font-size="10"
+                fill="#9ea2b8"
+                text-anchor="middle"
+                data-pt="2. ObjectCreated"
+                data-en="2. ObjectCreated"
+              >
+                2. ObjectCreated
+              </text>
+              <text
+                x="515"
+                y="38"
+                font-family="Space Grotesk"
+                font-size="10"
+                fill="#9ea2b8"
+                text-anchor="middle"
+                data-pt="3. poll"
+                data-en="3. poll"
+              >
+                3. poll
+              </text>
+              <text
+                x="515"
+                y="62"
+                font-family="Space Grotesk"
+                font-size="10"
+                fill="#9ea2b8"
+                text-anchor="middle"
+                data-pt="4. bucket+key"
+                data-en="4. bucket+key"
+              >
+                4. bucket+key
+              </text>
+              <text
+                x="540"
+                y="118"
+                font-family="Space Grotesk"
+                font-size="10"
+                fill="#9ea2b8"
+                text-anchor="end"
+                data-pt="5. GET original"
+                data-en="5. GET original"
+              >
+                5. GET original
+              </text>
+              <text
+                x="195"
+                y="104"
+                font-family="Space Grotesk"
+                font-size="10"
+                fill="#9ea2b8"
+                text-anchor="middle"
+                data-pt="6. bytes"
+                data-en="6. bytes"
+              >
+                6. bytes
+              </text>
+              <text
+                x="658"
+                y="244"
+                font-family="Space Grotesk"
+                font-size="10"
+                fill="#9ea2b8"
+                text-anchor="end"
+                data-pt="7. grava versões"
+                data-en="7. writes versions"
+              >
+                7. grava versões
+              </text>
+              <text
+                x="678"
+                y="196"
+                font-family="Space Grotesk"
+                font-size="10"
+                fill="#9ea2b8"
+                text-anchor="end"
+                data-pt="8. status"
+                data-en="8. status"
+              >
+                8. status
+              </text>
+              <text
+                x="515"
+                y="104"
+                font-family="Space Grotesk"
+                font-size="10"
+                fill="#fbbf24"
+                text-anchor="middle"
+                data-pt="9. DeleteMessage"
+                data-en="9. DeleteMessage"
+              >
+                9. DeleteMessage
+              </text>
+              <text
+                x="230"
+                y="296"
+                font-family="Space Grotesk"
+                font-size="10"
+                fill="#9ea2b8"
+                text-anchor="middle"
+                data-pt="10. pede"
+                data-en="10. request"
+              >
+                10. pede
+              </text>
+              <text
+                x="435"
+                y="277"
+                font-family="Space Grotesk"
+                font-size="10"
+                fill="#2dd4bf"
+                text-anchor="middle"
+                data-pt="11. miss: busca"
+                data-en="11. miss: fetch"
+              >
+                11. miss: busca
+              </text>
+              <text
+                x="435"
+                y="341"
+                font-family="Space Grotesk"
+                font-size="10"
+                fill="#9ea2b8"
+                text-anchor="middle"
+                data-pt="12. bytes"
+                data-en="12. bytes"
+              >
+                12. bytes
+              </text>
+              <text
+                x="230"
+                y="341"
+                font-family="Space Grotesk"
+                font-size="10"
+                fill="#9ea2b8"
+                text-anchor="middle"
+                data-pt="13. serve"
+                data-en="13. serve"
+              >
+                13. serve
+              </text>
+              <text
+                x="340"
+                y="356"
+                font-family="Space Grotesk"
+                font-size="9"
+                fill="#9ea2b8"
+                text-anchor="middle"
+                data-pt="hit → serve direto (pula 11–12)"
+                data-en="hit → serve directly (skips 11–12)"
+              >
+                hit → serve direto (pula 11–12)
+              </text>
+            </svg>`} />
+  <ol slot="order">
+    <Fragment set:html={`<li>`} />
+    <T pt={`Autor → S3 originais (upload direto, P4 — começa com URL
+    pré-assinada da API)`} en={`Author → S3 originals (direct upload, P4 — starts with a
+    presigned URL from the API)`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`SQS ao lado; seta S3 → SQS ("ObjectCreated"); DLQ pendurada na
+    SQS, seta pontilhada ("maxReceiveCount")`} en={`SQS beside it; arrow S3 → SQS ("ObjectCreated"); a DLQ hanging
+    off SQS, dashed arrow ("maxReceiveCount")`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`Workers; setas worker → SQS ("poll") e SQS → worker ("evento") —
+    quem puxa é o worker; o evento traz metadados, incluindo bucket +
+    key codificada, não os bytes do objeto`} en={`Workers; arrows worker → SQS ("poll") and SQS → worker ("event")
+    — the worker pulls; the event carries metadata, including bucket +
+    a URL-encoded key, not the object bytes`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`Setas worker ↔ S3 originais ("GET original" / "bytes"), worker →
+    S3 versões ("grava versões") e worker → DB ("status + metadados");
+    depois seta pontilhada worker → SQS ("DeleteMessage") — sem
+    delete, retry após o timeout de visibilidade e, no limite,
+    DLQ`} en={`Arrows worker ↔ S3 originals ("GET original" / "bytes"), worker →
+    S3 versions ("writes versions"), and worker → DB ("status +
+    metadata"); then dashed arrow worker → SQS ("DeleteMessage") — no
+    delete means retry after the visibility timeout and eventually the
+    DLQ`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`Usuários → CDN ("pede"); no cache miss CDN ↔ S3 versões ("busca"
+    / "bytes"); CDN → usuários ("serve") — no hit serve direto;
+    usuário nunca toca os originais`} en={`Users → CDN ("request"); on a cache miss CDN ↔ S3 versions
+    ("fetch" / "bytes"); CDN → users ("serve") — a hit serves
+    directly; users never touch the originals`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`Detalhes de produção (bônus, se perguntarem): DB como fonte da
+    verdade para <em>status + metadados</em> (uploaded → processing →
+    ready/failed); worker <em>idempotente</em> com origem imutável ou
+    versionada, outputs determinísticos e transições de status
+    seguras`} en={`Production details (bonus, if asked): a DB as the source of truth
+    for <em>status + metadata</em> (uploaded → processing → ready/
+    failed); an <em>idempotent</em> worker with immutable or versioned
+    inputs, deterministic outputs, and safe status transitions`} />
+    <Fragment set:html={`</li>`} />
+  </ol>
+  <p class="cite" slot="cite" set:html={`<a
+  href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/EventNotifications.html"
+  >AWS — S3 Event Notifications</a
+>
+·
+<a
+  href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/notification-content-structure.html"
+  >AWS — event message structure</a
+>
+·
+<a
+  href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-visibility-timeout.html"
+  >AWS — SQS visibility timeout</a
+>
+·
+<a
+  href="https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/RequestAndResponseBehaviorS3Origin.html"
+  >AWS — CloudFront S3 origin</a
+>`} />
+</Pattern>

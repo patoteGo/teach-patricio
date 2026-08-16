@@ -1,0 +1,30 @@
+---
+// Shell for topic reference pages: exact head/body markup the runtime
+// assets expect (i18n.js swaps body.lang + title; nav.js injects the sidebar).
+// pageStyle: page-specific CSS, injected verbatim (is:inline = unprocessed).
+const { titlePt, titleEn, titleFallback, pageStyle } = Astro.props;---
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title data-pt={titlePt} data-en={titleEn}>{titleFallback}</title>
+    <!-- Phosphor icons (house rule: no emojis) -->
+    <script is:inline src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+    <!-- is:inline: these resolve against the page URL in the browser (public/ files),
+         not against this .astro file — without it Vite dev 404s them. -->
+    <link is:inline rel="stylesheet" href="../assets/style.css" />
+    <link is:inline rel="stylesheet" href="../assets/dark.css" />
+    <link is:inline rel="stylesheet" href="../assets/i18n.css" />
+    <link is:inline rel="stylesheet" href="../assets/exercises.css" />
+    <script is:inline src="../assets/i18n.js" defer></script>
+    <script is:inline src="../assets/nav.js" defer></script>
+    <script is:inline src="../assets/exercises.js" defer></script>
+    {pageStyle && <style is:inline set:html={pageStyle}></style>}
+  </head>
+  <body class="lang-pt">
+    <article class="lesson">
+      <slot />
+    </article>
+  </body>
+</html>

@@ -1,0 +1,372 @@
+---
+import Pattern from "../Pattern.astro";
+import T from "../T.astro";
+---
+
+<!-- P11 · Analytics: clickstream → S3 (L4) -->
+<Pattern
+  id="p11"
+  num="P11"
+  lvl={4}
+  titlePt={`Analytics: clickstream → S3`}
+  titleEn={`Analytics: clickstream → S3`}
+  kickerPt={`Milhões de eventos por minuto. Kafka desacopla a ingestão dos
+            consumidores e absorve rajadas; retenção, replicação e garantias
+            de entrega seguem os requisitos de confiabilidade e frescor.`}
+  kickerEn={`Millions of events per minute. Kafka decouples ingestion from
+            consumers and absorbs bursts; retention, replication, and
+            delivery guarantees follow the system's reliability and
+            freshness requirements.`}
+  tipPt={`<strong>Fale enquanto desenha:</strong> "Eventos de clique são
+              <em>append-only</em> e absurdamente rajudos. O coletor é burro e
+              rápido; o Kafka segura a rajada. De um lado, um stream processor
+              agrega métricas ao vivo num analytics store — o dashboard
+              consulta com SQL, nunca o Kafka direto. Do outro, o sink escreve
+              no S3 em batches particionados por tempo — e o Athena consulta
+              com SQL quando precisar."`}
+  tipEn={`<strong>Say while drawing:</strong> "Click events are
+              <em>append-only</em> and bursty. The collector stays dumb and
+              fast; Kafka buffers the burst. On one side, a stream processor
+              aggregates live metrics into an analytics store — the dashboard
+              queries it with SQL, never Kafka directly. On the other, the
+              sink writes to S3 in batches, time-partitioned — and Athena
+              queries it with SQL when needed."`}
+  whyPt={`<strong>Por quê:</strong> <em>Kafka</em> porque o volume é alto e
+              rajado — sem buffer, o coletor derruba os consumidores no pico; e
+              consumidores com ritmos diferentes leem o mesmo log (particionado
+              por usuário/sessão, replicado). <em>Stream processor +
+              analytics store</em> porque um dashboard precisa de queries
+              rápidas, filtros e histórico — ler o Kafka direto não entrega
+              isso. <em>S3</em> porque dado bruto de analytics é enorme e
+              raramente consultado — object storage durável e de baixo custo,
+              escrito em batches e particionado por tempo; Postgres costuma ser
+              um fit ruim nesse padrão nessa escala. <em>Tradeoff:</em>
+              retenção, replicação e garantias de entrega seguem os requisitos
+              de confiabilidade e frescor do produto.`}
+  whyEn={`<strong>Why:</strong> <em>Kafka</em> buffers high, bursty volume
+              and lets consumers advance at different rates (partitioned by
+              user/session, replicated). <em>Stream processor + analytics
+              store</em> because a dashboard needs fast queries, filters, and
+              history — reading Kafka directly provides none of that.
+              <em>S3</em> fits huge, rarely queried raw analytics as low-cost
+              durable object storage, written in batches and partitioned by
+              time; PostgreSQL is usually a poor fit for this pattern at this
+              scale. <em>Tradeoff:</em> retention, replication, and delivery
+              guarantees follow the product's reliability and freshness
+              requirements.`}
+  warnPt={`<strong>Em produção:</strong> entrega no Kafka é tipicamente
+              <em>at-least-once</em> — duplicatas acontecem. Todo evento carrega
+              um <em>event_id</em> e o processamento é idempotente
+              (dedupe por ID). Evento malformado: retry e, se persistir, uma
+              DLQ/quarentena — nunca descarte em silêncio. E o S3 recebe
+              <em>escritas em batch</em> em partições de tempo
+              (ano/mês/dia/hora): um objeto por clique seriam milhões de
+              arquivos minúsculos.`}
+  warnEn={`<strong>In production:</strong> Kafka delivery is typically
+              <em>at-least-once</em> — duplicates happen. Every event carries
+              an <em>event_id</em> and processing is idempotent (dedupe by
+              ID). Malformed event: retry, then a DLQ/quarantine topic — never
+              drop it silently. And S3 takes <em>batched writes</em> into time
+              partitions (year/month/day/hour): one object per click would be
+              millions of tiny files.`}
+>
+  <Fragment slot="dia" set:html={`<svg
+              viewBox="0 0 920 280"
+              width="100%"
+              style="min-width: 750px"
+              role="img"
+              aria-labelledby="p11t"
+            >
+              <title
+                id="p11t"
+                data-pt="SDK no browser → coletor → Kafka (particionado, replicado) → duas saídas: stream processor → analytics store → dashboard (SQL) e sink connector com escritas em batch → S3 raw particionado por tempo (data lake, batch)"
+                data-en="Browser SDK → collector → Kafka (partitioned, replicated) → two sinks: stream processor → analytics store → dashboard (SQL) and a sink connector with batched writes → raw S3, time-partitioned (data lake, batch)"
+              >
+                Clickstream
+              </title>
+              <defs>
+                <marker
+                  id="m11"
+                  markerWidth="8"
+                  markerHeight="8"
+                  refX="6"
+                  refY="3"
+                  orient="auto"
+                >
+                  <path d="M0,0 L0,6 L7,3 z" fill="#8b6ff7" />
+                </marker>
+              </defs>
+              <g font-family="Space Grotesk" font-size="13" font-weight="700">
+                <rect
+                  x="20"
+                  y="110"
+                  width="110"
+                  height="60"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#2dd4bf"
+                />
+                <text x="75" y="135" fill="#2dd4bf" text-anchor="middle">
+                  SDK
+                </text>
+                <text
+                  x="75"
+                  y="152"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="10"
+                  data-pt="browser/app"
+                  data-en="browser/app"
+                >
+                  browser/app
+                </text>
+                <rect
+                  x="190"
+                  y="110"
+                  width="110"
+                  height="60"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#8b6ff7"
+                />
+                <text
+                  x="245"
+                  y="135"
+                  fill="#8b6ff7"
+                  text-anchor="middle"
+                  data-pt="Coletor"
+                  data-en="Collector"
+                >
+                  Coletor
+                </text>
+                <text
+                  x="245"
+                  y="152"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="10"
+                  data-pt="valida + ingere"
+                  data-en="validate + ingest"
+                >
+                  valida + ingere
+                </text>
+                <rect
+                  x="390"
+                  y="110"
+                  width="130"
+                  height="70"
+                  rx="10"
+                  fill="#2a0f1c"
+                  stroke="#fb7185"
+                />
+                <text x="455" y="134" fill="#fb7185" text-anchor="middle">
+                  Kafka
+                </text>
+                <text
+                  x="455"
+                  y="152"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="10"
+                  data-pt="buffer de rajadas"
+                  data-en="burst buffer"
+                >
+                  buffer de rajadas
+                </text>
+                <text
+                  x="455"
+                  y="167"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="9"
+                  data-pt="partições · replicação"
+                  data-en="partitioned · replicated"
+                >
+                  partições · replicação
+                </text>
+                <rect
+                  x="545"
+                  y="20"
+                  width="110"
+                  height="60"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#8b6ff7"
+                />
+                <text
+                  x="600"
+                  y="44"
+                  fill="#8b6ff7"
+                  text-anchor="middle"
+                  font-size="12"
+                >
+                  Stream Processor
+                </text>
+                <text
+                  x="600"
+                  y="62"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="9"
+                  data-pt="Flink · Kafka Streams"
+                  data-en="Flink · Kafka Streams"
+                >
+                  Flink · Kafka Streams
+                </text>
+                <rect
+                  x="670"
+                  y="20"
+                  width="110"
+                  height="60"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#8b6ff7"
+                />
+                <text
+                  x="725"
+                  y="44"
+                  fill="#8b6ff7"
+                  text-anchor="middle"
+                  font-size="12"
+                >
+                  Analytics Store
+                </text>
+                <text
+                  x="725"
+                  y="62"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="9"
+                  data-pt="ClickHouse · Druid"
+                  data-en="ClickHouse · Druid"
+                >
+                  ClickHouse · Druid
+                </text>
+                <rect
+                  x="795"
+                  y="20"
+                  width="90"
+                  height="60"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#2dd4bf"
+                />
+                <text
+                  x="840"
+                  y="44"
+                  fill="#2dd4bf"
+                  text-anchor="middle"
+                  data-pt="Dashboard"
+                  data-en="Dashboard"
+                >
+                  Dashboard
+                </text>
+                <text
+                  x="840"
+                  y="62"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="9"
+                  data-pt="SQL · filtros"
+                  data-en="SQL · filters"
+                >
+                  SQL · filtros
+                </text>
+                <rect
+                  x="795"
+                  y="195"
+                  width="90"
+                  height="60"
+                  rx="10"
+                  fill="#612a07"
+                  stroke="#f59e0b"
+                />
+                <text x="840" y="217" fill="#fbbf24" text-anchor="middle">
+                  S3
+                </text>
+                <text
+                  x="840"
+                  y="233"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="9"
+                  data-pt="raw · lake"
+                  data-en="raw · lake"
+                >
+                  raw · lake
+                </text>
+                <text
+                  x="840"
+                  y="246"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="9"
+                  data-pt="ano/mês/dia/hora"
+                  data-en="yr/mo/day/hr"
+                >
+                  ano/mês/dia/hora
+                </text>
+              </g>
+              <g
+                stroke="#8b6ff7"
+                stroke-width="2"
+                fill="none"
+                marker-end="url(#m11)"
+              >
+                <path d="M130 140 H190" />
+                <path d="M300 140 H390" />
+                <path d="M520 125 C540 95 528 70 545 50" />
+                <path d="M655 50 H670" />
+                <path d="M780 50 H795" />
+                <path d="M520 160 C620 200 700 205 795 225" />
+              </g>
+              <text
+                x="550"
+                y="100"
+                font-family="Space Grotesk"
+                font-size="11"
+                fill="#9ea2b8"
+                data-pt="tempo real"
+                data-en="real time"
+              >
+                tempo real
+              </text>
+              <text
+                x="615"
+                y="192"
+                font-family="Space Grotesk"
+                font-size="11"
+                fill="#9ea2b8"
+                data-pt="sink connector · batch"
+                data-en="sink connector · batched"
+              >
+                sink connector · batch
+              </text>
+            </svg>`} />
+  <ol slot="order">
+    <Fragment set:html={`<li>`} />
+    <T pt={`SDK no browser → coletor ("valida e ingere; não processa")`} en={`Browser SDK → collector ("validates and ingests; no processing")`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`Kafka no meio ("absorve rajadas, desacopla produtores de
+    consumidores; particionado por usuário/sessão e replicado")`} en={`Kafka in the middle ("absorbs bursts, decouples producers from
+    consumers; partitioned by user/session and replicated")`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`Saída 1, em cima: stream processor agrega → analytics store
+    (ClickHouse/Druid) → dashboard consulta com SQL, sem consumir Kafka
+    direto`} en={`Sink 1, top: stream processor aggregates → analytics store
+    (ClickHouse/Druid) → dashboard queries with SQL, never consuming Kafka
+    directly`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`Saída 2, embaixo: sink connector com escritas em batch → S3 raw
+    particionado por tempo (ano/mês/dia/hora); Athena consulta em batch`} en={`Sink 2, bottom: sink connector with batched writes → raw S3
+    time-partitioned (yr/mo/day/hr); Athena queries those objects in
+    batch`} />
+    <Fragment set:html={`</li>`} />
+  </ol>
+  <p class="cite" slot="cite" set:html={`<a href="https://kafka.apache.org/documentation/#intro_topics"
+  >Kafka — why a log</a
+>`} />
+</Pattern>

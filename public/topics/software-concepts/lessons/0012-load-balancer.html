@@ -1,0 +1,592 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title
+      data-pt="Load balancer — o porteiro que divide a fila"
+      data-en="Load balancer — the doorman who splits the line"
+    >
+      Load balancer
+    </title>
+    <link rel="stylesheet" href="../assets/style.css" />
+    <link rel="stylesheet" href="../assets/dark.css" />
+    <link rel="stylesheet" href="../assets/i18n.css" />
+    <link rel="stylesheet" href="../assets/concepts.css" />
+    <script src="../assets/i18n.js" defer></script>
+    <script src="../assets/nav.js" defer></script>
+    <script src="../assets/reading-ui.js" defer></script>
+    <script src="../assets/concepts.js" defer></script>
+  </head>
+  <body class="lang-pt">
+    <article class="lesson">
+      <header class="hero">
+        <span class="eyebrow"
+          >⬡ <span data-lang="pt">Conceitos · Load balancer</span
+          ><span data-lang="en">Concepts · Load balancer</span></span
+        >
+        <h1>
+          <span data-lang="pt"
+            >Um servidor cai. Ninguém percebe. Esse é o trabalho dele.</span
+          ><span data-lang="en"
+            >One server dies. Nobody notices. That's its whole job.</span
+          >
+        </h1>
+        <p class="lead">
+          <span data-lang="pt"
+            >Na lição de <a href="0005-estimation.html">estimativa</a> você
+            calculou QPS de pico. O load balancer é
+            <strong>o que faz o pico caber</strong>: um porteiro na frente de N
+            servidores que recebe toda a fila e distribui — sem os clientes
+            saberem quantos servidores existem.</span
+          ><span data-lang="en"
+            >In the <a href="0005-estimation.html">estimation lesson</a> you
+            computed peak QPS. The load balancer is
+            <strong>what makes the peak fit</strong>: a doorman in front of N
+            servers who takes the whole line and spreads it — clients never
+            learn how many servers exist.</span
+          >
+        </p>
+      </header>
+      <nav class="concept-nav">
+        <a href="0011-postgres-vs-mysql.html"
+          ><span data-lang="pt">← Postgres vs MySQL</span
+          ><span data-lang="en">← Postgres vs MySQL</span></a
+        ><a href="0005-estimation.html"
+          ><span data-lang="pt">Estimativa</span
+          ><span data-lang="en">Estimation</span></a
+        ><a href="0007-aws-sqs.html"
+          ><span data-lang="pt">SQS</span><span data-lang="en">SQS</span></a
+        >
+      </nav>
+
+      <h2 class="section">
+        <span class="num">1</span
+        ><span data-lang="pt">O modelo mental (3 cartões)</span
+        ><span data-lang="en">The mental model (3 cards)</span>
+      </h2>
+      <div class="mental-model">
+        <div class="concept-card">
+          <h3>
+            <span data-lang="pt">Um endereço, N máquinas</span
+            ><span data-lang="en">One address, N machines</span>
+          </h3>
+          <p>
+            <span data-lang="pt"
+              >O cliente conhece <strong>um IP só</strong> — o do load balancer.
+              Atrás dele vivem servidores intercambiáveis que nem precisam de IP
+              público. Escalar = adicionar servidor; ninguém reconfigura
+              cliente.</span
+            ><span data-lang="en"
+              >The client knows <strong>one IP only</strong> — the balancer's.
+              Behind it live interchangeable servers that don't even need public
+              IPs. Scaling = add a server; no client gets reconfigured.</span
+            >
+          </p>
+        </div>
+        <div class="concept-card">
+          <h3>
+            <span data-lang="pt">Só manda pra quem está vivo</span
+            ><span data-lang="en">Only routes to the living</span>
+          </h3>
+          <p>
+            <span data-lang="pt"
+              >O balancer faz <strong>health checks</strong> periódicos (<code
+                >GET /health</code
+              >). Servidor que falha sai da rotação <em>na hora</em>, sem humano
+              — e volta sozinho quando responde de novo.</span
+            ><span data-lang="en"
+              >The balancer runs periodic <strong>health checks</strong> (<code
+                >GET /health</code
+              >). A failing server leaves the rotation <em>immediately</em>, no
+              human involved — and returns by itself once it answers
+              again.</span
+            >
+          </p>
+        </div>
+        <div class="concept-card">
+          <h3>
+            <span data-lang="pt">Espera-less: sem estado</span
+            ><span data-lang="en">Stateless by design</span>
+          </h3>
+          <p>
+            <span data-lang="pt"
+              >O balancer só distribui bem se os servidores forem
+              <strong>intercambiáveis</strong>: qualquer um pode atender
+              qualquer pedido. Sessão no servidor quebra isso — a sessão precisa
+              ir pra <a href="0010-redis.html">Redis</a> ou banco.</span
+            ><span data-lang="en"
+              >Balancing only works when servers are
+              <strong>interchangeable</strong>: any one can serve any request.
+              Server-local session state breaks that — sessions belong in
+              <a href="0010-redis.html">Redis</a> or the database.</span
+            >
+          </p>
+        </div>
+      </div>
+
+      <h2 class="section">
+        <span class="num">2</span
+        ><span data-lang="pt"
+          >A viagem de um pedido (e a morte de um servidor)</span
+        ><span data-lang="en">One request's trip (and one server's death)</span>
+      </h2>
+      <div class="flow-board" data-flow>
+        <div class="flow-row">
+          <span class="step">1</span>
+          <div>
+            <b>GET /api/orders → IP do balancer</b>
+            <p>
+              <span data-lang="pt"
+                >O DNS resolve o nome para o IP <em>do balancer</em>. O cliente
+                acha que é ele o servidor. Ele nunca soube quantos
+                existem.</span
+              ><span data-lang="en"
+                >DNS resolves the name to the <em>balancer's</em> IP. The client
+                thinks that IS the server. It never learns how many exist.</span
+              >
+            </p>
+          </div>
+        </div>
+        <div class="flow-row">
+          <span class="step">2</span>
+          <div>
+            <b
+              ><span data-lang="pt">Health check: servidor 3 está morto</span
+              ><span data-lang="en">Health check: server 3 is dead</span></b
+            >
+            <p>
+              <span data-lang="pt"
+                >O balancer pergunta <code>/health</code> a cada servidor de N
+                em N segundos. O 3 falhou duas vezes seguidas → sai da rotação.
+                <strong>Nenhum pedido vai mais pra lá.</strong></span
+              ><span data-lang="en"
+                >The balancer asks <code>/health</code> every few seconds.
+                Server 3 failed twice in a row → out of the rotation.
+                <strong>No request goes there anymore.</strong></span
+              >
+            </p>
+          </div>
+        </div>
+        <div class="flow-row">
+          <span class="step">3</span>
+          <div>
+            <b
+              ><span data-lang="pt">Escolhe um vivo e repassa</span
+              ><span data-lang="en">Picks a live one and forwards</span></b
+            >
+            <p>
+              <span data-lang="pt"
+                >Entre os vivos, uma regra decide: <em>round-robin</em> (fila
+                circular), <em>least connections</em> (menos ocupado), ou hash
+                do cliente. O pedido sai com o IP de origem trocado — NAT
+                simples.</span
+              ><span data-lang="en"
+                >Among the living, a rule decides:
+                <em>round-robin</em> (circular line),
+                <em>least connections</em> (least busy), or client hash. The
+                request is forwarded with its source IP rewritten — plain
+                NAT.</span
+              >
+            </p>
+          </div>
+        </div>
+        <div class="flow-row">
+          <span class="step">4</span>
+          <div>
+            <b
+              ><span data-lang="pt">Resposta volta pelo mesmo caminho</span
+              ><span data-lang="en">Response returns the same way</span></b
+            >
+            <p>
+              <span data-lang="pt"
+                >O servidor responde ao balancer, que devolve ao cliente. O 3
+                pode reiniciar, passar no health check e voltar à rotação — o
+                cliente nunca soube da festa.</span
+              ><span data-lang="en"
+                >The server answers the balancer, which answers the client.
+                Server 3 can reboot, pass its health check, and rejoin — the
+                client never knew there was a party.</span
+              >
+            </p>
+          </div>
+        </div>
+        <div class="flow-controls">
+          <button type="button" data-next>
+            <span data-lang="pt">Próxima etapa →</span
+            ><span data-lang="en">Next step →</span>
+          </button>
+          <button type="button" data-reset>
+            <span data-lang="pt">Reiniciar</span
+            ><span data-lang="en">Reset</span>
+          </button>
+          <span class="flow-status" data-flow-status></span>
+        </div>
+      </div>
+
+      <h2 class="section">
+        <span class="num">3</span
+        ><span data-lang="pt">As regras de distribuição</span
+        ><span data-lang="en">The distribution rules</span>
+      </h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>
+                <span data-lang="pt">Regra</span
+                ><span data-lang="en">Rule</span>
+              </th>
+              <th>
+                <span data-lang="pt">Como decide</span
+                ><span data-lang="en">How it decides</span>
+              </th>
+              <th>
+                <span data-lang="pt">Quando brilha</span
+                ><span data-lang="en">When it shines</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <span data-lang="pt">Round-robin</span
+                ><span data-lang="en">Round-robin</span>
+              </td>
+              <td>
+                <span data-lang="pt">Fila circular: 1, 2, 3, 1, 2, 3…</span
+                ><span data-lang="en">Circular line: 1, 2, 3, 1, 2, 3…</span>
+              </td>
+              <td>
+                <span data-lang="pt">Pedidos custam todos o mesmo.</span
+                ><span data-lang="en">Requests all cost about the same.</span>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="pt">Least connections</span
+                ><span data-lang="en">Least connections</span>
+              </td>
+              <td>
+                <span data-lang="pt"
+                  >Manda pra quem tem menos conexões abertas.</span
+                ><span data-lang="en"
+                  >Sends to whoever holds fewest open connections.</span
+                >
+              </td>
+              <td>
+                <span data-lang="pt"
+                  >Pedidos têm custos muito diferentes (um é 1 ms, outro é 10
+                  s).</span
+                ><span data-lang="en"
+                  >Request costs vary wildly (one is 1 ms, another 10 s).</span
+                >
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="pt">Hash do cliente</span
+                ><span data-lang="en">Client hash</span>
+              </td>
+              <td>
+                <span data-lang="pt"
+                  >Mesmo cliente → sempre o mesmo servidor (IP ou cookie).</span
+                ><span data-lang="en"
+                  >Same client → always the same server (by IP or cookie).</span
+                >
+              </td>
+              <td>
+                <span data-lang="pt">Cache local por servidor / sessões.</span
+                ><span data-lang="en"
+                  >Per-server local caches / sticky sessions.</span
+                >
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="pt">Peso</span
+                ><span data-lang="en">Weight</span>
+              </td>
+              <td>
+                <span data-lang="pt"
+                  >Round-robin com pesos: servidor 2× maior leva 2× mais.</span
+                ><span data-lang="en"
+                  >Weighted round-robin: a 2× beefier server takes 2×
+                  more.</span
+                >
+              </td>
+              <td>
+                <span data-lang="pt">Frota heterogênea.</span
+                ><span data-lang="en">Mixed hardware fleet.</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 class="section">
+        <span class="num">4</span
+        ><span data-lang="pt"
+          >Camada 4 vs camada 7 — e o calcanhar de aquiles</span
+        ><span data-lang="en">Layer 4 vs layer 7 — and the Achilles heel</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          ><strong>L4</strong> olha só IP/porta (pacote): rápido, burro — não lê
+          o HTTP. <strong>L7</strong> lê a requisição: rota por path (<code
+            >/api</code
+          >
+          pros servidores de API, <code>/img</code> pro CDN), termina o TLS,
+          reescreve headers. A regra prática:
+          <em
+            >L4 quando só falta dividir; L7 quando a decisão depende do
+            conteúdo.</em
+          ></span
+        ><span data-lang="en"
+          ><strong>L4</strong> looks at IP/port only (packets): fast, dumb —
+          never reads HTTP. <strong>L7</strong> reads the request: routes by
+          path (<code>/api</code> to API servers, <code>/img</code> to the CDN),
+          terminates TLS, rewrites headers. Rule of thumb:
+          <em
+            >L4 when you only need to split; L7 when the decision depends on
+            content.</em
+          ></span
+        >
+      </p>
+      <div class="callout warn">
+        <p>
+          <span data-lang="pt"
+            ><strong>O calcanhar: quem balanceia o balancer?</strong> Ele é um
+            ponto único de falha — a menos que você o resolva: dois balancers
+            com <strong>IP virtual (VRRP)</strong> — um ativo, um à espera que
+            assume em segundos — ou DNS com múltiplos IPs. No mundo real isso
+            tem nome de produto: AWS NLB/ALB, GCP LB, nginx, HAProxy.</span
+          ><span data-lang="en"
+            ><strong>The heel: who balances the balancer?</strong> It's a single
+            point of failure — unless you solve that too: two balancers sharing
+            a <strong>virtual IP (VRRP)</strong> — one active, one on standby
+            taking over in seconds — or DNS with multiple IPs. In practice these
+            are products: AWS NLB/ALB, GCP LB, nginx, HAProxy.</span
+          >
+        </p>
+      </div>
+      <p>
+        <span data-lang="pt"
+          >Segundo susto: <strong>health check mentiroso</strong>. Se o check é
+          <code>GET /</code> mas o banco do servidor caiu, a página responde 200
+          e o balancer segue mandando tráfego pra um servidor que
+          <em>falha em tudo</em>. O check tem que testar o que importa:
+          dependências inclusas.</span
+        ><span data-lang="en"
+          >Second scare: the <strong>lying health check</strong>. If the check
+          is <code>GET /</code> but the server's database died, the page still
+          returns 200 and the balancer keeps sending traffic to a server that
+          <em>fails everything</em>. The check must test what matters:
+          dependencies included.</span
+        >
+      </p>
+      <div class="callout key">
+        <p>
+          <span data-lang="pt"
+            ><strong>O load balancer também é um amortecedor de pico.</strong>
+            Com o
+            <a href="0006-cache-hit-rate.html">cache</a> ele é a dupla de escala
+            horizontal: o cache corta trabalho, o balancer distribui o que sobra
+            por mais máquinas. Juntos transformam "um servidor grande" em "N
+            servidores pequenos".</span
+          ><span data-lang="en"
+            ><strong>The load balancer is also a peak absorber.</strong> With
+            the <a href="0006-cache-hit-rate.html">cache</a> it forms the
+            horizontal-scaling pair: the cache cuts work, the balancer spreads
+            what's left across more machines. Together they turn "one big
+            server" into "N small servers".</span
+          >
+        </p>
+      </div>
+
+      <h2 class="section">
+        <span class="num">5</span
+        ><span data-lang="pt">A jogada de entrevista (30 segundos)</span
+        ><span data-lang="en">The interview move (30 seconds)</span>
+      </h2>
+      <div class="code-stage">
+        <pre><code><span data-lang="pt"><span style="color:#8b88b8"># nginx: L7 por trás, health check ativo</span>
+upstream api {
+    server 10.0.1.10:3000;
+    server 10.0.1.11:3000;
+    server 10.0.1.12:3000 backup;   # entra só se os dois caírem
+}
+
+server {
+    location /api {
+        proxy_pass http://api;      # round-robin é o padrão
+    }
+    location /health { return 200; }
+}
+
+<span style="color:#8b88b8"># as máquinas são intercambiáveis — sessão fora delas</span>
+GET /api/session   →  Redis (ver lição 09), não a RAM do servidor</span><span data-lang="en"><span style="color:#8b88b8"># nginx: an L7 in front, active health checks</span>
+upstream api {
+    server 10.0.1.10:3000;
+    server 10.0.1.11:3000;
+    server 10.0.1.12:3000 backup;   # joins only if both die
+}
+
+server {
+    location /api {
+        proxy_pass http://api;      # round-robin is the default
+    }
+    location /health { return 200; }
+}
+
+<span style="color:#8b88b8"># machines are interchangeable — sessions live outside them</span>
+GET /api/session   →  Redis (see lesson 09), not server RAM</span></code></pre>
+      </div>
+      <div class="callout key">
+        <p>
+          <span data-lang="pt"
+            ><strong>Frase que fecha a questão:</strong> "O load balancer é o
+            porteiro: um IP público, N servidores intercambiáveis atrás. Health
+            check tira o morto da rotação em segundos; a regra de distribuição —
+            round-robin, least connections ou hash — divide a fila. L4 divide
+            pacotes, L7 entende HTTP e roteia por conteúdo. Estado vai pra
+            Redis/banco, nunca pro servidor. E o próprio balancer nunca é único:
+            par com IP virtual ou DNS multi-IP."</span
+          ><span data-lang="en"
+            ><strong>The sentence that closes the question:</strong> "The load
+            balancer is the doorman: one public IP, N interchangeable servers
+            behind it. Health checks drop the dead from rotation in seconds; the
+            distribution rule — round-robin, least connections, or hash — splits
+            the line. L4 splits packets, L7 reads HTTP and routes by content.
+            State goes to Redis/the database, never the server. And the balancer
+            itself is never singular: a pair with a virtual IP or multi-IP
+            DNS."</span
+          >
+        </p>
+      </div>
+
+      <div class="mcq" data-mcq>
+        <p class="mcq-q">
+          <span data-lang="pt"
+            >O servidor 2 travou mas o health check continua passando. O que os
+            usuários veem?</span
+          ><span data-lang="en"
+            >Server 2 hung but the health check keeps passing. What do users
+            see?</span
+          >
+        </p>
+        <div class="mcq-opts">
+          <button
+            class="mcq-opt"
+            data-correct="true"
+            data-fb-pt="Correto: check superficial (200 OK da home) não prova que o serviço funciona — o servidor pode estar 'vivo' e inútil. Health check honesto testa as dependências: banco, fila, disco."
+            data-fb-en="Correct: a shallow check (200 OK from the home page) doesn't prove the service works — the server can be 'alive' and useless. An honest health check tests dependencies: database, queue, disk."
+          >
+            <span data-lang="pt"
+              >Erros intermitentes: 1 em cada N pedidos falha</span
+            ><span data-lang="en"
+              >Intermittent errors: 1 in every N requests fails</span
+            >
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="Se o check passa, o balancer não sabe do problema — o servidor continua na rotação recebendo tráfego. O usuário sente o erro, não o silêncio."
+            data-fb-en="If the check passes, the balancer knows nothing — the server stays in rotation receiving traffic. Users feel the errors, not silence."
+          >
+            <span data-lang="pt">Nada: o balancer tira ele da rotação</span
+            ><span data-lang="en"
+              >Nothing: the balancer pulls it from rotation</span
+            >
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="O load balancer não reescreve respostas de erro em sucesso — ele repassa o que recebe. Um 500 chega como 500."
+            data-fb-en="A load balancer doesn't rewrite error responses into successes — it forwards what it receives. A 500 arrives as a 500."
+          >
+            <span data-lang="pt"
+              >Página 404 customizada do próprio balancer</span
+            ><span data-lang="en"
+              >A custom 404 page from the balancer itself</span
+            >
+          </button>
+        </div>
+        <div class="mcq-fb" data-fb></div>
+      </div>
+
+      <div class="mcq" data-mcq>
+        <p class="mcq-q">
+          <span data-lang="pt"
+            >Seus pedidos têm custos muito diferentes — alguns respondem em 5
+            ms, outros processam vídeo por 30 s. Qual regra de
+            distribuição?</span
+          ><span data-lang="en"
+            >Your requests have wildly different costs — some answer in 5 ms,
+            others process video for 30 s. Which distribution rule?</span
+          >
+        </p>
+        <div class="mcq-opts">
+          <button
+            class="mcq-opt"
+            data-correct="true"
+            data-fb-pt="Exato: least connections manda cada pedido novo pro servidor menos ocupado. Round-robin entregaria o mesmo número de pedidos a todos — mas os pesados acumulariam num só."
+            data-fb-en="Exactly: least connections sends each new request to the least-busy server. Round-robin would deliver equal counts to all — but the heavy ones would pile up on one."
+          >
+            <span data-lang="pt">Least connections</span
+            ><span data-lang="en">Least connections</span>
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="Round-robin iguala a CONTAGEM de pedidos, não o TRABALHO. Com custos heterogêneos, quem pegar os pesados afunda enquanto os outros ociosam."
+            data-fb-en="Round-robin equalizes request COUNT, not WORK. With heterogeneous costs, whoever gets the heavy ones drowns while the others idle."
+          >
+            <span data-lang="pt">Round-robin</span
+            ><span data-lang="en">Round-robin</span>
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="Hash do cliente garante afinidade (mesmo cliente → mesmo servidor), que é justamente o risco aqui: um cliente pesado prende um servidor. Affinidade ≠ balanceamento."
+            data-fb-en="Client hash guarantees affinity (same client → same server), which is exactly the risk here: one heavy client pins one server. Affinity ≠ balancing."
+          >
+            <span data-lang="pt">Hash do cliente (sticky)</span
+            ><span data-lang="en">Client hash (sticky)</span>
+          </button>
+        </div>
+        <div class="mcq-fb" data-fb></div>
+      </div>
+
+      <p class="cite-line">
+        <span data-lang="pt">Revisão:</span><span data-lang="en">Review:</span>
+        <a href="0005-estimation.html"
+          ><span data-lang="pt">Estimativa (o pico que ele divide)</span
+          ><span data-lang="en">Estimation (the peak it splits)</span></a
+        >
+        ·
+        <a href="0010-redis.html"
+          ><span data-lang="pt">Redis (onde mora o estado)</span
+          ><span data-lang="en">Redis (where the state lives)</span></a
+        >
+        ·
+        <a
+          href="https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html"
+          >AWS — Application Load Balancer (docs.aws.amazon.com)</a
+        >
+        ·
+        <a
+          href="https://docs.nginx.com/nginx/admin-guide/load-balancer/http-load-balancer/"
+          >nginx — HTTP Load Balancing (docs.nginx.com)</a
+        >.
+        <span data-lang="pt"
+          >Dúvida em qualquer parte? Pergunte ao agente — ele é seu professor e
+          pode destrinchar qualquer seção.</span
+        ><span data-lang="en"
+          >Stuck on any part? Ask the agent — it's your teacher and can break
+          down any section.</span
+        >
+      </p>
+    </article>
+  </body>
+</html>

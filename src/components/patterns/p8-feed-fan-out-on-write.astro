@@ -1,0 +1,528 @@
+---
+import Pattern from "../Pattern.astro";
+import T from "../T.astro";
+---
+
+<!-- P8 · Feed: fan-out on write (L3) -->
+<Pattern
+  id="p8"
+  num="P8"
+  lvl={3}
+  titlePt={`Feed: fan-out na escrita`}
+  titleEn={`Feed: fan-out on write`}
+  kickerPt={`Twitter/Instagram. A pergunta-chave: montar o feed na
+            <em>leitura</em> ou empurrar na <em>escrita</em>?`}
+  kickerEn={`Twitter/Instagram. Key question: build the feed on <em>read</em> or
+            push on <em>write</em>?`}
+  tipPt={`<strong>Fale enquanto desenha:</strong> "Fan-out na escrita:
+              post + outbox numa transação; um publisher relê o outbox e
+              publica na fila. Workers buscam os seguidores no grafo e fazem
+              ZADD só do ID em cada feed. Ler custa O(log N + k); escrever
+              custa O(F × log N) por post."`}
+  tipEn={`<strong>Say while drawing:</strong> "Fan-out on write: post + outbox
+              in one transaction; a publisher relays the outbox to the queue.
+              Workers fetch followers from the graph and ZADD only the post id
+              into each feed. Reading is O(log N + k); writing is
+              O(F × log N) per post."`}
+  whyPt={`<strong>Por quê:</strong> <em>Redis</em> para os feeds porque é
+              um sorted set por usuário, sempre lido do topo — e guarda só
+              IDs; o conteúdo é hidratado no cache de posts na leitura.
+              <em>Fila</em> para o fan-out não bloquear a escrita do post,
+              com retries + DLQ, at-least-once (pode reentregar).
+              Workers <em>idempotentes</em>: o id do post como member do
+              ZSET torna um ZADD duplicado inofensivo. <em>Trim</em> do
+              feed (~500–1000 IDs) mantém o ZSET pequeno — e o feed é
+              cache <em>reconstruível</em>: o DB é a fonte da verdade,
+              Redis perdido = rebuild. <em>Kafka se</em> outros
+              consumidores também querem o stream (analytics, notificação)
+              — cada consumer group recebe tudo; <em>SQS se</em> só o
+              fan-out consome — workers competem pelas mensagens, um
+              worker pega o evento do post inteiro e fan-outa em lotes.
+              <strong>Tradeoff dos famosos:</strong> 10M de seguidores = 10M
+              de escritas por post — híbrido: gente comum push, famosos montar
+              na leitura, merge na API.`}
+  whyEn={`<strong>Why:</strong> <em>Redis</em> for feeds because it's one
+              sorted set per user, always read from the top — and it stores
+              only IDs; content is hydrated from the post cache at read time.
+              <em>A queue</em> so fan-out doesn't block the post write, with
+              retries + DLQ, at-least-once (may redeliver).
+              <em>Idempotent</em> workers: the post id as the ZSET member
+              makes a duplicate ZADD harmless. <em>Feed trim</em>
+              (~500–1000 IDs) keeps the ZSET small — and the feed is a
+              <em>rebuildable</em> cache: the DB is the source of truth,
+              lost Redis = rebuild. <em>Kafka if</em> other consumers also
+              want the stream (analytics, notifications) — every consumer
+              group gets it; <em>SQS if</em> only fan-out consumes —
+              workers compete for messages, one worker takes the whole
+              post event and fans out in batches.
+              <strong>The celebrity tradeoff:</strong> 10M followers = 10M
+              writes per post — hybrid: regular people push, celebrities
+              build on read, the API merges both.`}
+>
+  <Fragment slot="dia" set:html={`<svg
+              viewBox="0 0 790 372"
+              width="100%"
+              style="min-width: 760px"
+              role="img"
+              aria-labelledby="p8t"
+            >
+              <title
+                id="p8t"
+                data-pt="Autor → API grava post + outbox no DB (uma transação); Outbox Publisher publica na fila; workers consultam o Social Graph pelos seguidores e fazem ZADD só do ID nos feeds (Redis ZSET, com trim); leitor → API → ZRANGE de IDs → hidratação no cache de posts; híbrido: famosos montam na leitura"
+                data-en="Author → API stores post + outbox in the DB (one transaction); Outbox Publisher relays to the queue; workers fetch followers from the social graph and ZADD only post IDs into feeds (Redis ZSET, trimmed); reader → API → ZRANGE of IDs → hydration from the post cache; hybrid: celebrities build on read"
+              >
+                Fan-out feed
+              </title>
+              <defs>
+                <marker
+                  id="m8"
+                  markerWidth="8"
+                  markerHeight="8"
+                  refX="6"
+                  refY="3"
+                  orient="auto"
+                >
+                  <path d="M0,0 L0,6 L7,3 z" fill="#8b6ff7" />
+                </marker>
+              </defs>
+              <g font-family="Space Grotesk" font-size="13" font-weight="700">
+                <!-- write path -->
+                <rect
+                  x="15"
+                  y="25"
+                  width="75"
+                  height="48"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#2dd4bf"
+                />
+                <text
+                  x="52"
+                  y="54"
+                  fill="#2dd4bf"
+                  text-anchor="middle"
+                  data-pt="Autor"
+                  data-en="Author"
+                >
+                  Autor
+                </text>
+                <rect
+                  x="115"
+                  y="25"
+                  width="70"
+                  height="48"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#8b6ff7"
+                />
+                <text x="150" y="54" fill="#8b6ff7" text-anchor="middle">
+                  API
+                </text>
+                <rect
+                  x="205"
+                  y="20"
+                  width="145"
+                  height="58"
+                  rx="10"
+                  fill="#2a1207"
+                  stroke="#f59e0b"
+                />
+                <text
+                  x="277"
+                  y="44"
+                  fill="#fbbf24"
+                  text-anchor="middle"
+                  font-size="12"
+                  data-pt="DB · posts + outbox"
+                  data-en="DB · posts + outbox"
+                >
+                  DB · posts + outbox
+                </text>
+                <text
+                  x="277"
+                  y="61"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="10"
+                  data-pt="1 transação"
+                  data-en="one transaction"
+                >
+                  1 transação
+                </text>
+                <rect
+                  x="370"
+                  y="20"
+                  width="90"
+                  height="58"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#8b6ff7"
+                />
+                <text
+                  x="415"
+                  y="41"
+                  fill="#8b6ff7"
+                  text-anchor="middle"
+                  font-size="12"
+                  data-pt="Outbox"
+                  data-en="Outbox"
+                >
+                  Outbox
+                </text>
+                <text
+                  x="415"
+                  y="56"
+                  fill="#8b6ff7"
+                  text-anchor="middle"
+                  font-size="12"
+                  data-pt="Publisher"
+                  data-en="Publisher"
+                >
+                  Publisher
+                </text>
+                <text
+                  x="415"
+                  y="70"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="9"
+                  data-pt="poll/CDC"
+                  data-en="poll/CDC"
+                >
+                  poll/CDC
+                </text>
+                <rect
+                  x="480"
+                  y="20"
+                  width="115"
+                  height="58"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#fb7185"
+                />
+                <text
+                  x="537"
+                  y="44"
+                  fill="#fb7185"
+                  text-anchor="middle"
+                  data-pt="Kafka / SQS"
+                  data-en="Kafka / SQS"
+                >
+                  Kafka / SQS
+                </text>
+                <text x="537" y="61" fill="#9ea2b8" text-anchor="middle" font-size="10">
+                  retries → DLQ
+                </text>
+                <!-- fan-out row -->
+                <rect
+                  x="300"
+                  y="105"
+                  width="140"
+                  height="58"
+                  rx="10"
+                  fill="#2a1207"
+                  stroke="#f59e0b"
+                />
+                <text
+                  x="370"
+                  y="129"
+                  fill="#fbbf24"
+                  text-anchor="middle"
+                  data-pt="Social Graph"
+                  data-en="Social Graph"
+                >
+                  Social Graph
+                </text>
+                <text
+                  x="370"
+                  y="146"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="10"
+                  data-pt="seguidores · cache/DB"
+                  data-en="followers · cache/DB"
+                >
+                  seguidores · cache/DB
+                </text>
+                <rect
+                  x="480"
+                  y="105"
+                  width="115"
+                  height="58"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#8b6ff7"
+                />
+                <text
+                  x="537"
+                  y="126"
+                  fill="#8b6ff7"
+                  text-anchor="middle"
+                  font-size="11"
+                  data-pt="Fan-out workers"
+                  data-en="Fan-out workers"
+                >
+                  Fan-out workers
+                </text>
+                <text
+                  x="537"
+                  y="143"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="10"
+                  data-pt="idempotentes"
+                  data-en="idempotent"
+                >
+                  idempotentes
+                </text>
+                <text
+                  x="460"
+                  y="100"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="10"
+                >
+                  IDs
+                </text>
+                <!-- feeds -->
+                <rect
+                  x="280"
+                  y="190"
+                  width="170"
+                  height="58"
+                  rx="10"
+                  fill="#2a0f1c"
+                  stroke="#fb7185"
+                />
+                <text
+                  x="365"
+                  y="209"
+                  fill="#fb7185"
+                  text-anchor="middle"
+                  font-size="12"
+                  data-pt="Feeds · Redis ZSET"
+                  data-en="Feeds · Redis ZSET"
+                >
+                  Feeds · Redis ZSET
+                </text>
+                <text x="365" y="225" fill="#9ea2b8" text-anchor="middle" font-size="10">
+                  ZADD feed:&lt;fid&gt; &lt;ts&gt; &lt;pid&gt;
+                </text>
+                <text
+                  x="365"
+                  y="240"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="10"
+                  data-pt="IDs por ts · últimos ~1k"
+                  data-en="IDs by ts · keep last ~1k"
+                >
+                  IDs por ts · últimos ~1k
+                </text>
+                <!-- read path -->
+                <rect
+                  x="15"
+                  y="285"
+                  width="80"
+                  height="48"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#2dd4bf"
+                />
+                <text
+                  x="55"
+                  y="314"
+                  fill="#2dd4bf"
+                  text-anchor="middle"
+                  data-pt="Leitor"
+                  data-en="Reader"
+                >
+                  Leitor
+                </text>
+                <rect
+                  x="120"
+                  y="285"
+                  width="76"
+                  height="48"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#8b6ff7"
+                />
+                <text x="158" y="314" fill="#8b6ff7" text-anchor="middle">
+                  API
+                </text>
+                <rect
+                  x="460"
+                  y="285"
+                  width="150"
+                  height="48"
+                  rx="10"
+                  fill="#2a1207"
+                  stroke="#f59e0b"
+                />
+                <text
+                  x="535"
+                  y="305"
+                  fill="#fbbf24"
+                  text-anchor="middle"
+                  font-size="12"
+                  data-pt="Post cache / DB"
+                  data-en="Post cache / DB"
+                >
+                  Post cache / DB
+                </text>
+                <text
+                  x="535"
+                  y="321"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="10"
+                  data-pt="hidrata os posts"
+                  data-en="hydrate full posts"
+                >
+                  hidrata os posts
+                </text>
+                <!-- celebrity hybrid note -->
+                <rect
+                  x="630"
+                  y="278"
+                  width="155"
+                  height="64"
+                  rx="10"
+                  fill="none"
+                  stroke="#f59e0b"
+                  stroke-dasharray="4 3"
+                />
+                <text
+                  x="707"
+                  y="298"
+                  fill="#fbbf24"
+                  text-anchor="middle"
+                  font-size="10"
+                  data-pt="Híbrido: famosos →"
+                  data-en="Hybrid: celebrities →"
+                >
+                  Híbrido: famosos →
+                </text>
+                <text
+                  x="707"
+                  y="312"
+                  fill="#fbbf24"
+                  text-anchor="middle"
+                  font-size="10"
+                  data-pt="fan-out na leitura;"
+                  data-en="fan-out on read;"
+                >
+                  fan-out na leitura;
+                </text>
+                <text
+                  x="707"
+                  y="326"
+                  fill="#fbbf24"
+                  text-anchor="middle"
+                  font-size="10"
+                  data-pt="API faz o merge"
+                  data-en="API merges both"
+                >
+                  API faz o merge
+                </text>
+              </g>
+              <g
+                stroke="#8b6ff7"
+                stroke-width="2"
+                fill="none"
+                marker-end="url(#m8)"
+              >
+                <path d="M90 49 H115" />
+                <path d="M185 49 H205" />
+                <path d="M350 49 H370" />
+                <path d="M460 49 H480" />
+                <path d="M537 78 V105" />
+                <path d="M480 122 H440" />
+                <path d="M440 146 H480" />
+                <path d="M537 163 C528 185 495 200 452 216" />
+                <path d="M95 309 H120" />
+                <path d="M196 296 C230 285 300 270 330 250" />
+                <path d="M196 318 H460" />
+              </g>
+              <g
+                font-family="Space Grotesk"
+                font-size="10"
+                fill="#9ea2b8"
+                text-anchor="middle"
+              >
+                <text x="630" y="190" data-pt="escrita: O(F × log N)" data-en="write: O(F × log N)">
+                  escrita: O(F × log N)
+                </text>
+                <text
+                  x="630"
+                  y="204"
+                  data-pt="10M seguidores = 10M ZADDs"
+                  data-en="10M followers = 10M ZADDs"
+                >
+                  10M seguidores = 10M ZADDs
+                </text>
+                <text x="202" y="262" text-anchor="start">ZRANGE → IDs</text>
+                <text
+                  x="328"
+                  y="334"
+                  data-pt="IDs → posts completos"
+                  data-en="IDs → full posts"
+                >
+                  IDs → posts completos
+                </text>
+                <text
+                  x="390"
+                  y="358"
+                  data-pt="leitura: O(log N + k) — ZRANGE feed:&lt;uid&gt; 0 49 REV"
+                  data-en="read: O(log N + k) — ZRANGE feed:&lt;uid&gt; 0 49 REV"
+                >
+                  leitura: O(log N + k) — ZRANGE feed:&lt;uid&gt; 0 49 REV
+                </text>
+              </g>
+            </svg>`} />
+  <ol slot="order">
+    <Fragment set:html={`<li>`} />
+    <T pt={`Caminho de escrita em cima: autor → API`} en={`Write path on top: author → API`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`DB de posts + outbox; seta API → DB (uma transação)`} en={`Posts + outbox DB; arrow API → DB (one transaction)`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`Outbox Publisher; seta DB → publisher → fila (poll/CDC das
+    rows não publicadas)`} en={`Outbox Publisher; arrow DB → publisher → queue (poll/CDC of
+    unpublished rows)`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`Kafka/SQS com retries → DLQ; seta fila → workers
+    (idempotentes)`} en={`Kafka/SQS with retries → DLQ; arrow queue → workers
+    (idempotent)`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`Social Graph; setas workers ↔ graph ("lista de seguidores")`} en={`Social Graph; arrows workers ↔ graph ("follower list")`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`Feeds (Redis ZSET); seta workers → feeds ("ZADD do id do post
+    em cada feed; guarda só IDs, com trim dos últimos ~1k")`} en={`Feeds (Redis ZSET); arrow workers → feeds ("ZADD the post id
+    into each feed; stores IDs only, trimmed to last ~1k")`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`Caminho de leitura embaixo: leitor → API → feeds (ZRANGE →
+    IDs)`} en={`Read path below: reader → API → feeds (ZRANGE → IDs)`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`Post cache/DB; seta API → cache (hidrata os posts completos)`} en={`Post cache/DB; arrow API → cache (hydrate the full posts)`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`Nota do híbrido: famosos → fan-out na leitura, a API faz o
+    merge`} en={`Hybrid note: celebrities → fan-out on read, the API merges`} />
+    <Fragment set:html={`</li>`} />
+  </ol>
+  <p class="cite" slot="cite" set:html={`<a href="https://bytebytego.com/books/"
+  ><span data-lang="pt"
+    >System Design Interview (Alex Xu) — cap. 11, News Feed</span
+  ><span data-lang="en"
+    >System Design Interview (Alex Xu) — ch. 11, News Feed</span
+  ></a
+>`} />
+</Pattern>

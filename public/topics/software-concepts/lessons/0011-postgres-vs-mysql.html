@@ -1,0 +1,582 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title
+      data-pt="PostgreSQL vs MySQL — irmãos, não gêmeos"
+      data-en="PostgreSQL vs MySQL — siblings, not twins"
+    >
+      PostgreSQL vs MySQL
+    </title>
+    <link rel="stylesheet" href="../assets/style.css" />
+    <link rel="stylesheet" href="../assets/dark.css" />
+    <link rel="stylesheet" href="../assets/i18n.css" />
+    <link rel="stylesheet" href="../assets/concepts.css" />
+    <script src="../assets/i18n.js" defer></script>
+    <script src="../assets/nav.js" defer></script>
+    <script src="../assets/reading-ui.js" defer></script>
+    <script src="../assets/concepts.js" defer></script>
+  </head>
+  <body class="lang-pt">
+    <article class="lesson">
+      <header class="hero">
+        <span class="eyebrow"
+          >⬡ <span data-lang="pt">Conceitos · SQL</span
+          ><span data-lang="en">Concepts · SQL</span></span
+        >
+        <h1>
+          <span data-lang="pt"
+            >Postgres e MySQL falam a mesma língua. Eles discordam no
+            sotaque.</span
+          ><span data-lang="en"
+            >Postgres and MySQL speak the same language. They disagree on the
+            accent.</span
+          >
+        </h1>
+        <p class="lead">
+          <span data-lang="pt"
+            >Na lição de <a href="0001-sql-foundations.html">SQL</a> você
+            aprendeu SELECT e JOIN — a parte que os dois falam igual. Esta lição
+            é o resto: onde eles <strong>convergem por natureza</strong> (o
+            modelo relacional, ACID, B-tree) e onde divergem por escolha (tipos,
+            rigor, sintaxe).</span
+          ><span data-lang="en"
+            >In the <a href="0001-sql-foundations.html">SQL lesson</a> you
+            learned SELECT and JOIN — the part both speak the same. This lesson
+            is the rest: where they <strong>converge by nature</strong> (the
+            relational model, ACID, B-trees) and where they diverge by choice
+            (types, strictness, syntax).</span
+          >
+        </p>
+      </header>
+      <nav class="concept-nav">
+        <a href="0010-redis.html"
+          ><span data-lang="pt">← Redis</span
+          ><span data-lang="en">← Redis</span></a
+        ><a href="0001-sql-foundations.html"
+          ><span data-lang="pt">SQL</span><span data-lang="en">SQL</span></a
+        ><a href="0004-relational-keys.html"
+          ><span data-lang="pt">Chaves</span><span data-lang="en">Keys</span></a
+        ><a href="0012-load-balancer.html"
+          ><span data-lang="pt">Load balancer</span
+          ><span data-lang="en">Load balancer</span></a
+        >
+      </nav>
+
+      <h2 class="section">
+        <span class="num">1</span
+        ><span data-lang="pt"
+          >O que é igual (e por que é igual por natureza)</span
+        ><span data-lang="en">What's alike (and why it's alike by nature)</span>
+      </h2>
+      <div class="mental-model">
+        <div class="concept-card">
+          <h3>
+            <span data-lang="pt">Mesma matemática</span
+            ><span data-lang="en">Same math</span>
+          </h3>
+          <p>
+            <span data-lang="pt"
+              >Ambos são <strong>bancos relacionais</strong>: tabelas, linhas,
+              PK/FK, JOIN, Normalização. O modelo —
+              <a href="0004-relational-keys.html">chaves e relações</a> — veio
+              antes de qualquer marca. Trocar de um pro outro não muda seu
+              desenho de dados.</span
+            ><span data-lang="en"
+              >Both are <strong>relational databases</strong>: tables, rows,
+              PK/FK, JOIN, normalization. The model —
+              <a href="0004-relational-keys.html">keys and relations</a> —
+              predates either brand. Switching between them doesn't change your
+              data design.</span
+            >
+          </p>
+        </div>
+        <div class="concept-card">
+          <h3>
+            <span data-lang="pt">Mesmas promessas</span
+            ><span data-lang="en">Same promises</span>
+          </h3>
+          <p>
+            <span data-lang="pt"
+              >Ambos entregam <strong>ACID</strong> com transações (<span
+                class="token"
+                >BEGIN … COMMIT</span
+              >), isolamento via <strong>MVCC</strong> (leitores não bloqueiam
+              escritores) e índices B-tree por padrão. O "P" de Primary Key e o
+              "J" de JOIN funcionam igual.</span
+            ><span data-lang="en"
+              >Both deliver <strong>ACID</strong> with transactions (<span
+                class="token"
+                >BEGIN … COMMIT</span
+              >), isolation via <strong>MVCC</strong> (readers don't block
+              writers), and B-tree indexes by default. The "P" in Primary Key
+              and the "J" in JOIN work the same.</span
+            >
+          </p>
+        </div>
+        <div class="concept-card">
+          <h3>
+            <span data-lang="pt">Mesmo dialeto no dia a dia</span
+            ><span data-lang="en">Same dialect day to day</span>
+          </h3>
+          <p>
+            <span data-lang="pt"
+              >95% do seu SQL é portátil: SELECT, WHERE, JOIN, GROUP BY,
+              agregações, <span class="token">LIMIT</span>,
+              <span class="token">INSERT</span>. Os 5% que quebram ao migrar
+              são: tipos, coerção, e cláusulas especiais — a seção 3.</span
+            ><span data-lang="en"
+              >95% of your SQL is portable: SELECT, WHERE, JOIN, GROUP BY,
+              aggregates, <span class="token">LIMIT</span>,
+              <span class="token">INSERT</span>. The 5% that break on migration:
+              types, coercion, and special clauses — section 3.</span
+            >
+          </p>
+        </div>
+      </div>
+
+      <h2 class="section">
+        <span class="num">2</span
+        ><span data-lang="pt">O que é diferente (a tabela de escolha)</span
+        ><span data-lang="en">What's different (the table of choices)</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >As diferenças não são bugs de um nem do outro — são prioridades.
+          Postgres apostou em <strong>rigor e riqueza de tipos</strong>; MySQL
+          em <strong>simplicidade e velocidade de leitura</strong>.</span
+        ><span data-lang="en"
+          >The differences aren't bugs in either — they're priorities. Postgres
+          bet on <strong>strictness and rich types</strong>; MySQL on
+          <strong>simplicity and read speed</strong>.</span
+        >
+      </p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>
+                <span data-lang="pt">Eixo</span><span data-lang="en">Axis</span>
+              </th>
+              <th>PostgreSQL</th>
+              <th>MySQL</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <span data-lang="pt">Postura</span
+                ><span data-lang="en">Posture</span>
+              </td>
+              <td>
+                <span data-lang="pt"
+                  ><strong>Estrito</strong>: compara <code>int</code> com
+                  <code>string</code> → erro.</span
+                ><span data-lang="en"
+                  ><strong>Strict</strong>: comparing <code>int</code> to
+                  <code>string</code> → error.</span
+                >
+              </td>
+              <td>
+                <span data-lang="pt"
+                  ><strong>Flexível</strong>: coerção implícita (<code
+                    >'1'</code
+                  >
+                  vira <code>1</code>), ajustável via
+                  <code>sql_mode</code>.</span
+                ><span data-lang="en"
+                  ><strong>Lenient</strong>: implicit coercion (<code>'1'</code>
+                  becomes <code>1</code>), tunable via
+                  <code>sql_mode</code>.</span
+                >
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="pt">JSON</span><span data-lang="en">JSON</span>
+              </td>
+              <td>
+                <span data-lang="pt"
+                  ><code>JSONB</code> binário, indexável com GIN — consultas
+                  <code>-&gt;&gt;</code> rápidas.</span
+                ><span data-lang="en"
+                  ><code>JSONB</code> binary, GIN-indexable — fast
+                  <code>-&gt;&gt;</code> queries.</span
+                >
+              </td>
+              <td>
+                <span data-lang="pt"
+                  ><code>JSON</code> com índices funcionais sobre
+                  <code>JSON_EXTRACT</code>.</span
+                ><span data-lang="en"
+                  ><code>JSON</code> with functional indexes over
+                  <code>JSON_EXTRACT</code>.</span
+                >
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="pt">Upsert</span
+                ><span data-lang="en">Upsert</span>
+              </td>
+              <td>
+                <code>INSERT … ON CONFLICT (pk) DO UPDATE</code>
+              </td>
+              <td>
+                <code>INSERT … ON DUPLICATE KEY UPDATE</code>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="pt">ID gerado</span
+                ><span data-lang="en">Generated ID</span>
+              </td>
+              <td>
+                <span data-lang="pt"
+                  ><code>RETURNING id</code> na própria query.</span
+                ><span data-lang="en"
+                  ><code>RETURNING id</code> in the same query.</span
+                >
+              </td>
+              <td>
+                <span data-lang="pt"
+                  ><code>AUTO_INCREMENT</code> +
+                  <code>LAST_INSERT_ID()</code> depois.</span
+                ><span data-lang="en"
+                  ><code>AUTO_INCREMENT</code> +
+                  <code>LAST_INSERT_ID()</code> afterwards.</span
+                >
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="pt">MVCC</span><span data-lang="en">MVCC</span>
+              </td>
+              <td>
+                <span data-lang="pt"
+                  >Versões antigas ficam na tabela → precisa de
+                  <strong>VACUUM</strong>.</span
+                ><span data-lang="en"
+                  >Old row versions stay in the table → needs
+                  <strong>VACUUM</strong>.</span
+                >
+              </td>
+              <td>
+                <span data-lang="pt"
+                  >InnoDB guarda desfazimentos no <em>undo log</em> → sem
+                  vacuum.</span
+                ><span data-lang="en"
+                  >InnoDB keeps undo records in the <em>undo log</em> → no
+                  vacuum.</span
+                >
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="pt">Tipos extras</span
+                ><span data-lang="en">Extra types</span>
+              </td>
+              <td>
+                <span data-lang="pt"
+                  >Arrays, ranges, geometria (PostGIS), tipos custom.</span
+                ><span data-lang="en"
+                  >Arrays, ranges, geometry (PostGIS), custom types.</span
+                >
+              </td>
+              <td>
+                <span data-lang="pt"
+                  >Conjunto menor e pragmático; <code>ENUM</code> nativo.</span
+                ><span data-lang="en"
+                  >Smaller pragmatic set; native <code>ENUM</code>.</span
+                >
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="pt">Licença</span
+                ><span data-lang="en">License</span>
+              </td>
+              <td>
+                <span data-lang="pt"
+                  >PostgreSQL License (estilo BSD, permissiva).</span
+                ><span data-lang="en"
+                  >PostgreSQL License (BSD-style, permissive).</span
+                >
+              </td>
+              <td>
+                <span data-lang="pt">GPL (com opção comercial da Oracle).</span
+                ><span data-lang="en"
+                  >GPL (with Oracle's commercial option).</span
+                >
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 class="section">
+        <span class="num">3</span
+        ><span data-lang="pt">A sintaxe que quebra na migração</span
+        ><span data-lang="en">The syntax that breaks on migration</span>
+      </h2>
+      <div class="code-stage">
+        <pre><code><span data-lang="pt"><span style="color:#8b88b8"># concatenação</span>
+Postgres:  SELECT first_name || ' ' || last_name;
+MySQL:     SELECT CONCAT(first_name, ' ', last_name);
+
+<span style="color:#8b88b8"># upsert + pegar o id de volta</span>
+Postgres:  INSERT INTO users (email) VALUES ($1)
+           ON CONFLICT (email) DO UPDATE SET seen = now()
+           RETURNING id;
+MySQL:     INSERT INTO users (email) VALUES (?)
+           ON DUPLICATE KEY UPDATE seen = NOW();
+           -- depois: SELECT LAST_INSERT_ID();
+
+<span style="color:#8b88b8"># JSON: campo aninhado</span>
+Postgres:  SELECT data->>'city' FROM events;
+MySQL:     SELECT JSON_EXTRACT(data, '$.city') FROM events;</span><span data-lang="en"><span style="color:#8b88b8"># concatenation</span>
+Postgres:  SELECT first_name || ' ' || last_name;
+MySQL:     SELECT CONCAT(first_name, ' ', last_name);
+
+<span style="color:#8b88b8"># upsert + getting the id back</span>
+Postgres:  INSERT INTO users (email) VALUES ($1)
+           ON CONFLICT (email) DO UPDATE SET seen = now()
+           RETURNING id;
+MySQL:     INSERT INTO users (email) VALUES (?)
+           ON DUPLICATE KEY UPDATE seen = NOW();
+           -- then: SELECT LAST_INSERT_ID();
+
+<span style="color:#8b88b8"># JSON: nested field</span>
+Postgres:  SELECT data->>'city' FROM events;
+MySQL:     SELECT JSON_EXTRACT(data, '$.city') FROM events;</span></code></pre>
+      </div>
+
+      <h2 class="section">
+        <span class="num">4</span
+        ><span data-lang="pt">O que derruba todo mundo</span
+        ><span data-lang="en">What trips everyone up</span>
+      </h2>
+      <div class="callout warn">
+        <p>
+          <span data-lang="pt"
+            ><strong>Case sensitivity não é do SQL — é do sistema.</strong>
+            Postgres dobra todo identificador sem aspas para minúsculas. MySQL
+            depende do sistema de arquivos: <code>Users</code> e
+            <code>users</code> podem ser a mesma tabela no Linux e tabelas
+            diferentes no macOS. Migração cruzada de SO é onde isso morde.</span
+          ><span data-lang="en"
+            ><strong>Case sensitivity isn't SQL's — it's the OS's.</strong>
+            Postgres folds every unquoted identifier to lowercase. MySQL follows
+            the filesystem: <code>Users</code> and <code>users</code> can be the
+            same table on Linux and different tables on macOS. Cross-OS
+            migrations are where this bites.</span
+          >
+        </p>
+      </div>
+      <p>
+        <span data-lang="pt"
+          >Segundo susto: <strong>strings e números</strong>. No MySQL,
+          <code>WHERE id = '42'</code> funciona e o índice ainda é usado. No
+          Postgres, a mesma query pode dar erro de tipo — ele se recusa a
+          adivinhar. Terceiro: no MySQL histórico,
+          <strong><code>utf8</code> não era UTF-8 de verdade</strong> (3 bytes,
+          sem emoji) — o nome correto é <code>utf8mb4</code>. Postgres sempre
+          foi UTF-8 completo.</span
+        ><span data-lang="en"
+          >Second scare: <strong>strings and numbers</strong>. In MySQL,
+          <code>WHERE id = '42'</code> works and the index is still used. In
+          Postgres the same query can raise a type error — it refuses to guess.
+          Third: in legacy MySQL,
+          <strong><code>utf8</code> wasn't real UTF-8</strong> (3 bytes, no
+          emoji) — the correct name is <code>utf8mb4</code>. Postgres was always
+          full UTF-8.</span
+        >
+      </p>
+      <div class="callout key">
+        <p>
+          <span data-lang="pt"
+            ><strong>Escolha pela carga, não pela fama.</strong> Cargas
+            analíticas, JSON pesado, geografia e extensões → Postgres. Muita
+            leitura simples, ecossistema LAMP/W ordem-establishment, operação
+            batida → MySQL.
+            <em>Ambos escalam além do que 99% dos produtos precisam.</em></span
+          ><span data-lang="en"
+            ><strong>Choose by workload, not fame.</strong> Analytical loads,
+            heavy JSON, geo, and extensions → Postgres. Lots of simple reads,
+            established LAMP-ecosystem tooling, boring operations → MySQL.
+            <em>Both scale past what 99% of products need.</em></span
+          >
+        </p>
+      </div>
+
+      <h2 class="section">
+        <span class="num">5</span
+        ><span data-lang="pt">A jogada de entrevista (30 segundos)</span
+        ><span data-lang="en">The interview move (30 seconds)</span>
+      </h2>
+      <div class="code-stage">
+        <pre><code><span data-lang="pt"><span style="color:#8b88b8"># o mesmo design nos dois bancos: chaves e JOIN não mudam</span>
+SELECT o.id, COUNT(i.id) AS items
+FROM orders o
+JOIN order_items i ON i.order_id = o.id
+WHERE o.status = 'paid'
+GROUP BY o.id;
+
+<span style="color:#8b88b8"># o que muda é a borda: upsert, json, retorno de id</span>
+Postgres:  ON CONFLICT … RETURNING id      -- estrito, uma viagem
+MySQL:     ON DUPLICATE KEY UPDATE         + LAST_INSERT_ID()</span><span data-lang="en"><span style="color:#8b88b8"># the same design on both: keys and JOINs don't change</span>
+SELECT o.id, COUNT(i.id) AS items
+FROM orders o
+JOIN order_items i ON i.order_id = o.id
+WHERE o.status = 'paid'
+GROUP BY o.id;
+
+<span style="color:#8b88b8"># what changes is the edge: upsert, json, id return</span>
+Postgres:  ON CONFLICT … RETURNING id      -- strict, one round trip
+MySQL:     ON DUPLICATE KEY UPDATE         + LAST_INSERT_ID()</span></code></pre>
+      </div>
+      <div class="callout key">
+        <p>
+          <span data-lang="pt"
+            ><strong>Frase que fecha a questão:</strong> "Os dois são
+            relacionais ACID com MVCC e B-tree — o desenho de dados é idêntico.
+            Postgres é estrito e rico: JSONB com GIN, ON CONFLICT com RETURNING,
+            arrays e extensões, mas paga VACUUM. MySQL é pragmático: coerção
+            implícita, ON DUPLICATE KEY, operação simples. Eu escolho pela
+            carga: JSON e análise → Postgres; leitura simples e stack batida →
+            MySQL."</span
+          ><span data-lang="en"
+            ><strong>The sentence that closes the question:</strong> "Both are
+            ACID relational databases with MVCC and B-trees — the data design is
+            identical. Postgres is strict and rich: JSONB with GIN, ON CONFLICT
+            with RETURNING, arrays and extensions, but pays for VACUUM. MySQL is
+            pragmatic: implicit coercion, ON DUPLICATE KEY, simple operations. I
+            pick by workload: JSON and analytics → Postgres; simple reads and a
+            familiar stack → MySQL."</span
+          >
+        </p>
+      </div>
+
+      <div class="mcq" data-mcq>
+        <p class="mcq-q">
+          <span data-lang="pt"
+            >Sua query <code>WHERE id = '42'</code> funciona no MySQL e dá erro
+            no Postgres. Por quê?</span
+          ><span data-lang="en"
+            >Your query <code>WHERE id = '42'</code> works on MySQL and errors
+            on Postgres. Why?</span
+          >
+        </p>
+        <div class="mcq-opts">
+          <button
+            class="mcq-opt"
+            data-correct="true"
+            data-fb-pt="Correto: o Postgres é estrito com tipos — int ≠ string, sem adivinhação. O MySQL faz coerção implícita ('42' → 42), comportamento ajustável via sql_mode."
+            data-fb-en="Correct: Postgres is strict about types — int ≠ string, no guessing. MySQL does implicit coercion ('42' → 42), tunable via sql_mode."
+          >
+            <span data-lang="pt"
+              >Postgres se recusa a converter tipos implicitamente</span
+            ><span data-lang="en"
+              >Postgres refuses implicit type conversion</span
+            >
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="Comparar int com string funciona nos dois quando os tipos são compatíveis — a diferença é a coerção implícita, não o índice."
+            data-fb-en="Comparing int to string works on both when types are compatible — the difference is implicit coercion, not the index."
+          >
+            <span data-lang="pt"
+              >O índice do Postgres não aceita comparação com strings</span
+            ><span data-lang="en"
+              >The Postgres index doesn't accept string comparison</span
+            >
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="Nada de LOCK: leitura não bloqueia escrita em nenhum dos dois (MVCC). O problema é de tipo, não de concorrência."
+            data-fb-en="No LOCK involved: reads don't block writes on either (MVCC). It's a type issue, not concurrency."
+          >
+            <span data-lang="pt"
+              >O Postgres bloqueia a tabela para conversão</span
+            ><span data-lang="en">Postgres locks the table for conversion</span>
+          </button>
+        </div>
+        <div class="mcq-fb" data-fb></div>
+      </div>
+
+      <div class="mcq" data-mcq>
+        <p class="mcq-q">
+          <span data-lang="pt"
+            >Você precisa de upsert que devolve o id gerado, tudo numa viagem.
+            Qual banco resolve nativamente?</span
+          ><span data-lang="en"
+            >You need an upsert that returns the generated id, all in one round
+            trip. Which database solves it natively?</span
+          >
+        </p>
+        <div class="mcq-opts">
+          <button
+            class="mcq-opt"
+            data-correct="true"
+            data-fb-pt="Exato: INSERT … ON CONFLICT DO UPDATE RETURNING id faz tudo numa query. No MySQL você faz ON DUPLICATE KEY UPDATE e depois LAST_INSERT_ID() — duas viagens."
+            data-fb-en="Exactly: INSERT … ON CONFLICT DO UPDATE RETURNING id does it all in one query. On MySQL you do ON DUPLICATE KEY UPDATE then LAST_INSERT_ID() — two round trips."
+          >
+            <span data-lang="pt">PostgreSQL, com RETURNING</span
+            ><span data-lang="en">PostgreSQL, with RETURNING</span>
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="O MySQL tem o upsert (ON DUPLICATE KEY UPDATE), mas não tem RETURNING — o id vem depois via LAST_INSERT_ID(), numa segunda consulta."
+            data-fb-en="MySQL has the upsert (ON DUPLICATE KEY UPDATE), but no RETURNING — the id comes afterwards via LAST_INSERT_ID(), in a second query."
+          >
+            <span data-lang="pt">MySQL, com LAST_INSERT_ID</span
+            ><span data-lang="en">MySQL, with LAST_INSERT_ID</span>
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="Nenhum banco devolve o id do INSERT com um SELECT * — e SELECT extra é justamente a segunda viagem que você quer evitar."
+            data-fb-en="No database returns an INSERT's id with SELECT * — and an extra SELECT is exactly the second round trip you're avoiding."
+          >
+            <span data-lang="pt">Os dois, com SELECT * depois</span
+            ><span data-lang="en">Both, with SELECT * afterwards</span>
+          </button>
+        </div>
+        <div class="mcq-fb" data-fb></div>
+      </div>
+
+      <p class="cite-line">
+        <span data-lang="pt">Revisão:</span><span data-lang="en">Review:</span>
+        <a href="0001-sql-foundations.html"
+          ><span data-lang="pt">SQL (o dialeto comum)</span
+          ><span data-lang="en">SQL (the common dialect)</span></a
+        >
+        ·
+        <a href="0004-relational-keys.html"
+          ><span data-lang="pt">Chaves relacionais</span
+          ><span data-lang="en">Relational keys</span></a
+        >
+        ·
+        <a href="https://www.postgresql.org/docs/current/sql-insert.html"
+          >PostgreSQL — INSERT (postgresql.org)</a
+        >
+        ·
+        <a
+          href="https://dev.mysql.com/doc/refman/8.0/en/insert-on-duplicate.html"
+          >MySQL — INSERT … ON DUPLICATE KEY (dev.mysql.com)</a
+        >.
+        <span data-lang="pt"
+          >Dúvida em qualquer parte? Pergunte ao agente — ele é seu professor e
+          pode destrinchar qualquer seção.</span
+        ><span data-lang="en"
+          >Stuck on any part? Ask the agent — it's your teacher and can break
+          down any section.</span
+        >
+      </p>
+    </article>
+  </body>
+</html>

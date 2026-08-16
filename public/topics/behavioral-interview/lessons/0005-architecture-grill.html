@@ -1,0 +1,702 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Behavioral Interview · Lesson 5 — The Architecture Grill</title>
+    <link rel="stylesheet" href="../assets/style.css" />
+    <link rel="stylesheet" href="../assets/dark.css" />
+    <script src="../assets/nav.js" defer></script>
+    <style>
+      .grill-score #syncDot[data-saving] {
+        background: #f59e0b;
+      }
+      .grill-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 18px 0 6px;
+      }
+      .grill-tabs button {
+        border: 1px solid var(--border, #d8d4e8);
+        background: transparent;
+        color: inherit;
+        border-radius: 999px;
+        padding: 6px 14px;
+        font-size: 13px;
+        cursor: pointer;
+        font-weight: 600;
+      }
+      .grill-tabs button.on {
+        background: #6c4bf0;
+        color: #fff;
+        border-color: #6c4bf0;
+      }
+      .probe {
+        border: 1px solid var(--border, #d8d4e8);
+        border-radius: 14px;
+        padding: 18px;
+        margin: 14px 0;
+      }
+      .probe .why {
+        font-size: 13px;
+        opacity: 0.75;
+        font-style: italic;
+      }
+      .probe .model {
+        display: none;
+        margin-top: 12px;
+        border-top: 1px dashed var(--border, #d8d4e8);
+        padding-top: 12px;
+      }
+      .probe.open .model {
+        display: block;
+      }
+      .probe .trap {
+        margin-top: 10px;
+        background: rgba(251, 113, 133, 0.08);
+        border-left: 3px solid #fb7185;
+        padding: 8px 12px;
+        border-radius: 0 8px 8px 0;
+        font-size: 14px;
+      }
+      .probe .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 12px;
+      }
+      .probe .actions button {
+        border-radius: 8px;
+        border: 1px solid var(--border, #d8d4e8);
+        background: transparent;
+        color: inherit;
+        padding: 6px 12px;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 600;
+      }
+      .probe button.reveal {
+        background: #6c4bf0;
+        color: #fff;
+        border-color: #6c4bf0;
+      }
+      .rate-nailed {
+        border-color: #10b981 !important;
+      }
+      .rate-shaky {
+        border-color: #f59e0b !important;
+      }
+      .rate-missed {
+        border-color: #fb7185 !important;
+      }
+      .grill-score {
+        position: sticky;
+        top: 8px;
+        z-index: 5;
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        background: rgba(20, 19, 43, 0.92);
+        backdrop-filter: blur(6px);
+        color: #fff;
+        border-radius: 12px;
+        padding: 10px 16px;
+        margin: 14px 0;
+        font-size: 14px;
+        font-weight: 600;
+      }
+      .grill-score button {
+        margin-left: auto;
+        border: none;
+        background: #fff;
+        color: #14132b;
+        border-radius: 8px;
+        padding: 6px 12px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 13px;
+      }
+      .timerbox {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin: 10px 0;
+      }
+      .timerbox .t {
+        font-variant-numeric: tabular-nums;
+        font-size: 26px;
+        font-weight: 700;
+      }
+      .timerbox button {
+        border-radius: 8px;
+        border: 1px solid var(--border, #d8d4e8);
+        background: transparent;
+        color: inherit;
+        padding: 6px 14px;
+        cursor: pointer;
+        font-weight: 600;
+      }
+      .pitch-check label {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        margin: 8px 0;
+        cursor: pointer;
+      }
+      .pitch-check input {
+        margin-top: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <article class="lesson">
+      <header class="hero">
+        <span class="eyebrow">⬡ Lesson 05 · English drill</span>
+        <h1>"The project you're most proud of —<br />architecturally."</h1>
+        <p class="lead">
+          Yesterday this question slipped away from you. Here's the diagnosis:
+          it is
+          <strong>not a story question</strong> — it's an architecture-judgment
+          question wearing a story costume. The interviewer isn't scoring your
+          narrative. They're asking:
+          <em
+            >does this person understand what they built, and can they justify
+            every decision in it?</em
+          >
+          This lesson is a grill deck for the Cencosud ingest project: one
+          upgraded pitch, then the follow-up probes on SQS, data, scale, and
+          team that a senior interviewer will throw.
+        </p>
+        <p class="lesson-nav-top">
+          ↑ Part of the <a href="../MISSION.md">course</a> · prev:
+          <a href="./0004-follow-ups.html">Follow-ups</a> · story source:
+          <a href="../my-stories.md">my-stories.md</a> (Story 1)
+        </p>
+      </header>
+
+      <!-- ============ 1. WHY IT DIDN'T LAND ============ -->
+      <h2 class="section">
+        <span class="num">1</span>Why the answer didn't convince
+      </h2>
+      <p class="kicker">
+        "Project you're proud of <em>in an architectural sense</em>" has a
+        hidden rubric. The interviewer is scoring four things, and a straight
+        STAR pitch only covers the first:
+      </p>
+      <div class="grid cols-2" style="margin-top: 18px">
+        <div class="card" style="border-top: 4px solid #0fb9a4">
+          <h4>1 · You shipped something real</h4>
+          <p>
+            Scale, ownership, impact. Your BLUF already does this — millions of
+            events/day, spikes, one source of truth.
+            <strong>This part you nailed yesterday.</strong>
+          </p>
+        </div>
+        <div class="card" style="border-top: 4px solid #6c4bf0">
+          <h4>2 · Decision justification</h4>
+          <p>
+            <em>Why</em> SQS, why Node, why batch inserts, why normalize at the
+            edge. Each decision needs a because — and a rejected alternative
+            named. "We used SQS" scores zero; "SQS over Kafka because
+            events-per-second didn't justify operating Kafka" scores senior.
+          </p>
+        </div>
+        <div class="card" style="border-top: 4px solid #f59e0b">
+          <h4>3 · Depth of mechanics</h4>
+          <p>
+            Do you know what you actually operated? At-least-once delivery,
+            visibility timeout, consumer lag, DLQ behavior. This is where "I
+            built it" separates from "I was on the team."
+          </p>
+        </div>
+        <div class="card" style="border-top: 4px solid #fb7185">
+          <h4>4 · Team- and org-level judgment</h4>
+          <p>
+            Architecture is a people decision too: Java estate + one Node
+            service, who owned the event contract, what you'd do differently.
+            Senior = you designed <em>for the organization</em>, not just the
+            workload.
+          </p>
+        </div>
+      </div>
+      <p class="callout">
+        <strong>The one-line fix:</strong> after your BLUF, immediately name
+        your <strong>three architectural decisions</strong> — "(1) SQS as the
+        decoupling backbone, (2) normalize at the edge into one internal event,
+        (3) batch writes to Postgres." That sentence is an invitation: the
+        follow-ups now land on ground <em>you</em> chose.
+      </p>
+
+      <!-- ============ 2. THE PITCH ============ -->
+      <h2 class="section">
+        <span class="num">2</span>The pitch (architecture edition, ~45s)
+      </h2>
+      <p class="kicker">
+        Rehearse this out loud with the timer. Hit every checklist item. Don't
+        memorize the words — memorize the <em>shape</em>.
+      </p>
+      <div class="card">
+        <blockquote style="margin: 0; font-size: 17px; line-height: 1.6">
+          "The ingest service at Cencosud. We had many external delivery
+          partners, each shipping tracking events in their own format, and every
+          internal service needed one consistent answer to
+          <em>where is this package</em>. I designed and owned the Node service
+          that solved it: SQS in front to decouple partners from consumers and
+          absorb our sale-day spikes, normalization at the edge so every partner
+          format collapsed into <strong>one internal tracking event</strong> —
+          the contract the whole company consumed — and batch writes into
+          Postgres so the database survived millions of events a day. The
+          architecture decision I'm proudest of isn't any single piece: it's
+          that the whole thing was right-sized — SQS instead of a heavier
+          broker, Node instead of the team's Java default — for the actual
+          workload and the actual team."
+        </blockquote>
+      </div>
+      <div class="timerbox">
+        <span class="t" id="pitchTimer">0:45</span>
+        <button id="pitchStart">▶ Start</button>
+        <button id="pitchStop">■ Stop</button>
+      </div>
+      <div class="card pitch-check">
+        <h4>Self-audit — tick only what you actually said</h4>
+        <label
+          ><input type="checkbox" /> Headline names the
+          <strong>architectural problem</strong> (N formats → 1 truth), not just
+          "I built a service"</label
+        >
+        <label
+          ><input type="checkbox" /> The <strong>three decisions</strong> are
+          named: SQS decoupling · normalize-at-edge · batch inserts</label
+        >
+        <label
+          ><input type="checkbox" /> Scale with numbers: millions/day, sale-day
+          spikes (~3×/year)</label
+        >
+        <label
+          ><input type="checkbox" /> At least one
+          <strong>tradeoff voiced</strong> ("right-sized for the workload and
+          team")</label
+        >
+        <label
+          ><input type="checkbox" /> "I designed and owned" — ownership
+          language, no hiding in "we"</label
+        >
+      </div>
+
+      <!-- ============ 3. THE GRILL ============ -->
+      <h2 class="section"><span class="num">3</span>The grill</h2>
+      <p class="kicker">
+        The drill: <strong>say your answer out loud first</strong>, then reveal
+        the model answer, then rate yourself honestly. Shaky and Missed are the
+        valuable ratings — they tell you what to re-drill tomorrow (spacing
+        works: come back after 1 day, then 3).
+      </p>
+      <div class="grill-score">
+        <span>Nailed <span id="scN">0</span></span>
+        <span style="color: #f59e0b">Shaky <span id="scS">0</span></span>
+        <span style="color: #fb7185">Missed <span id="scM">0</span></span>
+        <span
+          id="syncDot"
+          style="
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: #94a3b8;
+          "
+          title=""
+        ></span>
+        <button id="randomProbe">🎲 Random probe</button>
+      </div>
+      <div class="grill-tabs" id="tabs"></div>
+      <div id="deck"></div>
+      <noscript
+        ><p>Enable JavaScript to run the interactive drill.</p></noscript
+      >
+
+      <!-- ============ 4. SOURCES + NEXT ============ -->
+      <h2 class="section"><span class="num">4</span>Primary sources</h2>
+      <p>
+        Every model answer above is grounded in the AWS documentation — read the
+        first one tonight, it's short and it's the probe interviewers love most:
+      </p>
+      <ul>
+        <li>
+          <a
+            class="cite"
+            href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/standard-queues-at-least-once-delivery.html"
+            >Amazon SQS at-least-once delivery</a
+          >
+          — the official statement that duplicates happen, i.e. why your
+          idempotency answer exists.
+        </li>
+        <li>
+          <a
+            class="cite"
+            href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-visibility-timeout.html"
+            >SQS visibility timeout</a
+          >
+          — the mechanism behind "what if a consumer dies mid-processing?"
+        </li>
+        <li>
+          <a
+            class="cite"
+            href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dead-letter-queues.html"
+            >SQS dead-letter queues</a
+          >
+          — poison-message handling and maxReceiveCount.
+        </li>
+        <li>
+          <a
+            class="cite"
+            href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/quotas-messages.html"
+            >SQS message quotas</a
+          >
+          — the 10-message receive batch limit behind your batch-size answer.
+        </li>
+        <li>
+          <a
+            class="cite"
+            href="https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues-exactly-once-processing.html"
+            >FIFO exactly-once processing</a
+          >
+          — the tradeoff you name when asked "why not FIFO?"
+        </li>
+      </ul>
+      <div class="next-card">
+        <h4>Stuck mid-probe? Ask your teacher.</h4>
+        <p>
+          This lesson is a mirror, not a wall. If any model answer feels wrong
+          for <em>your</em> system — batch size, lag metric, partner count —
+          open the agent and pressure-test it: "here's what actually happened,
+          help me say it senior." That conversation is the real feedback loop.
+        </p>
+        <p style="margin-top: 8px">
+          Next drills: <a href="./0002-the-dojo.html">the Dojo</a> for timed
+          full answers · <a href="./0004-follow-ups.html">Lesson 4</a> for probe
+          technique in general.
+        </p>
+      </div>
+    </article>
+
+    <footer class="lesson-foot">
+      <p>
+        Behavioral Interview · Lesson 5 — The Architecture Grill · part of the
+        <a href="../../../index.html">Learning Hub</a>
+      </p>
+    </footer>
+
+    <script>
+      const PROBES = [
+        // ---- SQS MECHANICS ----
+        {
+          cat: "SQS",
+          q: "SQS is at-least-once. How did you handle duplicates?",
+          why: "The #1 probe for anyone who claims SQS experience. Get this cold.",
+          a: "Idempotent writes at the database. Each event carries a stable ID — partner event ID or a hash of partner + order + status + timestamp — enforced by a unique constraint, so inserts are upserts (<code>ON CONFLICT DO NOTHING/UPDATE</code>). A redelivered message is a no-op, never a double-count. We didn't try to dedupe in the consumer's memory — statelessness beats caching when you scale pods.",
+          trap: "Saying ‘we were careful not to process twice.’ SQS guarantees duplicates WILL happen. No idempotency story = you didn't really run SQS in prod.",
+        },
+        {
+          cat: "SQS",
+          q: "What happens if your service reads a message and then crashes before committing?",
+          why: "Tests whether you understand delivery semantics vs. processing semantics.",
+          a: "Nothing is lost. The message stays invisible until the <a class='cite' href='https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-visibility-timeout.html'>visibility timeout</a> expires, then SQS redelivers it to another consumer. That's exactly why writes had to be idempotent — the crash path and the duplicate path are the same problem. Tuning mattered too: timeout comfortably longer than the worst-case batch commit, so healthy consumers weren't racing redelivery.",
+          trap: "Mixing up visibility timeout with retention (14 days default — messages don't vanish at visibility-timeout expiry).",
+        },
+        {
+          cat: "SQS",
+          q: "Why a standard queue and not FIFO?",
+          why: "Checks you chose, rather than defaulted.",
+          a: "We didn't need ordering or exactly-once — tracking events are per-package state updates, and each event carries its own timestamp, so the final state is order-independent once we normalize. FIFO would have capped throughput (FIFO queues have lower limits and need message group IDs) and added deduplication-id bookkeeping for no business value. If strict per-order ordering had mattered, message-group-per-order in FIFO would be the move — but our data model made it unnecessary.",
+          trap: "Claiming you got exactly-once from FIFO — AWS calls it exactly-once <em>processing</em> with best-effort duplicates, and dedup only inside a 5-minute window. Don't overclaim.",
+        },
+        {
+          cat: "SQS",
+          q: "How did you deal with poison messages?",
+          why: "Ops maturity probe. Everyone who ran a queue has this story.",
+          a: "Redrive policy to a dead-letter queue: after <code>maxReceiveCount</code> failed deliveries the message lands in the DLQ instead of looping forever and clogging the consumers. DLQ depth was an alarm — a partner sending a malformed payload showed up as DLQ noise within minutes, not as a mysterious consumer stall. Then it's triage: fix the normalizer, replay from the DLQ.",
+          trap: "No DLQ answer at all — that's a red flag, it means one bad message could wedge the pipeline.",
+        },
+        {
+          cat: "SQS",
+          q: "How many messages did you fetch per call? Was there a limit?",
+          why: "The '10' separates hands-on from hearsay.",
+          a: "SQS caps a receive batch at <a class='cite' href='https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/quotas-messages.html'>10 messages</a>, so the consumer looped: long-poll receive of up to 10, process, then flush the accumulated DB batch — which was larger than 10, so one Postgres write amortized several SQS receives. Long polling also cut empty receives, which matters for cost and latency at our volume.",
+          trap: "Inventing a batch of 500 messages per SQS receive. The limit is 10 — it's the kind of number an interviewer knows.",
+        },
+        {
+          cat: "SQS",
+          q: "Why SQS at all — why not Kafka (or Kinesis)?",
+          why: "The classic right-sizing probe. Your best senior moment.",
+          a: "Right-sizing. Kafka buys replayable ordered logs and massive throughput — we needed neither: our volume was millions/day, not millions/second; ordering was unnecessary by design; and Kafka means running brokers (or MSK cost) plus an ops skill the team didn't have. SQS gave us the two things we actually needed — spike absorption and consumer decoupling — as a managed service with DLQ semantics built in. If the estate later needed stream processing, that's the trigger to revisit; it wasn't our trigger.",
+          trap: "Knocking Kafka (‘Kafka is overkill’ as a slogan). Name what Kafka would have bought and why the workload didn't need it.",
+        },
+
+        // ---- DATA / POSTGRES ----
+        {
+          cat: "Data",
+          q: "Walk me through the batch insert. What size, and why that size?",
+          why: "Follows the claim. Numbers or it didn't happen.",
+          a: "Each Postgres write flushed a chunk of normalized events — tens to a couple hundred rows — accumulated from several SQS receive batches. The size balanced three costs: bigger batches amortize round-trips and WAL pressure; too big and you hold a transaction too long, and a failure retries a huge chunk. It was tuned empirically watching Postgres lock/commit metrics and consumer lag in New Relic, not picked from a blog post.",
+          trap: "A precise, unexplained number (‘we used 500’). If you give a number, give the reasoning loop: observe → tune → observe.",
+        },
+        {
+          cat: "Data",
+          q: "The batch fails halfway. What's in the database now?",
+          why: "Transactional honesty check.",
+          a: "Nothing from that batch — the flush is one transaction, so it's all-or-nothing, and SQS redelivers after the visibility timeout. But this is exactly where partial failure could bite if I'd flushed per-row: half-committed state plus redelivery equals messier duplicates. One transaction per batch + idempotent upserts = redelivery is always safe.",
+          trap: "Hand-waving ‘we retried the failed ones.’ Explain the transaction boundary — that's the actual architecture.",
+        },
+        {
+          cat: "Data",
+          q: "How did downstream services read this? One big table?",
+          why: "Tests whether you saw the whole path, not just your service.",
+          a: "Two paths. Real-time: the service fanned the normalized event out to downstream consumers — each service got its own copy pushed to its own queue, so nobody polled and nobody touched our database. The Postgres table we persisted served the query side — support lookups, audit, package history. The design object I cared about was the internal event schema: one versioned contract. The table behind it was ours to change; the schema was public, so it evolved additively only. And partner quirks stopped at the normalizer — downstream never saw a partner format. <em>(Full walkthrough: <a class='cite' href='./0006-fanout-decoded.html'>Lesson 6</a>.)</em>",
+          trap: "Only describing your write path. The interviewer's real question is: did you design a contract for the org?",
+        },
+        {
+          cat: "Data",
+          q: "A partner changes their payload format without telling you. What happens?",
+          why: "Real-world ops — this WILL happen and they know it.",
+          a: "First line: validation at the edge of the normalizer — unknown/invalid shapes go to the DLQ with the partner ID attached, so the blast radius is one partner, never the pipeline. The rest keep flowing. Then the fix is a normalizer change for that partner only — the whole point of normalize-at-edge is that partner churn is a one-file change, not a downstream incident. Alert on per-partner DLQ rate to catch the silent ones.",
+          trap: "‘We had a meeting about API contracts.’ Fine, but the system answer is: DLQ isolation + per-partner normalizer + per-partner alarms.",
+        },
+
+        // ---- SCALE / K8S ----
+        {
+          cat: "Scale",
+          q: "What broke on the sale day? Walk me through the incident.",
+          why: "Honesty + incident narrative probe. Your best story — own it.",
+          a: "Consumer lag spiked — events arrived faster than the allocated pods could consume, and queue depth started climbing. Because we had queue depth/lag instrumented in New Relic, we saw it as a lag problem, not a mystery. We scaled up pods and the lag drained. The senior follow-up I'd add: the structural fix was autoscaling on queue lag (HPA on a lag/queue-depth metric) so the next spike self-heals instead of paging a human — instrument before you scale.",
+          trap: "Blaming capacity or the platform. The senior answer is: what did the metrics show → what did you do → what changed structurally so it can't recur.",
+        },
+        {
+          cat: "Scale",
+          q: "How did you know it was falling behind? What did you monitor?",
+          why: "Observability = seniority shorthand.",
+          a: "New Relic: throughput (rpm), error rate, p95/p99 latency on the consumer, and - the one that mattered - SQS queue depth / consumer lag. Lag is the leading indicator for a queue-based system: latency can look fine while you're silently minutes behind. ‘How stale is the tracking view’ is the business translation of that metric. <em>(Full walkthrough: <a class='cite' href='./0007-monitoring-lag-decoded.html'>Lesson 7</a>.)</em>",
+          trap: "Listing generic APM dashboards without the queue-specific metric. Lag IS the answer for ingest systems.",
+        },
+        {
+          cat: "Scale",
+          q: "Autoscale on CPU wouldn't work here. Why not, and what instead?",
+          why: "Separates K8s understanding from YAML copying.",
+          a: "CPU shows how hard pods work, not how much work is waiting. An I/O-bound Node consumer is mostly idle waiting on SQS and Postgres — CPU stays low while the backlog explodes. The right signal is the queue itself: expose queue depth / oldest-message age as a custom metric and scale pods on that (HPA custom metrics, or KEDA, which natively scales on SQS). You want capacity proportional to backlog, not to utilization.",
+          trap: "Saying CPU would've been fine. It contradicts the ‘I/O-heavy, that's why Node’ claim in your own pitch — keep your story internally consistent.",
+        },
+
+        // ---- ARCHITECTURE TRADEOFFS ----
+        {
+          cat: "Architecture",
+          q: "Why normalize at ingest instead of storing raw and normalizing on read?",
+          why: "ETL-vs-at-the-edge — a genuine architecture judgment.",
+          a: "Cost of complexity placement. Normalizing on read means every downstream consumer reimplements partner quirks, forever — N consumers × M partners. Normalizing at ingest pays the complexity once, at the seam, and everything downstream gets one clean contract. The tradeoff: the ingest service becomes schema-coupled to every partner, so we isolated that in the normalizer layer and kept the internal event versioned. For a read-heavy, many-consumer estate, paying once at write time was clearly right.",
+          trap: "Treating this as a slogan (‘normalize early is best practice’). It's a tradeoff — say who pays and when.",
+        },
+        {
+          cat: "Architecture",
+          q: "The estate was Java. You introduced Node. Defend that decision.",
+          why: "The team-knowledge probe. This is where yesterday probably wobbled.",
+          a: "It was a deliberate exception, not a preference. The service was pure I/O orchestration — receive, transform, batch-write, no CPU-heavy domain logic — exactly Node's strength, and it ran on a small resource footprint, which mattered in a shared cluster. I knew the cost of a second runtime: different build/deploy, different observability idioms, harder on-call for Java teammates. So the deal was: the service stays stateless and boring, infrastructure-as-code everything (Terraform), and full New Relic parity with the Java estate so it was never a second-class citizen. If it had grown CPU-heavy domain logic, I'd have moved it to Java.",
+          trap: "Sounding like you just wanted Node. Name the organizational cost you accepted and contained — that's the senior answer.",
+        },
+        {
+          cat: "Architecture",
+          q: "What's the internal event look like? Did it ever need to change?",
+          why: "Contract design probe — did you own a schema or just a payload?",
+          a: "One versioned schema: package/order identity, partner ID, normalized status mapped into a single status taxonomy, event timestamp, and a stable event ID for idempotency. The status taxonomy was the hard part — partners' vocabularies overlap but don't match (‘out for delivery’ vs ‘in transit’), so we built the mapping per partner and the internal enum once. Additive changes only (new optional fields, new enum values); breaking changes meant a new version and a migration window with downstream teams.",
+          trap: "Describing a JSON blob with no versioning story. An unversioned shared contract is a distributed monolith.",
+        },
+        {
+          cat: "Architecture",
+          q: "What would you do differently today?",
+          why: "Reflection probe — always comes. Have ONE you believe.",
+          a: "Autoscale on queue lag from day one — the sale-day incident taught me instrument-then-automate, and that's a general rule now. If I rebuilt it: I'd also look at <a class='cite' href='https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html'>event-source mapping autoscaling</a> or KEDA so scaling is a platform property, not something each service reinvents.",
+          trap: "The humble-brag (‘I'd document more’). Give a real gap with a structural fix — that's what the question rewards.",
+        },
+
+        // ---- TEAM / ORG ----
+        {
+          cat: "Team",
+          q: "Who owned the internal event contract — you, or the downstream teams?",
+          why: "Org-design probe dressed as a data question.",
+          a: "I owned the schema, but deliberately with a lightweight review: I proposed changes, downstream consumers reviewed anything that touched their reads, additive changes went in without ceremony. The alternative — committee ownership — would have slowed every partner integration to committee speed. Clear single owner + cheap review loop beat shared ownership for a contract with N consumers.",
+          trap: "‘The team owned it.’ Vague. Ownership questions want a mechanism, not a vibe.",
+        },
+        {
+          cat: "Team",
+          q: "How did the Java-heavy team react to a Node service? How did you handle it?",
+          why: "Influence-without-authority — the actual senior skill.",
+          a: "I sold it as a contained experiment with an exit clause: the service is stateless, it's I/O-only, and if it ever becomes a maintenance burden we migrate it to Java — the SQS/Postgres architecture is language-agnostic, so it's a rewrite of one service, not a redesign. I made it safe to say yes to. And I kept the operational surface identical — same Terraform, same New Relic, same deploy pipeline — so on-call never felt a difference.",
+          trap: "Framing the team as an obstacle you overcame. The win is that nobody had to lose.",
+        },
+        {
+          cat: "Team",
+          q: "How many partners? What was the cost of adding a new one?",
+          why: "Tests whether your architecture delivered its promise.",
+          a: "The design goal was: a new partner = one normalizer (mapping their statuses into the taxonomy) + credentials/config + a DLQ alarm. No downstream change, no schema change — the internal event doesn't care where a tracking event came from. That's the payoff of normalize-at-edge: partner count scales the one thing that's cheap to scale.",
+          trap: "Vagueness. If you can't say roughly how many partners or how long onboarding took, the architecture story deflates — go pin real numbers with yourself before the next interview.",
+        },
+        {
+          cat: "Team",
+          q: "Why is this the project you're proudest of?",
+          why: "The closing probe — it's the question again, one level deeper.",
+          a: "Because every decision in it was a right-sizing decision made consciously: SQS over Kafka, Node over Java, normalize-at-edge over normalize-on-read, batch writes over per-event writes. Nothing in it is the biggest or flashiest technology — all of it fits the workload and the team that had to run it. And it held: millions of events a day, sale-day spikes, one consistent source of truth for the whole company. Architecture that's still boring on Black Friday — that's what I'm proud of.",
+          trap: "Pride framed as scale (‘millions of events!’). Pride framed as judgment — right-sized, conscious tradeoffs, held under load — is the senior signal.",
+        },
+      ];
+
+      // ---- render ----
+      const CATS = ["All", ...new Set(PROBES.map((p) => p.cat))];
+      const tabs = document.getElementById("tabs"),
+        deck = document.getElementById("deck");
+      const store = "grill-cencosud";
+      let ratings = {};
+      try {
+        ratings = JSON.parse(localStorage.getItem(store) || "{}");
+      } catch (e) {}
+
+      // ---- cloud sync (Upstash-backed /api/progress; localStorage stays the offline fallback) ----
+      const sync = (method, body) =>
+        fetch(`/api/progress?k=${store}`, {
+          method,
+          headers: { "Content-Type": "application/json" },
+          body,
+        }).then((r) => (r.ok ? r.json() : Promise.reject(r.status)));
+      sync("GET")
+        .then((remote) => {
+          if (remote && Object.keys(remote).length) {
+            ratings = remote;
+            localStorage.setItem(store, JSON.stringify(ratings));
+            score();
+            document.getElementById("syncDot").title = "synced";
+          }
+        })
+        .catch(() => {
+          document.getElementById("syncDot").title =
+            "offline — results saved in this browser only";
+        });
+      const saveCloud = (() => {
+        let pending;
+        return () => {
+          clearTimeout(pending);
+          pending = setTimeout(() => {
+            const dot = document.getElementById("syncDot");
+            dot && (dot.dataset.saving = "1");
+            sync("POST", JSON.stringify(ratings))
+              .then(() => dot && delete dot.dataset.saving)
+              .catch(() => {});
+          }, 400);
+        };
+      })();
+
+      function score() {
+        let n = 0,
+          s = 0,
+          m = 0;
+        Object.values(ratings).forEach((r) =>
+          r === "n" ? n++ : r === "s" ? s++ : m++,
+        );
+        scN.textContent = n;
+        scS.textContent = s;
+        scM.textContent = m;
+      }
+      // Build nodes from an HTML string without innerHTML; content is author-authored
+      // lesson data (no user input), and DOMParser parsing leaves scripts inert.
+      const nodes = (html) => {
+        const doc = new DOMParser().parseFromString(
+          `<div>${html}</div>`,
+          "text/html",
+        );
+        return [...doc.body.firstElementChild.childNodes];
+      };
+      function card(p, i) {
+        const el = document.createElement("div");
+        el.className = "probe card";
+        el.append(
+          ...nodes(`
+          <h4 style="margin:0">${p.cat} · probe</h4>
+          <p style="font-size:17px;margin:8px 0 2px"><strong>${p.q}</strong></p>
+          <p class="why">Why they ask: ${p.why}</p>
+          <div class="model">
+            <p><strong>Model answer</strong> (make it yours — numbers, real details):</p>
+            <p>${p.a}</p>
+            <div class="trap">⚠ <strong>Trap:</strong> ${p.trap}</div>
+          </div>
+          <div class="actions">
+            <button class="reveal">Reveal model answer</button>
+            <span style="align-self:center;font-size:13px;opacity:.7">Rate after saying yours aloud:</span>
+            <button class="rate rate-nailed">Nailed</button>
+            <button class="rate rate-shaky">Shaky</button>
+            <button class="rate rate-missed">Missed</button>
+          </div>`),
+        );
+        el.querySelector(".reveal").onclick = () => el.classList.toggle("open");
+        el.querySelectorAll(".rate").forEach(
+          (b) =>
+            (b.onclick = () => {
+              ratings[i] = b.classList.contains("rate-nailed")
+                ? "n"
+                : b.classList.contains("rate-shaky")
+                  ? "s"
+                  : "m";
+              localStorage.setItem(store, JSON.stringify(ratings));
+              saveCloud();
+              score();
+            }),
+        );
+        return el;
+      }
+      let shown = PROBES;
+      CATS.forEach((c, idx) => {
+        const b = document.createElement("button");
+        b.textContent = c === "All" ? "All (" + PROBES.length + ")" : c;
+        if (!idx) b.classList.add("on");
+        b.onclick = () => {
+          tabs
+            .querySelectorAll("button")
+            .forEach((x) => x.classList.remove("on"));
+          b.classList.add("on");
+          shown = c === "All" ? PROBES : PROBES.filter((p) => p.cat === c);
+          deck.replaceChildren();
+          shown.forEach((p, j) => deck.appendChild(card(p, PROBES.indexOf(p))));
+        };
+        tabs.appendChild(b);
+      });
+      PROBES.forEach((p, i) => deck.appendChild(card(p, i)));
+      document.getElementById("randomProbe").onclick = () => {
+        const i = Math.floor(Math.random() * PROBES.length);
+        const el = deck.children[i];
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "center" });
+          el.style.outline = "2px solid #6c4bf0";
+          setTimeout(() => (el.style.outline = ""), 1500);
+        }
+      };
+      score();
+
+      // ---- pitch timer ----
+      let t = 45,
+        tick = null;
+      const disp = document.getElementById("pitchTimer");
+      function render() {
+        disp.textContent =
+          Math.floor(t / 60) + ":" + String(t % 60).padStart(2, "0");
+      }
+      document.getElementById("pitchStart").onclick = () => {
+        clearInterval(tick);
+        t = 45;
+        render();
+        tick = setInterval(() => {
+          if (t > 0) {
+            t--;
+            render();
+          } else {
+            clearInterval(tick);
+          }
+        }, 1000);
+      };
+      document.getElementById("pitchStop").onclick = () => clearInterval(tick);
+    </script>
+  </body>
+</html>

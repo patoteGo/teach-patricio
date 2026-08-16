@@ -1,0 +1,536 @@
+---
+import Pattern from "../Pattern.astro";
+import T from "../T.astro";
+---
+
+<!-- P3 · Slow work: queue + worker (L2) -->
+<Pattern
+  id="p3"
+  num="P3"
+  lvl={2}
+  titlePt={`Trabalho lento: fila + worker`}
+  titleEn={`Slow work: queue + worker`}
+  kickerPt={`Email, relatório, thumbnail — "grava rápido, processa
+            depois".`}
+  kickerEn={`Email, report, thumbnail — "record fast, process later".`}
+  tipPt={`<strong>Fale enquanto desenha:</strong> "A API grava job + outbox
+              na mesma transação e responde <em>na hora</em> com 202 + jobId. O
+              publisher envia o outbox à SQS. O worker faz poll, executa o
+              trabalho lento, marca accepted — e só então chama DeleteMessage."
+              E feche com: "SQS pode reentregar, então o worker é idempotente.
+              Sem delete, a mensagem volta após o timeout de visibilidade e, no
+              limite, vai pra DLQ."`}
+  tipEn={`<strong>Say while drawing:</strong> "The API writes the job +
+              outbox in one transaction and responds <em>immediately</em> with
+              202 + jobId. The publisher sends the outbox to SQS. The worker
+              polls, does the slow work, marks accepted — and only then calls
+              DeleteMessage." And close with: "SQS may redeliver, so the worker
+              is idempotent. Undeleted messages return after the visibility
+              timeout and eventually move to a DLQ."`}
+  whyPt={`<strong>Por quê SQS (e não Kafka, ainda):</strong> o trabalho
+              falha <em>por mensagem</em> — em SQS, mensagem sem delete volta
+              após o timeout de visibilidade, e a redrive policy pode movê-la à
+              DLQ. Kafka seria canhão de mais para um único consumidor sem
+              replay. <em>Tradeoff pronto:</em> SQS Standard entrega
+              <em>pelo menos uma vez</em> — worker precisa ser
+              <em>idempotente</em>. Gravar no DB e publicar direto na fila
+              seriam duas escritas — o job poderia ser gravado e a publicação
+              falhar. O diagrama usa <em>outbox transacional</em>: a API grava
+              job + evento na <em>mesma transação</em>; um publisher lê o outbox
+              e publica na SQS. E se o cliente perde o 202 e reenvia? A API
+              aceita <em>idempotency-key</em> pra não duplicar o job.`}
+  whyEn={`<strong>Why SQS (not Kafka, yet):</strong> work fails
+              <em>per message</em> — in SQS, an undeleted message reappears
+              after its visibility timeout, and a redrive policy can move it to
+              a DLQ. Kafka is overkill for a single consumer with no replay.
+              <em>Ready tradeoff:</em> SQS Standard delivers
+              <em>at least once</em> — the worker must be <em>idempotent</em>.
+              Writing to the DB and publishing directly to the queue would be
+              two writes — the job could commit while the publish fails. The
+              diagram uses a <em>transactional outbox</em>: the API writes job +
+              event in <em>one transaction</em>; a publisher reads the outbox
+              and publishes to SQS. And if the client loses the 202 and retries?
+              The API accepts an <em>idempotency key</em> so the job isn't
+              duplicated.`}
+  warnPt={`<strong>O fluxo na íntegra:</strong> 1–3 a API confirma job +
+              outbox atomicamente, responde <em>na hora</em>, e o publisher
+              entrega o outbox à SQS — o cliente nunca espera o trabalho lento.
+              4–5 o worker <em>puxa</em> a mensagem (a fila não empurra), sob um
+              <em>timeout de visibilidade</em>: ela fica invisível para os
+              outros workers enquanto ele processa. 6–8 envia e grava
+              <em>accepted</em> depois do ok — mas ok do provedor é
+              <em>aceito</em>, não entregue; a cadeia real é queued → processing
+              → accepted → delivered/failed, e o delivered chega depois, por
+              webhook. 9 chama <em>DeleteMessage</em> após o sucesso; mesmo
+              assim, SQS Standard pode raramente reentregar, então o worker
+              continua idempotente. Se o worker não deleta — falhou ou morreu —,
+              o timeout expira, a mensagem volta a ficar visível e é reentregue.
+              Cada recebimento conta; no <em>maxReceiveCount</em>, a política de
+              redrive move a mensagem pra DLQ, onde pode ser inspecionada,
+              alertada e reproduzida; um consumidor da DLQ (ou reconciliação)
+              marca o job como <em>failed</em>. Sem DLQ, uma mensagem venenosa
+              tenta novamente até expirar o período de retenção.`}
+  warnEn={`<strong>The full flow:</strong> after the API commits job +
+              outbox, it responds <em>instantly</em> while the publisher sends
+              the outbox to SQS — the client never waits for the slow work. 4–5
+              the worker <em>pulls</em> the message under a
+              <em>visibility timeout</em>. 6–8 send, then record
+              <em>accepted</em>; the provider's ok means accepted, not
+              delivered, and delivered/failed arrives later through an
+              authenticated webhook endpoint. 9 calls
+              <em>DeleteMessage</em> after success; SQS Standard can still
+              rarely redeliver, so the worker remains idempotent. Without a
+              delete, the timeout expires and the message becomes visible again.
+              Each receive counts; at <em>maxReceiveCount</em> the redrive
+              policy moves it to the DLQ for inspection, alerting, and replay.
+              Without a DLQ, a poison message retries until its retention period
+              expires.`}
+>
+  <Fragment slot="dia" set:html={`<svg
+              viewBox="0 0 720 310"
+              width="100%"
+              style="min-width: 620px"
+              role="img"
+              aria-labelledby="p3t"
+            >
+              <title
+                id="p3t"
+                data-pt="Cliente → API → transação no DB (job + outbox); publisher envia o outbox à SQS; worker idempotente faz poll, envia, grava accepted e chama DeleteMessage; webhook atualiza delivered/failed; sem delete a mensagem volta após o timeout de visibilidade e, no maxReceiveCount, vai pra DLQ"
+                data-en="Client → API → DB transaction (job + outbox); publisher sends the outbox to SQS; idempotent worker polls, sends, records accepted, and calls DeleteMessage; webhook updates delivered/failed; without a delete the message returns after the visibility timeout and, at maxReceiveCount, moves to the DLQ"
+              >
+                Queue + worker
+              </title>
+              <defs>
+                <marker
+                  id="m3"
+                  markerWidth="8"
+                  markerHeight="8"
+                  refX="6"
+                  refY="3"
+                  orient="auto"
+                >
+                  <path d="M0,0 L0,6 L7,3 z" fill="#8b6ff7" />
+                </marker>
+                <marker
+                  id="m3d"
+                  markerWidth="8"
+                  markerHeight="8"
+                  refX="6"
+                  refY="3"
+                  orient="auto"
+                >
+                  <path d="M0,0 L0,6 L7,3 z" fill="#ef4444" />
+                </marker>
+              </defs>
+              <g font-family="Space Grotesk" font-size="13" font-weight="700">
+                <rect
+                  x="20"
+                  y="90"
+                  width="90"
+                  height="50"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#2dd4bf"
+                />
+                <text
+                  x="65"
+                  y="119"
+                  fill="#2dd4bf"
+                  text-anchor="middle"
+                  data-pt="Cliente"
+                  data-en="Client"
+                >
+                  Cliente
+                </text>
+                <rect
+                  x="160"
+                  y="90"
+                  width="90"
+                  height="50"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#8b6ff7"
+                />
+                <text x="205" y="119" fill="#8b6ff7" text-anchor="middle">
+                  API
+                </text>
+                <rect
+                  x="320"
+                  y="20"
+                  width="140"
+                  height="46"
+                  rx="10"
+                  fill="#2a1207"
+                  stroke="#f59e0b"
+                />
+                <text
+                  x="390"
+                  y="48"
+                  fill="#fbbf24"
+                  text-anchor="middle"
+                  data-pt="DB · job + outbox"
+                  data-en="DB · job + outbox"
+                >
+                  DB · job + outbox
+                </text>
+                <rect
+                  x="310"
+                  y="92"
+                  width="160"
+                  height="38"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#fbbf24"
+                />
+                <text
+                  x="390"
+                  y="116"
+                  fill="#fbbf24"
+                  text-anchor="middle"
+                  data-pt="Publisher do outbox"
+                  data-en="Outbox publisher"
+                >
+                  Publisher do outbox
+                </text>
+                <rect
+                  x="300"
+                  y="170"
+                  width="130"
+                  height="50"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#fb7185"
+                />
+                <text x="365" y="193" fill="#fb7185" text-anchor="middle">
+                  SQS
+                </text>
+                <text
+                  x="365"
+                  y="210"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="11"
+                  data-pt="fila"
+                  data-en="queue"
+                >
+                  fila
+                </text>
+                <rect
+                  x="300"
+                  y="258"
+                  width="130"
+                  height="46"
+                  rx="10"
+                  fill="#2a0d12"
+                  stroke="#ef4444"
+                />
+                <text x="365" y="280" fill="#f87171" text-anchor="middle">
+                  DLQ
+                </text>
+                <text
+                  x="365"
+                  y="296"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="11"
+                  data-pt="consumidor → failed"
+                  data-en="consumer → failed"
+                >
+                  consumidor → failed
+                </text>
+                <rect
+                  x="540"
+                  y="170"
+                  width="104"
+                  height="50"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#8b6ff7"
+                />
+                <text
+                  x="592"
+                  y="193"
+                  fill="#8b6ff7"
+                  text-anchor="middle"
+                  data-pt="Worker ×N"
+                  data-en="Worker ×N"
+                >
+                  Worker ×N
+                </text>
+                <rect
+                  x="540"
+                  y="20"
+                  width="140"
+                  height="46"
+                  rx="10"
+                  fill="#0c2a27"
+                  stroke="#2dd4bf"
+                />
+                <text
+                  x="610"
+                  y="48"
+                  fill="#2dd4bf"
+                  text-anchor="middle"
+                  data-pt="Externo (email)"
+                  data-en="External (email)"
+                >
+                  Externo (email)
+                </text>
+                <text
+                  x="592"
+                  y="210"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="10"
+                  data-pt="idempotente"
+                  data-en="idempotent"
+                >
+                  idempotente
+                </text>
+              </g>
+              <g
+                stroke="#8b6ff7"
+                stroke-width="2"
+                fill="none"
+                marker-end="url(#m3)"
+              >
+                <path d="M110 103 H160" />
+                <path d="M160 127 H110" />
+                <path d="M205 90 C205 50 270 43 320 43" />
+                <path d="M390 66 V92" />
+                <path d="M390 130 V170" />
+                <path d="M540 186 H430" />
+                <path d="M430 204 H540" />
+                <path d="M570 170 C570 110 580 75 590 66" />
+                <path d="M630 66 C635 80 615 130 600 170" />
+              </g>
+              <g
+                stroke="#2dd4bf"
+                stroke-width="2"
+                fill="none"
+                stroke-dasharray="4 4"
+                marker-end="url(#m3)"
+              >
+                <path d="M540 43 H460" />
+              </g>
+              <g
+                stroke="#fbbf24"
+                stroke-width="2"
+                fill="none"
+                stroke-dasharray="4 4"
+                marker-end="url(#m3)"
+              >
+                <path d="M540 178 C500 135 500 78 460 56" />
+                <path d="M592 220 C592 242 480 242 365 220" />
+              </g>
+              <g
+                stroke="#ef4444"
+                stroke-width="2"
+                fill="none"
+                stroke-dasharray="4 4"
+                marker-end="url(#m3d)"
+              >
+                <path d="M330 220 V258" />
+              </g>
+              <text
+                x="263"
+                y="62"
+                font-family="Space Grotesk"
+                font-size="11"
+                fill="#9ea2b8"
+                text-anchor="middle"
+                data-pt="1. tx: job + outbox"
+                data-en="1. tx: job + outbox"
+              >
+                1. tx: job + outbox
+              </text>
+              <text
+                x="405"
+                y="151"
+                font-family="Space Grotesk"
+                font-size="11"
+                fill="#9ea2b8"
+                data-pt="2b. publica"
+                data-en="2b. publish"
+              >
+                2b. publica
+              </text>
+              <text
+                x="135"
+                y="155"
+                font-family="Space Grotesk"
+                font-size="11"
+                fill="#9ea2b8"
+                text-anchor="middle"
+                data-pt="2a. 202 + jobId"
+                data-en="2a. 202 + jobId"
+              >
+                2a. 202 + jobId
+              </text>
+              <text
+                x="485"
+                y="179"
+                font-family="Space Grotesk"
+                font-size="11"
+                fill="#9ea2b8"
+                text-anchor="middle"
+                data-pt="4. poll"
+                data-en="4. poll"
+              >
+                4. poll
+              </text>
+              <text
+                x="485"
+                y="218"
+                font-family="Space Grotesk"
+                font-size="11"
+                fill="#9ea2b8"
+                text-anchor="middle"
+                data-pt="5. job"
+                data-en="5. job"
+              >
+                5. job
+              </text>
+              <text
+                x="556"
+                y="118"
+                font-family="Space Grotesk"
+                font-size="11"
+                fill="#9ea2b8"
+                text-anchor="end"
+                data-pt="6. envia"
+                data-en="6. send"
+              >
+                6. envia
+              </text>
+              <text
+                x="626"
+                y="116"
+                font-family="Space Grotesk"
+                font-size="11"
+                fill="#9ea2b8"
+                data-pt="7. accepted"
+                data-en="7. accepted"
+              >
+                7. accepted
+              </text>
+              <text
+                x="505"
+                y="108"
+                font-family="Space Grotesk"
+                font-size="11"
+                fill="#9ea2b8"
+                text-anchor="middle"
+                data-pt="8. status = accepted"
+                data-en="8. status = accepted"
+              >
+                8. status = accepted
+              </text>
+              <text
+                x="500"
+                y="15"
+                font-family="Space Grotesk"
+                font-size="10"
+                fill="#2dd4bf"
+                text-anchor="middle"
+                data-pt="webhook API → DB: delivered / failed"
+                data-en="webhook API → DB: delivered / failed"
+              >
+                webhook API → DB: delivered / failed
+              </text>
+              <text
+                x="478"
+                y="251"
+                font-family="Space Grotesk"
+                font-size="11"
+                fill="#9ea2b8"
+                text-anchor="middle"
+                data-pt="9. DeleteMessage"
+                data-en="9. DeleteMessage"
+              >
+                9. DeleteMessage
+              </text>
+              <text
+                x="292"
+                y="238"
+                font-family="Space Grotesk"
+                font-size="11"
+                fill="#9ea2b8"
+                text-anchor="end"
+                data-pt="10. timeout de visibilidade"
+                data-en="10. visibility timeout"
+              >
+                10. timeout de visibilidade
+              </text>
+              <text
+                x="292"
+                y="252"
+                font-family="Space Grotesk"
+                font-size="11"
+                fill="#9ea2b8"
+                text-anchor="end"
+                data-pt="+ maxReceiveCount → DLQ"
+                data-en="+ maxReceiveCount → DLQ"
+              >
+                + maxReceiveCount → DLQ
+              </text>
+            </svg>`} />
+  <ol slot="order">
+    <Fragment set:html={`<li>`} />
+    <T pt={`Cliente → API (como P1)`} en={`Client → API (as in P1)`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`DB em cima, com "job + outbox"`} en={`DB on top, with "job + outbox"`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`Seta API → DB ("transação: job queued + outbox")`} en={`Arrow API → DB ("transaction: queued job + outbox")`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`Publisher entre DB e SQS; setas DB → publisher → SQS. API →
+    cliente responde "202 + jobId" após o commit, sem esperar a
+    publicação`} en={`Publisher between DB and SQS; arrows DB → publisher → SQS. API →
+    client returns "202 + jobId" after commit, without waiting for
+    publication`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`Worker ×N; seta worker → fila ("poll") e fila → worker ("job") —
+    quem puxa é o worker, a fila não empurra`} en={`Worker ×N; arrow worker → queue ("poll") and queue → worker
+    ("job") — the worker pulls; the queue doesn't push`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`Externo; seta worker → externo ("envia") e volta
+    ("accepted")`} en={`External; arrow worker → external ("send") and back
+    ("accepted")`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`Seta pontilhada worker → DB ("status = accepted"); depois,
+    externo → API de webhook autenticada → DB ("delivered/failed";
+    endpoint omitido no desenho)`} en={`Dashed arrow worker → DB ("status = accepted"); later, external →
+    authenticated webhook API → DB ("delivered/failed"; endpoint
+    omitted from the drawing)`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`Seta pontilhada worker → fila ("DeleteMessage") — não existe ack:
+    é um delete explícito; sem ele a mensagem reaparece e é
+    reprocessada`} en={`Dashed arrow worker → queue ("DeleteMessage") — there is no ack:
+    it's an explicit delete; without it the message reappears and gets
+    reprocessed`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`DLQ embaixo da fila; seta fila → DLQ ("timeout de visibilidade +
+    maxReceiveCount") — a SQS não conta "falhas", conta recebimentos
+    sem delete`} en={`DLQ below the queue; arrow queue → DLQ ("visibility timeout +
+    maxReceiveCount") — SQS doesn't count "failures", it counts
+    receives without a delete`} />
+    <Fragment set:html={`</li>`} />
+  </ol>
+  <p class="cite" slot="cite" set:html={`<a href="../lessons/0004-starter-onboarding-email.html"
+  ><span data-lang="pt">Brief L2 — onboarding + email</span
+  ><span data-lang="en">Brief L2 — onboarding + email</span></a
+>
+·
+<a href="../lessons/0005-starter-webhook-delivery.html"
+  ><span data-lang="pt">Brief L2 — webhooks</span
+  ><span data-lang="en">Brief L2 — webhooks</span></a
+>`} />
+</Pattern>

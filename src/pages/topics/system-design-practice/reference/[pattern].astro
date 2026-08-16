@@ -1,0 +1,68 @@
+---
+import Reference from "../../../../layouts/Reference.astro";
+import T from "../../../../components/T.astro";
+import P1 from "../../../../components/patterns/p1-the-base-skeleton-crud-api.astro";
+import P2 from "../../../../components/patterns/p2-read-heavy-cache-aside.astro";
+import P3 from "../../../../components/patterns/p3-slow-work-queue-worker.astro";
+import P4 from "../../../../components/patterns/p4-large-files-upload-cdn.astro";
+import P5 from "../../../../components/patterns/p5-rate-limiter-atomic-counter.astro";
+import P6 from "../../../../components/patterns/p6-media-pipeline-s3-event.astro";
+import P7 from "../../../../components/patterns/p7-ranking-top-k-sorted-set.astro";
+import P8 from "../../../../components/patterns/p8-feed-fan-out-on-write.astro";
+import P9 from "../../../../components/patterns/p9-real-time-websocket-gateway.astro";
+import P10 from "../../../../components/patterns/p10-propagation-cdc-via-kafka.astro";
+import P11 from "../../../../components/patterns/p11-analytics-clickstream-s3.astro";
+import P12 from "../../../../components/patterns/p12-outgoing-webhooks-queue-per-ta.astro";
+import P13 from "../../../../components/patterns/p13-hot-key-auction-hot-item.astro";
+import P14 from "../../../../components/patterns/p14-scaling-writes-sharding.astro";
+import P15 from "../../../../components/patterns/p15-global-multi-region.astro";
+
+const PATTERNS = [
+  { slug: "p1", num: "P1", C: P1, titlePt: `O esqueleto base: API CRUD`, titleEn: `The base skeleton: CRUD API` },
+  { slug: "p2", num: "P2", C: P2, titlePt: `Leitura pesada: cache-aside`, titleEn: `Read-heavy: cache-aside` },
+  { slug: "p3", num: "P3", C: P3, titlePt: `Trabalho lento: fila + worker`, titleEn: `Slow work: queue + worker` },
+  { slug: "p4", num: "P4", C: P4, titlePt: `Arquivos grandes: upload + CDN`, titleEn: `Large files: upload + CDN` },
+  { slug: "p5", num: "P5", C: P5, titlePt: `Rate limiter: contador atômico`, titleEn: `Rate limiter: atomic counter` },
+  { slug: "p6", num: "P6", C: P6, titlePt: `Pipeline de mídia: evento do S3`, titleEn: `Media pipeline: S3 event` },
+  { slug: "p7", num: "P7", C: P7, titlePt: `Ranking / top-K: sorted set`, titleEn: `Ranking / top-K: sorted set` },
+  { slug: "p8", num: "P8", C: P8, titlePt: `Feed: fan-out na escrita`, titleEn: `Feed: fan-out on write` },
+  { slug: "p9", num: "P9", C: P9, titlePt: `Tempo real: gateway WebSocket`, titleEn: `Real-time: WebSocket gateway` },
+  { slug: "p10", num: "P10", C: P10, titlePt: `Propagação: CDC via Kafka`, titleEn: `Propagation: CDC via Kafka` },
+  { slug: "p11", num: "P11", C: P11, titlePt: `Analytics: clickstream → S3`, titleEn: `Analytics: clickstream → S3` },
+  { slug: "p12", num: "P12", C: P12, titlePt: `Webhooks de saída: fila por destino`, titleEn: `Outgoing webhooks: queue per target` },
+  { slug: "p13", num: "P13", C: P13, titlePt: `Chave quente: leilão / hot key`, titleEn: `Hot key: auction / hot item` },
+  { slug: "p14", num: "P14", C: P14, titlePt: `Escalar escrita: sharding`, titleEn: `Scaling writes: sharding` },
+  { slug: "p15", num: "P15", C: P15, titlePt: `Global: multi-região`, titleEn: `Global: multi-region` },
+];
+
+export function getStaticPaths() {
+  // self-contained: getStaticPaths runs in an isolated scope (no module consts)
+  return ["p1","p2","p3","p4","p5","p6","p7","p8","p9","p10","p11","p12","p13","p14","p15"].map((s) => ({ params: { pattern: s }, props: { i: parseInt(s.slice(1)) - 1 } }));
+}
+const { i } = Astro.props;
+const p = PATTERNS[i];
+const prev = PATTERNS[i - 1];
+const next = PATTERNS[i + 1];
+const Pattern = p.C;
+---
+<Reference
+  titlePt={`${p.num} · ${p.titlePt} — Repertório`}
+  titleEn={`${p.num} · ${p.titleEn} — Repertoire`}
+  titleFallback={p.num}
+>
+  <nav class="pattern-nav">
+    <a href="repertoire.html"><i class="ph ph-arrow-left"></i>&nbsp;<T pt="Repertório" en="Repertoire" /></a>
+    <span>
+      {prev && <a href={prev.slug + ".html"}><i class="ph ph-caret-left"></i>&nbsp;{prev.num}</a>}
+      {next && <a href={next.slug + ".html"}>{next.num}&nbsp;<i class="ph ph-caret-right"></i></a>}
+    </span>
+  </nav>
+  <Pattern />
+</Reference>
+<style is:inline>
+  .pattern-nav { display: flex; justify-content: space-between; gap: 12px; align-items: center;
+    font: 600 12px/1 "Space Grotesk"; letter-spacing: 0.04em; margin: 0 0 10px; }
+  .pattern-nav a { color: #9ea2b8; text-decoration: none; }
+  .pattern-nav a:hover { color: #eceef6; }
+  .pattern-nav .ph { vertical-align: -0.15em; }
+</style>

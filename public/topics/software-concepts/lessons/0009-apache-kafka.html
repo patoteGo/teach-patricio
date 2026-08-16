@@ -1,0 +1,586 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title
+      data-pt="Apache Kafka — o log que não apaga"
+      data-en="Apache Kafka — the log that doesn't delete"
+    >
+      Apache Kafka
+    </title>
+    <link rel="stylesheet" href="../assets/style.css" />
+    <link rel="stylesheet" href="../assets/dark.css" />
+    <link rel="stylesheet" href="../assets/i18n.css" />
+    <link rel="stylesheet" href="../assets/concepts.css" />
+    <script src="../assets/i18n.js" defer></script>
+    <script src="../assets/nav.js" defer></script>
+    <script src="../assets/reading-ui.js" defer></script>
+    <script src="../assets/concepts.js" defer></script>
+  </head>
+  <body class="lang-pt">
+    <article class="lesson">
+      <header class="hero">
+        <span class="eyebrow"
+          >⬡ <span data-lang="pt">Conceitos · Apache Kafka</span
+          ><span data-lang="en">Concepts · Apache Kafka</span></span
+        >
+        <h1>
+          <span data-lang="pt"
+            >O SQS entrega e apaga. O Kafka deixa o diário aberto.</span
+          ><span data-lang="en"
+            >SQS delivers and deletes. Kafka leaves the diary open.</span
+          >
+        </h1>
+        <p class="lead">
+          <span data-lang="pt"
+            >Na <a href="0007-aws-sqs.html">lição do SQS</a>, a mensagem morria
+            no DeleteMessage. Kafka é o próximo degrau: o evento vira um
+            <strong>log retido</strong> que vários times leem — e
+            <strong>relêem</strong> — cada um no próprio ritmo.</span
+          ><span data-lang="en"
+            >In the <a href="0007-aws-sqs.html">SQS lesson</a>, the message died
+            at DeleteMessage. Kafka is the next rung: the event becomes a
+            <strong>retained log</strong> that several teams read — and
+            <strong>re-read</strong> — each at its own pace.</span
+          >
+        </p>
+      </header>
+      <nav class="concept-nav">
+        <a href="0008-aws-s3.html"
+          ><span data-lang="pt">← S3</span><span data-lang="en">← S3</span></a
+        ><a href="0005-estimation.html"
+          ><span data-lang="pt">Estimativa</span
+          ><span data-lang="en">Estimation</span></a
+        ><a href="0010-redis.html"
+          ><span data-lang="pt">Redis →</span
+          ><span data-lang="en">Redis →</span></a
+        >
+      </nav>
+
+      <h2 class="section">
+        <span class="num">1</span
+        ><span data-lang="pt">O problema que o log resolve</span
+        ><span data-lang="en">The problem the log solves</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >Uma fila é uma carta: entregue para <em>um</em> destinatário e
+          destruída. Mas no evento “pedido pago” tem mais de um interessado:
+          pagamentos, estoque, auditoria, analytics. Com fila, você publica a
+          mesma mensagem em quatro filas — ou perde alguém. E se o analytics
+          quiser <strong>reler ontem</strong>? Impossível: já foi apagada.</span
+        ><span data-lang="en"
+          >A queue is a letter: delivered to <em>one</em> recipient and
+          destroyed. But the event “order paid” has several stakeholders:
+          payments, inventory, audit, analytics. With a queue, you publish the
+          same message to four queues — or someone misses out. And if analytics
+          wants to <strong>re-read yesterday</strong>? Impossible: it's
+          gone.</span
+        >
+      </p>
+      <div class="callout key">
+        <p>
+          <span data-lang="pt"
+            ><strong>Kafka não é fila. É um diário (log) append-only.</strong>
+            O produtor só escreve no fim. A mensagem não é “entregue” —
+            <strong>permanece</strong> por dias. Cada leitor guarda um marcador
+            (offset) e vira as páginas no próprio ritmo.</span
+          ><span data-lang="en"
+            ><strong>Kafka isn't a queue. It's an append-only log.</strong> The
+            producer only writes at the end. The message isn't “delivered” — it
+            <strong>stays</strong> for days. Each reader keeps a bookmark
+            (offset) and turns pages at its own pace.</span
+          >
+        </p>
+      </div>
+
+      <h2 class="section">
+        <span class="num">2</span
+        ><span data-lang="pt">O modelo mental (5 passos)</span
+        ><span data-lang="en">The mental model (5 steps)</span>
+      </h2>
+      <div class="flow-board" data-flow>
+        <div class="flow-row">
+          <span class="step">1</span>
+          <div>
+            <b
+              ><span data-lang="pt">Produtor → append no fim</span
+              ><span data-lang="en">Producer → append at the end</span></b
+            >
+            <p>
+              <span data-lang="pt"
+                >Escreve no fim do log e sai. O Kafka grava em disco e replica
+                para outros brokers — durável por padrão.</span
+              ><span data-lang="en"
+                >Writes at the tail of the log and leaves. Kafka persists to
+                disk and replicates to other brokers — durable by default.</span
+              >
+            </p>
+          </div>
+        </div>
+        <div class="flow-row">
+          <span class="step">2</span>
+          <div>
+            <b
+              ><span data-lang="pt">Tópico → partições</span
+              ><span data-lang="en">Topic → partitions</span></b
+            >
+            <p>
+              <span data-lang="pt"
+                >Um tópico é dividido em partições; cada partição é um log
+                ordenado. A <strong>chave</strong> da mensagem decide a partição
+                (mesma chave = mesma partição).</span
+              ><span data-lang="en"
+                >A topic is split into partitions; each partition is an ordered
+                log. The message <strong>key</strong> picks the partition (same
+                key = same partition).</span
+              >
+            </p>
+          </div>
+        </div>
+        <div class="flow-row">
+          <span class="step">3</span>
+          <div>
+            <b
+              ><span data-lang="pt">Retenção: fica, não é entregue</span
+              ><span data-lang="en"
+                >Retention: it stays, isn't delivered</span
+              ></b
+            >
+            <p>
+              <span data-lang="pt"
+                >As mensagens permanecem por tempo configurável (padrão
+                <strong>7 dias</strong>), consumidas ou não. Ninguém apaga nada
+                ao ler.</span
+              ><span data-lang="en"
+                >Messages remain for a configurable time (default
+                <strong>7 days</strong>), consumed or not. Nobody deletes
+                anything by reading.</span
+              >
+            </p>
+          </div>
+        </div>
+        <div class="flow-row">
+          <span class="step">4</span>
+          <div>
+            <b
+              ><span data-lang="pt">Consumidor guarda o próprio offset</span
+              ><span data-lang="en">The consumer keeps its own offset</span></b
+            >
+            <p>
+              <span data-lang="pt"
+                >Cada grupo de consumidores lê na velocidade que puder, do
+                offset que escolher — inclusive do início, ou de ontem.</span
+              ><span data-lang="en"
+                >Each consumer group reads at whatever pace it can, from
+                whatever offset it chooses — including the beginning, or
+                yesterday.</span
+              >
+            </p>
+          </div>
+        </div>
+        <div class="flow-row">
+          <span class="step">5</span>
+          <div>
+            <b
+              ><span data-lang="pt">Commit do offset</span
+              ><span data-lang="en">Offset commit</span></b
+            >
+            <p>
+              <span data-lang="pt"
+                >Após processar, o grupo registra (commit) o offset. Se um
+                consumidor cai, outro assume a partição e continua do último
+                commit — igual ao “pega, processa, confirma” do SQS.</span
+              ><span data-lang="en"
+                >After processing, the group commits its offset. If a consumer
+                dies, another takes over the partition and resumes from the last
+                commit — like SQS's “receive, process, delete.”</span
+              >
+            </p>
+          </div>
+        </div>
+        <div class="flow-controls">
+          <button type="button" data-next>
+            <span data-lang="pt">Próxima etapa →</span
+            ><span data-lang="en">Next step →</span>
+          </button>
+          <button type="button" data-reset>
+            <span data-lang="pt">Reiniciar</span
+            ><span data-lang="en">Reset</span>
+          </button>
+          <span class="flow-status" data-flow-status></span>
+        </div>
+      </div>
+
+      <h2 class="section">
+        <span class="num">3</span
+        ><span data-lang="pt">O log ao vivo: offsets e lag</span
+        ><span data-lang="en">The log live: offsets and lag</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >A faixa de cima é a partição: o produtor empurra células novas (novo
+          offset em violeta) e as antigas saem —
+          <strong>por retenção, não por consumo</strong>. Abaixo, dois grupos
+          independentes leem o <em>mesmo</em> log: ✓ lido, ◉ lendo agora. A
+          distância entre eles e o fim do log é o <strong>lag</strong>.</span
+        ><span data-lang="en"
+          >The top strip is the partition: the producer pushes new cells (new
+          offset in violet) and old ones leave —
+          <strong>by retention, not by consumption</strong>. Below, two
+          independent groups read the <em>same</em> log: ✓ read, ◉ reading now.
+          The distance to the end of the log is the <strong>lag</strong>.</span
+        >
+      </p>
+      <div class="log-sim" data-log>
+        <span class="log-caption"
+          ><span data-lang="pt"
+            >produtor ▸ append no fim (offset cresce sozinho)</span
+          ><span data-lang="en"
+            >producer ▸ appends at the tail (offset grows on its own)</span
+          ></span
+        >
+        <div data-log-stage></div>
+        <div class="flow-controls">
+          <button type="button" data-log-toggle>
+            <span data-lang="pt">⏸ Pausar</span
+            ><span data-lang="en">⏸ Pause</span>
+          </button>
+          <button type="button" data-log-reset>
+            <span data-lang="pt">Reiniciar</span
+            ><span data-lang="en">Reset</span>
+          </button>
+          <span class="flow-status" data-log-status></span>
+        </div>
+      </div>
+      <div class="callout tip">
+        <p>
+          <span data-lang="pt"
+            ><strong>Lag é o “comprimento da fila” do Kafka.</strong> Pagamentos
+            anda rápido (lag baixo); auditoria anda devagar (lag alto) — e está
+            tudo bem. O lag por grupo é o número que você monitora e usa para
+            escalar consumidores.</span
+          ><span data-lang="en"
+            ><strong>Lag is Kafka's “queue depth.”</strong> Payments keeps up
+            (low lag); audit moves slowly (high lag) — and that's fine.
+            Per-group lag is the number you monitor and scale consumers
+            on.</span
+          >
+        </p>
+      </div>
+
+      <h2 class="section">
+        <span class="num">4</span
+        ><span data-lang="pt">Partições, chaves e ordem</span
+        ><span data-lang="en">Partitions, keys, and order</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >A partição é a unidade de paralelismo <em>e</em> de ordem. Dentro de
+          uma partição, as mensagens ficam na ordem em que entraram. Entre
+          partições, ninguém promete nada. Quer os eventos do usuário 42 em
+          ordem? Use 42 como chave: ele sempre cai na mesma partição.</span
+        ><span data-lang="en"
+          >The partition is the unit of parallelism <em>and</em> of order.
+          Within a partition, messages stay in arrival order. Across partitions,
+          nothing is promised. Want user 42's events in order? Use 42 as the
+          key: it always lands on the same partition.</span
+        >
+      </p>
+      <p>
+        <span data-lang="pt"
+          >Dentro de um grupo, cada partição é lida por
+          <strong>no máximo um consumidor</strong>. 4 partições = no máximo 4
+          consumidores úteis no grupo; para escalar além, crie partições. Se um
+          consumidor cai, o grupo faz um <strong>rebalance</strong> e
+          redistribui as partições entre os vivos.</span
+        ><span data-lang="en"
+          >Within a group, each partition is read by
+          <strong>at most one consumer</strong>. 4 partitions = at most 4 useful
+          consumers in the group; to scale past that, add partitions. If a
+          consumer dies, the group <strong>rebalances</strong> and redistributes
+          partitions among the survivors.</span
+        >
+      </p>
+      <div class="callout warn">
+        <p>
+          <span data-lang="pt"
+            ><strong
+              >Consequência direta: a ordem é por partição, não por
+              tópico.</strong
+            >
+            Chave errada (ou ausente) = eventos do mesmo usuário espalhados em
+            partições = “debitado antes de creditado” fora de ordem. E o
+            processamento ainda pode rodar duas vezes depois de um rebalance —
+            consumidor idempotente, igual ao SQS.</span
+          ><span data-lang="en"
+            ><strong
+              >Direct consequence: order is per partition, not per
+              topic.</strong
+            >
+            Wrong (or missing) key = one user's events spread across partitions
+            = “debited before credited” out of order. And processing can still
+            run twice after a rebalance — idempotent consumer, same as
+            SQS.</span
+          >
+        </p>
+      </div>
+
+      <h2 class="section">
+        <span class="num">5</span><span data-lang="pt">Kafka vs SQS</span
+        ><span data-lang="en">Kafka vs SQS</span>
+      </h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th></th>
+              <th>SQS</th>
+              <th>Kafka</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <span data-lang="pt">Modelo</span
+                ><span data-lang="en">Model</span>
+              </td>
+              <td>
+                <span data-lang="pt">fila: entrega e apaga no delete</span
+                ><span data-lang="en">queue: delivered, deleted on delete</span>
+              </td>
+              <td>
+                <span data-lang="pt">log retido: fica dias após leitura</span
+                ><span data-lang="en"
+                  >retained log: stays days after reading</span
+                >
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="pt">Consumidores</span
+                ><span data-lang="en">Consumers</span>
+              </td>
+              <td>
+                <span data-lang="pt">um por mensagem</span
+                ><span data-lang="en">one per message</span>
+              </td>
+              <td>
+                <span data-lang="pt"
+                  >N grupos independentes, todos recebem tudo</span
+                ><span data-lang="en"
+                  >N independent groups, all get everything</span
+                >
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="pt">Replay</span
+                ><span data-lang="en">Replay</span>
+              </td>
+              <td>
+                <span data-lang="pt">impossível (apagada)</span
+                ><span data-lang="en">impossible (deleted)</span>
+              </td>
+              <td>
+                <span data-lang="pt">sim: reposicione o offset e releia</span
+                ><span data-lang="en">yes: move the offset and re-read</span>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="pt">Ordem</span
+                ><span data-lang="en">Order</span>
+              </td>
+              <td>
+                <span data-lang="pt">FIFO: por grupo, ~300 msg/s</span
+                ><span data-lang="en">FIFO: per group, ~300 msg/s</span>
+              </td>
+              <td>
+                <span data-lang="pt">por partição, throughput altíssimo</span
+                ><span data-lang="en">per partition, very high throughput</span>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="pt">Use quando</span
+                ><span data-lang="en">Use when</span>
+              </td>
+              <td>
+                <span data-lang="pt">desacoplar um produtor de um worker</span
+                ><span data-lang="en"
+                  >decoupling one producer from one worker</span
+                >
+              </td>
+              <td>
+                <span data-lang="pt"
+                  >evento com vários destinos, replay, stream</span
+                ><span data-lang="en"
+                  >event with several destinations, replay, streaming</span
+                >
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 class="section">
+        <span class="num">6</span
+        ><span data-lang="pt">A jogada de entrevista (30 segundos)</span
+        ><span data-lang="en">The interview move (30 seconds)</span>
+      </h2>
+      <div class="code-stage">
+        <pre><code><span data-lang="pt"><span style="color:#8b88b8"># produtor: append no log (o offset cresce sozinho)</span>
+kcat -P -b broker:9092 -t orders
+42:{"orderId":42,"total":189.90}
+
+<span style="color:#8b88b8"># grupo novo: lê TUDO desde o começo — impossível no SQS</span>
+kcat -C -b broker:9092 -t orders -o beginning
+
+<span style="color:#8b88b8"># bug no analytics? reposiciona o offset e relê</span>
+kcat -C -b broker:9092 -t orders -o 1234</span><span data-lang="en"><span style="color:#8b88b8"># producer: append to the log (the offset grows on its own)</span>
+kcat -P -b broker:9092 -t orders
+42:{"orderId":42,"total":189.90}
+
+<span style="color:#8b88b8"># new group: read EVERYTHING from the start — impossible in SQS</span>
+kcat -C -b broker:9092 -t orders -o beginning
+
+<span style="color:#8b88b8"># bug in analytics? move the offset back and re-read</span>
+kcat -C -b broker:9092 -t orders -o 1234</span></code></pre>
+      </div>
+      <div class="callout key">
+        <p>
+          <span data-lang="pt"
+            ><strong>Frase que fecha a questão:</strong> “Kafka quando o evento
+            tem vários destinos ou precisa de replay: o tópico é um log
+            particionado com retenção de dias; cada grupo guarda o próprio
+            offset e lê no próprio ritmo; ordem por partição via chave; escalo
+            consumidores até o número de partições. Se é só um worker
+            desacoplando, SQS basta.”</span
+          ><span data-lang="en"
+            ><strong>The sentence that closes the question:</strong> “Kafka when
+            the event has several destinations or needs replay: the topic is a
+            partitioned log with days of retention; each group keeps its own
+            offset and reads at its own pace; order per partition via key; I
+            scale consumers up to the partition count. If it's just one worker
+            to decouple, SQS is enough.”</span
+          >
+        </p>
+      </div>
+
+      <div class="mcq" data-mcq>
+        <p class="mcq-q">
+          <span data-lang="pt"
+            >Pagamentos e auditoria leem o mesmo tópico, cada um com seu grupo.
+            O que o grupo de pagamentos recebe?</span
+          ><span data-lang="en"
+            >Payments and audit read the same topic, each with its own group.
+            What does the payments group receive?</span
+          >
+        </p>
+        <div class="mcq-opts">
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="Nada impede os dois: offset é por grupo, então cada um percorre o log inteiro por conta própria."
+            data-fb-en="Nothing stops both: the offset is per group, so each walks the whole log on its own."
+          >
+            <span data-lang="pt"
+              >Só as mensagens que a auditoria ainda não leu</span
+            ><span data-lang="en">Only messages audit hasn't read yet</span>
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="true"
+            data-fb-pt="Exato: offsets são independentes por grupo — todos os grupos recebem todas as mensagens. É por isso que Kafka serve para vários times ouvirem o mesmo evento."
+            data-fb-en="Exactly: offsets are independent per group — every group gets every message. That's why Kafka works for many teams listening to the same event."
+          >
+            <span data-lang="pt"
+              >Todas as mensagens — cada grupo tem offset próprio</span
+            ><span data-lang="en"
+              >Every message — each group has its own offset</span
+            >
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="Ninguém remove mensagem por leitura no Kafka — a saída é por retenção (dias), independente de quantos grupos leram."
+            data-fb-en="Nobody removes a message by reading in Kafka — messages leave by retention (days), regardless of how many groups read them."
+          >
+            <span data-lang="pt"
+              >Só o que sobrou depois que a auditoria leu e apagou</span
+            ><span data-lang="en"
+              >Only what survived after audit read and deleted</span
+            >
+          </button>
+        </div>
+        <div class="mcq-fb" data-fb></div>
+      </div>
+
+      <div class="mcq" data-mcq>
+        <p class="mcq-q">
+          <span data-lang="pt"
+            >Seus eventos “débito” e “crédito” do mesmo usuário chegaram fora de
+            ordem. Por quê?</span
+          ><span data-lang="en"
+            >Your “debit” and “credit” events for the same user arrived out of
+            order. Why?</span
+          >
+        </p>
+        <div class="mcq-opts">
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="Kafka entrega na ordem de chegada dentro de cada partição. Ele não reordena nem atrasa por conta própria."
+            data-fb-en="Kafka delivers in arrival order within each partition. It doesn't reorder or delay on its own."
+          >
+            <span data-lang="pt">O Kafka reordenou por performance</span
+            ><span data-lang="en">Kafka reordered for performance</span>
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="Partições em si são o mecanismo de ordem — o problema é a mensagem cair em partições diferentes por falta de chave."
+            data-fb-en="Partitions are themselves the ordering mechanism — the problem is messages landing on different partitions for lack of a key."
+          >
+            <span data-lang="pt">Deveria ter usado menos partições</span
+            ><span data-lang="en">Should have used fewer partitions</span>
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="true"
+            data-fb-pt="Correto: sem chave (ou com chave diferente), os dois eventos caíram em partições distintas — e ordem só existe dentro de uma partição. Use userId como chave."
+            data-fb-en="Correct: without a key (or with different keys), the two events landed on different partitions — and order only exists within a partition. Use userId as the key."
+          >
+            <span data-lang="pt"
+              >Foram para partições diferentes — ordem é por partição</span
+            ><span data-lang="en"
+              >They hit different partitions — order is per partition</span
+            >
+          </button>
+        </div>
+        <div class="mcq-fb" data-fb></div>
+      </div>
+
+      <p class="cite-line">
+        <span data-lang="pt">Revisão:</span><span data-lang="en">Review:</span>
+        <a href="0007-aws-sqs.html"
+          ><span data-lang="pt">AWS SQS (a fila que o Kafka não é)</span
+          ><span data-lang="en">AWS SQS (the queue Kafka isn't)</span></a
+        >
+        ·
+        <a href="https://kafka.apache.org/documentation/#intro"
+          >Kafka — Introduction (kafka.apache.org)</a
+        >.
+        <span data-lang="pt"
+          >Dúvida em qualquer parte? Pergunte ao agente — ele é seu professor e
+          pode destrinchar qualquer seção.</span
+        ><span data-lang="en"
+          >Stuck on any part? Ask the agent — it's your teacher and can break
+          down any section.</span
+        >
+      </p>
+    </article>
+  </body>
+</html>

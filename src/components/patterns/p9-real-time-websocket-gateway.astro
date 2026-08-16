@@ -1,0 +1,473 @@
+---
+import Pattern from "../Pattern.astro";
+import T from "../T.astro";
+---
+
+<!-- P9 · Real-time: WebSocket gateway (L3) -->
+<Pattern
+  id="p9"
+  num="P9"
+  lvl={3}
+  titlePt={`Tempo real: gateway WebSocket`}
+  titleEn={`Real-time: WebSocket gateway`}
+  kickerPt={`Chat, notificação, colaboração. A conexão é <em>com estado</em> —
+            isso muda tudo.`}
+  kickerEn={`Chat, notifications, collaboration. The connection is
+            <em>stateful</em> — that changes everything.`}
+  tipPt={`<strong>Fale enquanto desenha:</strong> "A conexão WebSocket é
+              stateful — depois do upgrade é um TCP vivo que fica num gateway;
+              sticky só importa na reconexão. Para entregar de A pra B: o
+              serviço grava o histórico, pergunta ao registro onde o B está
+              (user:B → gateway:2) e publica no canal gateway.2 — só o GW 2
+              escuta esse canal e entrega o push. Gateway caiu? Heartbeat
+              para, TTL expira. Offline? Fila/push notification."`}
+  tipEn={`<strong>Say while drawing:</strong> "A WebSocket connection is
+              stateful — after the upgrade it's a live TCP connection on one
+              gateway; sticky only matters on reconnect. To deliver from A to
+              B: the service stores the history, asks the registry where B is
+              (user:B → gateway:2), and publishes to channel gateway.2 — only
+              GW 2 listens and pushes it. Gateway crashed? Heartbeats
+              stop, the TTL expires. Offline? Queue/push notification."`}
+  whyPt={`<strong>Por quê:</strong> <em>gateways separados</em> da API
+              porque manter milhares de conexões abertas é um trabalho diferente
+              de servir requests. <em>Registro no Redis</em> porque precisa ser
+              compartilhado entre gateways, gravado pelos próprios gateways
+              (register/heartbeat) e expirado por TTL — gateway caiu sem
+              disconnect, a entrada morre sozinha. <em>Broker com canal por
+              gateway</em> (Redis Pub/Sub, NATS): o registro diz <em>onde</em>
+              a conexão vive e o serviço publica só no canal daquele gateway
+              — gateway.2 —, que só ele escuta; Kafka com consumer group
+              comum entrega cada mensagem a um gateway só, talvez o errado
+              (precisaria de tópico por gateway ou um roteador). <em>Postgres</em> só para o histórico,
+              fora do caminho quente — e persista <em>antes</em> de publicar
+              (outbox transacional): sem isso, entrega mensagem que nunca foi
+              gravada ou grava mensagem que nunca é entregue. <em>Tradeoff:</em> gateway caiu → todas
+              as suas conexões caem; clientes reconectam noutro, por isso o
+              registro existe — sticky session só importa na reconexão:
+              depois do upgrade, o TCP mantém a conexão no gateway.`}
+  whyEn={`<strong>Why:</strong> <em>separate gateways</em> because holding
+              thousands of open connections is a different job from serving
+              requests. <em>Registry in Redis</em> because it must be shared
+              across gateways, written by the gateways themselves
+              (register/heartbeat) and expired by TTL — a crashed gateway never
+              sends disconnect, its entry dies on its own. <em>A broker with a
+              channel per gateway</em> (Redis Pub/Sub, NATS): the registry says
+              <em>where</em> the connection lives and the service publishes
+              only to that gateway's channel — gateway.2 — which only it
+              subscribes to; plain Kafka consumer groups deliver each message
+              to a single gateway, possibly the wrong one (you'd need a topic
+              per gateway or a routing service). <em>Postgres</em> only for history,
+              off the hot path — and persist <em>before</em> publishing
+              (transactional outbox): otherwise you deliver messages that were
+              never stored, or store messages that are never delivered. <em>Tradeoff:</em> gateway crashes → all its
+              connections drop; clients reconnect elsewhere — that's why the
+              registry exists. Sticky sessions only matter on reconnect:
+              once upgraded, the TCP connection just stays on its gateway.`}
+>
+  <Fragment slot="dia" set:html={`<svg
+              viewBox="0 0 760 310"
+              width="100%"
+              style="min-width: 640px"
+              role="img"
+              aria-labelledby="p9t"
+            >
+              <title
+                id="p9t"
+                data-pt="Clientes conectam via load balancer a gateways WebSocket com estado; os dois gateways gravam o registro no Redis (heartbeat + TTL); o serviço grava o histórico no Postgres, consulta o registro e publica no canal gateway.2 do broker; o GW 2 entrega o push ao cliente B"
+                data-en="Clients connect through a load balancer to stateful WebSocket gateways; both gateways write the registry in Redis (heartbeat + TTL); the service stores history in Postgres, looks up the registry, and publishes to broker channel gateway.2; GW 2 pushes to client B"
+              >
+                WebSocket gateway
+              </title>
+              <defs>
+                <marker
+                  id="m9"
+                  markerWidth="8"
+                  markerHeight="8"
+                  refX="6"
+                  refY="3"
+                  orient="auto"
+                >
+                  <path d="M0,0 L0,6 L7,3 z" fill="#8b6ff7" />
+                </marker>
+                <marker
+                  id="m9b"
+                  markerWidth="8"
+                  markerHeight="8"
+                  refX="6"
+                  refY="3"
+                  orient="auto"
+                >
+                  <path d="M0,0 L0,6 L7,3 z" fill="#2dd4bf" />
+                </marker>
+              </defs>
+              <g font-family="Space Grotesk" font-size="13" font-weight="700">
+                <rect
+                  x="20"
+                  y="45"
+                  width="90"
+                  height="50"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#2dd4bf"
+                />
+                <text
+                  x="65"
+                  y="74"
+                  fill="#2dd4bf"
+                  text-anchor="middle"
+                  data-pt="Cliente A"
+                  data-en="Client A"
+                >
+                  Cliente A
+                </text>
+                <rect
+                  x="20"
+                  y="215"
+                  width="90"
+                  height="50"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#2dd4bf"
+                />
+                <text
+                  x="65"
+                  y="244"
+                  fill="#2dd4bf"
+                  text-anchor="middle"
+                  data-pt="Cliente B"
+                  data-en="Client B"
+                >
+                  Cliente B
+                </text>
+                <rect
+                  x="140"
+                  y="130"
+                  width="120"
+                  height="60"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#2dd4bf"
+                />
+                <text x="200" y="152" fill="#2dd4bf" text-anchor="middle">
+                  Load balancer
+                </text>
+                <text
+                  x="200"
+                  y="167"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="10"
+                  data-pt="upgrade WS"
+                  data-en="WS upgrade"
+                >
+                  upgrade WS
+                </text>
+                <text
+                  x="200"
+                  y="180"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="10"
+                  data-pt="reconexão fixa"
+                  data-en="sticky on reconnect"
+                >
+                  reconexão fixa
+                </text>
+                <rect
+                  x="300"
+                  y="45"
+                  width="120"
+                  height="50"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#8b6ff7"
+                />
+                <text x="360" y="63" fill="#8b6ff7" text-anchor="middle">
+                  WS GW 1
+                </text>
+                <text
+                  x="360"
+                  y="80"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="11"
+                  data-pt="mantém conexão"
+                  data-en="holds connection"
+                >
+                  mantém conexão
+                </text>
+                <rect
+                  x="300"
+                  y="215"
+                  width="120"
+                  height="50"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#8b6ff7"
+                />
+                <text x="360" y="233" fill="#8b6ff7" text-anchor="middle">
+                  WS GW 2
+                </text>
+                <text
+                  x="360"
+                  y="250"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="11"
+                  data-pt="mantém conexão"
+                  data-en="holds connection"
+                >
+                  mantém conexão
+                </text>
+                <rect
+                  x="470"
+                  y="15"
+                  width="150"
+                  height="52"
+                  rx="10"
+                  fill="#2a0f1c"
+                  stroke="#fb7185"
+                />
+                <text
+                  x="545"
+                  y="37"
+                  fill="#fb7185"
+                  text-anchor="middle"
+                  data-pt="Registro"
+                  data-en="Registry"
+                >
+                  Registro
+                </text>
+                <text
+                  x="545"
+                  y="53"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="10"
+                >
+                  Redis · user→GW · TTL
+                </text>
+                <rect
+                  x="470"
+                  y="130"
+                  width="120"
+                  height="50"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#8b6ff7"
+                />
+                <text
+                  x="530"
+                  y="155"
+                  fill="#8b6ff7"
+                  text-anchor="middle"
+                  data-pt="Serviço"
+                  data-en="Service"
+                >
+                  Serviço
+                </text>
+                <rect
+                  x="470"
+                  y="225"
+                  width="150"
+                  height="46"
+                  rx="10"
+                  fill="#2a0f1c"
+                  stroke="#fb7185"
+                />
+                <text x="545" y="244" fill="#fb7185" text-anchor="middle">
+                  Broker
+                </text>
+                <text
+                  x="545"
+                  y="260"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="10"
+                >
+                  NATS · Redis Pub/Sub
+                </text>
+                <rect
+                  x="640"
+                  y="130"
+                  width="100"
+                  height="50"
+                  rx="10"
+                  fill="#2a1207"
+                  stroke="#f59e0b"
+                />
+                <text x="690" y="155" fill="#fbbf24" text-anchor="middle">
+                  Postgres
+                </text>
+              </g>
+              <g
+                stroke="#2dd4bf"
+                stroke-width="2"
+                fill="none"
+                marker-end="url(#m9b)"
+              >
+                <path d="M110 70 C122 70 126 140 140 148" />
+                <path d="M110 240 C122 240 126 170 140 163" />
+                <path d="M260 148 C275 146 282 78 300 70" />
+                <path d="M260 163 C275 166 282 232 300 240" />
+              </g>
+              <g
+                stroke="#8b6ff7"
+                stroke-width="2"
+                fill="none"
+                marker-end="url(#m9)"
+              >
+                <path d="M420 70 C445 72 448 140 470 147" />
+                <path d="M590 155 H640" />
+                <path d="M530 180 V225" />
+                <path d="M470 250 C450 248 436 244 420 241" />
+                <path d="M340 265 C300 296 150 296 75 265" />
+              </g>
+              <g
+                stroke="#8b6ff7"
+                stroke-width="2"
+                fill="none"
+                stroke-dasharray="4 4"
+                marker-end="url(#m9)"
+              >
+                <path d="M420 55 C440 48 452 44 470 40" />
+                <path d="M420 222 C455 200 455 115 480 67" />
+                <path d="M540 130 C546 108 550 88 552 67" />
+                <path d="M505 67 C499 88 495 108 492 130" />
+              </g>
+              <g font-family="Space Grotesk" font-size="10" fill="#9ea2b8">
+                <text x="124" y="158" text-anchor="middle">WS</text>
+                <text x="438" y="32" text-anchor="middle">heartbeat</text>
+                <text x="428" y="196" text-anchor="end">heartbeat</text>
+                <text
+                  x="560"
+                  y="100"
+                  data-pt="onde está B?"
+                  data-en="where is B?"
+                >
+                  onde está B?
+                </text>
+                <text x="502" y="110">gateway:2</text>
+                <text x="537" y="206" data-pt="publica" data-en="publish">
+                  publica
+                </text>
+                <text x="445" y="262" text-anchor="middle">gateway.2</text>
+                <text
+                  x="615"
+                  y="147"
+                  text-anchor="middle"
+                  data-pt="histórico"
+                  data-en="history"
+                >
+                  histórico
+                </text>
+              </g>
+              <text
+                x="444"
+                y="94"
+                font-family="Space Grotesk"
+                font-size="11"
+                fill="#9ea2b8"
+                text-anchor="middle"
+              >
+                msg
+              </text>
+              <text
+                x="208"
+                y="282"
+                font-family="Space Grotesk"
+                font-size="11"
+                fill="#9ea2b8"
+                text-anchor="middle"
+              >
+                push
+              </text>
+              <g
+                font-family="Space Grotesk"
+                font-size="11"
+                font-weight="700"
+                text-anchor="middle"
+              >
+                <text x="137" y="99" fill="#2dd4bf">1</text>
+                <text x="267" y="103" fill="#2dd4bf">2</text>
+                <text x="444" y="80" fill="#8b6ff7">3</text>
+                <text x="615" y="138" fill="#8b6ff7">4</text>
+                <text x="575" y="87" fill="#8b6ff7">5</text>
+                <text x="518" y="206" fill="#8b6ff7">6</text>
+                <text x="445" y="278" fill="#8b6ff7">7</text>
+                <text x="330" y="285" fill="#8b6ff7">8</text>
+              </g>
+            </svg>`} />
+  <ol slot="order">
+    <Fragment set:html={`<li>`} />
+    <T
+      pt={`Clientes → load balancer → gateways ("upgrade WS; depois do
+    upgrade é uma conexão TCP viva que permanece no gateway escolhido —
+    sticky session só importa na reconexão")`}
+      en={`Clients → load balancer → gateways ("WS upgrade; after the
+    upgrade it's a live TCP connection that stays on the chosen gateway —
+    sticky sessions only matter on reconnect")`}
+    />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T
+      pt={`Cada gateway mantém as conexões (stateful): A no GW 1, B no GW 2`}
+      en={`Each gateway holds the connections (stateful): A on GW 1, B on GW 2`}
+    />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T
+      pt={`Cada gateway → registro (Redis), pontilhado: register no
+    connect, heartbeat (GW 1 e GW 2), TTL — gateway caiu sem disconnect? A
+    entrada expira sozinha`}
+      en={`Each gateway → registry (Redis), dashed: register on connect,
+    heartbeat (GW 1 and GW 2), TTL — a crashed gateway never sends
+    disconnect? Its entries expire on their own`}
+    />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T
+      pt={`Entrada: cliente → gateway → serviço ("msg"); serviço → Postgres
+    ("histórico") — persiste antes de publicar (outbox transacional)`}
+      en={`Inbound: client → gateway → service ("msg"); service → Postgres
+    ("history") — persist before publishing (transactional outbox)`}
+    />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T
+      pt={`Consulta: serviço → registro ("onde está B?") → serviço
+    ("user:B → gateway:2")`}
+      en={`Lookup: service → registry ("where is B?") → service
+    ("user:B → gateway:2")`}
+    />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T
+      pt={`Saída: serviço → broker ("publica" no canal gateway.2 — cada
+    gateway assina só o seu canal) → GW 2 → push no cliente B`}
+      en={`Outbound: service → broker ("publish" to channel gateway.2 —
+    each gateway subscribes only to its own channel) → GW 2 → push to
+    client B`}
+    />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T
+      pt={`Registro ≠ broker: o registro diz onde a conexão vive; o broker
+    (Redis Pub/Sub, NATS) leva a mensagem no canal do gateway certo — o
+    Redis pode fazer os dois. Kafka? Só com tópico por gateway ou um
+    roteador`}
+      en={`Registry ≠ broker: the registry says where the connection lives;
+    the broker (Redis Pub/Sub, NATS) carries the message on the right
+    gateway's channel — Redis can do both. Kafka? Only with a topic per
+    gateway or a routing service`}
+    />
+    <Fragment set:html={`</li>`} />
+  </ol>
+  <p class="cite" slot="cite" set:html={`<a href="https://bytebytego.com/books/"
+  ><span data-lang="pt"
+    >System Design Interview (Alex Xu) — cap. 12, Chat</span
+  ><span data-lang="en"
+    >System Design Interview (Alex Xu) — ch. 12, Chat</span
+  ></a
+>`} />
+</Pattern>

@@ -1,0 +1,367 @@
+---
+import Pattern from "../Pattern.astro";
+import T from "../T.astro";
+---
+
+<!-- P7 · Ranking / top-K: sorted set (L2) -->
+<Pattern
+  id="p7"
+  num="P7"
+  lvl={2}
+  titlePt={`Ranking / top-K: sorted set`}
+  titleEn={`Ranking / top-K: sorted set`}
+  kickerPt={`Leaderboard de jogo, trending topics, "mais vendidos". Redis ZSET
+            ajuda quando pontuações e ranks mudam em alta frequência.`}
+  kickerEn={`Game leaderboard, trending topics, "best sellers". Redis ZSET helps
+            when scores and ranks change at high frequency.`}
+  tipPt={`<strong>Fale enquanto desenha:</strong> "Pontos entram com ZADD
+              <code>&lt;pts&gt; &lt;id&gt;</code> — substitui — ou ZINCRBY
+              <code>&lt;pts&gt; &lt;id&gt;</code> — acumula — ambas O(log N). O
+              top-100 sai com <code>ZRANGE 0 99 REV WITHSCORES</code> — O(log N
+              + M). O ZSET guarda <em>scores</em>; o rank é derivado da ordem na
+              consulta. Um snapshot worker grava o histórico no Postgres."`}
+  tipEn={`<strong>Say while drawing:</strong> "Scores go in with ZADD
+              <code>&lt;pts&gt; &lt;id&gt;</code> — replace — or ZINCRBY
+              <code>&lt;pts&gt; &lt;id&gt;</code> — accumulate — both O(log N).
+              The top 100 comes from <code>ZRANGE 0 99 REV WITHSCORES</code> —
+              O(log N + M). The ZSET stores <em>scores</em>; rank is derived
+              from the sorted order at query time. A snapshot worker writes
+              history to Postgres."`}
+  whyPt={`<strong>Por quê Redis ZSET:</strong> score, rank e top-K vêm da
+              mesma estrutura com operações atômicas e baixa latência. Postgres
+              com índice compatível também serve
+              <code>ORDER BY pontos DESC LIMIT 100</code> eficientemente; Redis
+              ganha quando a taxa de atualização/ranking justifica. Redis pode
+              persistir com RDB/AOF; um <em>snapshot worker</em> separado lê o
+              Redis e grava o histórico no Postgres. Snapshot por hora = até 1h
+              de atualizações perdidas se o Redis cair — aceitável quando o
+              Postgres é analytics e o ranking é reconstrutível; se ponto não
+              pode se perder, persista cada evento de pontuação no Postgres ou
+              numa fila/stream durável.`}
+  whyEn={`<strong>Why Redis ZSET:</strong> score, rank, and top-K come from
+              one structure with atomic, low-latency operations. PostgreSQL with
+              a matching index can also serve
+              <code>ORDER BY score DESC LIMIT 100</code> efficiently; Redis pays
+              off when ranking/update throughput justifies it. Redis can persist
+              with RDB/AOF; a separate <em>snapshot worker</em> reads Redis and
+              writes history to Postgres. An hourly snapshot means up to one
+              hour of updates lost if Redis dies — fine when Postgres holds
+              analytics and the ranking is reconstructible; if points must never
+              be lost, persist every score event through Postgres or a durable
+              queue/stream.`}
+>
+  <Fragment slot="dia" set:html={`<svg
+              viewBox="0 0 720 320"
+              width="100%"
+              style="min-width: 640px"
+              role="img"
+              aria-labelledby="p7t"
+            >
+              <title
+                id="p7t"
+                data-pt="Jogador → API ↔ Redis ZSET: ZADD/ZINCRBY grava pontos, ZRANGE 0 99 REV WITHSCORES lê o top-100; snapshot worker lê o Redis periodicamente e grava histórico no Postgres"
+                data-en="Player → API ↔ Redis ZSET: ZADD/ZINCRBY writes scores, ZRANGE 0 99 REV WITHSCORES reads the top 100; a snapshot worker reads Redis periodically and writes history to Postgres"
+              >
+                Leaderboard
+              </title>
+              <defs>
+                <marker
+                  id="m7"
+                  markerWidth="8"
+                  markerHeight="8"
+                  refX="6"
+                  refY="3"
+                  orient="auto"
+                >
+                  <path d="M0,0 L0,6 L7,3 z" fill="#8b6ff7" />
+                </marker>
+              </defs>
+              <g font-family="Space Grotesk" font-size="13" font-weight="700">
+                <rect
+                  x="20"
+                  y="95"
+                  width="100"
+                  height="50"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#2dd4bf"
+                />
+                <text
+                  x="70"
+                  y="125"
+                  fill="#2dd4bf"
+                  text-anchor="middle"
+                  data-pt="Jogador"
+                  data-en="Player"
+                >
+                  Jogador
+                </text>
+                <rect
+                  x="190"
+                  y="95"
+                  width="90"
+                  height="50"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#8b6ff7"
+                />
+                <text x="235" y="125" fill="#8b6ff7" text-anchor="middle">
+                  API
+                </text>
+                <rect
+                  x="400"
+                  y="60"
+                  width="240"
+                  height="110"
+                  rx="10"
+                  fill="#2a0f1c"
+                  stroke="#fb7185"
+                />
+                <text x="520" y="88" fill="#fb7185" text-anchor="middle">
+                  Redis · ZSET
+                </text>
+                <text
+                  x="520"
+                  y="110"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="11"
+                >
+                  ZADD/ZINCRBY &lt;pts&gt; &lt;id&gt;
+                </text>
+                <text
+                  x="520"
+                  y="130"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="11"
+                >
+                  ZRANGE 0 99 REV WITHSCORES
+                </text>
+                <rect
+                  x="430"
+                  y="240"
+                  width="180"
+                  height="44"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#8b6ff7"
+                />
+                <text
+                  x="520"
+                  y="267"
+                  fill="#8b6ff7"
+                  text-anchor="middle"
+                  font-size="12"
+                >
+                  Snapshot worker
+                </text>
+                <rect
+                  x="120"
+                  y="235"
+                  width="160"
+                  height="64"
+                  rx="10"
+                  fill="#2a1207"
+                  stroke="#f59e0b"
+                />
+                <text x="200" y="262" fill="#fbbf24" text-anchor="middle">
+                  Postgres
+                </text>
+                <text
+                  x="200"
+                  y="282"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="10"
+                  data-pt="histórico · analytics"
+                  data-en="history · analytics"
+                >
+                  histórico · analytics
+                </text>
+              </g>
+              <g
+                stroke="#8b6ff7"
+                stroke-width="2"
+                fill="none"
+                marker-end="url(#m7)"
+              >
+                <path d="M120 120 H190" />
+                <path d="M280 120 H400" />
+              </g>
+              <g
+                stroke="#fbbf24"
+                stroke-width="2"
+                fill="none"
+                stroke-dasharray="4 4"
+                marker-end="url(#m7)"
+              >
+                <path d="M520 170 V240" />
+                <path d="M430 262 H280" />
+              </g>
+              <text
+                x="534"
+                y="210"
+                font-family="Space Grotesk"
+                font-size="11"
+                fill="#9ea2b8"
+                text-anchor="start"
+                data-pt="snapshot 1×/hora"
+                data-en="snapshot 1×/hour"
+              >
+                snapshot 1×/hora
+              </text>
+            </svg>`} />
+  <ol slot="order">
+    <Fragment set:html={`<li>`} />
+    <T pt={`Jogador → API`} en={`Player → API`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`Redis ZSET grande à direita, com "ZADD/ZINCRBY &lt;pts&gt;
+    &lt;id&gt;" e "ZRANGE 0 99 REV WITHSCORES" escritos dentro`} en={`Big Redis ZSET on the right, with "ZADD/ZINCRBY &lt;pts&gt;
+    &lt;id&gt;" and "ZRANGE 0 99 REV WITHSCORES" written inside`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`Seta API → Redis — ela representa duas operações: gravar/
+    atualizar pontos e ler o top-100`} en={`Arrow API → Redis — it represents two operations: write/update
+    scores and read the top-100`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`Snapshot worker entre Redis e Postgres; setas tracejadas Redis →
+    worker → Postgres ("snapshot 1×/hora") — o Redis não escreve no
+    Postgres diretamente`} en={`Snapshot worker between Redis and Postgres; dashed arrows Redis →
+    worker → Postgres ("snapshot 1×/hour") — Redis does not write to
+    Postgres directly`} />
+    <Fragment set:html={`</li>`} />
+  </ol>
+  <Fragment slot="extra" set:html={`<h3>
+          <span data-lang="pt">Os comandos em 60 segundos</span
+          ><span data-lang="en">The commands in 60 seconds</span>
+        </h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>
+                  <span data-lang="pt">Termo</span
+                  ><span data-lang="en">Term</span>
+                </th>
+                <th>
+                  <span data-lang="pt">O que é / faz</span
+                  ><span data-lang="en">What it is / does</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>ZSET</strong></td>
+                <td>
+                  <span data-lang="pt"
+                    >"sorted set": coleção de membros únicos onde cada um tem um
+                    <em>score</em> numérico — e o Redis mantém tudo sempre
+                    ordenado pelo score. É um leaderboard como tipo nativo. (O
+                    "Z" é de "sorted"… digamos que "S" já estava ocupado.)</span
+                  ><span data-lang="en"
+                    >"sorted set": a collection of unique members, each with a
+                    numeric <em>score</em> — Redis keeps it permanently sorted
+                    by score. A leaderboard as a native type. (The "Z" stands
+                    for "sorted"… let's say "S" was taken.)</span
+                  >
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <code>ZADD chave score membro</code>
+                </td>
+                <td>
+                  <span data-lang="pt"
+                    ><strong>Define</strong> o score do membro — substitui o
+                    valor anterior, não soma. Use quando o score é um estado
+                    absoluto (ex.: nível, total já calculado).</span
+                  ><span data-lang="en"
+                    ><strong>Sets</strong> the member's score — replaces the
+                    previous value, doesn't add. Use when the score is absolute
+                    state (e.g., level, precomputed total).</span
+                  >
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <code>ZINCRBY chave incremento membro</code>
+                </td>
+                <td>
+                  <span data-lang="pt"
+                    ><strong>Soma</strong> ao score atual (começa de 0 se o
+                    membro não existe). Use quando pontos acumulam — cada kill,
+                    venda ou ponto entra como incremento.</span
+                  ><span data-lang="en"
+                    ><strong>Adds</strong> to the current score (starts at 0 if
+                    the member is new). Use when points accumulate — each kill,
+                    sale, or point arrives as an increment.</span
+                  >
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <code>ZRANGE chave 0 99 REV WITHSCORES</code>
+                </td>
+                <td>
+                  <span data-lang="pt"
+                    ><strong>Lê</strong> as posições 0–99 em ordem reversa —
+                    maior score primeiro — devolvendo membro + score.
+                    <code>REV</code> inverte a ordem;
+                    <code>WITHSCORES</code> inclui os números.</span
+                  ><span data-lang="en"
+                    ><strong>Reads</strong> positions 0–99 in reverse order —
+                    highest score first — returning member + score.
+                    <code>REV</code> flips the order;
+                    <code>WITHSCORES</code> includes the numbers.</span
+                  >
+                </td>
+              </tr>
+              <tr>
+                <td><code>ZREVRANK chave membro</code></td>
+                <td>
+                  <span data-lang="pt"
+                    >Devolve o rank de um membro (0 = primeiro) — derivado da
+                    ordem, não gravado. É o "em que posição estou?".</span
+                  ><span data-lang="en"
+                    >Returns a member's rank (0 = first) — derived from the
+                    order, not stored. It's the "what position am I?".</span
+                  >
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <pre
+          class="block"
+        ><span data-lang="pt"><span class="c">// exemplo: pontos acumulam → ZINCRBY; o score é gravado, o rank é a posição</span>
+ZADD leaderboard 100 ana        <span class="c"># ana = 100 (define/substitui)</span>
+ZINCRBY leaderboard 50 bruno    <span class="c"># bruno = 50 (soma; 0 se novo)</span>
+ZINCRBY leaderboard 30 ana      <span class="c"># ana = 130 (100 + 30)</span>
+ZINCRBY leaderboard 200 bruno   <span class="c"># bruno = 250</span>
+
+ZRANGE leaderboard 0 -1 REV WITHSCORES
+<span class="s">  1) "bruno" 250      ← rank 1</span>
+<span class="s">  2) "ana"   130      ← rank 2</span></span><span data-lang="en"><span class="c">// example: points accumulate → ZINCRBY; the score is stored, rank is the position</span>
+ZADD leaderboard 100 ana        <span class="c"># ana = 100 (set/replace)</span>
+ZINCRBY leaderboard 50 bruno    <span class="c"># bruno = 50 (increment; 0 if new)</span>
+ZINCRBY leaderboard 30 ana      <span class="c"># ana = 130 (100 + 30)</span>
+ZINCRBY leaderboard 200 bruno   <span class="c"># bruno = 250</span>
+
+ZRANGE leaderboard 0 -1 REV WITHSCORES
+<span class="s">  1) "bruno" 250      ← rank 1</span>
+<span class="s">  2) "ana"   130      ← rank 2</span></span></pre>`} />
+  <p class="cite" slot="cite" set:html={`<a href="https://redis.io/docs/latest/develop/data-types/sorted-sets/"
+  >Redis — sorted sets</a
+>
+·
+<a href="https://redis.io/docs/latest/commands/zincrby/"
+  >Redis — ZINCRBY</a
+>
+·
+<a href="https://redis.io/docs/latest/commands/zrange/"
+  >Redis — ZRANGE</a
+>`} />
+</Pattern>

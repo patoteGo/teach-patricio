@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title
+      data-pt="Redis — memória com TTL"
+      data-en="Redis — memory with a TTL"
+    >
+      Redis
+    </title>
+    <link rel="stylesheet" href="../assets/style.css" />
+    <link rel="stylesheet" href="../assets/dark.css" />
+    <link rel="stylesheet" href="../assets/i18n.css" />
+    <link rel="stylesheet" href="../assets/concepts.css" />
+    <script src="../assets/i18n.js" defer></script>
+    <script src="../assets/nav.js" defer></script>
+    <script src="../assets/reading-ui.js" defer></script>
+    <script src="../assets/concepts.js" defer></script>
+  </head>
+  <body class="lang-pt">
+    <article class="lesson">
+      <header class="hero">
+        <span class="eyebrow"
+          >⬡ <span data-lang="pt">Conceitos · Redis</span
+          ><span data-lang="en">Concepts · Redis</span></span
+        >
+        <h1>
+          <span data-lang="pt"
+            >O banco responde em 100 ms. A memória, em 1 ms.</span
+          ><span data-lang="en"
+            >The database answers in 100 ms. Memory answers in 1 ms.</span
+          >
+        </h1>
+        <p class="lead">
+          <span data-lang="pt"
+            >Na <a href="0006-cache-hit-rate.html">lição de hit rate</a> você
+            calculou quanto um cache poupa. O Redis é
+            <strong>onde essa conta acontece</strong>: um guarda-chaves →
+            estrutura de dados vivendo em RAM, cada chave com seu
+            <strong>TTL</strong>.</span
+          ><span data-lang="en"
+            >In the <a href="0006-cache-hit-rate.html">hit-rate lesson</a> you
+            computed how much a cache saves. Redis is
+            <strong>where that math happens</strong>: a key-value store of data
+            structures living in RAM, each key with its own
+            <strong>TTL</strong>.</span
+          >
+        </p>
+      </header>
+      <nav class="concept-nav">
+        <a href="0009-apache-kafka.html"
+          ><span data-lang="pt">← Kafka</span
+          ><span data-lang="en">← Kafka</span></a
+        ><a href="0006-cache-hit-rate.html"
+          ><span data-lang="pt">Hit rate</span
+          ><span data-lang="en">Hit rate</span></a
+        ><a href="0011-postgres-vs-mysql.html"
+          ><span data-lang="pt">Postgres vs MySQL</span
+          ><span data-lang="en">Postgres vs MySQL</span></a
+        ><a href="0007-aws-sqs.html"
+          ><span data-lang="pt">SQS</span><span data-lang="en">SQS</span></a
+        >
+      </nav>
+
+      <h2 class="section">
+        <span class="num">1</span
+        ><span data-lang="pt">O modelo mental (3 cartões)</span
+        ><span data-lang="en">The mental model (3 cards)</span>
+      </h2>
+      <div class="mental-model">
+        <div class="concept-card">
+          <h3>
+            <span data-lang="pt">RAM, não disco</span
+            ><span data-lang="en">RAM, not disk</span>
+          </h3>
+          <p>
+            <span data-lang="pt"
+              >Tudo vive em memória. Um GET custa ~1 ms — sem busca em disco,
+              sem plano de consulta. É uma tabela hash gigante e rápida.</span
+            ><span data-lang="en"
+              >Everything lives in memory. A GET costs ~1 ms — no disk seeks, no
+              query plans. It's one giant, fast hash table.</span
+            >
+          </p>
+        </div>
+        <div class="concept-card">
+          <h3>
+            <span data-lang="pt">Estruturas, não só strings</span
+            ><span data-lang="en">Structures, not just strings</span>
+          </h3>
+          <p>
+            <span data-lang="pt"
+              >Além de string: hash (objeto), list (fila), set (único),
+              <em>sorted set</em> (ranking com nota). Operações atômicas: INCR,
+              SADD, ZADD — o servidor é single-threaded, sem corrida.</span
+            ><span data-lang="en"
+              >Beyond strings: hash (object), list (queue), set (uniqueness),
+              <em>sorted set</em> (scored ranking). Atomic operations: INCR,
+              SADD, ZADD — the server is single-threaded, no races.</span
+            >
+          </p>
+        </div>
+        <div class="concept-card">
+          <h3>
+            <span data-lang="pt">TTL por chave</span
+            ><span data-lang="en">TTL per key</span>
+          </h3>
+          <p>
+            <span data-lang="pt"
+              >Cada chave pode expirar sozinha (<span class="token"
+                >SETEX user:42 60</span
+              >). O dado quente fica; o frio sai sem ninguém rodar limpeza.
+              Cache morre sozinho.</span
+            ><span data-lang="en"
+              >Every key can expire on its own (<span class="token"
+                >SETEX user:42 60</span
+              >). Hot data stays; cold data leaves without anyone running
+              cleanup. Caches die on their own.</span
+            >
+          </p>
+        </div>
+      </div>
+
+      <h2 class="section">
+        <span class="num">2</span
+        ><span data-lang="pt">O padrão: cache-aside</span
+        ><span data-lang="en">The pattern: cache-aside</span>
+      </h2>
+      <div class="flow-board" data-flow>
+        <div class="flow-row">
+          <span class="step">1</span>
+          <div>
+            <b>GET user:42</b>
+            <p>
+              <span data-lang="pt"
+                >A aplicação pergunta <em>primeiro</em> ao Redis. O banco nem
+                sabe que existiu uma leitura.</span
+              ><span data-lang="en"
+                >The application asks Redis <em>first</em>. The database never
+                knows a read happened.</span
+              >
+            </p>
+          </div>
+        </div>
+        <div class="flow-row">
+          <span class="step">2</span>
+          <div>
+            <b
+              ><span data-lang="pt">Hit → resposta em ~1 ms</span
+              ><span data-lang="en">Hit → answer in ~1 ms</span></b
+            >
+            <p>
+              <span data-lang="pt"
+                >A chave está lá e o TTL ainda não expirou. Fim da história —
+                foi isso que pagou a conta da
+                <a href="0006-cache-hit-rate.html">hit rate</a>.</span
+              ><span data-lang="en"
+                >The key is there and the TTL hasn't expired. End of story —
+                this is what pays the
+                <a href="0006-cache-hit-rate.html">hit-rate</a> bill.</span
+              >
+            </p>
+          </div>
+        </div>
+        <div class="flow-row">
+          <span class="step">3</span>
+          <div>
+            <b
+              ><span data-lang="pt">Miss → banco (~100 ms)</span
+              ><span data-lang="en">Miss → database (~100 ms)</span></b
+            >
+            <p>
+              <span data-lang="pt"
+                >A chave não está (nunca entrou, TTL expirou, ou caiu). A
+                leitura vai ao banco — a parte cara, o “preço do miss”.</span
+              ><span data-lang="en"
+                >The key isn't there (never stored, TTL expired, or evicted).
+                The read goes to the DB — the expensive part, the “price of a
+                miss.”</span
+              >
+            </p>
+          </div>
+        </div>
+        <div class="flow-row">
+          <span class="step">4</span>
+          <div>
+            <b>SETEX user:42 60 '{"name":"Ana"}'</b>
+            <p>
+              <span data-lang="pt"
+                >A aplicação devolve o dado <em>e</em> repõe o cache com TTL. O
+                próximo leitor paga 1 ms em vez de 100.</span
+              ><span data-lang="en"
+                >The application returns the data <em>and</em> refills the cache
+                with a TTL. The next reader pays 1 ms instead of 100.</span
+              >
+            </p>
+          </div>
+        </div>
+        <div class="flow-controls">
+          <button type="button" data-next>
+            <span data-lang="pt">Próxima etapa →</span
+            ><span data-lang="en">Next step →</span>
+          </button>
+          <button type="button" data-reset>
+            <span data-lang="pt">Reiniciar</span
+            ><span data-lang="en">Reset</span>
+          </button>
+          <span class="flow-status" data-flow-status></span>
+        </div>
+      </div>
+
+      <h2 class="section">
+        <span class="num">3</span
+        ><span data-lang="pt">A memória ao vivo: TTL, hit e miss</span
+        ><span data-lang="en">Memory live: TTL, hit and miss</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >Os cartões são a memória do Redis: cada chave com a barra de TTL
+          derretendo. Clique em <strong>GET</strong> até ver um hit (~1 ms) — e
+          espere o TTL de <code>user:42</code> ou de
+          <code>cart:ana</code> expirar para sentir o miss (~120 ms +
+          repovoamento).</span
+        ><span data-lang="en"
+          >The cards are Redis's memory: each key with its melting TTL bar.
+          Click <strong>GET</strong> until you see a hit (~1 ms) — and wait for
+          <code>user:42</code>'s or <code>cart:ana</code>'s TTL to expire to
+          feel the miss (~120 ms + refill).</span
+        >
+      </p>
+      <div class="redis-sim" data-redis>
+        <div class="redis-actions">
+          <button type="button" data-get>GET user:42</button>
+          <button type="button" class="ghost" data-setex>
+            SETEX user:42 60
+          </button>
+          <button type="button" class="ghost" data-del>DEL user:42</button>
+        </div>
+        <div class="mem-grid" data-mem></div>
+        <div class="redis-fb" data-redis-fb></div>
+        <div class="redis-meter" data-redis-meter></div>
+      </div>
+      <div class="callout tip">
+        <p>
+          <span data-lang="pt"
+            ><strong>Repare na simetria com a lição de SQS:</strong> o miss é o
+            “preço” que você paga de vez em quando para os hits ficarem baratos.
+            A pergunta de arquitetura é sempre: hit rate alta o suficiente para
+            valer a RAM?</span
+          ><span data-lang="en"
+            ><strong>Notice the symmetry with the SQS lesson:</strong> the miss
+            is the “price” you pay occasionally so hits stay cheap. The
+            architecture question is always: is the hit rate high enough to be
+            worth the RAM?</span
+          >
+        </p>
+      </div>
+
+      <h2 class="section">
+        <span class="num">4</span
+        ><span data-lang="pt">O que derruba todo mundo</span
+        ><span data-lang="en">What trips everyone up</span>
+      </h2>
+      <div class="callout warn">
+        <p>
+          <span data-lang="pt"
+            ><strong>Expirar ≠ ser evitado.</strong> O TTL leva a chave embora
+            quando o tempo acaba. Mas se a <em>memória encher</em> antes, a
+            política de eviction decide quem sai (padrão comum:
+            <code>allkeys-lru</code> — a chave menos usada recentemente, mesmo
+            com TTL no futuro). Chave sumiu “antes da hora”? Não é bug — é falta
+            de RAM.</span
+          ><span data-lang="en"
+            ><strong>Expiring ≠ being evicted.</strong> The TTL removes the key
+            when time runs out. But if <em>memory fills up</em> first, the
+            eviction policy picks the victim (a common default:
+            <code>allkeys-lru</code> — the least recently used key, even with
+            TTL left). Key vanished “early”? Not a bug — you ran out of
+            RAM.</span
+          >
+        </p>
+      </div>
+      <p>
+        <span data-lang="pt"
+          >Segundo susto: o <strong>cache stampede</strong>. Uma chave popular
+          expira e 500 requisições dão miss <em>juntas</em> — 500 leituras
+          idênticas no banco ao mesmo tempo. Primeira defesa: TTL com jitter
+          (60s ± aleatório) e repovoamento único; o resto é lição de outro
+          dia.</span
+        ><span data-lang="en"
+          >Second scare: the <strong>cache stampede</strong>. A popular key
+          expires and 500 requests miss <em>together</em> — 500 identical DB
+          reads at once. First defense: TTL with jitter (60s ± random) and
+          single-flight refill; the rest is a lesson for another day.</span
+        >
+      </p>
+      <div class="callout key">
+        <p>
+          <span data-lang="pt"
+            ><strong>Redis não é fonte da verdade.</strong> Ele tem persistência
+            (RDB snapshot, AOF log) — mas o contrato honesto do cache é: pode
+            cair, pode perder calor, e o sistema continua. A verdade vive no
+            banco; o Redis é o atalho.</span
+          ><span data-lang="en"
+            ><strong>Redis is not the source of truth.</strong> It has
+            persistence (RDB snapshots, AOF log) — but the honest cache contract
+            is: it can crash, it can lose warmth, and the system survives. Truth
+            lives in the database; Redis is the shortcut.</span
+          >
+        </p>
+      </div>
+
+      <h2 class="section">
+        <span class="num">5</span
+        ><span data-lang="pt">A jogada de entrevista (30 segundos)</span
+        ><span data-lang="en">The interview move (30 seconds)</span>
+      </h2>
+      <div class="code-stage">
+        <pre><code><span data-lang="pt"><span style="color:#8b88b8"># repõe o cache no caminho do miss (cache-aside)</span>
+redis-cli setex user:42 60 '{"name":"Ana","plan":"pro"}'
+
+<span style="color:#8b88b8"># leitura: 1 ms quando quente, 100 ms quando fria</span>
+redis-cli get user:42
+
+<span style="color:#8b88b8"># além de cache: contador atômico (rate limit)</span>
+redis-cli incr rate:api:42
+redis-cli expire rate:api:42 60</span><span data-lang="en"><span style="color:#8b88b8"># refill the cache on the miss path (cache-aside)</span>
+redis-cli setex user:42 60 '{"name":"Ana","plan":"pro"}'
+
+<span style="color:#8b88b8"># read: 1 ms when warm, 100 ms when cold</span>
+redis-cli get user:42
+
+<span style="color:#8b88b8"># beyond cache: atomic counter (rate limiting)</span>
+redis-cli incr rate:api:42
+redis-cli expire rate:api:42 60</span></code></pre>
+      </div>
+      <div class="callout key">
+        <p>
+          <span data-lang="pt"
+            ><strong>Frase que fecha a questão:</strong> “Leituras quentes vão
+            pro Redis com cache-aside e TTL: GET em ~1 ms; miss busca no banco e
+            repõe com SETEX; monito hit rate — abaixo de ~80% investigo as
+            chaves. Eviction allkeys-lru com maxmemory, e o banco continua sendo
+            a fonte da verdade: o Redis pode cair e perder calor, não perder
+            verdade.”</span
+          ><span data-lang="en"
+            ><strong>The sentence that closes the question:</strong> “Hot reads
+            go to Redis with cache-aside and TTL: GET in ~1 ms; a miss hits the
+            DB and refills with SETEX; I watch hit rate — below ~80% I
+            investigate the keys. allkeys-lru eviction with maxmemory, and the
+            database stays the source of truth: Redis can crash and lose warmth,
+            not truth.”</span
+          >
+        </p>
+      </div>
+
+      <div class="mcq" data-mcq>
+        <p class="mcq-q">
+          <span data-lang="pt"
+            >O Redis reiniciou e a memória está vazia. O que os usuários
+            notam?</span
+          ><span data-lang="en"
+            >Redis restarted and memory is empty. What do users notice?</span
+          >
+        </p>
+        <div class="mcq-opts">
+          <button
+            class="mcq-opt"
+            data-correct="true"
+            data-fb-pt="Correto: o cache-aside repõe cada chave no primeiro miss. Alguns ~100 ms no começo e depois volta a ~1 ms — perder o cache esquenta o banco, não derruba o sistema."
+            data-fb-en="Correct: cache-aside refills each key on first miss. A few ~100 ms reads at first, then back to ~1 ms — losing the cache warms the DB load, it doesn't kill the system."
+          >
+            <span data-lang="pt"
+              >Alguns misses mais lentos; o cache se repõe sozinho</span
+            ><span data-lang="en"
+              >Some slower misses; the cache refills itself</span
+            >
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="Nada se perde de verdade: a fonte da verdade é o banco. O Redis era cópia quente — por isso o padrão cache-aside existe."
+            data-fb-en="No truth is lost: the source of truth is the database. Redis was the warm copy — that's the whole point of cache-aside."
+          >
+            <span data-lang="pt">Erro 500 — os dados se perderam</span
+            ><span data-lang="en">Error 500 — the data is gone</span>
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="Redis até tem persistência (RDB/AOF), mas o contrato do cache não pode depender disso. O sistema deve funcionar com o Redis vazio."
+            data-fb-en="Redis does have persistence (RDB/AOF), but the cache contract must not depend on it. The system must work with Redis empty."
+          >
+            <span data-lang="pt"
+              >Nada — o RDB restaura tudo instantaneamente</span
+            ><span data-lang="en"
+              >Nothing — RDB restores everything instantly</span
+            >
+          </button>
+        </div>
+        <div class="mcq-fb" data-fb></div>
+      </div>
+
+      <div class="mcq" data-mcq>
+        <p class="mcq-q">
+          <span data-lang="pt"
+            >Uma chave popular sumiu antes do TTL acabar. Investigação mais
+            provável?</span
+          ><span data-lang="en"
+            >A popular key vanished before its TTL ended. Most likely
+            cause?</span
+          >
+        </p>
+        <div class="mcq-opts">
+          <button
+            class="mcq-opt"
+            data-correct="true"
+            data-fb-pt="Exato: TTL não foi o motivo — memória cheia acionou a eviction (allkeys-lru) e a chave menos usada saiu antes da hora. Solução: mais RAM ou chaves/ttl menores."
+            data-fb-en="Exactly: the TTL wasn't the cause — full memory triggered eviction (allkeys-lru) and the least recently used key left early. Fix: more RAM or fewer/smaller keys."
+          >
+            <span data-lang="pt"
+              >Memória cheia — a eviction LRU levou a chave</span
+            ><span data-lang="en"
+              >Memory filled — LRU eviction took the key</span
+            >
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="O servidor é single-threaded e os comandos são atômicos — corrida de TTL não existe. Procure memória, não concorrência."
+            data-fb-en="The server is single-threaded and commands are atomic — there is no TTL race. Look at memory, not concurrency."
+          >
+            <span data-lang="pt"
+              >Condição de corrida entre dois GETs simultâneos</span
+            ><span data-lang="en"
+              >A race condition between two simultaneous GETs</span
+            >
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="Expurgo de chaves frias é justamente o que o LRU faz — e é comportamento configurado, não falha. O ponto é dimensionar maxmemory."
+            data-fb-en="Purging cold keys is exactly what LRU does — and it's configured behavior, not a fault. The point is sizing maxmemory."
+          >
+            <span data-lang="pt"
+              >Falta de disco — o Redis purgou chaves frias</span
+            ><span data-lang="en">Out of disk — Redis purged cold keys</span>
+          </button>
+        </div>
+        <div class="mcq-fb" data-fb></div>
+      </div>
+
+      <p class="cite-line">
+        <span data-lang="pt">Revisão:</span><span data-lang="en">Review:</span>
+        <a href="0006-cache-hit-rate.html"
+          ><span data-lang="pt">Hit rate (a matemática deste cache)</span
+          ><span data-lang="en">Hit rate (the math behind this cache)</span></a
+        >
+        ·
+        <a href="https://redis.io/docs/latest/develop/use/client-side-caching/"
+          >Redis — Client-side caching (redis.io)</a
+        >.
+        <span data-lang="pt"
+          >Dúvida em qualquer parte? Pergunte ao agente — ele é seu professor e
+          pode destrinchar qualquer seção.</span
+        ><span data-lang="en"
+          >Stuck on any part? Ask the agent — it's your teacher and can break
+          down any section.</span
+        >
+      </p>
+    </article>
+  </body>
+</html>

@@ -1,0 +1,223 @@
+---
+import Pattern from "../Pattern.astro";
+import T from "../T.astro";
+---
+
+<!-- P14 · Scaling writes: sharding (L4) -->
+<Pattern
+  id="p14"
+  num="P14"
+  lvl={4}
+  titlePt={`Escalar escrita: sharding`}
+  titleEn={`Scaling writes: sharding`}
+  kickerPt={`Réplica ajuda leitura. Depois de otimizar o write path, sharding é
+            uma opção para escritas particionáveis.`}
+  kickerEn={`Replicas help reads. After write-path optimization, sharding is one
+            option for partitionable writes.`}
+  tipPt={`<strong>Fale enquanto desenha:</strong> "Réplica de leitura
+              resolve leitura, mas a escrita ainda bate num primário só.
+              Sharding divide o banco pela chave: o roteador faz o hash da
+              shard key e roteia cada escrita para exatamente UM shard — as
+              setas são rotas possíveis. Hash consistente é UMA opção (shards
+              entram e saem); cluster fixo pode usar hash % N, ranges ou
+              diretório. Cada shard é um deployment completo — primário e
+              réplicas próprias; réplicas não desenhadas aqui."`}
+  tipEn={`<strong>Say while drawing:</strong> "A read replica helps reads,
+              but writes still hit one primary. Sharding splits the DB by key:
+              the router hashes the shard key and routes each write to exactly
+              ONE shard — the arrows are possible routes. Consistent hashing is
+              ONE option (when shards come and go); a fixed cluster may use
+              hash % N, ranges, or a directory. Each shard is a full
+              deployment — own primary and replicas; replicas not drawn
+              here."`}
+  whyPt={`<strong>Por quê e quando NÃO:</strong> shard é o último recurso —
+              antes dele: índices, cache, réplicas, particionamento. Custos:
+              consultas e transações cross-shard viram problema explícito —
+              mais caras e dependentes da plataforma; opções incluem
+              execução/transação distribuída ou sagas na aplicação. Adicionar
+              um shard exige resharding/rebalanceamento — por isso
+              <em>hash consistente</em> (mover só ~1/N das chaves). A chave
+              precisa ser <em>estável e bem distribuída</em>; chave errada
+              (ex.: shard por país, e um país domina) cria hot shard.`}
+  whyEn={`<strong>Why, and when NOT to:</strong> sharding is the last
+              resort — before it: indexes, cache, replicas, partitioning. Costs:
+              cross-shard queries and transactions become an explicit problem —
+              costlier and platform-dependent; options include distributed
+              execution/transactions or application sagas. Adding a shard
+              requires resharding/rebalancing — hence <em>consistent
+              hashing</em> (moves only ~1/N of the keys). The key must be
+              <em>stable and well distributed</em>; a wrong key (e.g., shard by
+              country, one country dominates) creates a hot shard.`}
+>
+  <Fragment slot="dia" set:html={`<svg
+              viewBox="0 0 720 250"
+              width="100%"
+              style="min-width: 640px"
+              role="img"
+              aria-labelledby="p14t"
+            >
+              <title
+                id="p14t"
+                data-pt="Cliente → API → roteador: hash da chave → exatamente um shard"
+                data-en="Client → API → router: hash of the shard key → exactly one shard"
+              >
+                Sharding
+              </title>
+              <defs>
+                <marker
+                  id="m14"
+                  markerWidth="8"
+                  markerHeight="8"
+                  refX="6"
+                  refY="3"
+                  orient="auto"
+                >
+                  <path d="M0,0 L0,6 L7,3 z" fill="#8b6ff7" />
+                </marker>
+              </defs>
+              <g font-family="Space Grotesk" font-size="13" font-weight="700">
+                <rect
+                  x="20"
+                  y="100"
+                  width="90"
+                  height="50"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#2dd4bf"
+                />
+                <text
+                  x="65"
+                  y="129"
+                  fill="#2dd4bf"
+                  text-anchor="middle"
+                  data-pt="Cliente"
+                  data-en="Client"
+                >
+                  Cliente
+                </text>
+                <rect
+                  x="160"
+                  y="100"
+                  width="90"
+                  height="50"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#8b6ff7"
+                />
+                <text x="205" y="129" fill="#8b6ff7" text-anchor="middle">
+                  API
+                </text>
+                <rect
+                  x="320"
+                  y="100"
+                  width="160"
+                  height="50"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#fbbf24"
+                />
+                <text
+                  x="400"
+                  y="121"
+                  fill="#fbbf24"
+                  text-anchor="middle"
+                  data-pt="Roteador"
+                  data-en="Router"
+                >
+                  Roteador
+                </text>
+                <text
+                  x="400"
+                  y="139"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="11"
+                  data-pt="hash(chave)"
+                  data-en="hash(key)"
+                >
+                  hash(chave)
+                </text>
+                <rect
+                  x="560"
+                  y="30"
+                  width="120"
+                  height="46"
+                  rx="10"
+                  fill="#2a1207"
+                  stroke="#f59e0b"
+                />
+                <text x="620" y="58" fill="#fbbf24" text-anchor="middle">
+                  Shard 1
+                </text>
+                <rect
+                  x="560"
+                  y="102"
+                  width="120"
+                  height="46"
+                  rx="10"
+                  fill="#2a1207"
+                  stroke="#f59e0b"
+                />
+                <text x="620" y="130" fill="#fbbf24" text-anchor="middle">
+                  Shard 2
+                </text>
+                <rect
+                  x="560"
+                  y="174"
+                  width="120"
+                  height="46"
+                  rx="10"
+                  fill="#2a1207"
+                  stroke="#f59e0b"
+                />
+                <text x="620" y="202" fill="#fbbf24" text-anchor="middle">
+                  Shard 3
+                </text>
+              </g>
+              <g
+                stroke="#8b6ff7"
+                stroke-width="2"
+                fill="none"
+                marker-end="url(#m14)"
+              >
+                <path d="M110 125 H160" />
+                <path d="M250 125 H320" />
+                <path d="M480 115 C520 95 530 60 560 55" />
+                <path d="M480 125 H560" />
+                <path d="M480 135 C520 155 530 195 560 197" />
+              </g>
+              <text
+                x="400"
+                y="92"
+                font-family="Space Grotesk"
+                font-size="10"
+                fill="#9ea2b8"
+                text-anchor="middle"
+                data-pt="→ exatamente 1 shard"
+                data-en="→ exactly 1 shard"
+              >
+                → exatamente 1 shard
+              </text>
+            </svg>`} />
+  <ol slot="order">
+    <Fragment set:html={`<li>`} />
+    <T pt={`Cliente → API (P1)`} en={`Client → API (P1)`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`Roteador no meio com "hash(chave)" escrito; "→ exatamente 1
+    shard" acima dele`} en={`Router in the middle with "hash(key)" on it;
+    "→ exactly 1 shard" above it`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`3 shards de DB à direita; setas = rotas possíveis, cada escrita
+    vai a exatamente 1`} en={`3 DB shards on the right; arrows = possible
+    routes, each write goes to exactly 1`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`Diga: "todos os dados de um usuário vivem no MESMO shard"`} en={`Say: "all of a user's data lives on the SAME shard"`} />
+    <Fragment set:html={`</li>`} />
+  </ol>
+  <p class="cite" slot="cite" set:html={`<a href="https://github.com/donnemartin/system-design-primer#sharding"
+  >System Design Primer — sharding</a
+>`} />
+</Pattern>

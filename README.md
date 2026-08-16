@@ -88,7 +88,7 @@ Action on every push, so it never drifts. (See
 <!-- topics:start -->
 ### Ace the Senior Fullstack Behavioral Interview
 
-`topics/behavioral-interview/` · 6 lesson(s)
+`topics/behavioral-interview/` · 7 lesson(s)
 
 | # | Lesson |
 |---|--------|
@@ -98,6 +98,7 @@ Action on every push, so it never drifts. (See
 | 04 | [Follow-ups](./topics/behavioral-interview/lessons/0004-follow-ups.html) |
 | 05 | [The Architecture Grill](./topics/behavioral-interview/lessons/0005-architecture-grill.html) |
 | 06 | [Fan-out, Decoded](./topics/behavioral-interview/lessons/0006-fanout-decoded.html) |
+| 07 | [Monitoring & Lag, Decoded](./topics/behavioral-interview/lessons/0007-monitoring-lag-decoded.html) |
 
 ### ClearOne Advantage Senior Full-Stack interview (8 August 2026)
 
@@ -142,7 +143,7 @@ Action on every push, so it never drifts. (See
 
 ### Practical software concepts
 
-`topics/software-concepts/` · 9 lesson(s)
+`topics/software-concepts/` · 12 lesson(s)
 
 | # | Lesson |
 |---|--------|
@@ -153,8 +154,11 @@ Action on every push, so it never drifts. (See
 | 05 | [Estimation — DAU, QPS and why one number is enough](./topics/software-concepts/lessons/0005-estimation.html) |
 | 06 | [Cache — the hit rate is a DB-load dial](./topics/software-concepts/lessons/0006-cache-hit-rate.html) |
 | 07 | [AWS SQS — the queue that decouples](./topics/software-concepts/lessons/0007-aws-sqs.html) |
-| 08 | [Apache Kafka — the log that doesn't delete](./topics/software-concepts/lessons/0008-apache-kafka.html) |
-| 09 | [Redis — memory with a TTL](./topics/software-concepts/lessons/0009-redis.html) |
+| 08 | [AWS S3 — the key → bytes map](./topics/software-concepts/lessons/0008-aws-s3.html) |
+| 09 | [Apache Kafka — the log that doesn't delete](./topics/software-concepts/lessons/0009-apache-kafka.html) |
+| 10 | [Redis — memory with a TTL](./topics/software-concepts/lessons/0010-redis.html) |
+| 11 | [PostgreSQL vs MySQL — siblings, not twins](./topics/software-concepts/lessons/0011-postgres-vs-mysql.html) |
+| 12 | [Load balancer — one address, N servers](./topics/software-concepts/lessons/0012-load-balancer.html) |
 
 ### System Design (backend · infra · frontend)
 
