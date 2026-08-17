@@ -17,8 +17,10 @@ import T from "../T.astro";
   tipPt={`<strong>Fale enquanto desenha:</strong> "Fan-out na escrita:
               post + outbox numa transação; um publisher relê o outbox e
               publica o evento na fila. Um <em>fan-out coordinator</em> pagina
-              os seguidores no grafo e publica <em>jobs de lotes</em> — 10M de
-              seguidores viram 10k jobs de 1k IDs. Workers fazem ZADD do ID do
+              os seguidores no grafo — getFollowers(cursor) — e publica
+              <em>jobs numa fila durável</em> — 10M de seguidores viram 10k
+              jobs × 1k IDs, retry só do lote que falhar. Workers fazem ZADD
+              do ID do
               post em cada feed do lote e aparam com ZREMRANGEBYRANK (~1k
               IDs). Ler: ZREVRANGE 0 49, depois MGET no cache de posts, DB
               nos misses. Escrever custa O(F × log K) por post; ler a timeline
@@ -26,8 +28,10 @@ import T from "../T.astro";
   tipEn={`<strong>Say while drawing:</strong> "Fan-out on write: post + outbox
               in one transaction; a publisher relays the outbox and publishes
               the event to the queue. A <em>fan-out coordinator</em> pages
-              followers from the graph and publishes <em>batch jobs</em> — 10M
-              followers become 10k jobs of 1k IDs each. Workers ZADD the post
+              followers from the graph — getFollowers(cursor) — and publishes
+              <em>jobs to a durable queue</em> — 10M followers become 10k
+              jobs × 1k IDs, retrying only the batch that fails. Workers ZADD
+              the post
               id into each feed in their batch and trim with ZREMRANGEBYRANK
               (~1k ids). Read: ZREVRANGE 0 49, then MGET from the post cache,
               DB on misses. Writing is O(F × log K) per post; reading the
@@ -38,21 +42,26 @@ import T from "../T.astro";
               pagina o grafo e fatia em jobs é ele. <em>Redis</em> para os
               feeds: um sorted set por <em>leitor</em>
               (<code>feed:&lt;userId&gt;</code>), sempre lido do topo, guardando
-              só IDs; conteúdo hidratado no cache de posts na leitura (MGET,
-              DB nos misses). <em>Fila</em> para o fan-out não bloquear a
-              escrita — SQS: visibility timeout → reentrega → DLQ configurada;
-              Kafka: offset não confirmado → retry (retry topics/DLQ são
-              padrão da aplicação, não do broker). <em>Idempotentes:</em> o
-              postId como member do ZSET faz o retry <em>atualizar</em> o
-              mesmo membro, não duplicar; se edições podem gerar jobs velhos,
-              workers guardam a versão do evento. <em>Trim</em> com
+              só IDs; conteúdo hidratado no cache de posts na leitura (MGET em
+              lote dos IDs; misses buscados em lote no DB). <em>Filas duráveis</em> nos dois saltos — a
+              do evento desacopla a escrita; a <em>fila de jobs</em> (postId +
+              lotes de ~1k IDs) entre coordinator e workers dá backpressure
+              com milhões de seguidores, retry só do lote que falhou, escala
+              horizontal de workers e recuperação se o coordinator cair.
+              SQS: delete após sucesso; visibility timeout → reentrega;
+              redrive → DLQ. Kafka: commit do offset só depois de processar
+              (retry topics/DLQ são padrão da aplicação, não do broker). <em>Idempotentes:</em> postId é o
+              member do ZSET — o retry <em>atualiza</em> o mesmo membro, não
+              duplica; checar versão importa para edits, deletes, moderação ou
+              eventos fora de ordem, não para o post inicial. <em>Trim</em> com
               <code>ZREMRANGEBYRANK 0 -(MAX+1)</code> mantém K limitado — e o
               feed é cache <em>reconstruível</em>: o DB é a fonte da verdade,
               Redis perdido = rebuild. <em>Kafka se</em> outros consumidores
               também querem o stream (analytics, notificação); <em>SQS se</em>
               só o fan-out consome. <strong>Tradeoff dos famosos:</strong>
               10M de ZADDs por post mesmo fatiado — híbrido: gente comum push,
-              famosos montar na leitura, merge na API.`}
+              famosos montar na leitura — a API faz merge + rank + dedupe
+              das duas partes.`}
   whyEn={`<strong>Why:</strong> a <em>coordinator</em> because one queue message
               goes to <em>one</em> consumer in the group — N workers don't
               automatically split a single post's 10M followers; the
@@ -60,38 +69,48 @@ import T from "../T.astro";
               <em>Redis</em> for feeds: one sorted set per <em>reader</em>
               (<code>feed:&lt;userId&gt;</code>), always read from the top,
               storing IDs only; content is hydrated from the post cache at
-              read time (MGET, DB on misses). <em>A queue</em> so fan-out
-              doesn't block the post write — SQS: visibility timeout →
-              redelivery → configured DLQ; Kafka: uncommitted offset → retry
-              (retry topics/DLQ are application patterns, not broker
-              features). <em>Idempotent workers:</em> the postId as the ZSET
-              member makes a retry <em>update</em> the same member instead of
-              duplicating; if edits can produce stale jobs, workers track the
-              event version. <em>Trim</em> with
+              read time (batched MGET for the ids; cache misses batch-fetched
+              from the DB). <em>Durable queues</em> at both hops —
+              the event queue decouples the write; the <em>jobs queue</em>
+              (postId + ~1k-ID batches) between coordinator and workers gives
+              backpressure with millions of followers, retry of only the
+              failed batch, horizontal worker scaling, and recovery if the
+              coordinator crashes. SQS: delete on success; visibility timeout
+              → redelivery; redrive policy → DLQ. Kafka: commit the offset
+              only after processing (retry topics/DLQ are application
+              patterns, not broker features). <em>Idempotent workers:</em> postId is the ZSET
+              member, so a retry <em>updates</em> the same member instead of
+              duplicating; version checks matter for edits, deletes,
+              moderation, or out-of-order events — not for a simple initial
+              post. <em>Trim</em> with
               <code>ZREMRANGEBYRANK 0 -(MAX+1)</code> keeps K bounded — and
               the feed is a <em>rebuildable</em> cache: the DB is the source
               of truth, lost Redis = rebuild. <em>Kafka if</em> other
               consumers also want the stream (analytics, notifications);
               <em>SQS if</em> only fan-out consumes. <strong>The celebrity
               tradeoff:</strong> 10M ZADDs per post even chunked — hybrid:
-              regular people push, celebrities build on read, the API merges
-              both.`}
+              regular people push, celebrities build on read —
+              the API merges, ranks, and deduplicates both.`}
   warnPt={`<strong>Ciclo de vida:</strong> o ZSET aponta, não garante.
-              <em>Post deletado:</em> a hidratação bate num túmulo → filtra na
-              resposta e faz ZREM preguiçoso. <em>Privacidade, bloqueio,
+              <em>Post deletado:</em> ZREM em milhões de ZSETs é caro — túmulo
+              na hidratação → filtra na leitura, ZREM preguiçoso, limpeza
+              assíncrona em segundo plano. <em>Privacidade, bloqueio,
               unfollow:</em> entradas velhas sobrevivem até o trim — filtre
               pelo autor na leitura ou reconstrua o feed (é cache; o DB
               manda). <em>Seguidor novo:</em> backfill <em>opcional</em> copia
               posts recentes do autor para o feed novo — sem isso, o feed
-              enche só com posts novos.`}
+              enche só com posts novos (ou merge dos posts do autor na
+              leitura).`}
   warnEn={`<strong>Lifecycle:</strong> the ZSET points, it doesn't guarantee.
-              <em>Deleted post:</em> hydration hits a tombstone → filter it
-              from the response and lazily ZREM. <em>Privacy change, block,
+              <em>Deleted post:</em> ZREMming millions of ZSETs is expensive —
+              tombstone at hydration → filter at read, lazy ZREM,
+              asynchronous background cleanup. <em>Privacy change, block,
               unfollow:</em> stale entries survive until the trim — filter by
               author at read time or rebuild the feed (it's a cache; the DB
               decides). <em>New follower:</em> an <em>optional</em> backfill
               copies the author's recent posts into the new feed — otherwise
-              it only fills with posts published after the follow.`}
+              it only fills with posts published after the follow (or merge
+              the author's posts at read time).`}
 >
   <Fragment slot="dia" set:html={`<svg
               viewBox="0 0 790 450"
@@ -102,8 +121,8 @@ import T from "../T.astro";
             >
               <title
                 id="p8t"
-                data-pt="Autor → API grava post + outbox no DB (uma transação); Outbox Publisher publica na fila; o fan-out coordinator pagina os seguidores no Social Graph e cria jobs de lotes (~1k IDs); workers fazem ZADD só do ID nos feeds (Redis ZSET, com trim ZREMRANGEBYRANK); leitor → API → ZREVRANGE de IDs → MGET no cache de posts, DB nos misses; híbrido: famosos montam na leitura"
-                data-en="Author → API stores post + outbox in the DB (one transaction); Outbox Publisher relays to the queue; the fan-out coordinator pages followers from the social graph and creates batch jobs (~1k IDs each); workers ZADD only post IDs into feeds (Redis ZSET, trimmed with ZREMRANGEBYRANK); reader → API → ZREVRANGE of IDs → MGET from the post cache, DB on misses; hybrid: celebrities build on read"
+                data-pt="Autor → API grava post + outbox no DB (uma transação); Outbox Publisher publica na fila; o fan-out coordinator pagina os seguidores no Social Graph (getFollowers(cursor) → página + nextCursor) e publica jobs numa fila durável de fan-out (postId + ~1k IDs); workers fazem ZADD só do ID nos feeds (Redis ZSET, com trim ZREMRANGEBYRANK); leitor → API → ZREVRANGE de IDs → MGET no cache de posts, DB nos misses; híbrido: famosos montam na leitura, a API faz merge + rank + dedupe"
+                data-en="Author → API stores post + outbox in the DB (one transaction); Outbox Publisher relays to the queue; the fan-out coordinator pages followers from the social graph (getFollowers(cursor) → page + nextCursor) and publishes jobs to a durable fan-out jobs queue (postId + ~1k IDs); workers ZADD only post IDs into feeds (Redis ZSET, trimmed with ZREMRANGEBYRANK); reader → API → ZREVRANGE of IDs → MGET from the post cache, DB on misses; hybrid: celebrities build on read, the API merges, ranks, and deduplicates"
               >
                 Fan-out feed
               </title>
@@ -228,14 +247,14 @@ import T from "../T.astro";
                 <rect
                   x="480"
                   y="20"
-                  width="115"
+                  width="130"
                   height="58"
                   rx="10"
                   fill="#211d33"
                   stroke="#fb7185"
                 />
                 <text
-                  x="537"
+                  x="545"
                   y="42"
                   fill="#fb7185"
                   text-anchor="middle"
@@ -244,11 +263,11 @@ import T from "../T.astro";
                 >
                   Kafka / SQS
                 </text>
-                <text x="537" y="56" fill="#9ea2b8" text-anchor="middle" font-size="9">
-                  SQS: timeout → DLQ
+                <text x="545" y="56" fill="#9ea2b8" text-anchor="middle" font-size="9">
+                  SQS: delete on success
                 </text>
-                <text x="537" y="68" fill="#9ea2b8" text-anchor="middle" font-size="9">
-                  Kafka: offset → retry
+                <text x="545" y="68" fill="#9ea2b8" text-anchor="middle" font-size="9">
+                  Kafka: commit on success
                 </text>
                 <!-- fan-out row: graph + coordinator -->
                 <rect
@@ -324,45 +343,58 @@ import T from "../T.astro";
                   10M → 10k jobs × 1k
                 </text>
                 <text
-                  x="460"
-                  y="100"
+                  x="405"
+                  y="97"
                   fill="#9ea2b8"
                   text-anchor="middle"
-                  font-size="10"
+                  font-size="9"
+                  data-pt="getFollowers(cursor) ↔ página + nextCursor"
+                  data-en="getFollowers(cursor) ↔ page + nextCursor"
                 >
-                  IDs
+                  getFollowers(cursor) ↔ página + nextCursor
                 </text>
-                <!-- batch jobs -->
+                <!-- fan-out jobs queue -->
                 <rect
-                  x="470"
+                  x="465"
                   y="190"
-                  width="125"
+                  width="140"
                   height="58"
                   rx="10"
                   fill="#211d33"
                   stroke="#fb7185"
                 />
                 <text
-                  x="533"
-                  y="211"
+                  x="535"
+                  y="209"
                   fill="#fb7185"
                   text-anchor="middle"
-                  font-size="11"
-                  data-pt="Lotes de seguidores"
-                  data-en="Follower batches"
+                  font-size="10"
+                  data-pt="Fila de jobs de fan-out"
+                  data-en="Fan-out jobs queue"
                 >
-                  Lotes de seguidores
+                  Fila de jobs de fan-out
                 </text>
                 <text
-                  x="533"
-                  y="228"
+                  x="535"
+                  y="225"
                   fill="#9ea2b8"
                   text-anchor="middle"
                   font-size="9"
-                  data-pt="1 job ≈ 1k IDs"
-                  data-en="1 job ≈ 1k IDs"
+                  data-pt="postId + ~1k IDs · durável"
+                  data-en="postId + ~1k IDs · durable"
                 >
-                  1 job ≈ 1k IDs
+                  postId + ~1k IDs · durável
+                </text>
+                <text
+                  x="535"
+                  y="240"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="8"
+                  data-pt="retry só do lote que falhou"
+                  data-en="retry only the failed batch"
+                >
+                  retry só do lote que falhou
                 </text>
                 <!-- feeds -->
                 <rect
@@ -437,10 +469,8 @@ import T from "../T.astro";
                   fill="#9ea2b8"
                   text-anchor="middle"
                   font-size="9"
-                  data-pt="checam versão"
-                  data-en="check version"
                 >
-                  checam versão
+                  postId = member
                 </text>
                 <!-- read path -->
                 <rect
@@ -544,10 +574,8 @@ import T from "../T.astro";
                   fill="#fbbf24"
                   text-anchor="middle"
                   font-size="10"
-                  data-pt="API faz o merge"
-                  data-en="API merges both"
                 >
-                  API faz o merge
+                  API: merge + rank + dedupe
                 </text>
               </g>
               <g
@@ -560,7 +588,7 @@ import T from "../T.astro";
                 <path d="M185 49 H205" />
                 <path d="M350 49 H370" />
                 <path d="M460 49 H480" />
-                <path d="M537 78 V105" />
+                <path d="M545 78 V105" />
                 <path d="M470 122 H440" />
                 <path d="M440 146 H470" />
                 <path d="M537 163 V190" />
@@ -643,22 +671,27 @@ import T from "../T.astro";
     unpublished rows)`} />
     <Fragment set:html={`</li>
 <li>`} />
-    <T pt={`Fila (SQS: visibility timeout → retry → DLQ; Kafka: offset
-    não confirmado → retry); seta fila ↓ <em>fan-out coordinator</em> —
-    uma mensagem vai para UM consumidor; o coordinator fatia, os
-    workers não dividem um post sozinhos`} en={`Queue (SQS: visibility timeout → retry → DLQ; Kafka:
-    uncommitted offset → retry); arrow queue ↓ <em>fan-out
-    coordinator</em> — one message goes to ONE consumer; the
-    coordinator chunks, workers don't split a post by themselves`} />
+    <T pt={`Fila (SQS: delete após sucesso; visibility timeout →
+    reentrega → DLQ; Kafka: commit só após processar); seta fila ↓
+    <em>fan-out coordinator</em> — uma mensagem vai para UM consumidor; o
+    coordinator fatia, os workers não dividem um post sozinhos`} en={`Queue (SQS: delete on success; visibility timeout →
+    redelivery → DLQ; Kafka: commit only after processing); arrow queue
+    ↓ <em>fan-out coordinator</em> — one message goes to ONE consumer;
+    the coordinator chunks, workers don't split a post by themselves`} />
     <Fragment set:html={`</li>
 <li>`} />
-    <T pt={`Social Graph; setas coordinator ↔ graph ("seguidores, em
-    páginas")`} en={`Social Graph; arrows coordinator ↔ graph ("followers, paged")`} />
+    <T pt={`Social Graph; setas coordinator ↔ graph ("getFollowers(cursor)"
+    → "página + nextCursor")`} en={`Social Graph; arrows coordinator ↔ graph
+    ("getFollowers(cursor)" → "page + nextCursor")`} />
     <Fragment set:html={`</li>
 <li>`} />
-    <T pt={`Jobs de lotes de seguidores (10M → 10k jobs × 1k IDs); seta
-    jobs → workers (idempotentes; checam a versão do evento)`} en={`Follower-batch jobs (10M → 10k jobs × 1k IDs); arrow jobs →
-    workers (idempotent; they check the event version)`} />
+    <T pt={`Fila durável de jobs de fan-out (postId + 1k IDs; 10M → 10k
+    jobs) — backpressure, retry só do lote que falhou, workers escalam
+    e o coordinator pode cair; seta fila → workers (ZADD idempotente:
+    postId é o member do ZSET)`} en={`Durable fan-out jobs queue (postId + 1k IDs; 10M → 10k
+    jobs) — backpressure, retry of only the failed batch, horizontal
+    worker scaling, the coordinator can crash; arrow queue → workers
+    (idempotent ZADD: postId is the ZSET member)`} />
     <Fragment set:html={`</li>
 <li>`} />
     <T pt={`Feeds (Redis ZSET); seta workers → feeds ("ZADD
@@ -678,8 +711,9 @@ import T from "../T.astro";
     on misses")`} />
     <Fragment set:html={`</li>
 <li>`} />
-    <T pt={`Nota do híbrido: famosos → fan-out na leitura, a API faz o
-    merge`} en={`Hybrid note: celebrities → fan-out on read, the API merges`} />
+    <T pt={`Nota do híbrido: famosos → fan-out na leitura; a API faz
+    merge + rank + dedupe`} en={`Hybrid note: celebrities → fan-out on read; the API merges,
+    ranks, and deduplicates`} />
     <Fragment set:html={`</li>`} />
   </ol>
   <p class="cite" slot="cite" set:html={`<a href="https://bytebytego.com/books/"
