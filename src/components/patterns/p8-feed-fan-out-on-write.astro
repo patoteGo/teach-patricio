@@ -16,51 +16,85 @@ import T from "../T.astro";
             push on <em>write</em>?`}
   tipPt={`<strong>Fale enquanto desenha:</strong> "Fan-out na escrita:
               post + outbox numa transação; um publisher relê o outbox e
-              publica na fila. Workers buscam os seguidores no grafo e fazem
-              ZADD só do ID em cada feed. Ler custa O(log N + k); escrever
-              custa O(F × log N) por post."`}
+              publica o evento na fila. Um <em>fan-out coordinator</em> pagina
+              os seguidores no grafo e publica <em>jobs de lotes</em> — 10M de
+              seguidores viram 10k jobs de 1k IDs. Workers fazem ZADD do ID do
+              post em cada feed do lote e aparam com ZREMRANGEBYRANK (~1k
+              IDs). Ler: ZREVRANGE 0 49, depois MGET no cache de posts, DB
+              nos misses. Escrever custa O(F × log K) por post; ler a timeline
+              custa O(log K + pageSize)."`}
   tipEn={`<strong>Say while drawing:</strong> "Fan-out on write: post + outbox
-              in one transaction; a publisher relays the outbox to the queue.
-              Workers fetch followers from the graph and ZADD only the post id
-              into each feed. Reading is O(log N + k); writing is
-              O(F × log N) per post."`}
-  whyPt={`<strong>Por quê:</strong> <em>Redis</em> para os feeds porque é
-              um sorted set por usuário, sempre lido do topo — e guarda só
-              IDs; o conteúdo é hidratado no cache de posts na leitura.
-              <em>Fila</em> para o fan-out não bloquear a escrita do post,
-              com retries + DLQ, at-least-once (pode reentregar).
-              Workers <em>idempotentes</em>: o id do post como member do
-              ZSET torna um ZADD duplicado inofensivo. <em>Trim</em> do
-              feed (~500–1000 IDs) mantém o ZSET pequeno — e o feed é
-              cache <em>reconstruível</em>: o DB é a fonte da verdade,
-              Redis perdido = rebuild. <em>Kafka se</em> outros
-              consumidores também querem o stream (analytics, notificação)
-              — cada consumer group recebe tudo; <em>SQS se</em> só o
-              fan-out consome — workers competem pelas mensagens, um
-              worker pega o evento do post inteiro e fan-outa em lotes.
-              <strong>Tradeoff dos famosos:</strong> 10M de seguidores = 10M
-              de escritas por post — híbrido: gente comum push, famosos montar
-              na leitura, merge na API.`}
-  whyEn={`<strong>Why:</strong> <em>Redis</em> for feeds because it's one
-              sorted set per user, always read from the top — and it stores
-              only IDs; content is hydrated from the post cache at read time.
-              <em>A queue</em> so fan-out doesn't block the post write, with
-              retries + DLQ, at-least-once (may redeliver).
-              <em>Idempotent</em> workers: the post id as the ZSET member
-              makes a duplicate ZADD harmless. <em>Feed trim</em>
-              (~500–1000 IDs) keeps the ZSET small — and the feed is a
-              <em>rebuildable</em> cache: the DB is the source of truth,
-              lost Redis = rebuild. <em>Kafka if</em> other consumers also
-              want the stream (analytics, notifications) — every consumer
-              group gets it; <em>SQS if</em> only fan-out consumes —
-              workers compete for messages, one worker takes the whole
-              post event and fans out in batches.
-              <strong>The celebrity tradeoff:</strong> 10M followers = 10M
-              writes per post — hybrid: regular people push, celebrities
-              build on read, the API merges both.`}
+              in one transaction; a publisher relays the outbox and publishes
+              the event to the queue. A <em>fan-out coordinator</em> pages
+              followers from the graph and publishes <em>batch jobs</em> — 10M
+              followers become 10k jobs of 1k IDs each. Workers ZADD the post
+              id into each feed in their batch and trim with ZREMRANGEBYRANK
+              (~1k ids). Read: ZREVRANGE 0 49, then MGET from the post cache,
+              DB on misses. Writing is O(F × log K) per post; reading the
+              timeline is O(log K + pageSize)."`}
+  whyPt={`<strong>Por quê:</strong> <em>Coordinator</em> porque uma mensagem da
+              fila vai para <em>um</em> consumidor do grupo — N workers não
+              dividem sozinhos os 10M de seguidores de um único post; quem
+              pagina o grafo e fatia em jobs é ele. <em>Redis</em> para os
+              feeds: um sorted set por <em>leitor</em>
+              (<code>feed:&lt;userId&gt;</code>), sempre lido do topo, guardando
+              só IDs; conteúdo hidratado no cache de posts na leitura (MGET,
+              DB nos misses). <em>Fila</em> para o fan-out não bloquear a
+              escrita — SQS: visibility timeout → reentrega → DLQ configurada;
+              Kafka: offset não confirmado → retry (retry topics/DLQ são
+              padrão da aplicação, não do broker). <em>Idempotentes:</em> o
+              postId como member do ZSET faz o retry <em>atualizar</em> o
+              mesmo membro, não duplicar; se edições podem gerar jobs velhos,
+              workers guardam a versão do evento. <em>Trim</em> com
+              <code>ZREMRANGEBYRANK 0 -(MAX+1)</code> mantém K limitado — e o
+              feed é cache <em>reconstruível</em>: o DB é a fonte da verdade,
+              Redis perdido = rebuild. <em>Kafka se</em> outros consumidores
+              também querem o stream (analytics, notificação); <em>SQS se</em>
+              só o fan-out consome. <strong>Tradeoff dos famosos:</strong>
+              10M de ZADDs por post mesmo fatiado — híbrido: gente comum push,
+              famosos montar na leitura, merge na API.`}
+  whyEn={`<strong>Why:</strong> a <em>coordinator</em> because one queue message
+              goes to <em>one</em> consumer in the group — N workers don't
+              automatically split a single post's 10M followers; the
+              coordinator pages the graph and slices it into jobs.
+              <em>Redis</em> for feeds: one sorted set per <em>reader</em>
+              (<code>feed:&lt;userId&gt;</code>), always read from the top,
+              storing IDs only; content is hydrated from the post cache at
+              read time (MGET, DB on misses). <em>A queue</em> so fan-out
+              doesn't block the post write — SQS: visibility timeout →
+              redelivery → configured DLQ; Kafka: uncommitted offset → retry
+              (retry topics/DLQ are application patterns, not broker
+              features). <em>Idempotent workers:</em> the postId as the ZSET
+              member makes a retry <em>update</em> the same member instead of
+              duplicating; if edits can produce stale jobs, workers track the
+              event version. <em>Trim</em> with
+              <code>ZREMRANGEBYRANK 0 -(MAX+1)</code> keeps K bounded — and
+              the feed is a <em>rebuildable</em> cache: the DB is the source
+              of truth, lost Redis = rebuild. <em>Kafka if</em> other
+              consumers also want the stream (analytics, notifications);
+              <em>SQS if</em> only fan-out consumes. <strong>The celebrity
+              tradeoff:</strong> 10M ZADDs per post even chunked — hybrid:
+              regular people push, celebrities build on read, the API merges
+              both.`}
+  warnPt={`<strong>Ciclo de vida:</strong> o ZSET aponta, não garante.
+              <em>Post deletado:</em> a hidratação bate num túmulo → filtra na
+              resposta e faz ZREM preguiçoso. <em>Privacidade, bloqueio,
+              unfollow:</em> entradas velhas sobrevivem até o trim — filtre
+              pelo autor na leitura ou reconstrua o feed (é cache; o DB
+              manda). <em>Seguidor novo:</em> backfill <em>opcional</em> copia
+              posts recentes do autor para o feed novo — sem isso, o feed
+              enche só com posts novos.`}
+  warnEn={`<strong>Lifecycle:</strong> the ZSET points, it doesn't guarantee.
+              <em>Deleted post:</em> hydration hits a tombstone → filter it
+              from the response and lazily ZREM. <em>Privacy change, block,
+              unfollow:</em> stale entries survive until the trim — filter by
+              author at read time or rebuild the feed (it's a cache; the DB
+              decides). <em>New follower:</em> an <em>optional</em> backfill
+              copies the author's recent posts into the new feed — otherwise
+              it only fills with posts published after the follow.`}
 >
   <Fragment slot="dia" set:html={`<svg
-              viewBox="0 0 790 372"
+              viewBox="0 0 790 450"
               width="100%"
               style="min-width: 760px"
               role="img"
@@ -68,8 +102,8 @@ import T from "../T.astro";
             >
               <title
                 id="p8t"
-                data-pt="Autor → API grava post + outbox no DB (uma transação); Outbox Publisher publica na fila; workers consultam o Social Graph pelos seguidores e fazem ZADD só do ID nos feeds (Redis ZSET, com trim); leitor → API → ZRANGE de IDs → hidratação no cache de posts; híbrido: famosos montam na leitura"
-                data-en="Author → API stores post + outbox in the DB (one transaction); Outbox Publisher relays to the queue; workers fetch followers from the social graph and ZADD only post IDs into feeds (Redis ZSET, trimmed); reader → API → ZRANGE of IDs → hydration from the post cache; hybrid: celebrities build on read"
+                data-pt="Autor → API grava post + outbox no DB (uma transação); Outbox Publisher publica na fila; o fan-out coordinator pagina os seguidores no Social Graph e cria jobs de lotes (~1k IDs); workers fazem ZADD só do ID nos feeds (Redis ZSET, com trim ZREMRANGEBYRANK); leitor → API → ZREVRANGE de IDs → MGET no cache de posts, DB nos misses; híbrido: famosos montam na leitura"
+                data-en="Author → API stores post + outbox in the DB (one transaction); Outbox Publisher relays to the queue; the fan-out coordinator pages followers from the social graph and creates batch jobs (~1k IDs each); workers ZADD only post IDs into feeds (Redis ZSET, trimmed with ZREMRANGEBYRANK); reader → API → ZREVRANGE of IDs → MGET from the post cache, DB on misses; hybrid: celebrities build on read"
               >
                 Fan-out feed
               </title>
@@ -202,7 +236,7 @@ import T from "../T.astro";
                 />
                 <text
                   x="537"
-                  y="44"
+                  y="42"
                   fill="#fb7185"
                   text-anchor="middle"
                   data-pt="Kafka / SQS"
@@ -210,10 +244,13 @@ import T from "../T.astro";
                 >
                   Kafka / SQS
                 </text>
-                <text x="537" y="61" fill="#9ea2b8" text-anchor="middle" font-size="10">
-                  retries → DLQ
+                <text x="537" y="56" fill="#9ea2b8" text-anchor="middle" font-size="9">
+                  SQS: timeout → DLQ
                 </text>
-                <!-- fan-out row -->
+                <text x="537" y="68" fill="#9ea2b8" text-anchor="middle" font-size="9">
+                  Kafka: offset → retry
+                </text>
+                <!-- fan-out row: graph + coordinator -->
                 <rect
                   x="300"
                   y="105"
@@ -239,41 +276,52 @@ import T from "../T.astro";
                   fill="#9ea2b8"
                   text-anchor="middle"
                   font-size="10"
-                  data-pt="seguidores · cache/DB"
-                  data-en="followers · cache/DB"
+                  data-pt="seguidores · em páginas"
+                  data-en="followers · paged"
                 >
-                  seguidores · cache/DB
+                  seguidores · em páginas
                 </text>
                 <rect
-                  x="480"
+                  x="470"
                   y="105"
-                  width="115"
+                  width="125"
                   height="58"
                   rx="10"
                   fill="#211d33"
                   stroke="#8b6ff7"
                 />
                 <text
-                  x="537"
-                  y="126"
+                  x="533"
+                  y="124"
                   fill="#8b6ff7"
                   text-anchor="middle"
                   font-size="11"
-                  data-pt="Fan-out workers"
-                  data-en="Fan-out workers"
+                  data-pt="Fan-out coordinator"
+                  data-en="Fan-out coordinator"
                 >
-                  Fan-out workers
+                  Fan-out coordinator
                 </text>
                 <text
-                  x="537"
-                  y="143"
+                  x="533"
+                  y="141"
                   fill="#9ea2b8"
                   text-anchor="middle"
-                  font-size="10"
-                  data-pt="idempotentes"
-                  data-en="idempotent"
+                  font-size="9"
+                  data-pt="pagina os seguidores"
+                  data-en="pages the followers"
                 >
-                  idempotentes
+                  pagina os seguidores
+                </text>
+                <text
+                  x="533"
+                  y="154"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="9"
+                  data-pt="10M → 10k jobs × 1k"
+                  data-en="10M → 10k jobs × 1k"
+                >
+                  10M → 10k jobs × 1k
                 </text>
                 <text
                   x="460"
@@ -284,19 +332,51 @@ import T from "../T.astro";
                 >
                   IDs
                 </text>
+                <!-- batch jobs -->
+                <rect
+                  x="470"
+                  y="190"
+                  width="125"
+                  height="58"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#fb7185"
+                />
+                <text
+                  x="533"
+                  y="211"
+                  fill="#fb7185"
+                  text-anchor="middle"
+                  font-size="11"
+                  data-pt="Lotes de seguidores"
+                  data-en="Follower batches"
+                >
+                  Lotes de seguidores
+                </text>
+                <text
+                  x="533"
+                  y="228"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="9"
+                  data-pt="1 job ≈ 1k IDs"
+                  data-en="1 job ≈ 1k IDs"
+                >
+                  1 job ≈ 1k IDs
+                </text>
                 <!-- feeds -->
                 <rect
-                  x="280"
-                  y="190"
-                  width="170"
+                  x="240"
+                  y="275"
+                  width="190"
                   height="58"
                   rx="10"
                   fill="#2a0f1c"
                   stroke="#fb7185"
                 />
                 <text
-                  x="365"
-                  y="209"
+                  x="335"
+                  y="294"
                   fill="#fb7185"
                   text-anchor="middle"
                   font-size="12"
@@ -305,24 +385,67 @@ import T from "../T.astro";
                 >
                   Feeds · Redis ZSET
                 </text>
-                <text x="365" y="225" fill="#9ea2b8" text-anchor="middle" font-size="10">
-                  ZADD feed:&lt;fid&gt; &lt;ts&gt; &lt;pid&gt;
+                <text x="335" y="310" fill="#9ea2b8" text-anchor="middle" font-size="9">
+                  ZADD feed:&lt;userId&gt; &lt;ts&gt; &lt;postId&gt;
                 </text>
                 <text
-                  x="365"
-                  y="240"
+                  x="335"
+                  y="324"
                   fill="#9ea2b8"
                   text-anchor="middle"
-                  font-size="10"
-                  data-pt="IDs por ts · últimos ~1k"
-                  data-en="IDs by ts · keep last ~1k"
+                  font-size="9"
+                  data-pt="ZREMRANGEBYRANK 0 -(MAX+1) · ~1k"
+                  data-en="ZREMRANGEBYRANK 0 -(MAX+1) · ~1k"
                 >
-                  IDs por ts · últimos ~1k
+                  ZREMRANGEBYRANK 0 -(MAX+1) · ~1k
+                </text>
+                <!-- workers -->
+                <rect
+                  x="480"
+                  y="275"
+                  width="115"
+                  height="58"
+                  rx="10"
+                  fill="#211d33"
+                  stroke="#8b6ff7"
+                />
+                <text
+                  x="537"
+                  y="296"
+                  fill="#8b6ff7"
+                  text-anchor="middle"
+                  font-size="11"
+                  data-pt="Fan-out workers"
+                  data-en="Fan-out workers"
+                >
+                  Fan-out workers
+                </text>
+                <text
+                  x="537"
+                  y="313"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="9"
+                  data-pt="idempotentes"
+                  data-en="idempotent"
+                >
+                  idempotentes
+                </text>
+                <text
+                  x="537"
+                  y="326"
+                  fill="#9ea2b8"
+                  text-anchor="middle"
+                  font-size="9"
+                  data-pt="checam versão"
+                  data-en="check version"
+                >
+                  checam versão
                 </text>
                 <!-- read path -->
                 <rect
                   x="15"
-                  y="285"
+                  y="355"
                   width="80"
                   height="48"
                   rx="10"
@@ -331,7 +454,7 @@ import T from "../T.astro";
                 />
                 <text
                   x="55"
-                  y="314"
+                  y="384"
                   fill="#2dd4bf"
                   text-anchor="middle"
                   data-pt="Leitor"
@@ -341,19 +464,19 @@ import T from "../T.astro";
                 </text>
                 <rect
                   x="120"
-                  y="285"
+                  y="355"
                   width="76"
                   height="48"
                   rx="10"
                   fill="#211d33"
                   stroke="#8b6ff7"
                 />
-                <text x="158" y="314" fill="#8b6ff7" text-anchor="middle">
+                <text x="158" y="384" fill="#8b6ff7" text-anchor="middle">
                   API
                 </text>
                 <rect
                   x="460"
-                  y="285"
+                  y="355"
                   width="150"
                   height="48"
                   rx="10"
@@ -362,7 +485,7 @@ import T from "../T.astro";
                 />
                 <text
                   x="535"
-                  y="305"
+                  y="375"
                   fill="#fbbf24"
                   text-anchor="middle"
                   font-size="12"
@@ -373,19 +496,19 @@ import T from "../T.astro";
                 </text>
                 <text
                   x="535"
-                  y="321"
+                  y="391"
                   fill="#9ea2b8"
                   text-anchor="middle"
                   font-size="10"
-                  data-pt="hidrata os posts"
-                  data-en="hydrate full posts"
+                  data-pt="MGET · DB nos misses"
+                  data-en="MGET · DB on misses"
                 >
-                  hidrata os posts
+                  MGET · DB nos misses
                 </text>
                 <!-- celebrity hybrid note -->
                 <rect
                   x="630"
-                  y="278"
+                  y="345"
                   width="155"
                   height="64"
                   rx="10"
@@ -395,7 +518,7 @@ import T from "../T.astro";
                 />
                 <text
                   x="707"
-                  y="298"
+                  y="365"
                   fill="#fbbf24"
                   text-anchor="middle"
                   font-size="10"
@@ -406,7 +529,7 @@ import T from "../T.astro";
                 </text>
                 <text
                   x="707"
-                  y="312"
+                  y="379"
                   fill="#fbbf24"
                   text-anchor="middle"
                   font-size="10"
@@ -417,7 +540,7 @@ import T from "../T.astro";
                 </text>
                 <text
                   x="707"
-                  y="326"
+                  y="393"
                   fill="#fbbf24"
                   text-anchor="middle"
                   font-size="10"
@@ -438,12 +561,14 @@ import T from "../T.astro";
                 <path d="M350 49 H370" />
                 <path d="M460 49 H480" />
                 <path d="M537 78 V105" />
-                <path d="M480 122 H440" />
-                <path d="M440 146 H480" />
-                <path d="M537 163 C528 185 495 200 452 216" />
-                <path d="M95 309 H120" />
-                <path d="M196 296 C230 285 300 270 330 250" />
-                <path d="M196 318 H460" />
+                <path d="M470 122 H440" />
+                <path d="M440 146 H470" />
+                <path d="M537 163 V190" />
+                <path d="M537 248 V275" />
+                <path d="M480 304 H430" />
+                <path d="M95 379 H120" />
+                <path d="M196 366 C222 352 242 344 258 335" />
+                <path d="M196 379 H460" />
               </g>
               <g
                 font-family="Space Grotesk"
@@ -451,21 +576,37 @@ import T from "../T.astro";
                 fill="#9ea2b8"
                 text-anchor="middle"
               >
-                <text x="630" y="190" data-pt="escrita: O(F × log N)" data-en="write: O(F × log N)">
-                  escrita: O(F × log N)
+                <text
+                  x="700"
+                  y="140"
+                  data-pt="escrita: O(F × log K)"
+                  data-en="write: O(F × log K)"
+                >
+                  escrita: O(F × log K)
                 </text>
                 <text
-                  x="630"
-                  y="204"
+                  x="700"
+                  y="154"
+                  data-pt="F = seguidores · K = feed"
+                  data-en="F = followers · K = feed size"
+                >
+                  F = seguidores · K = feed
+                </text>
+                <text
+                  x="700"
+                  y="168"
                   data-pt="10M seguidores = 10M ZADDs"
                   data-en="10M followers = 10M ZADDs"
                 >
                   10M seguidores = 10M ZADDs
                 </text>
-                <text x="202" y="262" text-anchor="start">ZRANGE → IDs</text>
+                <text x="455" y="296">ZADD</text>
+                <text x="335" y="268" data-pt="ZREVRANGE 0 49 → IDs" data-en="ZREVRANGE 0 49 → IDs">
+                  ZREVRANGE 0 49 → IDs
+                </text>
                 <text
                   x="328"
-                  y="334"
+                  y="396"
                   data-pt="IDs → posts completos"
                   data-en="IDs → full posts"
                 >
@@ -473,11 +614,19 @@ import T from "../T.astro";
                 </text>
                 <text
                   x="390"
-                  y="358"
-                  data-pt="leitura: O(log N + k) — ZRANGE feed:&lt;uid&gt; 0 49 REV"
-                  data-en="read: O(log N + k) — ZRANGE feed:&lt;uid&gt; 0 49 REV"
+                  y="424"
+                  data-pt="timeline: O(log K + pageSize) — ZREVRANGE feed:&lt;userId&gt; 0 49"
+                  data-en="timeline: O(log K + pageSize) — ZREVRANGE feed:&lt;userId&gt; 0 49"
                 >
-                  leitura: O(log N + k) — ZRANGE feed:&lt;uid&gt; 0 49 REV
+                  timeline: O(log K + pageSize) — ZREVRANGE feed:&lt;userId&gt; 0 49
+                </text>
+                <text
+                  x="390"
+                  y="438"
+                  data-pt="hidratação: O(pageSize) + misses no cache"
+                  data-en="hydration: O(pageSize) + cache misses"
+                >
+                  hidratação: O(pageSize) + misses no cache
                 </text>
               </g>
             </svg>`} />
@@ -494,24 +643,39 @@ import T from "../T.astro";
     unpublished rows)`} />
     <Fragment set:html={`</li>
 <li>`} />
-    <T pt={`Kafka/SQS com retries → DLQ; seta fila → workers
-    (idempotentes)`} en={`Kafka/SQS with retries → DLQ; arrow queue → workers
-    (idempotent)`} />
+    <T pt={`Fila (SQS: visibility timeout → retry → DLQ; Kafka: offset
+    não confirmado → retry); seta fila ↓ <em>fan-out coordinator</em> —
+    uma mensagem vai para UM consumidor; o coordinator fatia, os
+    workers não dividem um post sozinhos`} en={`Queue (SQS: visibility timeout → retry → DLQ; Kafka:
+    uncommitted offset → retry); arrow queue ↓ <em>fan-out
+    coordinator</em> — one message goes to ONE consumer; the
+    coordinator chunks, workers don't split a post by themselves`} />
     <Fragment set:html={`</li>
 <li>`} />
-    <T pt={`Social Graph; setas workers ↔ graph ("lista de seguidores")`} en={`Social Graph; arrows workers ↔ graph ("follower list")`} />
+    <T pt={`Social Graph; setas coordinator ↔ graph ("seguidores, em
+    páginas")`} en={`Social Graph; arrows coordinator ↔ graph ("followers, paged")`} />
     <Fragment set:html={`</li>
 <li>`} />
-    <T pt={`Feeds (Redis ZSET); seta workers → feeds ("ZADD do id do post
-    em cada feed; guarda só IDs, com trim dos últimos ~1k")`} en={`Feeds (Redis ZSET); arrow workers → feeds ("ZADD the post id
-    into each feed; stores IDs only, trimmed to last ~1k")`} />
+    <T pt={`Jobs de lotes de seguidores (10M → 10k jobs × 1k IDs); seta
+    jobs → workers (idempotentes; checam a versão do evento)`} en={`Follower-batch jobs (10M → 10k jobs × 1k IDs); arrow jobs →
+    workers (idempotent; they check the event version)`} />
     <Fragment set:html={`</li>
 <li>`} />
-    <T pt={`Caminho de leitura embaixo: leitor → API → feeds (ZRANGE →
-    IDs)`} en={`Read path below: reader → API → feeds (ZRANGE → IDs)`} />
+    <T pt={`Feeds (Redis ZSET); seta workers → feeds ("ZADD
+    feed:&lt;userId&gt; &lt;ts&gt; &lt;postId&gt;; trim ZREMRANGEBYRANK
+    0 -(MAX+1), mantém ~1k")`} en={`Feeds (Redis ZSET); arrow workers → feeds ("ZADD
+    feed:&lt;userId&gt; &lt;ts&gt; &lt;postId&gt;; trim ZREMRANGEBYRANK
+    0 -(MAX+1), keep ~1k")`} />
     <Fragment set:html={`</li>
 <li>`} />
-    <T pt={`Post cache/DB; seta API → cache (hidrata os posts completos)`} en={`Post cache/DB; arrow API → cache (hydrate the full posts)`} />
+    <T pt={`Caminho de leitura embaixo: leitor → API → feeds ("ZREVRANGE
+    feed:&lt;userId&gt; 0 49 → IDs")`} en={`Read path below: reader → API → feeds ("ZREVRANGE
+    feed:&lt;userId&gt; 0 49 → IDs")`} />
+    <Fragment set:html={`</li>
+<li>`} />
+    <T pt={`Post cache/DB; seta API → cache ("MGET dos IDs; DB nos
+    misses")`} en={`Post cache/DB; arrow API → cache ("MGET the IDs; DB fallback
+    on misses")`} />
     <Fragment set:html={`</li>
 <li>`} />
     <T pt={`Nota do híbrido: famosos → fan-out na leitura, a API faz o

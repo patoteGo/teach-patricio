@@ -35,7 +35,10 @@ import T from "../T.astro";
               <em>Retry-After</em> e <em>RateLimit / RateLimit-Policy</em>.
               <em>Tradeoff pronto:</em> janela fixa permite rajada na virada
               (200 em torno do limite); janela deslizante evita essa borda, e
-              token bucket troca a borda por uma rajada configurável.`}
+              token bucket troca a borda por uma rajada configurável.
+              <em>Atalho moderno:</em> o Redis 8.8 ganhou
+              <code>INCREX k BYINT 1 EX 60 ENX</code> — o mesmo efeito em um
+              comando nativo só (tabela abaixo).`}
   whyEn={`<strong>Why Redis:</strong> "check and increment" must be
               <em>one</em> atomic operation — in two separate calls, two
               instances both read 99 and let 101 through. A counter row in
@@ -47,7 +50,9 @@ import T from "../T.astro";
               <em>Ready tradeoff:</em> a fixed window permits a boundary burst
               (200 around the minute edge); a sliding window avoids that edge,
               while a token bucket replaces it with configurable burst
-              capacity.`}
+              capacity. <em>Modern shortcut:</em> Redis 8.8 added
+              <code>INCREX k BYINT 1 EX 60 ENX</code> — the same effect in
+              one native command (table below).`}
 >
   <Fragment slot="dia" set:html={`<svg
               viewBox="0 0 720 290"
@@ -293,6 +298,183 @@ import T from "../T.astro";
     <T pt={`Abaixo do limite → handler (o resto de P1/P2)`} en={`Under the limit → handler (the rest of P1/P2)`} />
     <Fragment set:html={`</li>`} />
   </ol>
+  <Fragment slot="extra" set:html={`<h3>
+          <span data-lang="pt">Três eras do INCR + EXPIRE</span
+          ><span data-lang="en">Three eras of INCR + EXPIRE</span>
+        </h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>
+                  <span data-lang="pt">Versão</span
+                  ><span data-lang="en">Version</span>
+                </th>
+                <th>
+                  <span data-lang="pt">Comandos</span
+                  ><span data-lang="en">Commands</span>
+                </th>
+                <th>
+                  <span data-lang="pt">Como funciona</span
+                  ><span data-lang="en">How it works</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <span data-lang="pt">qualquer Redis</span
+                  ><span data-lang="en">any Redis</span>
+                </td>
+                <td>
+                  <code>local c = INCR k<br />if c == 1 then<br />&nbsp;&nbsp;EXPIRE k 60<br />end<br />return c</code>
+                </td>
+                <td>
+                  <span data-lang="pt"
+                    >Lua clássica: uma viagem só, atômica, portátil — é o que a
+                    maioria das libs de rate limit roda por dentro. O
+                    <code>if c == 1</code> garante que o EXPIRE roda uma única
+                    vez, no nascimento da janela.</span
+                  ><span data-lang="en"
+                    >The classic Lua: one round trip, atomic, portable — what
+                    most rate-limit libraries run internally. The
+                    <code>if c == 1</code> ensures EXPIRE runs exactly once,
+                    at the window's birth.</span
+                  >
+                </td>
+              </tr>
+              <tr>
+                <td>Redis 7.0+</td>
+                <td>
+                  <code>MULTI<br />INCR k<br />EXPIRE k 60 NX<br />EXEC</code>
+                </td>
+                <td>
+                  <span data-lang="pt"
+                    >Sem script: o <code>NX</code> do EXPIRE (novo no 7.0) só
+                    define o TTL se a chave ainda não tem — a transação
+                    MULTI/EXEC substitui o Lua.</span
+                  ><span data-lang="en"
+                    >No script: EXPIRE's <code>NX</code> option (new in 7.0)
+                    only sets the TTL if the key has none — the MULTI/EXEC
+                    transaction replaces Lua.</span
+                  >
+                </td>
+              </tr>
+              <tr>
+                <td>Redis 8.8+</td>
+                <td><code>INCREX k BYINT 1 EX 60 ENX</code></td>
+                <td>
+                  <span data-lang="pt"
+                    >Um único comando nativo: incrementa e aplica
+                    <code>EX 60</code> com <code>ENX</code> — TTL apenas se a
+                    chave não tem TTL. Responde
+                    <code>[count, incremento aplicado]</code>; o count é o 1º
+                    elemento. Recém-chegado (8.8) — ainda ausente no Redis
+                    Cloud/Software.</span
+                  ><span data-lang="en"
+                    >A single native command: increments and applies
+                    <code>EX 60</code> with <code>ENX</code> — TTL only if the
+                    key has no TTL. Replies
+                    <code>[count, increment applied]</code>; the count is the
+                    1st element. Brand new (8.8) — not yet on Redis
+                    Cloud/Software.</span
+                  >
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <h3>
+          <span data-lang="pt">A vida da chave (por que o “só no 1º” importa)</span
+          ><span data-lang="en">The life of the key (why “only on the 1st” matters)</span>
+        </h3>
+        <div class="scroll-x" style="margin: 18px 0">
+          <svg
+            viewBox="0 0 720 168"
+            width="100%"
+            style="min-width: 620px"
+            role="img"
+            aria-labelledby="p5w"
+          >
+            <title
+              id="p5w"
+              data-pt="Janela fixa: o TTL nasce no 1º hit, não é renovado nos hits seguintes, e a chave expira em 60s; a próxima janela nasce no hit seguinte"
+              data-en="Fixed window: the TTL is born on the 1st hit, is not refreshed by later hits, and the key expires at 60s; the next window is born on the following hit"
+            >
+              Janela fixa
+            </title>
+            <rect
+              x="105"
+              y="26"
+              width="365"
+              height="20"
+              rx="10"
+              fill="none"
+              stroke="#2dd4bf"
+              stroke-width="1.5"
+            />
+            <text
+              x="287"
+              y="40"
+              fill="#2dd4bf"
+              text-anchor="middle"
+              font-family="Space Grotesk"
+              font-size="10"
+              font-weight="700"
+              data-pt="janela fixa de 60s"
+              data-en="fixed 60s window"
+            >
+              janela fixa de 60s
+            </text>
+            <line x1="40" y1="95" x2="685" y2="95" stroke="#3a3f55" stroke-width="2" />
+            <line
+              x1="470"
+              y1="50"
+              x2="470"
+              y2="88"
+              stroke="#ef476f"
+              stroke-width="1.5"
+              stroke-dasharray="4 4"
+            />
+            <circle cx="105" cy="95" r="6" fill="#2dd4bf" />
+            <circle cx="300" cy="95" r="6" fill="#8b6ff7" />
+            <circle cx="470" cy="95" r="6" fill="#ef476f" />
+            <circle cx="620" cy="95" r="6" fill="#2dd4bf" />
+            <g
+              font-family="Space Grotesk"
+              font-size="10"
+              fill="#9ea2b8"
+              text-anchor="middle"
+            >
+              <text x="105" y="78">t=0</text>
+              <text x="300" y="78">t=1…59</text>
+              <text x="470" y="78">t=60</text>
+              <text x="620" y="78">t=61+</text>
+            </g>
+            <g font-family="Space Grotesk" font-size="11" text-anchor="middle">
+              <text x="105" y="120" fill="#eceef6" font-weight="700" data-pt="1º hit" data-en="1st hit">1º hit</text>
+              <text x="105" y="136" fill="#9ea2b8" data-pt="count=1 · TTL nasce" data-en="count=1 · TTL is born">count=1 · TTL nasce</text>
+              <text x="300" y="120" fill="#eceef6" font-weight="700" data-pt="hits 2…N" data-en="hits 2…N">hits 2…N</text>
+              <text x="300" y="136" fill="#9ea2b8" data-pt="count++ · TTL intacto" data-en="count++ · TTL untouched">count++ · TTL intacto</text>
+              <text x="470" y="120" fill="#eceef6" font-weight="700" data-pt="chave expira" data-en="key expires">chave expira</text>
+              <text x="470" y="136" fill="#9ea2b8" data-pt="contador some" data-en="counter is gone">contador some</text>
+              <text x="620" y="120" fill="#eceef6" font-weight="700" data-pt="próximo hit" data-en="next hit">próximo hit</text>
+              <text x="620" y="136" fill="#9ea2b8" data-pt="count=1 · nova janela" data-en="count=1 · new window">count=1 · nova janela</text>
+            </g>
+            <text
+              x="360"
+              y="160"
+              font-family="Space Grotesk"
+              font-size="10"
+              fill="#9ea2b8"
+              text-anchor="middle"
+              data-pt="O EXPIRE roda uma só vez, no nascimento — rodar a cada hit viraria janela deslizante"
+              data-en="EXPIRE runs once, at birth — running it on every hit would turn it into a sliding window"
+            >
+              O EXPIRE roda uma só vez, no nascimento — rodar a cada hit viraria janela deslizante
+            </text>
+          </svg>
+        </div>`} />
   <p class="cite" slot="cite" set:html={`<a
   href="https://github.com/donnemartin/system-design-primer#rate-limiter"
   >System Design Primer — rate limiter</a
