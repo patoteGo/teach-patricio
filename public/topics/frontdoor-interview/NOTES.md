@@ -1,11 +1,14 @@
 # Teaching Notes — Lob Interview · 13 August 2026
 
+> **Outcome: rejected.** Email from Grace (recruiter) on Friday 14 August 2026, the day after the interview. No actionable feedback given; door left open for future contact. Lesson kept as-is — history of how the prep was.
+
 ## Confirmed setup
 
 - **Company:** Lob, the direct-mail automation and logistics platform.
-- **Interviewer:** Grace Derksen, Senior Technical Talent Partner / recruiter at Lob.
+- **Interviewer:** Sharon Ben Hayon, Director of Engineering at Lob.
+- **Recruiter/contact:** Grace Derksen, Senior Technical Talent Partner at Lob (sent the rejection email).
 - **Role:** Senior Software Engineer contract carrying the label “Frontdoor.”
-- **Unknown:** Frontdoor may be a Lob team, product area, requisition, or contract label. Ask Grace.
+- **Unknown:** Frontdoor may be a Lob team, product area, requisition, or contract label. Ask Sharon.
 - **Do not infer:** No evidence connects this role to the public company Frontdoor, Inc.
 
 ## Strongest match
@@ -36,3 +39,14 @@ and the problems this engineer would own?”
 - US-hours overlap from Brazil.
 - Legal, payroll, and security feasibility for remote work from Brazil.
 - Contract duration, weekly hours, and renewal possibility.
+
+## Rejection email (verbatim, Grace, Friday 14 August 2026)
+
+> Hi Gonzalez,
+>
+> Thank you for your time and investment in the Senior Software Engineer interview process here at Lob. Unfortunately after debriefing with the team, it's not felt the position here is the right fit for you at this time.
+>
+> Thanks again for your interest in Lob and we wish you luck in your search. While we are unable to provide actionable feedback at this time, we are regularly calibrating on the needs for the role—so if there is anything that changes on our end in the near future, I would be happy to reach out and pick up the conversation
+>
+> All the best,
+> Grace

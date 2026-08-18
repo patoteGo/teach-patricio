@@ -1,5 +1,9 @@
 # Mission: ClearOne Advantage Senior Full-Stack interview (8 August 2026)
 
+> **Outcome: HIRED ✅** — offer after round 1 (eng manager) + round 2 (Gati PO + Manasa peer),
+> both positive. **Start date: Monday 24 August 2026.**
+> Feedback (verbatim) and gap notes in NOTES.md Session 7. Retained as history.
+
 ## Why
 
 Interviews ✅ done — round 1 (eng manager) + round 2 (Gati PO + Manasa peer). Both positive. **Waiting for feedback.** **Senior Full-Stack Engineer** role

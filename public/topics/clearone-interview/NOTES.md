@@ -386,3 +386,38 @@ Salesforce migration priorities.
   lessons) was a genuine differentiator.
 
 **Status: Both round-2 interviews complete. Waiting for feedback.**
+
+---
+
+## Session 7 — OUTCOME: HIRED ✅
+
+**Offer accepted. Start date: Monday 24 August 2026.**
+
+Feedback received verbatim from ClearOne (both interviewers):
+
+### Interview 1 (engineering manager)
+
+> Overall, I think he performed well and demonstrated senior-level experience.
+>
+> One thing I particularly liked was how actively he uses AI in his day-to-day work. He even showed some of the skills he has created for his own use cases, which showed that he's not just using AI occasionally but is thinking about how to make it useful in his development workflow.
+>
+> His system design discussion was also strong. He asked good questions upfront, came up with a reasonable design, and when I introduced additional scenarios, he quickly recognized the impact and adjusted his design while clearly communicating his thought process.
+>
+> The main concern was SQL. Even though he mentioned being comfortable with relational databases and performing DB migrations regularly, he struggled with a simple join between two tables which is little surprising. His infra exposure also seems somewhat limited since DevOps manages most of it and will be a learning curve
+>
+> That said, given his overall experience, problem-solving approach, and effective use of AI, I think he should be able to work through those gaps. He was also very enthusiastic throughout the interview and seems like he could be a good fit for the team.
+
+### Interview 2 (Gati)
+
+> Gati also agreed that Patricio performed well. She uses a flowchart tool and presents a systems design problem. Patricio communicated well by sharing his thought process. He surfaced edge cases, error handling scenarios, and had the ability to think through the user experience
+
+### What carried the offer
+
+- **AI-first workflow, with receipts** — the self-built skills (pi harness) were a named differentiator. Exactly what the prep bet on (Session 2 Q3).
+- **System design with diagrams** — praised by both interviewers (questions upfront, adjusted on new scenarios, edge cases, UX thinking). The diagram habit from the system-design lessons paid off.
+- **Enthusiasm / communication.**
+
+### Confirmed gaps to close on the job
+
+1. **SQL** — flagged by the interviewer AND visible in the Manasa round (forgot GROUP BY/aggregation). Brush up before start: JOINs, GROUP BY, HAVING, window functions. This is now the #1 prep item, not a backlog item.
+2. **Infra** — DevOps manages most of it; will be a learning curve. (Terraform experience from Cencosud helps.)
