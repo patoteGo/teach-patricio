@@ -86,7 +86,122 @@ Action on every push, so it never drifts. (See
 [`.github/workflows/sync-lessons.yml`](./.github/workflows/sync-lessons.yml).)
 
 <!-- topics:start -->
-_(No topics yet — copy `topics/_template/` to start one.)_
+### Behavioral Interview
+
+`./src/pages/topics/behavioral-interview/` · 7 lesson(s)
+
+| # | Lesson |
+|---|--------|
+| 01 | [Entrevista Comportamental · Lição 1 — BLUF + STAR](./src/pages/topics/behavioral-interview/lessons/0001-bluf-star.html) |
+| 02 | [Entrevista Comportamental · Lição 2 — O Dojo](./src/pages/topics/behavioral-interview/lessons/0002-the-dojo.html) |
+| 03 | [Behavioral Interview · Lição 3 — O Pitch](./src/pages/topics/behavioral-interview/lessons/0003-the-pitch.html) |
+| 04 | [Entrevista Comportamental · Lição 4 — Perguntas de Acompanhamento](./src/pages/topics/behavioral-interview/lessons/0004-follow-ups.html) |
+| 05 | [Untitled](./src/pages/topics/behavioral-interview/lessons/0005-architecture-grill.html) |
+| 06 | [Untitled](./src/pages/topics/behavioral-interview/lessons/0006-fanout-decoded.html) |
+| 07 | [Untitled](./src/pages/topics/behavioral-interview/lessons/0007-monitoring-lag-decoded.html) |
+
+### Clearone Interview
+
+`./src/pages/topics/clearone-interview/` · 2 lesson(s)
+
+| # | Lesson |
+|---|--------|
+| 01 | [ClearOne Advantage — playbook · 8 de agosto de 2026](./src/pages/topics/clearone-interview/lessons/0001-clearone-playbook.html) |
+| 02 | [ClearOne — lembretes rápidos do stack](./src/pages/topics/clearone-interview/lessons/0002-stack-cheatsheet.html) |
+
+### Frontdoor Interview
+
+`./src/pages/topics/frontdoor-interview/` · 1 lesson(s)
+
+| # | Lesson |
+|---|--------|
+| 01 | [Lob — tela inicial de 30 minutos · 13 de agosto de 2026](./src/pages/topics/frontdoor-interview/lessons/0001-lob-intro-screen.html) |
+
+### Pi
+
+`./src/pages/topics/pi/` · 9 lesson(s)
+
+| # | Lesson |
+|---|--------|
+| 01 | [Pi · Lição 1 — O Core Loop](./src/pages/topics/pi/lessons/0001-the-core-loop.html) |
+| 02 | [Pi · Lição 2 — Dirigindo o TUI](./src/pages/topics/pi/lessons/0002-driving-the-tui.html) |
+| 03 | [Pi · Lição 3 — Sessões, Ramificação e Compaction](./src/pages/topics/pi/lessons/0003-sessions-branching-compaction.html) |
+| 04 | [Pi · Lição 4 — Arquivos de Contexto](./src/pages/topics/pi/lessons/0004-context-files.html) |
+| 05 | [Pi · Lição 5 — Skills](./src/pages/topics/pi/lessons/0005-skills.html) |
+| 06 | [Pi · Lição 6 — Extensões](./src/pages/topics/pi/lessons/0006-extensions.html) |
+| 07 | [Pi · Lição 7 — Pacotes do Pi](./src/pages/topics/pi/lessons/0007-packages.html) |
+| 08 | [O mapa: LLM, agente, harness, ferramentas, skills e MCP](./src/pages/topics/pi/lessons/0008-o-mapa-dos-agentes.html) |
+| 09 | [Untitled](./src/pages/topics/pi/lessons/0009-orquestra-de-agentes.html) |
+
+### Portuguese
+
+`./src/pages/topics/portuguese/` · 2 lesson(s)
+
+| # | Lesson |
+|---|--------|
+| 01 | [Falsos amigos — as palavras que te traem](./src/pages/topics/portuguese/lessons/0001-falsos-amigos-traicoeiros.html) |
+| 02 | [Sotaque — as cinco marcas que entregam](./src/pages/topics/portuguese/lessons/0002-sotaque-cinco-marcas.html) |
+
+### Software Company
+
+`./src/pages/topics/software-company/` · 1 lesson(s)
+
+| # | Lesson |
+|---|--------|
+| 01 | [EP Software · Lição 1 — Antes do código, a pessoa (descoberta com a padeira em início)](./src/pages/topics/software-company/lessons/0001-antes-do-codigo.html) |
+
+### Software Concepts
+
+`./src/pages/topics/software-concepts/` · 12 lesson(s)
+
+| # | Lesson |
+|---|--------|
+| 01 | [SQL básico — selecionar, combinar e resumir](./src/pages/topics/software-concepts/lessons/0001-sql-foundations.html) |
+| 02 | [OAuth — o fluxo básico, visualmente](./src/pages/topics/software-concepts/lessons/0002-oauth-flow.html) |
+| 03 | [Sandbox SQL — pratique escrevendo](./src/pages/topics/software-concepts/lessons/0003-sql-sandbox.html) |
+| 04 | [Chaves relacionais — PK e FK, o 1-para-muitos](./src/pages/topics/software-concepts/lessons/0004-relational-keys.html) |
+| 05 | [Estimativa — DAU, QPS e por que um número basta](./src/pages/topics/software-concepts/lessons/0005-estimation.html) |
+| 06 | [Cache — a taxa de hit é um dial de carga do banco](./src/pages/topics/software-concepts/lessons/0006-cache-hit-rate.html) |
+| 07 | [AWS SQS — a fila que desacopla](./src/pages/topics/software-concepts/lessons/0007-aws-sqs.html) |
+| 08 | [AWS S3 — o mapa chave → bytes](./src/pages/topics/software-concepts/lessons/0008-aws-s3.html) |
+| 09 | [Apache Kafka — o log que não apaga](./src/pages/topics/software-concepts/lessons/0009-apache-kafka.html) |
+| 10 | [Redis — memória com TTL](./src/pages/topics/software-concepts/lessons/0010-redis.html) |
+| 11 | [PostgreSQL vs MySQL — irmãos, não gêmeos](./src/pages/topics/software-concepts/lessons/0011-postgres-vs-mysql.html) |
+| 12 | [Load balancer — o porteiro que divide a fila](./src/pages/topics/software-concepts/lessons/0012-load-balancer.html) |
+
+### System Design
+
+`./src/pages/topics/system-design/` · 4 lesson(s)
+
+| # | Lesson |
+|---|--------|
+| 01 | [System Design · Lição 1 — O loop de design](./src/pages/topics/system-design/lessons/0001-the-design-loop.html) |
+| 02 | [System Design · Lição 2 — As quatro forças](./src/pages/topics/system-design/lessons/0002-the-four-forces.html) |
+| 03 | [System Design · Lição 3 — Escala e estimativa](./src/pages/topics/system-design/lessons/0003-scale-and-estimation.html) |
+| 04 | [System Design · Lição 4 — Estado, acoplamento e módulos profundos](./src/pages/topics/system-design/lessons/0004-state-and-boundaries.html) |
+
+### System Design Practice
+
+`./src/pages/topics/system-design-practice/` · 6 lesson(s)
+
+| # | Lesson |
+|---|--------|
+| 01 | [System Design Dojo · Desenhe e fale](./src/pages/topics/system-design-practice/lessons/0001-draw-and-talk.html) |
+| 02 | [System Design · A escada de dificuldade](./src/pages/topics/system-design-practice/lessons/0002-the-difficulty-ladder.html) |
+| 03 | [Brief L1 — Encurtador de URL](./src/pages/topics/system-design-practice/lessons/0003-starter-url-shortener.html) |
+| 04 | [Brief L1–2 — Onboarding + email (ClearOne)](./src/pages/topics/system-design-practice/lessons/0004-starter-onboarding-email.html) |
+| 05 | [Brief L2 — Entrega de webhook (Lob)](./src/pages/topics/system-design-practice/lessons/0005-starter-webhook-delivery.html) |
+| 06 | [System Design · Warmup copy-recall](./src/pages/topics/system-design-practice/lessons/0006-warmup-copy-recall.html) |
+
+### Tooling
+
+`./src/pages/topics/tooling/` · 1 lesson(s)
+
+| # | Lesson |
+|---|--------|
+| 01 | [Vim — o loop essencial](./src/pages/topics/tooling/lessons/0001-vim-core-loop.html) |
+
+**Total: 45 lesson(s) across 10 topic(s).**
 <!-- topics:end -->
 
 ## 🗂 Repo map

@@ -1,0 +1,233 @@
+---
+// Português · Reference — ES→PT falsos amigos quick-lookup table.
+// Registered in: assets/nav.js. Linked from lesson 0001.
+import Lesson from "../../../../layouts/Lesson.astro";
+const titlePt = "Falsos amigos espanhol–português";
+const titleEn = "Spanish–Portuguese false friends";
+const titleFallback = "Falsos amigos espanhol–português";
+const bodyClass = "lang-pt";
+const viewport = "width=device-width, initial-scale=1.0";
+const assets = [
+	"<link rel=\"stylesheet\" href=\"../assets/style.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/dark.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/i18n.css\" />",
+	"<script src=\"https://unpkg.com/@phosphor-icons/web@2.1.1\"></script>",
+	"<script src=\"../assets/i18n.js\" defer></script>",
+	"<script src=\"../assets/nav.js\" defer></script>",
+	"<script src=\"../assets/reading-ui.js\" defer></script>",
+];
+
+---
+<Lesson
+	titlePt={titlePt}
+	titleEn={titleEn}
+	titleFallback={titleFallback}
+	bodyClass={bodyClass}
+	viewport={viewport}
+	assets={assets}
+>
+	<Fragment is:raw>
+    <article class="lesson">
+      <header class="hero">
+        <span class="eyebrow"
+          >⬡ Português · <span data-lang="pt">referência</span
+          ><span data-lang="en">reference</span></span
+        >
+        <h1>
+          <span data-lang="pt">Falsos amigos ES→PT</span
+          ><span data-lang="en">False friends ES→PT</span>
+        </h1>
+        <p class="lead">
+          <span data-lang="pt"
+            >A tabela que o espanhol não quer que você tenha. Modo de uso:
+            <strong>cubra a última coluna, tente lembrar, confira</strong>. Imprime
+            bem.</span
+          ><span data-lang="en"
+            >The table Spanish doesn't want you to have. How to use it:
+            <strong>cover the last column, try to recall, check</strong>. Prints
+            well.</span
+          >
+        </p>
+      </header>
+
+      <h2 class="section">
+        <span class="num">1</span
+        ><span data-lang="pt">A regra de leitura</span
+        ><span data-lang="en">How to read it</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >Cada linha: a palavra <strong>em português</strong> que parece com o
+          espanhol que você quer dizer — e o que falar em vez dela.</span
+        ><span data-lang="en"
+          >Each row: the <strong>Portuguese</strong> word that looks like the
+          Spanish you want to say — and what to say instead.</span
+        >
+      </p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th><span data-lang="pt">Português (o que significa)</span><span data-lang="en">Portuguese (what it means)</span></th>
+              <th><span data-lang="pt">Parece com (ES)</span><span data-lang="en">Looks like (ES)</span></th>
+              <th><span data-lang="pt">Diga em vez disso</span><span data-lang="en">Say instead</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>esquisito</strong> — estranho</td>
+              <td><em>exquisito</em> — delicioso</td>
+              <td>delicioso, requintado</td>
+            </tr>
+            <tr>
+              <td><strong>apelido</strong> — nome de carinho</td>
+              <td><em>apellido</em> — sobrenome</td>
+              <td>sobrenome</td>
+            </tr>
+            <tr>
+              <td><strong>sobrenome</strong> — nome de família</td>
+              <td><em>sobrenombre</em> — apelido</td>
+              <td>apelido</td>
+            </tr>
+            <tr>
+              <td><strong>largo</strong> — de largura</td>
+              <td><em>largo</em> — longo</td>
+              <td>longo, comprido</td>
+            </tr>
+            <tr>
+              <td><strong>roxo</strong> — violeta</td>
+              <td><em>rojo</em> — vermelho</td>
+              <td>vermelho</td>
+            </tr>
+            <tr>
+              <td><strong>ruivo</strong> — cabelo vermelho</td>
+              <td><em>rubio</em> — louro</td>
+              <td>louro</td>
+            </tr>
+            <tr>
+              <td><strong>cena</strong> — parte do filme/teatro</td>
+              <td><em>cena</em> — jantar</td>
+              <td>ceia, jantar</td>
+            </tr>
+            <tr>
+              <td><strong>polvo</strong> — animal de oito braços</td>
+              <td><em>polvo</em> — pó</td>
+              <td>pó</td>
+            </tr>
+            <tr>
+              <td><strong>escova</strong> — pente de cabelo</td>
+              <td><em>escoba</em> — vassoura</td>
+              <td>vassoura</td>
+            </tr>
+            <tr>
+              <td><strong>quarto</strong> — cômodo de dormir</td>
+              <td><em>cuarto</em> — qualquer cômodo</td>
+              <td>sala, cômodo</td>
+            </tr>
+            <tr>
+              <td><strong>cadeira</strong> — para sentar</td>
+              <td><em>cadera</em> — quadril</td>
+              <td>quadril</td>
+            </tr>
+            <tr>
+              <td><strong>escritório</strong> — sala de trabalho</td>
+              <td><em>escritorio</em> — escrivaninha</td>
+              <td>escrivaninha (a mesa)</td>
+            </tr>
+            <tr>
+              <td><strong>trair</strong> — quebrar a confiança</td>
+              <td><em>traer</em> — trazer</td>
+              <td>trazer</td>
+            </tr>
+            <tr>
+              <td><strong>reparar</strong> — notar</td>
+              <td><em>reparar</em> — consertar</td>
+              <td>consertar</td>
+            </tr>
+            <tr>
+              <td><strong>acordar</strong> — despertar</td>
+              <td><em>acordarse</em> — lembrar</td>
+              <td>lembrar</td>
+            </tr>
+            <tr>
+              <td><strong>rato</strong> — o animal</td>
+              <td><em>rato</em> — um tempo</td>
+              <td>tempo, instante</td>
+            </tr>
+            <tr>
+              <td><strong>barata</strong> — o inseto</td>
+              <td><em>barata</em> — barata (fem. de barato)</td>
+              <td>"a passagem barata" ✓ — cuidado com "barata" solta</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout key">
+        <span data-lang="pt"
+          >Armadilha dupla: <em>ratón</em> (ES, mouse) não existe em PT — é
+          <strong>mouse</strong> (o mesmo do inglês). E <em>exquisito</em>
+          simplesmente <strong>não é palavra em português</strong>.</span
+        ><span data-lang="en"
+          >Double trap: <em>ratón</em> (ES, mouse) doesn't exist in PT — it's
+          <strong>mouse</strong> (same as English). And <em>exquisito</em>
+          is simply <strong>not a Portuguese word</strong>.</span
+        >
+      </div>
+
+      <h2 class="section">
+        <span class="num">2</span
+        ><span data-lang="pt">Recuperação espaçada</span
+        ><span data-lang="en">Spaced retrieval</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >Dia 1: cubra a coluna e teste tudo. Dia 3: só as linhas que errou.
+          Dia 7: fale cada par em voz alta, sem olhar.
+          <strong>Errar na revisão é parte do método</strong>, não falha.</span
+        ><span data-lang="en"
+          >Day 1: cover the column and test everything. Day 3: only the rows you
+          missed. Day 7: say each pair out loud, without looking.
+          <strong>Missing items on review is part of the method</strong>, not
+          failure.</span
+        >
+      </p>
+
+      <footer class="lesson-foot">
+        <div>
+          <span data-lang="pt">Dados verificados em:</span
+          ><span data-lang="en">Data verified against:</span>
+          <a
+            href="https://ielanguages.com/spanish-portuguese-false-cognates.html"
+            >FSI — From Spanish to Portuguese</a
+          >
+          · <a href="https://www.tradulex.com/Glossaries/falsos_por-esp.htm">Tradulex</a>
+        </div>
+        <a
+          class="next-card"
+          href="../lessons/0001-falsos-amigos-traicoeiros.html"
+          ><span class="lbl"
+            ><span data-lang="pt">Lição</span
+            ><span data-lang="en">Lesson</span></span
+          >
+          <div class="t">
+            <span data-lang="pt">Falsos amigos traiçoeiros →</span
+            ><span data-lang="en">Treacherous false friends →</span>
+          </div></a
+        >
+        <div>
+          <span data-lang="pt"
+            ><i class="ph ph-chat-circle-dots" aria-hidden="true"></i> Quer uma
+            lista com as palavras do SEU trabalho ou rotina? Peça ao agente —
+            ele gera pares personalizados e adiciona aqui.</span
+          ><span data-lang="en"
+            ><i class="ph ph-chat-circle-dots" aria-hidden="true"></i> Want a
+            list with words from YOUR work or routine? Ask the agent — it can
+            generate custom pairs and add them here.</span
+          >
+          · <a href="../../../index.html">⬡ Hub</a>
+        </div>
+      </footer>
+    </article>
+  </Fragment>
+</Lesson>

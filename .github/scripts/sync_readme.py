@@ -16,7 +16,9 @@ from pathlib import Path
 
 # .github/scripts/sync_readme.py -> repo root
 ROOT = Path(__file__).resolve().parent.parent.parent
-TOPICS = ROOT / "topics"
+# Lessons live as Astro pages (post-migration); they build to <slug>.html.
+TOPICS = ROOT / "src" / "pages" / "topics"
+SRC_BASE = "./src/pages/topics"
 README = ROOT / "README.md"
 
 START = "<!-- topics:start -->"
@@ -26,16 +28,13 @@ END = "<!-- topics:end -->"
 PREFIX_RE = re.compile(r"^.*?(?:Lesson|Lição)\s*\d+\s*[—–-]\s*", re.I)
 
 
-def lesson_title(html: str) -> str:
-    # Prefer the bilingual title's English label (data-en), else the tag text.
-    m = re.search(r'<title[^>]*\bdata-en="([^"]*)"', html, re.I)
-    if m:
-        raw = unescape(m.group(1).strip())
-    else:
-        m = re.search(r"<title[^>]*>(.*?)</title>", html, re.S | re.I)
-        raw = unescape(m.group(1).strip()) if m else ""
-    title = PREFIX_RE.sub("", raw).strip()
-    return title or "Untitled"
+def lesson_title(astro: str) -> str:
+    # Frontmatter consts: prefer the Portuguese title (site is PT-first).
+    for var in ("titlePt", "titleFallback", "titleEn"):
+        m = re.search(rf'const {var} = "([^"]*)"', astro)
+        if m:
+            return unescape(m.group(1).strip()) or "Untitled"
+    return "Untitled"
 
 
 def topic_name(topic_dir: Path) -> str:
@@ -54,13 +53,14 @@ def topic_name(topic_dir: Path) -> str:
 
 def lesson_rows(lessons_dir: Path):
     rows = []
-    for f in sorted(lessons_dir.glob("*.html")):
+    for f in sorted(lessons_dir.glob("*.astro")):
         try:
-            html = f.read_text(encoding="utf-8", errors="replace")
-            title = lesson_title(html)
+            astro = f.read_text(encoding="utf-8", errors="replace")
+            title = lesson_title(astro)
+            fname = f.stem + ".html"
             head = f.name.split("-", 1)[0]
             num = int(head) if head.isdigit() else len(rows) + 1
-            rows.append((num, title, f.name))
+            rows.append((num, title, fname))
         except OSError as e:
             print(f"skip {f}: {e}", file=sys.stderr)
     return rows
@@ -90,13 +90,13 @@ def build_catalog(topics):
         total += len(rows)
         lines.append(f"### {name}")
         lines.append("")
-        lines.append(f"`topics/{slug}/` · {len(rows)} lesson(s)")
+        lines.append(f"`{SRC_BASE}/{slug}/` · {len(rows)} lesson(s)")
         lines.append("")
         if rows:
             lines += ["| # | Lesson |", "|---|--------|"]
             for num, title, fname in rows:
                 lines.append(
-                    f"| {num:02d} | [{title}](./topics/{slug}/lessons/{fname}) |"
+                    f"| {num:02d} | [{title}]({SRC_BASE}/{slug}/lessons/{fname}) |"
                 )
         else:
             lines.append("_(no lessons yet)_")

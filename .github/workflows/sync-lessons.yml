@@ -6,7 +6,8 @@ on:
   push:
     branches: [main]
     paths:
-      - "topics/**"
+      - "src/pages/topics/**"
+      - "public/topics/**"
   workflow_dispatch: # manual run from the Actions tab
 
 permissions:
@@ -21,7 +22,7 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.2.2
 
       - name: Regenerate lesson table in README
         run: python3 .github/scripts/sync_readme.py
