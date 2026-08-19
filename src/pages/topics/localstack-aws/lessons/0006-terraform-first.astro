@@ -1,0 +1,290 @@
+---
+// LocalStack · Lesson 6 — Terraform I: tflocal, provider, S3 as code, plan/apply/destroy.
+import Lesson from "../../../../layouts/Lesson.astro";
+const titlePt = "LocalStack 6 — Terraform I";
+const titleEn = "LocalStack 6 — Terraform I";
+const titleFallback = "LocalStack 6 — Terraform I";
+const bodyClass = "lang-pt";
+const viewport = "width=device-width, initial-scale=1.0";
+const assets = [
+	"<link rel=\"stylesheet\" href=\"../assets/style.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/dark.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/i18n.css\" />",
+	"<script src=\"../assets/i18n.js\" defer></script>",
+	"<script src=\"../assets/nav.js\" defer></script>",
+	"<script src=\"../assets/reading-ui.js\" defer></script>",
+];
+---
+<Lesson
+	titlePt={titlePt}
+	titleEn={titleEn}
+	titleFallback={titleFallback}
+	bodyClass={bodyClass}
+	viewport={viewport}
+	assets={assets}
+>
+	<Fragment is:raw>
+    <article class="lesson">
+      <header class="hero">
+        <span class="eyebrow">⬡ LocalStack · Lição 6 · Médio</span>
+        <h1>
+          <span data-lang="pt">Terraform: a infra vira código (revisável)</span
+          ><span data-lang="en">Terraform: infra becomes code (reviewable)</span>
+        </h1>
+        <p class="lead">
+          <span data-lang="pt"
+            >O loop <code>init → plan → apply → destroy</code> contra o
+            LocalStack com <code>tflocal</code> — e o bloco
+            <code>provider</code> que faz o Terraform <strong>falar com a sua
+            máquina em vez da nuvem</strong>.</span
+          ><span data-lang="en"
+            >The <code>init → plan → apply → destroy</code> loop against
+            LocalStack with <code>tflocal</code> — and the
+            <code>provider</code> block that makes Terraform
+            <strong>talk to your machine instead of the cloud</strong>.</span
+          >
+        </p>
+      </header>
+
+      <h2 class="section">
+        <span class="num">1</span
+        ><span data-lang="pt">O modelo: estado, plano e drift</span
+        ><span data-lang="en">The model: state, plan and drift</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >Terraform guarda um <strong>arquivo de estado</strong> (o que ele
+          acha que existe), compara com seu código e mostra um
+          <strong>plano</strong> (o que ele vai criar/mudar/apagar). CLI é
+          ação manual; Terraform é <strong>declaração revisável</strong> —
+          o diff da sua infraestrutura.</span
+        ><span data-lang="en"
+          >Terraform keeps a <strong>state file</strong> (what it thinks
+          exists), diffs it against your code and shows a
+          <strong>plan</strong> (what it will create/change/destroy). CLI is
+          manual action; Terraform is a <strong>reviewable declaration</strong>
+          — the diff of your infrastructure.</span
+        >
+      </p>
+      <pre class="block"><code>pip install terraform-local   <span class="c"># fornece `tflocal`</span>
+terraform version             <span class="c"># binary oficial necessário</span></code></pre>
+      <div class="callout key">
+        <span data-lang="pt"
+          ><code>tflocal</code> é o <code>awslocal</code> do Terraform: um
+          wrapper que <strong>injeta o provider LocalStack por baixo</strong>,
+          sem você editar nenhum HCL.</span
+        ><span data-lang="en"
+          ><code>tflocal</code> is Terraform's <code>awslocal</code>: a wrapper
+          that <strong>injects the LocalStack provider underneath</strong>,
+          without you editing any HCL.</span
+        >
+      </div>
+
+      <h2 class="section">
+        <span class="num">2</span
+        ><span data-lang="pt">Sua primeira stack como código</span
+        ><span data-lang="en">Your first stack as code</span>
+      </h2>
+      <pre class="block"><code><span class="c"># main.tf — com tflocal, o provider pode ficar mínimo</span>
+<span class="k">terraform</span> {
+  required_providers {
+    aws = {
+      source  = <span class="s">"hashicorp/aws"</span>
+      version = <span class="s">"~&gt; 5.0"</span>
+    }
+  }
+}
+
+<span class="k">provider</span> <span class="s">"aws"</span> {
+  region = <span class="s">"us-east-1"</span>
+}
+
+<span class="k">resource</span> <span class="s">"aws_s3_bucket"</span> <span class="s">"site"</span> {
+  bucket = <span class="s">"tf-site-patricio"</span>
+}
+
+<span class="k">resource</span> <span class="s">"aws_s3_bucket_versioning"</span> <span class="s">"site"</span> {
+  bucket = aws_s3_bucket.site.id
+  versioning_configuration {
+    status = <span class="s">"Enabled"</span>
+  }
+}</code></pre>
+      <pre class="block"><code>tflocal init
+tflocal plan
+<span class="c"># esperado / expected:</span>
+<span class="s">Plan: 2 to add, 0 to change, 0 to destroy.</span>
+tflocal apply -auto-approve
+tflocal destroy -auto-approve</code></pre>
+      <p>
+        <span data-lang="pt"
+          >Sem o wrapper, o provider precisa apontar cada serviço para o
+          edge port — <strong>guarde este bloco</strong>, ele é o passaporte
+          do Terraform puro ao LocalStack:</span
+        ><span data-lang="en"
+          >Without the wrapper, the provider must point each service at the
+          edge port — <strong>keep this block</strong>, it is plain
+          Terraform's passport to LocalStack:</span
+        >
+      </p>
+      <pre class="block"><code><span class="k">provider</span> <span class="s">"aws"</span> {
+  access_key                  = <span class="s">"test"</span>
+  secret_key                  = <span class="s">"test"</span>
+  region                      = <span class="s">"us-east-1"</span>
+  <span class="c"># S3 no LocalStack: path-style evita o DNS wildcard</span>
+  s3_use_path_style           = <span class="k">true</span>
+  skip_credentials_validation = <span class="k">true</span>
+  skip_metadata_api_check     = <span class="k">true</span>
+  skip_requesting_account_id  = <span class="k">true</span>
+  <span class="k">endpoints</span> {
+    s3     = <span class="s">"http://s3.localhost.localstack.cloud:4566"</span>
+    lambda = <span class="s">"http://localhost:4566"</span>
+    sqs    = <span class="s">"http://localhost:4566"</span>
+    sns    = <span class="s">"http://localhost:4566"</span>
+    dynamodb = <span class="s">"http://localhost:4566"</span>
+    iam    = <span class="s">"http://localhost:4566"</span>
+    sts    = <span class="s">"http://localhost:4566"</span>
+  }
+}</code></pre>
+      <p class="cite">
+        <a href="https://docs.localstack.cloud/aws/connecting/infrastructure-as-code/terraform/">LocalStack · Terraform</a> ·
+        <a href="https://github.com/localstack/terraform-local">terraform-local</a> ·
+        <a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/guides/custom-service-endpoints">AWS provider · endpoints</a>
+      </p>
+
+      <h2 class="section">
+        <span class="num">3</span
+        ><span data-lang="pt">Desafio (médio): clique vira código</span
+        ><span data-lang="en">Challenge (medium): clicks become code</span>
+      </h2>
+      <div class="callout key">
+        <span data-lang="pt"
+          ><strong>Objetivo:</strong> recriar em HCL o site estático da lição
+          2 (bucket <code>tf-site-patricio</code> + versão + index.html
+          herdado via <code>aws_s3_object</code>) e provar com
+          <code>curl</code> que serve.</span
+        ><span data-lang="en"
+          ><strong>Goal:</strong> recreate lesson 2's static site in HCL
+          (bucket <code>tf-site-patricio</code> + versioning + index.html via
+          <code>aws_s3_object</code>) and prove with <code>curl</code> that
+          it serves.</span
+        >
+      </div>
+      <div class="card">
+        <h3>
+          <span data-lang="pt">Passos</span><span data-lang="en">Steps</span>
+        </h3>
+        <ol>
+          <li>
+            <span data-lang="pt">Adicione ao <code>main.tf</code>:</span
+            ><span data-lang="en">Add to <code>main.tf</code>:</span>
+            <pre class="block"><code><span class="k">resource</span> <span class="s">"aws_s3_object"</span> <span class="s">"index"</span> {
+  bucket       = aws_s3_bucket.site.id
+  key          = <span class="s">"index.html"</span>
+  content      = <span class="s">"&lt;h1&gt;via terraform&lt;/h1&gt;"</span>
+  content_type = <span class="s">"text/html"</span>
+}</code></pre>
+          </li>
+          <li>
+            <span data-lang="pt">Aplique e verifique — repare no
+            path-style:</span
+            ><span data-lang="en">Apply and verify — note the path-style
+            URL:</span>
+          </li>
+        </ol>
+      </div>
+      <pre class="block"><code>tflocal apply -auto-approve
+<span class="c"># esperado: Apply complete! Resources: 3 added</span>
+curl http://localhost:4566/tf-site-patricio/index.html
+<span class="c"># esperado / expected:</span>
+<span class="s">&lt;h1&gt;via terraform&lt;/h1&gt;</span></code></pre>
+      <div class="callout warn">
+        <span data-lang="pt"
+          >Deu <code>NoSuchBucket</code> no curl? O provider do
+          <code>tflocal</code> já usa path-style; se você usar o bloco manual,
+          <strong>confira <code>s3_use_path_style = true</code></strong> —
+          sem ele o Terraform tenta <code>tf-site-patricio.localhost</code>
+          e falha.</span
+        ><span data-lang="en"
+          >Got <code>NoSuchBucket</code> on curl? <code>tflocal</code>'s
+          provider already uses path-style; with the manual block,
+          <strong>check <code>s3_use_path_style = true</code></strong> —
+          without it Terraform tries
+          <code>tf-site-patricio.localhost</code> and fails.</span
+        >
+      </div>
+
+      <h2 class="section">
+        <span class="num">4</span
+        ><span data-lang="pt">Recupere sem pistas</span
+        ><span data-lang="en">Retrieve without clues</span>
+      </h2>
+      <div class="grid cols-2">
+        <details class="card">
+          <summary>
+            <span data-lang="pt">O que o Terraform compara no plan?</span
+            ><span data-lang="en">What does Terraform compare in the plan?</span>
+          </summary>
+          <p>
+            <span data-lang="pt">Estado salvo ↔ código desejado.</span
+            ><span data-lang="en">Saved state ↔ desired code.</span>
+          </p>
+        </details>
+        <details class="card">
+          <summary>
+            <span data-lang="pt">O que o tflocal faz por você?</span
+            ><span data-lang="en">What does tflocal do for you?</span>
+          </summary>
+          <p>
+            <span data-lang="pt">Injeta endpoints LocalStack no provider
+            AWS.</span
+            ><span data-lang="en">Injects LocalStack endpoints into the AWS
+            provider.</span>
+          </p>
+        </details>
+        <details class="card">
+          <summary>
+            <span data-lang="pt">Qual flag evita o DNS wildcard do S3?</span
+            ><span data-lang="en">Which flag avoids S3's wildcard DNS?</span>
+          </summary>
+          <p><code>s3_use_path_style = true</code></p>
+        </details>
+        <details class="card">
+          <summary>
+            <span data-lang="pt">O loop completo em 4 comandos?</span
+            ><span data-lang="en">The full loop in 4 commands?</span>
+          </summary>
+          <p><code>tflocal init · plan · apply · destroy</code></p>
+        </details>
+      </div>
+
+      <footer class="lesson-foot">
+        <div>
+          <span data-lang="pt">Fonte primária:</span
+          ><span data-lang="en">Primary source:</span>
+          <a href="https://docs.localstack.cloud/aws/connecting/infrastructure-as-code/terraform/"
+            >LocalStack · Terraform integration</a
+          >
+        </div>
+        <a class="next-card" href="0007-terraform-stack.html"
+          ><span class="lbl"
+            ><span data-lang="pt">Próxima lição</span
+            ><span data-lang="en">Next lesson</span></span
+          >
+          <div class="t">
+            <span data-lang="pt">Terraform II — Lambda, API GW e DynamoDB →</span
+            ><span data-lang="en">Terraform II — Lambda, API GW and DynamoDB →</span>
+          </div></a
+        >
+        <div>
+          <span data-lang="pt"
+            >Algo não ficou claro? Pergunte ao agente — ele é seu
+            professor.</span
+          ><span data-lang="en"
+            >Anything unclear? Ask the agent—your teacher.</span
+          >
+          · <a href="../../../index.html">⬡ Hub</a>
+        </div>
+      </footer>
+    </article>
+  </Fragment>
+</Lesson>

@@ -1,0 +1,268 @@
+---
+// LocalStack · Reference — CLI + Terraform + SDK cookbook (Python/TS columns).
+import Lesson from "../../../../layouts/Lesson.astro";
+const titlePt = "LocalStack · Cookbook CLI + Terraform";
+const titleEn = "LocalStack · CLI + Terraform Cookbook";
+const titleFallback = "LocalStack · Cookbook CLI + Terraform";
+const bodyClass = "lang-pt";
+const viewport = "width=device-width, initial-scale=1.0";
+const assets = [
+	"<link rel=\"stylesheet\" href=\"../assets/style.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/dark.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/i18n.css\" />",
+	"<script src=\"../assets/i18n.js\" defer></script>",
+	"<script src=\"../assets/nav.js\" defer></script>",
+	"<script src=\"../assets/reading-ui.js\" defer></script>",
+];
+---
+<Lesson
+	titlePt={titlePt}
+	titleEn={titleEn}
+	titleFallback={titleFallback}
+	bodyClass={bodyClass}
+	viewport={viewport}
+	assets={assets}
+>
+	<Fragment is:raw>
+    <article class="lesson">
+      <header class="hero">
+        <span class="eyebrow"
+          ><span data-lang="pt">⬡ Referência · Cookbook</span
+          ><span data-lang="en">⬡ Reference · Cookbook</span></span
+        >
+        <h1>
+          <span data-lang="pt">O cookbook: CLI, SDK e Terraform</span
+          ><span data-lang="en">The cookbook: CLI, SDK and Terraform</span>
+        </h1>
+        <p class="lead">
+          <span data-lang="pt"
+            >A essência comprimida das 7 lições: <strong>um comando por
+            intenção</strong>, a mesma operação nas duas linguagens, e o bloco
+            provider que nunca mais você precisa procurar. Lições vão e vêm —
+            este doc fica.</span
+          ><span data-lang="en"
+            >The compressed essence of the 7 lessons: <strong>one command per
+            intent</strong>, the same operation in both languages, and the
+            provider block you will never search for again. Lessons come and
+            go — this doc stays.</span
+          >
+        </p>
+      </header>
+
+      <h2 class="section">
+        <span class="num">1</span
+        ><span data-lang="pt">Bootstrap diário</span
+        ><span data-lang="en">Daily bootstrap</span>
+      </h2>
+      <pre class="block"><code>docker start localstack                  <span class="c"># container de pé</span>
+export AWS_ACCESS_KEY_ID=test             <span class="c"># credenciais falsas</span>
+export AWS_SECRET_ACCESS_KEY=test
+export AWS_DEFAULT_REGION=us-east-1
+awslocal sts get-caller-identity          <span class="c"># "vivo?" — sempre rode antes</span>
+<span class="c"># alternativa moderna p/ SDKs: export AWS_ENDPOINT_URL=http://localhost:4566</span></code></pre>
+
+      <h2 class="section">
+        <span class="num">2</span
+        ><span data-lang="pt">Uma intenção, três formas</span
+        ><span data-lang="en">One intent, three forms</span>
+      </h2>
+      <div class="grid cols-2">
+        <div class="card">
+          <h3>S3 · criar bucket</h3>
+          <pre class="block"><code><span class="c"># CLI</span>
+awslocal s3 mb s3://b1
+<span class="c"># Python</span>
+boto3.client(<span class="s">"s3"</span>, endpoint_url=END)\
+  .create_bucket(Bucket=<span class="s">"b1"</span>)
+<span class="c"># TypeScript</span>
+<span class="k">new</span> S3Client({ endpoint: END, region: <span class="s">"us-east-1"</span>,
+  credentials: { accessKeyId: <span class="s">"test"</span>,
+    secretAccessKey: <span class="s">"test"</span> } })</code></pre>
+        </div>
+        <div class="card">
+          <h3>S3 · upload</h3>
+          <pre class="block"><code><span class="c"># CLI</span>
+awslocal s3 cp a.txt s3://b1/a.txt
+<span class="c"># Python</span>
+s3.put_object(Bucket=<span class="s">"b1"</span>,
+  Key=<span class="s">"a.txt"</span>, Body=<span class="s">"x"</span>.encode())
+<span class="c"># TypeScript</span>
+<span class="k">await</span> s3.send(<span class="k">new</span> PutObjectCommand({
+  Bucket: <span class="s">"b1"</span>, Key: <span class="s">"a.txt"</span>,
+  Body: <span class="s">"x"</span> }))</code></pre>
+        </div>
+        <div class="card">
+          <h3>SQS · consumir + apagar</h3>
+          <pre class="block"><code><span class="c"># CLI</span>
+awslocal sqs receive-message --queue-url URL
+awslocal sqs delete-message --queue-url URL \
+  --receipt-handle RH
+<span class="c"># Python</span>
+m = sqs.receive_message(QueueUrl=u)[
+        <span class="s">"Messages"</span>][0]
+sqs.delete_message(QueueUrl=u,
+  ReceiptHandle=m[<span class="s">"ReceiptHandle"</span>])
+<span class="c"># TypeScript</span>
+<span class="k">const</span> [m] = ( <span class="k">await</span> sqs.send(
+  <span class="k">new</span> ReceiveMessageCommand(
+    { QueueUrl: u }))).Messages!;
+<span class="k">await</span> sqs.send(<span class="k">new</span> DeleteMessageCommand(
+  { QueueUrl: u, ReceiptHandle: m.ReceiptHandle! }));</code></pre>
+        </div>
+        <div class="card">
+          <h3>DynamoDB · contador</h3>
+          <pre class="block"><code><span class="c"># CLI</span>
+awslocal dynamodb get-item \
+  --table-name visitas \
+  --key <span class="s">'{"path":{"S":"/home"}}'</span>
+<span class="c"># Python</span>
+db.update_item(TableName=t,
+  Key={<span class="s">"path"</span>: {<span class="s">"S"</span>: p}},
+  UpdateExpression=<span class="s">"ADD visitas :um"</span>,
+  ExpressionAttributeValues={
+    <span class="s">":um"</span>: {<span class="s">"N"</span>: <span class="s">"1"</span>}})
+<span class="c"># TypeScript</span>
+<span class="k">await</span> db.send(<span class="k">new</span> UpdateItemCommand({
+  TableName: t, Key: { path: { S: p } },
+  UpdateExpression: <span class="s">"ADD visitas :um"</span>,
+  ExpressionAttributeValues:
+    { <span class="s">":um"</span>: { N: <span class="s">"1"</span> } } }));</code></pre>
+        </div>
+      </div>
+
+      <h2 class="section">
+        <span class="num">3</span
+        ><span data-lang="pt">Lambda — os 8 comandos que cobrem 95%</span
+        ><span data-lang="en">Lambda — the 8 commands covering 95%</span>
+      </h2>
+      <pre class="block"><code>awslocal lambda create-function --function-name f \
+  --runtime python3.12 --handler lambda_function.handler \
+  --zipfile fileb://function.zip --role arn:aws:iam::000000000000:role/R
+
+awslocal lambda invoke --payload <span class="s">'{"a":1}'</span> \
+  --cli-binary-format raw-in-base64-out out.json &amp;&amp; cat out.json
+
+awslocal lambda update-function-code --function-name f \
+  --zipfile fileb://function.zip
+awslocal lambda update-function-configuration --function-name f \
+  --environment <span class="s">"Variables={K=V}"</span>
+
+awslocal logs tail /aws/lambda/f --since 5m
+awslocal lambda get-function-configuration --function-name f \
+  --query Environment.Variables
+awslocal lambda delete-function --function-name f</code></pre>
+
+      <h2 class="section">
+        <span class="num">4</span
+        ><span data-lang="pt">Terraform — o bloco e o loop</span
+        ><span data-lang="en">Terraform — the block and the loop</span>
+      </h2>
+      <pre class="block"><code>pip install terraform-local        <span class="c"># wrapper `tflocal`</span>
+tflocal init | plan | apply -auto-approve | destroy -auto-approve
+
+<span class="c"># provider manual (sem tflocal) — s3_use_path_style é obrigatório</span>
+<span class="k">provider</span> <span class="s">"aws"</span> {
+  access_key                  = <span class="s">"test"</span>
+  secret_key                  = <span class="s">"test"</span>
+  region                      = <span class="s">"us-east-1"</span>
+  s3_use_path_style           = <span class="k">true</span>
+  skip_credentials_validation = <span class="k">true</span>
+  skip_metadata_api_check     = <span class="k">true</span>
+  <span class="k">endpoints</span> {
+    s3       = <span class="s">"http://s3.localhost.localstack.cloud:4566"</span>
+    lambda   = <span class="s">"http://localhost:4566"</span>
+    sqs      = <span class="s">"http://localhost:4566"</span>
+    sns      = <span class="s">"http://localhost:4566"</span>
+    dynamodb = <span class="s">"http://localhost:4566"</span>
+  }
+}</code></pre>
+
+      <h2 class="section">
+        <span class="num">5</span
+        ><span data-lang="pt">URLs locais &amp; limites do plano grátis</span
+        ><span data-lang="en">Local URLs &amp; free-tier limits</span>
+      </h2>
+      <div class="grid cols-2">
+        <div class="card">
+          <h3>
+            <span data-lang="pt">URLs que importam</span
+            ><span data-lang="en">URLs that matter</span>
+          </h3>
+          <p>
+            <code>S3: http://localhost:4566/&lt;bucket&gt;/&lt;key&gt;</code><br />
+            <code>S3 alt: http://s3.localhost.localstack.cloud:4566/…</code><br />
+            <code>API GW: http://&lt;apiId&gt;.execute-api.localhost.localstack.cloud:4566/&lt;stage&gt;/&lt;path&gt;</code><br />
+            <code>API GW alt: http://localhost:4566/_aws/execute-api/&lt;apiId&gt;/&lt;stage&gt;/&lt;path&gt;</code><br />
+            <code>SQS queue-url: http://localhost:4566/000000000000/&lt;fila&gt;</code>
+          </p>
+        </div>
+        <div class="card">
+          <h3>
+            <span data-lang="pt">Community (grátis) vs pago</span
+            ><span data-lang="en">Community (free) vs paid</span>
+          </h3>
+          <p>
+            <span data-lang="pt"><strong>Grátis:</strong> S3, Lambda, SQS,
+            SNS, DynamoDB (+Streams), API GW v1, IAM, CloudWatch Logs,
+            Secrets Manager, Route53.</span
+            ><span data-lang="en"><strong>Free:</strong> S3, Lambda, SQS,
+            SNS, DynamoDB (+Streams), API GW v1, IAM, CloudWatch Logs,
+            Secrets Manager, Route53.</span
+            ><br />
+            <span data-lang="pt"><strong>Pagos:</strong> RDS, ECR, API GW
+            v2 (HTTP/WebSocket) — veja a comparação oficial.</span
+            ><span data-lang="en"><strong>Paid:</strong> RDS, ECR, API GW
+            v2 (HTTP/WebSocket) — check the official comparison.</span
+            >
+          </p>
+        </div>
+      </div>
+      <div class="callout key">
+        <span data-lang="pt"
+          >Regra final de depuração: <strong>quando algo falhar, rode
+          primeiro <code>sts get-caller-identity</code></strong> (container
+          vivo?) e <code>logs tail</code> (o que a função viu?). Nove em dez
+          mistérios morrem aí.</span
+        ><span data-lang="en"
+          >Final debugging rule: <strong>when something fails, first run
+          <code>sts get-caller-identity</code></strong> (container alive?)
+          and <code>logs tail</code> (what did the function see?). Nine out
+          of ten mysteries die there.</span
+        >
+      </div>
+      <p class="cite">
+        <a href="https://docs.localstack.cloud/aws/connecting/aws-cli/">awslocal</a> ·
+        <a href="https://github.com/localstack/terraform-local">tflocal</a> ·
+        <a href="https://docs.localstack.cloud/aws/services/apigateway/">URLs do API GW</a> ·
+        <a href="https://www.localstack.cloud/pricing-comparison">planos</a>
+      </p>
+
+      <footer class="lesson-foot">
+        <div>
+          <span data-lang="pt">Fontes:</span
+          ><span data-lang="en">Sources:</span>
+          <a href="../RESOURCES.md">recursos do tópico</a>
+        </div>
+        <a class="next-card" href="../lessons/0001-localstack-up.html"
+          ><span class="lbl"
+            ><span data-lang="pt">Recomeçar</span
+            ><span data-lang="en">Start over</span></span
+          >
+          <div class="t">
+            <span data-lang="pt">Lição 1 — LocalStack no Docker →</span
+            ><span data-lang="en">Lesson 1 — LocalStack in Docker →</span>
+          </div></a
+        >
+        <div>
+          <span data-lang="pt"
+            >Algo não ficou claro? Pergunte ao agente — ele é seu
+            professor.</span
+          ><span data-lang="en"
+            >Anything unclear? Ask the agent—your teacher.</span
+          >
+          · <a href="../../../index.html">⬡ Hub</a>
+        </div>
+      </footer>
+    </article>
+  </Fragment>
+</Lesson>

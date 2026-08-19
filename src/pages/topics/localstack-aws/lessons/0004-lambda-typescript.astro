@@ -1,0 +1,286 @@
+---
+// LocalStack · Lesson 4 — Lambda in TypeScript: build, bundle, deploy + runtime comparison.
+import Lesson from "../../../../layouts/Lesson.astro";
+const titlePt = "LocalStack 4 — Lambda em TypeScript";
+const titleEn = "LocalStack 4 — Lambda in TypeScript";
+const titleFallback = "LocalStack 4 — Lambda em TypeScript";
+const bodyClass = "lang-pt";
+const viewport = "width=device-width, initial-scale=1.0";
+const assets = [
+	"<link rel=\"stylesheet\" href=\"../assets/style.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/dark.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/i18n.css\" />",
+	"<script src=\"../assets/i18n.js\" defer></script>",
+	"<script src=\"../assets/nav.js\" defer></script>",
+	"<script src=\"../assets/reading-ui.js\" defer></script>",
+];
+---
+<Lesson
+	titlePt={titlePt}
+	titleEn={titleEn}
+	titleFallback={titleFallback}
+	bodyClass={bodyClass}
+	viewport={viewport}
+	assets={assets}
+>
+	<Fragment is:raw>
+    <article class="lesson">
+      <header class="hero">
+        <span class="eyebrow">⬡ LocalStack · Lição 4 · Médio</span>
+        <h1>
+          <span data-lang="pt">Lambda em TypeScript: compile, empacote, invoque</span
+          ><span data-lang="en">Lambda in TypeScript: compile, bundle, invoke</span>
+        </h1>
+        <p class="lead">
+          <span data-lang="pt"
+            >A mesma Lambda da lição anterior, agora em Node — e a única
+            diferença que importa: <strong>TypeScript precisa virar JavaScript
+            antes do zip</strong>.</span
+          ><span data-lang="en"
+            >The same Lambda from the previous lesson, now on Node — and the
+            only difference that matters: <strong>TypeScript must become
+            JavaScript before the zip</strong>.</span
+          >
+        </p>
+      </header>
+
+      <h2 class="section">
+        <span class="num">1</span
+        ><span data-lang="pt">O handler: tipado, exportado como default</span
+        ><span data-lang="en">The handler: typed, exported as default</span>
+      </h2>
+      <pre class="block"><code><span class="c">// lambda.ts — APIGateway-style, serve p/ invoke direto também</span>
+<span class="k">export const</span> handler = <span class="k">async</span> (event: <span class="k">any</span> = {}) <span class="k">=&gt;</span> {
+  <span class="k">const</span> name = event.name ?? <span class="s">"mundo"</span>;
+  console.log(<span class="s">`recebi: </span>${JSON.stringify(event)}<span class="s">`</span>); <span class="c">// vira log</span>
+  <span class="k">return</span> {
+    statusCode: 200,
+    body: JSON.stringify({ msg: <span class="s">`ola, </span>${name}<span class="s">`</span> }),
+  };
+};
+
+<span class="k">export default</span> handler; <span class="c">// handlers de .js/.mjs usam default</span></code></pre>
+      <div class="callout key">
+        <span data-lang="pt"
+          >O runtime Node espera <strong>JavaScript no zip</strong>. O fluxo é
+          sempre: <code>ts → js → zip → update-function-code</code>. O
+          <code>esbuild</code> faz os dois primeiros passos num comando.</span
+        ><span data-lang="en"
+          >The Node runtime expects <strong>JavaScript in the zip</strong>. The
+          flow is always: <code>ts → js → zip → update-function-code</code>.
+          <code>esbuild</code> does the first two in one command.</span
+        >
+      </div>
+
+      <h2 class="section">
+        <span class="num">2</span
+        ><span data-lang="pt">Build + deploy</span
+        ><span data-lang="en">Build + deploy</span>
+      </h2>
+      <pre class="block"><code>mkdir ola-ts &amp;&amp; cd ola-ts
+npm init -y &gt;/dev/null
+npm i -D esbuild typescript @types/node
+
+<span class="c"># compila + empacota num index.mjs autossuficiente</span>
+npx esbuild lambda.ts --bundle --platform=node \
+  --format=esm --outfile=index.mjs
+
+zip -j function-ts.zip index.mjs
+
+<span class="c"># a role pode ser a mesma da lição anterior</span>
+awslocal lambda create-function \
+  --function-name ola-ts \
+  --runtime nodejs20.x \
+  --handler index.handler \
+  --zipfile fileb://function-ts.zip \
+  --role arn:aws:iam::000000000000:role/lambda-python-role</code></pre>
+      <pre class="block"><code>awslocal lambda invoke \
+  --payload <span class="s">'{"name":"Patricio"}'</span> \
+  --cli-binary-format raw-in-base64-out \
+  out-ts.json &amp;&amp; cat out-ts.json
+<span class="c"># esperado / expected:</span>
+<span class="s">{"statusCode":200,"body":"{\"msg\":\"ola, Patricio\"}"}</span></code></pre>
+      <div class="callout warn">
+        <span data-lang="pt"
+          >Formato ESM + <code>handler index.handler</code>: o arquivo
+          empacotado é <code>index.mjs</code> e a exportação usada é a
+          <code>default</code>. <strong>Se trocar <code>--format</code>,
+          troque a extensão</strong> (<code>cjs</code> → <code>index.js</code>
+          com <code>module.exports</code>).</span
+        ><span data-lang="en"
+          >ESM format + <code>handler index.handler</code>: the bundled file is
+          <code>index.mjs</code> and the export used is <code>default</code>.
+          <strong>If you change <code>--format</code>, change the
+          extension</strong> (<code>cjs</code> → <code>index.js</code> with
+          <code>module.exports</code>).</span
+        >
+      </div>
+
+      <h2 class="section">
+        <span class="num">3</span
+        ><span data-lang="pt">Python vs TypeScript: quando escolher qual</span
+        ><span data-lang="en">Python vs TypeScript: when to pick which</span>
+      </h2>
+      <div class="grid cols-2">
+        <div class="card">
+          <h3>
+            <span data-lang="pt">Python</span
+            ><span data-lang="en">Python</span>
+          </h3>
+          <p>
+            <span data-lang="pt"
+              >Zip direto do <code>.py</code>, sem build. Ideal para
+              <strong>scripts de dados e ciência</strong>; boto3 já vem no
+              runtime.</span
+            ><span data-lang="en"
+              >Zip the <code>.py</code> directly, no build. Ideal for
+              <strong>data and science scripts</strong>; boto3 ships in the
+              runtime.</span
+            >
+          </p>
+        </div>
+        <div class="card">
+          <h3>
+            <span data-lang="pt">TypeScript</span
+            ><span data-lang="en">TypeScript</span>
+          </h3>
+          <p>
+            <span data-lang="pt"
+              >Exige build, mas <strong>tipa o evento e o retorno</strong> — e
+              compartilha tipos com o front. Escolha padrão em stacks
+              full-stack TS.</span
+            ><span data-lang="en"
+              >Needs a build, but <strong>types the event and the
+              return</strong> — and shares types with the front end. Default
+              choice in full-stack TS shops.</span
+            >
+          </p>
+        </div>
+      </div>
+      <p class="cite">
+        <a href="https://docs.localstack.cloud/aws/services/lambda/">Lambda no LocalStack</a> ·
+        <a href="https://docs.aws.amazon.com/lambda/latest/dg/lambda-nodejs.html">AWS · Node.js runtimes</a> ·
+        <a href="https://esbuild.github.io/">esbuild</a>
+      </p>
+
+      <h2 class="section">
+        <span class="num">4</span
+        ><span data-lang="pt">Desafio (médio): o mesmo contrato, outra linguagem</span
+        ><span data-lang="en">Challenge (medium): same contract, other language</span>
+      </h2>
+      <div class="callout key">
+        <span data-lang="pt"
+          ><strong>Objetivo:</strong> a função <code>ola-ts</code> lê a env
+          var <code>PLACE</code> (como a Python fez) e devolve
+          <code>{"msg":"ola de &lt;PLACE&gt;"}</code>. Uma linha a mais de
+          código, dois comandos de update.</span
+        ><span data-lang="en"
+          ><strong>Goal:</strong> the <code>ola-ts</code> function reads the
+          <code>PLACE</code> env var (like the Python one) and returns
+          <code>{"msg":"ola de &lt;PLACE&gt;"}</code>. One extra line of code,
+          two update commands.</span
+        >
+      </div>
+      <div class="card">
+        <h3>
+          <span data-lang="pt">Passos</span><span data-lang="en">Steps</span>
+        </h3>
+        <ol>
+          <li>
+            <span data-lang="pt">Leia a variável com
+            <code>process.env.PLACE</code> (dê fallback <code>"mundo"</code>).</span
+            ><span data-lang="en">Read it with
+            <code>process.env.PLACE</code> (fall back to
+            <code>"mundo"</code>).</span>
+          </li>
+          <li>
+            <code>esbuild</code> <span data-lang="pt">de novo, zip de novo,</span
+            ><span data-lang="en">again, zip again,</span>
+            <code>awslocal lambda update-function-code --function-name ola-ts --zipfile fileb://function-ts.zip</code>
+          </li>
+          <li>
+            <span data-lang="pt">Env var:</span
+            ><span data-lang="en">Env var:</span>
+            <code>awslocal lambda update-function-configuration --function-name ola-ts --environment "Variables={PLACE=localstack}"</code>
+          </li>
+        </ol>
+      </div>
+      <pre class="block"><code>awslocal lambda invoke --payload <span class="s">'{}'</span> \
+  --cli-binary-format raw-in-base64-out out-ts.json &amp;&amp; cat out-ts.json
+awslocal logs tail /aws/lambda/ola-ts --since 2m
+<span class="c"># esperado / expected:</span>
+<span class="s">{"statusCode":200,"body":"{\"msg\":\"ola de localstack\"}"}</span>
+<span class="s">recebi: {}</span></code></pre>
+
+      <h2 class="section">
+        <span class="num">5</span
+        ><span data-lang="pt">Recupere sem pistas</span
+        ><span data-lang="en">Retrieve without clues</span>
+      </h2>
+      <div class="grid cols-2">
+        <details class="card">
+          <summary>
+            <span data-lang="pt">Qual a diferença de deploy Python → TS?</span
+            ><span data-lang="en">What is the deploy difference Python → TS?</span>
+          </summary>
+          <p>
+            <span data-lang="pt">Python: zip do fonte. TS: build para JS antes
+            do zip.</span
+            ><span data-lang="en">Python: zip the source. TS: build to JS
+            before zipping.</span>
+          </p>
+        </details>
+        <details class="card">
+          <summary>
+            <span data-lang="pt">Um comando esbuild para ESM?</span
+            ><span data-lang="en">One esbuild command for ESM?</span>
+          </summary>
+          <p><code>npx esbuild lambda.ts --bundle --platform=node --format=esm --outfile=index.mjs</code></p>
+        </details>
+        <details class="card">
+          <summary>
+            <span data-lang="pt">Como ler env var em cada runtime?</span
+            ><span data-lang="en">How to read an env var in each runtime?</span>
+          </summary>
+          <p><code>os.environ["PLACE"]</code> · <code>process.env.PLACE</code></p>
+        </details>
+        <details class="card">
+          <summary>
+            <span data-lang="pt">Onde foi o <code>console.log</code> parar?</span
+            ><span data-lang="en">Where did the <code>console.log</code> go?</span>
+          </summary>
+          <p><code>awslocal logs tail /aws/lambda/ola-ts --since 5m</code></p>
+        </details>
+      </div>
+
+      <footer class="lesson-foot">
+        <div>
+          <span data-lang="pt">Fonte primária:</span
+          ><span data-lang="en">Primary source:</span>
+          <a href="https://docs.aws.amazon.com/lambda/latest/dg/lambda-nodejs.html"
+            >AWS · Lambda Node.js runtime</a
+          >
+        </div>
+        <a class="next-card" href="0005-event-driven.html"
+          ><span class="lbl"
+            ><span data-lang="pt">Próxima lição</span
+            ><span data-lang="en">Next lesson</span></span
+          >
+          <div class="t">
+            <span data-lang="pt">Eventos — SNS, SQS e gatilhos de S3 →</span
+            ><span data-lang="en">Events — SNS, SQS and S3 triggers →</span>
+          </div></a
+        >
+        <div>
+          <span data-lang="pt"
+            >Algo não ficou claro? Pergunte ao agente — ele é seu
+            professor.</span
+          ><span data-lang="en"
+            >Anything unclear? Ask the agent—your teacher.</span
+          >
+          · <a href="../../../index.html">⬡ Hub</a>
+        </div>
+      </footer>
+    </article>
+  </Fragment>
+</Lesson>

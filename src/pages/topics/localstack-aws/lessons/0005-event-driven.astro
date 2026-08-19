@@ -1,0 +1,321 @@
+---
+// LocalStack · Lesson 5 — events: SNS fan-out to SQS, S3 trigger → polyglot Lambda.
+import Lesson from "../../../../layouts/Lesson.astro";
+const titlePt = "LocalStack 5 — SNS, SQS e gatilhos";
+const titleEn = "LocalStack 5 — SNS, SQS and triggers";
+const titleFallback = "LocalStack 5 — SNS, SQS e gatilhos";
+const bodyClass = "lang-pt";
+const viewport = "width=device-width, initial-scale=1.0";
+const assets = [
+	"<link rel=\"stylesheet\" href=\"../assets/style.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/dark.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/i18n.css\" />",
+	"<script src=\"../assets/i18n.js\" defer></script>",
+	"<script src=\"../assets/nav.js\" defer></script>",
+	"<script src=\"../assets/reading-ui.js\" defer></script>",
+];
+---
+<Lesson
+	titlePt={titlePt}
+	titleEn={titleEn}
+	titleFallback={titleFallback}
+	bodyClass={bodyClass}
+	viewport={viewport}
+	assets={assets}
+>
+	<Fragment is:raw>
+    <article class="lesson">
+      <header class="hero">
+        <span class="eyebrow">⬡ LocalStack · Lição 5 · Médio+</span>
+        <h1>
+          <span data-lang="pt">Eventos: publique, espalhe, consuma</span
+          ><span data-lang="en">Events: publish, fan out, consume</span>
+        </h1>
+        <p class="lead">
+          <span data-lang="pt"
+            >A infraestrutura orientada a eventos que aparece em toda vaga
+            sênior: <strong>SNS fan-out para SQS</strong>, gatilho de S3, e
+            uma stack poliglota — produtor em TypeScript, consumidor em
+            Python.</span
+          ><span data-lang="en"
+            >The event-driven infrastructure in every senior job posting:
+            <strong>SNS fan-out to SQS</strong>, an S3 trigger, and a polyglot
+            stack — TypeScript producer, Python consumer.</span
+          >
+        </p>
+      </header>
+
+      <h2 class="section">
+        <span class="num">1</span
+        ><span data-lang="pt">O modelo: tópico, fila e polling</span
+        ><span data-lang="en">The model: topic, queue and polling</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          ><strong>SNS é push para quem se inscreve</strong> (uma mensagem, N
+          destinos). <strong>SQS é uma fila puxada pelo consumidor</strong>
+          (uma mensagem, 1 dono por vez). O padrão clássico: SNS → várias
+          SQS — <strong>fan-out</strong>. Cada fila processa no seu ritmo,
+          com retry isolado.</span
+        ><span data-lang="en"
+          ><strong>SNS pushes to subscribers</strong> (one message, N
+          destinations). <strong>SQS is a queue pulled by the consumer</strong>
+          (one message, 1 owner at a time). The classic pattern: SNS → many
+          SQS — <strong>fan-out</strong>. Each queue processes at its own
+          pace, with isolated retries.</span
+        >
+      </p>
+      <pre class="block"><code><span class="c"># 1 — o tópico e duas filas</span>
+awslocal sns create-topic --name pedidos
+awslocal sqs create-queue --queue-name pedidos-email
+awslocal sqs create-queue --queue-name pedidos-fraude
+
+<span class="c"># 2 — assina cada fila no tópico (fan-out)</span>
+awslocal sns subscribe \
+  --topic-arn arn:aws:sns:us-east-1:000000000000:pedidos \
+  --protocol sqs \
+  --notification-endpoint arn:aws:sqs:us-east-1:000000000000:pedidos-email
+
+awslocal sns subscribe \
+  --topic-arn arn:aws:sns:us-east-1:000000000000:pedidos \
+  --protocol sqs \
+  --notification-endpoint arn:aws:sqs:us-east-1:000000000000:pedidos-fraude
+
+<span class="c"># 3 — publique uma vez</span>
+awslocal sns publish \
+  --topic-arn arn:aws:sns:us-east-1:000000000000:pedidos \
+  --message <span class="s">'{"pedido":42,"total":199.9}'</span></code></pre>
+      <div class="callout key">
+        <span data-lang="pt"
+          >Fila recebe o evento <strong>envelopado em SNS</strong>: o JSON
+          chega dentro de <code>Message</code>, com <code>Subject</code> e
+          <code>MessageId</code> ao redor. Parseie duas vezes, não uma.</span
+        ><span data-lang="en"
+          >The queue receives the event <strong>wrapped in SNS</strong>: the
+          JSON arrives inside <code>Message</code>, with <code>Subject</code>
+          and <code>MessageId</code> around it. Parse twice, not once.</span
+        >
+      </div>
+      <pre class="block"><code>awslocal sqs receive-message \
+  --queue-url http://localhost:4566/000000000000/pedidos-email \
+  --max-number-of-messages 1
+<span class="c"># esperado (trecho):</span>
+<span class="s">"Body": "{\"Type\": \"Notification\", ... \"Message\": \"{\\\"pedido\\\": 42,\\\"total\\\":199.9}\"}"</span>
+
+awslocal sqs receive-message \
+  --queue-url http://localhost:4566/000000000000/pedidos-fraude \
+  --max-number-of-messages 1
+<span class="c"># a MESMA mensagem também está aqui — fan-out</span></code></pre>
+
+      <h2 class="section">
+        <span class="num">2</span
+        ><span data-lang="pt">Produtor TS, consumidor Python (as duas linguagens)</span
+        ><span data-lang="en">TS producer, Python consumer (both languages)</span>
+      </h2>
+      <div class="grid cols-2">
+        <div class="card">
+          <h3>TypeScript · publica</h3>
+          <pre class="block"><code>npm i @aws-sdk/client-sns</code></pre>
+          <pre class="block"><code><span class="k">import</span> { SNSClient, PublishCommand }
+  <span class="k">from</span> <span class="s">"@aws-sdk/client-sns"</span>;
+
+<span class="k">const</span> sns = <span class="k">new</span> SNSClient({
+  endpoint: <span class="s">"http://localhost:4566"</span>,
+  region: <span class="s">"us-east-1"</span>,
+  credentials: {
+    accessKeyId: <span class="s">"test"</span>,
+    secretAccessKey: <span class="s">"test"</span> },
+});
+
+<span class="k">await</span> sns.send(<span class="k">new</span> PublishCommand({
+  TopicArn:
+    <span class="s">"arn:aws:sns:us-east-1:000000000000:pedidos"</span>,
+  Message: JSON.stringify({
+    pedido: 43, total: 20.5 }),
+}));
+console.log(<span class="s">"publicado"</span>);</code></pre>
+        </div>
+        <div class="card">
+          <h3>Python · consome</h3>
+          <pre class="block"><code>pip install boto3</code></pre>
+          <pre class="block"><code><span class="k">import</span> json, boto3
+
+sqs = boto3.client(<span class="s">"sqs"</span>,
+    endpoint_url=<span class="s">"http://localhost:4566"</span>)
+url = (sqs.get_queue_url(QueueName=
+    <span class="s">"pedidos-email"</span>)[<span class="s">"QueueUrl"</span>])
+
+msgs = sqs.receive_message(
+    QueueUrl=url, MaxNumberOfMessages=1)[
+      <span class="s">"Messages"</span>]
+<span class="k">for</span> m <span class="k">in</span> msgs:
+    pedido = json.loads(
+        json.loads(m[<span class="s">"Body"</span>])[<span class="s">"Message"</span>])
+    print(pedido[<span class="s">"pedido"</span>])
+    sqs.delete_message(  <span class="c"># confirma</span>
+        QueueUrl=url,
+        ReceiptHandle=m[<span class="s">"ReceiptHandle"</span>])
+<span class="c"># esperado: 43</span></code></pre>
+        </div>
+      </div>
+      <div class="callout warn">
+        <span data-lang="pt"
+          >A mensagem <strong>só sai da fila</strong> com
+          <code>delete_message</code> — receber não apaga. Sem isso, a
+          mensagem volta e você processa duplicado.</span
+        ><span data-lang="en"
+          >The message <strong>only leaves the queue</strong> with
+          <code>delete_message</code> — receiving does not delete it. Skip it
+          and the message returns and you process a duplicate.</span
+        >
+      </div>
+
+      <h2 class="section">
+        <span class="num">3</span
+        ><span data-lang="pt">Desafio (médio+): gatilho de S3 → Lambda</span
+        ><span data-lang="en">Challenge (medium+): S3 trigger → Lambda</span>
+      </h2>
+      <div class="callout key">
+        <span data-lang="pt"
+          ><strong>Objetivo:</strong> todo upload em
+          <code>s3://entradas-patricio/</code> dispara a Lambda Python
+          <code>ola-python</code> (lição 3), que loga a chave do arquivo.
+          Prova: o log contém a chave.</span
+        ><span data-lang="en"
+          ><strong>Goal:</strong> every upload to
+          <code>s3://entradas-patricio/</code> triggers the Python Lambda
+          <code>ola-python</code> (lesson 3), which logs the object key.
+          Proof: the log contains the key.</span
+        >
+      </div>
+      <div class="card">
+        <h3>
+          <span data-lang="pt">Passos</span><span data-lang="en">Steps</span>
+        </h3>
+        <ol>
+          <li>
+            <span data-lang="pt">Dê à role da Lambda permissão de leitura no
+            bucket ( política inline):</span
+            ><span data-lang="en">Give the Lambda role read access to the
+            bucket (inline policy):</span>
+            <code>awslocal iam put-role-policy --role-name lambda-python-role --policy-name s3read --policy-document '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":["s3:GetObject"],"Resource":"arn:aws:s3:::entradas-patricio/*"}]}'</code>
+          </li>
+          <li>
+            <span data-lang="pt">Autorize o S3 a invocar a função
+            (bucket
+            owner = conta <code>000000000000</code>):</span
+            ><span data-lang="en">Let S3 invoke the function (bucket owner =
+            account <code>000000000000</code>):</span>
+            <code>awslocal lambda add-permission --function-name ola-python --statement-id s3invoke --action lambda:InvokeFunction --principal s3.amazonaws.com --source-arn arn:aws:s3:::entradas-patricio --source-account 000000000000</code>
+          </li>
+          <li>
+            <span data-lang="pt">Crie a notificação no bucket:</span
+            ><span data-lang="en">Create the bucket notification:</span>
+            <code>awslocal s3api put-bucket-notification-configuration --bucket entradas-patricio --notification-configuration '{"LambdaFunctionConfigurations":[{"LambdaFunctionArn":"arn:aws:lambda:us-east-1:000000000000:function:ola-python","Events":["s3:ObjectCreated:*"]}]}'</code>
+          </li>
+          <li>
+            <span data-lang="pt">Suba um arquivo e olhe os logs.</span
+            ><span data-lang="en">Upload a file and watch the logs.</span>
+          </li>
+        </ol>
+      </div>
+      <pre class="block"><code>awslocal s3 mb s3://entradas-patricio
+echo teste &gt; t.txt
+awslocal s3 cp t.txt s3://entradas-patricio/t.txt
+sleep 1
+awslocal logs tail /aws/lambda/ola-python --since 2m
+<span class="c"># esperado: uma linha com "recebi:" seguida do evento</span>
+<span class="c"># contendo "s3:ObjectCreated:Put" e "object":{"key":"t.txt"}</span></code></pre>
+      <p class="cite">
+        <a href="https://docs.localstack.cloud/aws/services/sns/">SNS</a> ·
+        <a href="https://docs.localstack.cloud/aws/services/sqs/">SQS</a> ·
+        <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-s3.html">AWS · usando Lambda com S3</a>
+      </p>
+
+      <h2 class="section">
+        <span class="num">4</span
+        ><span data-lang="pt">Recupere sem pistas</span
+        ><span data-lang="en">Retrieve without clues</span>
+      </h2>
+      <div class="grid cols-2">
+        <details class="card">
+          <summary>
+            <span data-lang="pt">SNS vs SQS em uma frase cada?</span
+            ><span data-lang="en">SNS vs SQS in one line each?</span>
+          </summary>
+          <p>
+            <span data-lang="pt">SNS: push, N destinos. SQS: fila, consumo
+            puxado, 1 dono por mensagem.</span
+            ><span data-lang="en">SNS: push, N destinations. SQS: queue, pulled
+            consumption, 1 owner per message.</span>
+          </p>
+        </details>
+        <details class="card">
+          <summary>
+            <span data-lang="pt">Quando a mensagem sai da fila SQS?</span
+            ><span data-lang="en">When does a message leave the SQS queue?</span>
+          </summary>
+          <p>
+            <span data-lang="pt">No <code>delete_message</code> com o
+            <code>ReceiptHandle</code>.</span
+            ><span data-lang="en">On <code>delete_message</code> with the
+            <code>ReceiptHandle</code>.</span>
+          </p>
+        </details>
+        <details class="card">
+          <summary>
+            <span data-lang="pt">Por que o JSON vem "duas vezes"?</span
+            ><span data-lang="en">Why does the JSON come "twice"?</span>
+          </summary>
+          <p>
+            <span data-lang="pt">O envelope SNS embute o payload dentro de
+            <code>Message</code> como string.</span
+            ><span data-lang="en">The SNS envelope embeds the payload inside
+            <code>Message</code> as a string.</span>
+          </p>
+        </details>
+        <details class="card">
+          <summary>
+            <span data-lang="pt">Quais 3 peças autorizam S3 → Lambda?</span
+            ><span data-lang="en">Which 3 pieces authorize S3 → Lambda?</span>
+          </summary>
+          <p>
+            <span data-lang="pt">Role com permissão S3 +
+            <code>add-permission</code> + notificação do bucket.</span
+            ><span data-lang="en">Role with S3 access +
+            <code>add-permission</code> + bucket notification.</span>
+          </p>
+        </details>
+      </div>
+
+      <footer class="lesson-foot">
+        <div>
+          <span data-lang="pt">Fonte primária:</span
+          ><span data-lang="en">Primary source:</span>
+          <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-s3.html"
+            >AWS · Using Lambda with S3</a
+          >
+        </div>
+        <a class="next-card" href="0006-terraform-first.html"
+          ><span class="lbl"
+            ><span data-lang="pt">Próxima lição</span
+            ><span data-lang="en">Next lesson</span></span
+          >
+          <div class="t">
+            <span data-lang="pt">Terraform I — tflocal e S3 como código →</span
+            ><span data-lang="en">Terraform I — tflocal and S3 as code →</span>
+          </div></a
+        >
+        <div>
+          <span data-lang="pt"
+            >Algo não ficou claro? Pergunte ao agente — ele é seu
+            professor.</span
+          ><span data-lang="en"
+            >Anything unclear? Ask the agent—your teacher.</span
+          >
+          · <a href="../../../index.html">⬡ Hub</a>
+        </div>
+      </footer>
+    </article>
+  </Fragment>
+</Lesson>

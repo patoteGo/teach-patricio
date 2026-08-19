@@ -1,0 +1,442 @@
+---
+// Orca power-user lesson — follows 0001-vim-core-loop conventions
+// (bilingual data-lang spans, is:raw body, shared assets, no emojis).
+import Lesson from "../../../../layouts/Lesson.astro";
+const titlePt = "Orca — o cockpit dos agentes";
+const titleEn = "Orca — the agent cockpit";
+const titleFallback = "Orca — the agent cockpit";
+const bodyClass = "lang-pt";
+const viewport = "width=device-width, initial-scale=1.0";
+const assets = [
+	"<link rel=\"stylesheet\" href=\"../assets/style.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/dark.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/i18n.css\" />",
+	"<script src=\"../assets/i18n.js\" defer></script>",
+	"<script src=\"../assets/nav.js\" defer></script>",
+	"<script src=\"../assets/reading-ui.js\" defer></script>",
+];
+
+---
+<Lesson
+	titlePt={titlePt}
+	titleEn={titleEn}
+	titleFallback={titleFallback}
+	bodyClass={bodyClass}
+	viewport={viewport}
+	assets={assets}
+>
+	<Fragment is:raw>
+    <article class="lesson">
+      <header class="hero">
+        <span class="eyebrow">⬡ Tooling · Orca 01</span>
+        <h1>
+          <span data-lang="pt">Vários agentes. Um cockpit.</span
+          ><span data-lang="en">Many agents. One cockpit.</span>
+        </h1>
+        <p class="lead">
+          <span data-lang="pt"
+            >Em 10 minutos: o modelo de worktrees, seis atalhos que você usa
+            todo dia e um circuito de 2 minutos para pilotar vários agentes sem
+            se perder.</span
+          ><span data-lang="en"
+            >In 10 minutes: the worktree model, six shortcuts you use daily,
+            and a two-minute circuit to pilot several agents without getting
+            lost.</span
+          >
+        </p>
+      </header>
+
+      <h2 class="section">
+        <span class="num">1</span
+        ><span data-lang="pt">O modelo: tarefa → worktree</span
+        ><span data-lang="en">The model: task → worktree</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >Orca é um <strong>ADE</strong> (Agent Development Environment): ele
+          roda Claude Code, Codex, OpenCode e qualquer agente CLI lado a lado.
+          <strong
+            >Cada tarefa ganha um worktree git real</strong
+          >, com terminal, agente e navegador próprios.</span
+        ><span data-lang="en"
+          >Orca is an <strong>ADE</strong> (Agent Development Environment): it
+          runs Claude Code, Codex, OpenCode, and any CLI agent side by side.
+          <strong>Every task gets a real git worktree</strong>, with its own
+          terminal, agent, and browser.</span
+        >
+      </p>
+      <div class="grid cols-2">
+        <div class="card">
+          <span class="kbd">worktree</span>
+          <h3><span data-lang="pt">Uma tarefa</span><span data-lang="en">One task</span></h3>
+          <p>
+            <span data-lang="pt"
+              >Terminal + agente + abas isolados. Trocar de worktree troca a
+              árvore inteira de painéis — e ela volta como você deixou.</span
+            ><span data-lang="en"
+              >Isolated terminal + agent + tabs. Switching worktrees swaps the
+              whole pane tree—and it returns exactly as you left it.</span
+            >
+          </p>
+        </div>
+        <div class="card">
+          <span class="kbd">dots</span>
+          <h3><span data-lang="pt">Atenção</span><span data-lang="en">Attention</span></h3>
+          <p>
+            <span data-lang="pt"
+              >Na sidebar: <strong>verde</strong> = agente trabalhando,
+              <strong>amarelo</strong> = esperando você. Amarelo primeiro.</span
+            ><span data-lang="en"
+              >In the sidebar: <strong>green</strong> = agent working,
+              <strong>yellow</strong> = waiting for you. Yellow first.</span
+            >
+          </p>
+        </div>
+      </div>
+      <div class="callout key">
+        <span data-lang="pt"
+          >Nada é mágico: <strong>todo worktree é um worktree git de
+          verdade</strong> — entre com <code>cd</code> e use git puro quando
+          quiser.</span
+        ><span data-lang="en"
+          >Nothing is magic: <strong>every worktree is a real git
+          worktree</strong>—<code>cd</code> in and use plain git whenever you
+          want.</span
+        >
+      </div>
+      <p class="cite">
+        <span data-lang="pt">Fonte primária:</span
+        ><span data-lang="en">Primary source:</span>
+        <a href="https://www.onorca.dev/docs/model/worktrees"
+          >Orca docs · Worktrees</a
+        >
+      </p>
+
+      <h2 class="section">
+        <span class="num">2</span
+        ><span data-lang="pt">Seu primeiro vocabulário</span
+        ><span data-lang="en">Your first vocabulary</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >Associe cada atalho a um objetivo:
+          <strong>navegar, abrir, dividir, sair</strong>.</span
+        ><span data-lang="en"
+          >Tie each shortcut to an intent:
+          <strong>navigate, open, split, close</strong>.</span
+        >
+      </p>
+      <div class="grid cols-4">
+        <div class="card">
+          <span class="kbd">Cmd-J</span>
+          <p>
+            <span data-lang="pt">pular p/ worktree</span
+            ><span data-lang="en">jump to worktree</span>
+          </p>
+        </div>
+        <div class="card">
+          <span class="kbd">Cmd-P</span>
+          <p>
+            <span data-lang="pt">abrir arquivo</span
+            ><span data-lang="en">open file</span>
+          </p>
+        </div>
+        <div class="card">
+          <span class="kbd">Cmd-T</span>
+          <p>
+            <span data-lang="pt">novo terminal</span
+            ><span data-lang="en">new terminal</span>
+          </p>
+        </div>
+        <div class="card">
+          <span class="kbd">Cmd-\</span>
+          <p>
+            <span data-lang="pt">dividir à direita</span
+            ><span data-lang="en">split right</span>
+          </p>
+        </div>
+        <div class="card">
+          <span class="kbd">Cmd-Alt-T</span>
+          <p>
+            <span data-lang="pt">novo agente</span
+            ><span data-lang="en">new agent</span>
+          </p>
+        </div>
+        <div class="card">
+          <span class="kbd">Cmd-F</span>
+          <p>
+            <span data-lang="pt">buscar no scrollback</span
+            ><span data-lang="en">search scrollback</span>
+          </p>
+        </div>
+        <div class="card">
+          <span class="kbd">Cmd-W</span>
+          <p>
+            <span data-lang="pt">fechar aba</span
+            ><span data-lang="en">close tab</span>
+          </p>
+        </div>
+        <div class="card">
+          <span class="kbd">Cmd-Alt-A</span>
+          <p>
+            <span data-lang="pt">terminal flutuante</span
+            ><span data-lang="en">floating terminal</span>
+          </p>
+        </div>
+      </div>
+      <div class="grid cols-2" style="margin-top: 16px">
+        <div class="card">
+          <h3><span class="kbd">Cmd-Shift-]</span> / <span class="kbd">[</span></h3>
+          <p>
+            <span data-lang="pt">próxima / anterior aba</span
+            ><span data-lang="en">next / previous tab</span>
+          </p>
+        </div>
+        <div class="card">
+          <h3><span class="kbd">Cmd-1…6</span></h3>
+          <p>
+            <span data-lang="pt">sessões recentes, na paleta</span
+            ><span data-lang="en">recent sessions, in the palette</span>
+          </p>
+        </div>
+      </div>
+      <p class="cite">
+        <a href="https://www.onorca.dev/docs/model/quick-open">paleta</a> ·
+        <a href="https://www.onorca.dev/docs/terminal">terminal</a> ·
+        <a href="https://www.onorca.dev/docs/model/tabs-panes-splits"
+          >abas e painéis</a
+        >
+      </p>
+
+      <h2 class="section">
+        <span class="num">3</span
+        ><span data-lang="pt">Faça agora: um circuito de 2 minutos</span
+        ><span data-lang="en">Do it now: a two-minute circuit</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >Com o Orca aberto, o feedback é imediato: a paleta responde a cada
+          tecla.</span
+        ><span data-lang="en"
+          >With Orca open, feedback is immediate: the palette responds to every
+          keystroke.</span
+        >
+      </p>
+      <div class="card">
+        <h3>
+          <span data-lang="pt">Sequência</span
+          ><span data-lang="en">Sequence</span>
+        </h3>
+        <ol>
+          <li>
+            <span class="kbd">Cmd-J</span> <span data-lang="pt">sem digitar nada: veja as sessões por atenção — amarelo primeiro.</span><span data-lang="en">without typing: see sessions by attention—yellow first.</span>
+          </li>
+          <li>
+            <span data-lang="pt">Digite um nome de tarefa; sem resultado, a própria paleta oferece</span>
+            <span data-lang="en">Type a task name; with no match, the palette offers</span>
+            <em>Create worktree</em> — <span class="kbd">Enter</span>.
+          </li>
+          <li>
+            <span class="kbd">Cmd-T</span> <span data-lang="pt">terminal novo;</span><span data-lang="en">new terminal;</span>
+            <span class="kbd">Cmd-\</span> <span data-lang="pt">divida e veja dois shells lado a lado.</span><span data-lang="en">split and see two shells side by side.</span>
+          </li>
+          <li>
+            <span class="kbd">Cmd-J</span> <span data-lang="pt">de novo, digite</span><span data-lang="en">again, type</span>
+            <code>#123</code> <span data-lang="pt">para achar um worktree por PR.</span><span data-lang="en">to find a worktree by PR.</span>
+          </li>
+          <li>
+            <span class="kbd">Cmd-W</span> <span data-lang="pt">fecha a aba. Circuit completo.</span><span data-lang="en">closes the tab. Circuit complete.</span>
+          </li>
+        </ol>
+      </div>
+      <p class="cite">
+        <a href="https://www.onorca.dev/docs/recipes/jump-worktrees"
+          >Receita oficial: juggling 10 worktrees</a
+        >
+      </p>
+
+      <h2 class="section">
+        <span class="num">4</span
+        ><span data-lang="pt">Movimentos de power user</span
+        ><span data-lang="en">Power-user moves</span>
+      </h2>
+      <div class="grid cols-2">
+        <div class="card">
+          <h3>
+            <span data-lang="pt">Fan-out paralelo</span
+            ><span data-lang="en">Parallel fan-out</span>
+          </h3>
+          <p>
+            <span data-lang="pt"
+              >Mesmo prompt em N agentes, cada um num worktree. Compare os
+              diffs, mescle o vencedor.</span
+            ><span data-lang="en"
+              >Same prompt to N agents, each in a worktree. Compare diffs, merge
+              the winner.</span
+            >
+          </p>
+        </div>
+        <div class="card">
+          <h3>
+            <span data-lang="pt">Design Mode</span
+            ><span data-lang="en">Design Mode</span>
+          </h3>
+          <p>
+            <span data-lang="pt"
+              >Clique num elemento da UI no navegador embutido: HTML, CSS e
+              screenshot vão direto ao prompt.</span
+            ><span data-lang="en"
+              >Click a UI element in the embedded browser: HTML, CSS, and a
+              screenshot go straight into the prompt.</span
+            >
+          </p>
+        </div>
+        <div class="card">
+          <h3>
+            <span data-lang="pt">Anotar diffs</span
+            ><span data-lang="en">Annotate diffs</span>
+          </h3>
+          <p>
+            <span data-lang="pt"
+              >Comente qualquer linha do diff e mande os comentários de volta ao
+              agente.</span
+            ><span data-lang="en"
+              >Comment on any diff line and ship the comments back to the
+              agent.</span
+            >
+          </p>
+        </div>
+        <div class="card">
+          <h3>Quick Commands</h3>
+          <p>
+            <span data-lang="pt"
+              >Salve <code>pnpm test</code> ou prompts reutilizáveis; rode pelo
+              tab bar ou menu do terminal.</span
+            ><span data-lang="en"
+              >Save <code>pnpm test</code> or reusable prompts; run from the tab
+              bar or terminal menu.</span
+            >
+          </p>
+        </div>
+        <div class="card">
+          <h3>
+            <span data-lang="pt">Companion no celular</span
+            ><span data-lang="en">Mobile companion</span>
+          </h3>
+          <p>
+            <span data-lang="pt"
+              >Status ao vivo, notificações e follow-ups de qualquer lugar.</span
+            ><span data-lang="en"
+              >Live status, notifications, and follow-ups from anywhere.</span
+            >
+          </p>
+        </div>
+        <div class="card">
+          <h3>CLI</h3>
+          <p>
+            <span data-lang="pt"
+              >Agentes também dirigem o Orca — o guia versionado:</span
+            ><span data-lang="en"
+              >Agents drive Orca too—the version-matched guide:</span
+            >
+          </p>
+          <pre class="block"><code>orca skills get orca-cli</code></pre>
+        </div>
+      </div>
+      <div class="callout warn">
+        <span data-lang="pt"
+          ><strong>Higiene:</strong> delete worktrees mergeados sem pena — um
+          clique remove worktree e branch. Lista grande deixa a paleta lenta.</span
+        ><span data-lang="en"
+          ><strong>Hygiene:</strong> delete merged worktrees aggressively—one
+          click removes worktree and branch. A big list slows the palette.</span
+        >
+      </div>
+
+      <h2 class="section">
+        <span class="num">5</span><span data-lang="pt">Recupere sem pistas</span
+        ><span data-lang="en">Retrieve without clues</span>
+      </h2>
+      <div class="grid cols-2">
+        <details class="card">
+          <summary>
+            <span data-lang="pt">Cmd-J com a paleta vazia mostra o quê?</span
+            ><span data-lang="en">Cmd-J with an empty palette shows what?</span>
+          </summary>
+          <p>
+            <span data-lang="pt"
+              >Sessões recentes por atenção — amarelo primeiro, depois
+              concluídas.</span
+            ><span data-lang="en"
+              >Recent sessions by attention—yellow first, then done.</span
+            >
+          </p>
+        </details>
+        <details class="card">
+          <summary>
+            <span data-lang="pt">Como abrir um worktree num split?</span
+            ><span data-lang="en">How do you open a worktree in a split?</span>
+          </summary>
+          <p><span class="kbd">Shift-Enter</span></p>
+        </details>
+        <details class="card">
+          <summary>
+            <span data-lang="pt">O que significa ponto amarelo na sidebar?</span
+            ><span data-lang="en"
+              >What does a yellow sidebar dot mean?</span
+            >
+          </summary>
+          <p>
+            <span data-lang="pt"
+              >Agente esperando input seu. Atenda primeiro.</span
+            ><span data-lang="en"
+              >Agent waiting on your input. Handle it first.</span
+            >
+          </p>
+        </details>
+        <details class="card">
+          <summary>
+            <span data-lang="pt">Um worktree é…?</span
+            ><span data-lang="en">A worktree is…?</span>
+          </summary>
+          <p>
+            <span data-lang="pt"
+              >Um git worktree real — <code>cd</code> e git puro sempre
+              funcionam.</span
+            ><span data-lang="en"
+              >A real git worktree—<code>cd</code> and plain git always
+              work.</span
+            >
+          </p>
+        </details>
+      </div>
+
+      <footer class="lesson-foot">
+        <div>
+          <span data-lang="pt">Fonte primária:</span
+          ><span data-lang="en">Primary source:</span>
+          <a href="https://www.onorca.dev/docs">Orca docs</a>
+        </div>
+        <a class="next-card" href="../reference/vim-core-commands.html"
+          ><span class="lbl"
+            ><span data-lang="pt">Referência</span
+            ><span data-lang="en">Reference</span></span
+          >
+          <div class="t">
+            <span data-lang="pt">Comandos essenciais do Vim →</span
+            ><span data-lang="en">Vim core commands →</span>
+          </div></a
+        >
+        <div>
+          <span data-lang="pt"
+            >Algo não ficou claro? Pergunte ao agente — ele é seu
+            professor.</span
+          ><span data-lang="en"
+            >Anything unclear? Ask the agent—your teacher.</span
+          >
+          · <a href="../../../index.html">⬡ Hub</a>
+        </div>
+      </footer>
+    </article>
+  </Fragment>
+</Lesson>

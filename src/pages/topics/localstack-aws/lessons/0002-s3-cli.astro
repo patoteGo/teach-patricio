@@ -1,0 +1,288 @@
+---
+// LocalStack · Lesson 2 — S3 CRUD via CLI + first Python/TS SDK side-by-side.
+import Lesson from "../../../../layouts/Lesson.astro";
+const titlePt = "LocalStack 2 — S3 pelo CLI";
+const titleEn = "LocalStack 2 — S3 via the CLI";
+const titleFallback = "LocalStack 2 — S3 pelo CLI";
+const bodyClass = "lang-pt";
+const viewport = "width=device-width, initial-scale=1.0";
+const assets = [
+	"<link rel=\"stylesheet\" href=\"../assets/style.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/dark.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/i18n.css\" />",
+	"<script src=\"../assets/i18n.js\" defer></script>",
+	"<script src=\"../assets/nav.js\" defer></script>",
+	"<script src=\"../assets/reading-ui.js\" defer></script>",
+];
+---
+<Lesson
+	titlePt={titlePt}
+	titleEn={titleEn}
+	titleFallback={titleFallback}
+	bodyClass={bodyClass}
+	viewport={viewport}
+	assets={assets}
+>
+	<Fragment is:raw>
+    <article class="lesson">
+      <header class="hero">
+        <span class="eyebrow">⬡ LocalStack · Lição 2 · Fácil</span>
+        <h1>
+          <span data-lang="pt">S3: crie, encha, esvazie, prove</span
+          ><span data-lang="en">S3: create, fill, empty, prove</span>
+        </h1>
+        <p class="lead">
+          <span data-lang="pt"
+            >O loop completo de S3 no CLI — bucket, upload, listagem,
+            download, website — e as <strong>mesmas operações em Python e
+            TypeScript</strong>, lado a lado.</span
+          ><span data-lang="en"
+            >The full S3 loop from the CLI — bucket, upload, listing, download,
+            website — plus the <strong>same operations in Python and
+            TypeScript</strong>, side by side.</span
+          >
+        </p>
+      </header>
+
+      <h2 class="section">
+        <span class="num">1</span
+        ><span data-lang="pt">O modelo: buckets, chaves e objetos</span
+        ><span data-lang="en">The model: buckets, keys and objects</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >S3 é um <strong>mapa gigante</strong>: o nome do bucket é o
+          namespace, a chave é o caminho do arquivo
+          (<code>fotos/gato.jpg</code>), e o valor são os bytes. Não existe
+          pasta de verdade — <strong>prefixos simulam pastas</strong>.</span
+        ><span data-lang="en"
+          >S3 is a <strong>giant map</strong>: the bucket name is the
+          namespace, the key is the file path (<code>photos/cat.jpg</code>),
+          and the value is the bytes. There are no real folders —
+          <strong>prefixes simulate them</strong>.</span
+        >
+      </p>
+      <pre class="block"><code><span class="c"># o vocabulário essencial — decore o verbo, não a flag</span>
+awslocal s3 mb s3://meu-bucket            <span class="c"># make bucket</span>
+awslocal s3 cp arq.txt s3://meu-bucket/   <span class="c"># upload</span>
+awslocal s3 ls s3://meu-bucket             <span class="c"># list</span>
+awslocal s3 cp s3://meu-bucket/arq.txt .   <span class="c"># download</span>
+awslocal s3 rm s3://meu-bucket/arq.txt     <span class="c"># delete obj</span>
+awslocal s3 rb s3://meu-bucket             <span class="c"># remove bucket (vazio)</span></code></pre>
+      <div class="callout key">
+        <span data-lang="pt"
+          ><code>rb</code> se recusa a apagar bucket não-vazio —
+          <strong>esvazie antes com <code>awslocal s3 rm s3://b --recursive</code></strong>.
+          Isso te protege na AWS real também.</span
+        ><span data-lang="en"
+          ><code>rb</code> refuses to delete a non-empty bucket —
+          <strong>empty it first with <code>awslocal s3 rm s3://b --recursive</code></strong>.
+          That protects you on real AWS too.</span
+        >
+      </div>
+
+      <h2 class="section">
+        <span class="num">2</span
+        ><span data-lang="pt">Duas linguagens, um cliente: Python + TypeScript</span
+        ><span data-lang="en">Two languages, one client: Python + TypeScript</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >Regra deste curso: <strong>todo snippet aparece nas duas
+          linguagens</strong>. O que muda é a construção do cliente apontando
+          para <code>localhost:4566</code>.</span
+        ><span data-lang="en"
+          >Rule for this course: <strong>every snippet appears in both
+          languages</strong>. What changes is building the client pointed at
+          <code>localhost:4566</code>.</span
+        >
+      </p>
+      <div class="grid cols-2">
+        <div class="card">
+          <h3>
+            <span data-lang="pt">Python · boto3</span
+            ><span data-lang="en">Python · boto3</span>
+          </h3>
+          <pre class="block"><code>pip install boto3</code></pre>
+          <pre class="block"><code><span class="k">import</span> boto3
+
+s3 = boto3.client(
+    <span class="s">"s3"</span>,
+    endpoint_url=<span class="s">"http://localhost:4566"</span>,
+)
+s3.create_bucket(Bucket=<span class="s">"py-bucket"</span>)
+s3.put_object(
+    Bucket=<span class="s">"py-bucket"</span>,
+    Key=<span class="s">"hello.txt"</span>,
+    Body=<span class="s">"oi do python"</span>.encode(),
+)
+print(s3.list_objects_v2(
+    Bucket=<span class="s">"py-bucket"</span>)\
+    [<span class="s">"Contents"</span>][0][<span class="s">"Key"</span>])
+<span class="c"># esperado: hello.txt</span></code></pre>
+        </div>
+        <div class="card">
+          <h3>
+            <span data-lang="pt">TypeScript · SDK v3</span
+            ><span data-lang="en">TypeScript · SDK v3</span>
+          </h3>
+          <pre class="block"><code>npm i @aws-sdk/client-s3</code></pre>
+          <pre class="block"><code><span class="k">import</span> { S3Client, PutObjectCommand,
+  ListObjectsV2Command } <span class="k">from</span> <span class="s">"@aws-sdk/client-s3"</span>;
+
+<span class="k">const</span> s3 = <span class="k">new</span> S3Client({
+  endpoint: <span class="s">"http://localhost:4566"</span>,
+  region: <span class="s">"us-east-1"</span>,
+  credentials: {
+    accessKeyId: <span class="s">"test"</span>,
+    secretAccessKey: <span class="s">"test"</span>,
+  },
+});
+
+<span class="k">await</span> s3.send(<span class="k">new</span> PutObjectCommand({
+  Bucket: <span class="s">"ts-bucket"</span>,
+  Key: <span class="s">"hello.txt"</span>,
+  Body: <span class="s">"oi do typescript"</span>,
+});
+<span class="k">const</span> list = <span class="k">await</span> s3.send(
+  <span class="k">new</span> ListObjectsV2Command({
+    Bucket: <span class="s">"ts-bucket"</span> }));
+console.log(list.Contents![0].Key);
+<span class="c">// esperado: hello.txt</span></code></pre>
+        </div>
+      </div>
+      <div class="callout tip">
+        <span data-lang="pt"
+          >Alternativa sem tocar no código: exporte
+          <code>AWS_ENDPOINT_URL=http://localhost:4566</code> — SDKs recentes
+          (boto3 e JS v3) honram essa variável.</span
+        ><span data-lang="en"
+          >Alternative without touching code: export
+          <code>AWS_ENDPOINT_URL=http://localhost:4566</code> — recent SDKs
+          (boto3 and JS v3) honor that variable.</span
+        >
+      </div>
+      <p class="cite">
+        <a href="https://docs.localstack.cloud/aws/services/s3/">S3 no LocalStack</a> ·
+        <a href="https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/s3.html">boto3 · S3</a> ·
+        <a href="https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/s3/">SDK v3 · S3</a>
+      </p>
+
+      <h2 class="section">
+        <span class="num">3</span
+        ><span data-lang="pt">Desafio (fácil): um site estático em 60 segundos</span
+        ><span data-lang="en">Challenge (easy): a static site in 60 seconds</span>
+      </h2>
+      <div class="card">
+        <h3>
+          <span data-lang="pt">Passos</span><span data-lang="en">Steps</span>
+        </h3>
+        <ol>
+          <li>
+            <span data-lang="pt">Crie <code>site-patricio</code> e um
+            <code>index.html</code> qualquer.</span
+            ><span data-lang="en">Create <code>site-patricio</code> and any
+            <code>index.html</code>.</span>
+          </li>
+          <li>
+            <span data-lang="pt">Ative o hosting:</span
+            ><span data-lang="en">Enable hosting:</span>
+            <code>awslocal s3 website s3://site-patricio --index-document index.html</code>
+          </li>
+          <li>
+            <span data-lang="pt">Suba o arquivo e abra o URL abaixo.</span
+            ><span data-lang="en">Upload the file and open the URL below.</span>
+          </li>
+        </ol>
+      </div>
+      <pre class="block"><code>mkdir site &amp;&amp; echo <span class="s">"&lt;h1&gt;funcionou&lt;/h1&gt;"</span> &gt; site/index.html
+awslocal s3 mb s3://site-patricio
+awslocal s3 website s3://site-patricio --index-document index.html
+awslocal s3 cp site/index.html s3://site-patricio/index.html
+curl http://localhost:4566/site-patricio/index.html
+<span class="c"># esperado / expected:</span>
+<span class="s">&lt;h1&gt;funcionou&lt;/h1&gt;</span></code></pre>
+      <div class="callout warn">
+        <span data-lang="pt"
+          >Se o <code>curl</code> falhar, use o endpoint alternativo:
+          <code>http://s3.localhost.localstack.cloud:4566/site-patricio/index.html</code>
+          — <strong>path-style vs virtual-host style</strong> voltará na lição
+          de Terraform.</span
+        ><span data-lang="en"
+          >If the <code>curl</code> fails, use the alternative endpoint:
+          <code>http://s3.localhost.localstack.cloud:4566/site-patricio/index.html</code>
+          — <strong>path-style vs virtual-host style</strong> returns in the
+          Terraform lesson.</span
+        >
+      </div>
+
+      <h2 class="section">
+        <span class="num">4</span
+        ><span data-lang="pt">Recupere sem pistas</span
+        ><span data-lang="en">Retrieve without clues</span>
+      </h2>
+      <div class="grid cols-2">
+        <details class="card">
+          <summary>
+            <span data-lang="pt">Como apagar um bucket com objetos?</span
+            ><span data-lang="en">How to delete a bucket with objects?</span>
+          </summary>
+          <p><code>awslocal s3 rm s3://b --recursive</code> <span data-lang="pt">e depois</span><span data-lang="en">then</span> <code>awslocal s3 rb s3://b</code></p>
+        </details>
+        <details class="card">
+          <summary>
+            <span data-lang="pt">O que é uma "pasta" no S3?</span
+            ><span data-lang="en">What is a "folder" in S3?</span>
+          </summary>
+          <p>
+            <span data-lang="pt">Um prefixo da chave — nada mais.</span
+            ><span data-lang="en">A key prefix — nothing more.</span>
+          </p>
+        </details>
+        <details class="card">
+          <summary>
+            <span data-lang="pt">Qual parâmetro o boto3 usa para o LocalStack?</span
+            ><span data-lang="en">Which parameter does boto3 use for LocalStack?</span>
+          </summary>
+          <p><code>endpoint_url="http://localhost:4566"</code></p>
+        </details>
+        <details class="card">
+          <summary>
+            <span data-lang="pt">E o SDK v3 do TS?</span
+            ><span data-lang="en">And the TS SDK v3?</span>
+          </summary>
+          <p><code>endpoint</code> <span data-lang="pt">no construtor do client</span><span data-lang="en">in the client constructor</span>.</p>
+        </details>
+      </div>
+
+      <footer class="lesson-foot">
+        <div>
+          <span data-lang="pt">Fonte primária:</span
+          ><span data-lang="en">Primary source:</span>
+          <a href="https://docs.localstack.cloud/aws/services/s3/"
+            >LocalStack · S3</a
+          >
+        </div>
+        <a class="next-card" href="0003-lambda-python.html"
+          ><span class="lbl"
+            ><span data-lang="pt">Próxima lição</span
+            ><span data-lang="en">Next lesson</span></span
+          >
+          <div class="t">
+            <span data-lang="pt">Lambda em Python — zip, invoke e logs →</span
+            ><span data-lang="en">Lambda in Python — zip, invoke and logs →</span>
+          </div></a
+        >
+        <div>
+          <span data-lang="pt"
+            >Algo não ficou claro? Pergunte ao agente — ele é seu
+            professor.</span
+          ><span data-lang="en"
+            >Anything unclear? Ask the agent—your teacher.</span
+          >
+          · <a href="../../../index.html">⬡ Hub</a>
+        </div>
+      </footer>
+    </article>
+  </Fragment>
+</Lesson>

@@ -1,16 +1,46 @@
 (() => {
 	const pages = [
 		{
-			file: "0001-vim-core-loop.html",
+			file: "0001-localstack-up.html",
 			n: "01",
-			pt: "O loop essencial do Vim",
-			en: "The Vim core loop",
+			pt: "LocalStack no Docker — o primeiro comando",
+			en: "LocalStack in Docker — the first command",
 		},
 		{
-			file: "0002-orca-agent-cockpit.html",
+			file: "0002-s3-cli.html",
 			n: "02",
-			pt: "Orca — o cockpit dos agentes",
-			en: "Orca — the agent cockpit",
+			pt: "S3 pelo CLI — buckets, objetos e site",
+			en: "S3 via CLI — buckets, objects and a site",
+		},
+		{
+			file: "0003-lambda-python.html",
+			n: "03",
+			pt: "Lambda em Python — zip, invoke e logs",
+			en: "Lambda in Python — zip, invoke and logs",
+		},
+		{
+			file: "0004-lambda-typescript.html",
+			n: "04",
+			pt: "Lambda em TypeScript — o mesmo pelo Node",
+			en: "Lambda in TypeScript — same, via Node",
+		},
+		{
+			file: "0005-event-driven.html",
+			n: "05",
+			pt: "Eventos — SNS, SQS e gatilhos de S3",
+			en: "Events — SNS, SQS and S3 triggers",
+		},
+		{
+			file: "0006-terraform-first.html",
+			n: "06",
+			pt: "Terraform I — tflocal e S3 como código",
+			en: "Terraform I — tflocal and S3 as code",
+		},
+		{
+			file: "0007-terraform-stack.html",
+			n: "07",
+			pt: "Terraform II — Lambda, API GW e DynamoDB",
+			en: "Terraform II — Lambda, API GW and DynamoDB",
 		},
 	];
 	const path = location.pathname.replace(/\\/g, "/");
@@ -25,7 +55,7 @@
 
 	const nav = document.createElement("nav");
 	nav.className = "tool-nav";
-	nav.setAttribute("aria-label", "Tooling");
+	nav.setAttribute("aria-label", "LocalStack");
 	const head = document.createElement("div");
 	head.className = "tool-head";
 	const title = document.createElement("strong");
@@ -56,9 +86,9 @@
 	const reference = document.createElement("a");
 	reference.className = "tool-link";
 	reference.href = inReference
-		? "vim-core-commands.html"
-		: "../reference/vim-core-commands.html";
-	if (here === "vim-core-commands.html") reference.classList.add("active");
+		? "cli-cookbook.html"
+		: "../reference/cli-cookbook.html";
+	if (here === "cli-cookbook.html") reference.classList.add("active");
 	const referenceLabel = document.createElement("span");
 	reference.append(referenceLabel);
 	nav.append(reference);
@@ -93,15 +123,15 @@
 	backdrop.addEventListener("click", () => setOpen(false));
 
 	const render = () => {
-		title.textContent = "Tooling";
+		title.textContent = "LocalStack";
 		sub.textContent = text("Curso", "Course");
 		section.textContent = text("Lições", "Lessons");
 		labels.forEach(({ label, page }) => {
 			label.textContent = text(page.pt, page.en);
 		});
 		referenceLabel.textContent = text(
-			"📖 Comandos essenciais",
-			"📖 Core commands",
+			"⬡ Cookbook CLI + Terraform",
+			"⬡ CLI + Terraform cookbook",
 		);
 		hub.textContent = text("⬡ Início · todos os tópicos", "⬡ Home · all topics");
 		toggle.setAttribute("aria-label", text("Abrir lições", "Open lessons"));

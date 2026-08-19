@@ -1,0 +1,284 @@
+---
+// LocalStack · Lesson 1 — container, credentials, awslocal, first verify.
+// Registered: nav.js, README (CI), hub card (done with the topic).
+import Lesson from "../../../../layouts/Lesson.astro";
+const titlePt = "LocalStack 1 — o primeiro comando";
+const titleEn = "LocalStack 1 — the first command";
+const titleFallback = "LocalStack 1 — o primeiro comando";
+const bodyClass = "lang-pt";
+const viewport = "width=device-width, initial-scale=1.0";
+const assets = [
+	"<link rel=\"stylesheet\" href=\"../assets/style.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/dark.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/i18n.css\" />",
+	"<script src=\"../assets/i18n.js\" defer></script>",
+	"<script src=\"../assets/nav.js\" defer></script>",
+	"<script src=\"../assets/reading-ui.js\" defer></script>",
+];
+---
+<Lesson
+	titlePt={titlePt}
+	titleEn={titleEn}
+	titleFallback={titleFallback}
+	bodyClass={bodyClass}
+	viewport={viewport}
+	assets={assets}
+>
+	<Fragment is:raw>
+    <article class="lesson">
+      <header class="hero">
+        <span class="eyebrow">⬡ LocalStack · Lição 1 · Fácil</span>
+        <h1>
+          <span data-lang="pt">O par perfeito: LocalStack + <code>awslocal</code></span
+          ><span data-lang="en">The perfect pair: LocalStack + <code>awslocal</code></span>
+        </h1>
+        <p class="lead">
+          <span data-lang="pt"
+            >Em 10 minutos: seu container responde, seu CLI aponta para ele e
+            você prova isso com <strong>um comando de verificação</strong>.
+            Tudo grátis, tudo descartável.</span
+          ><span data-lang="en"
+            >In 10 minutes: your container answers, your CLI points at it, and
+            you prove it with <strong>one verification command</strong>. All
+            free, all disposable.</span
+          >
+        </p>
+      </header>
+
+      <h2 class="section">
+        <span class="num">1</span
+        ><span data-lang="pt">O modelo mental: uma região falsa dentro do Docker</span
+        ><span data-lang="en">The mental model: a fake region inside Docker</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >LocalStack é um <strong>emulador do AWS rodando num único processo
+          Docker</strong>. Cada serviço da AWS (S3, Lambda, SQS…) escuta num
+          endpoint local. Para o cliente, é como se existisse
+          <code>us-east-1</code> na sua máquina.</span
+        ><span data-lang="en"
+          >LocalStack is an <strong>AWS emulator running in a single Docker
+          process</strong>. Each AWS service (S3, Lambda, SQS…) listens on a
+          local endpoint. To the client, it is as if
+          <code>us-east-1</code> existed inside your machine.</span
+        >
+      </p>
+      <div class="grid cols-2">
+        <div class="card">
+          <h3><code>:4566</code></h3>
+          <p>
+            <span data-lang="pt"
+              >O <strong>edge port</strong>: todos os serviços atrás de uma
+              única porta.</span
+            ><span data-lang="en"
+              >The <strong>edge port</strong>: all services behind a single
+              port.</span
+            >
+          </p>
+        </div>
+        <div class="card">
+          <h3><code>test / test</code></h3>
+          <p>
+            <span data-lang="pt"
+              >Credenciais <strong>fictícias</strong> — LocalStack não valida
+              o que você manda.</span
+            ><span data-lang="en"
+              ><strong>Mock</strong> credentials — LocalStack does not validate
+              what you send.</span
+            >
+          </p>
+        </div>
+      </div>
+      <div class="callout warn">
+        <span data-lang="pt"
+          >Free tier (Community) cobre S3, Lambda, SQS, SNS, DynamoDB, API
+          Gateway v1, IAM, CloudWatch Logs… <strong>RDS, ECR e API GW v2 são
+          pagos</strong> — este curso evita depender deles.</span
+        ><span data-lang="en"
+          >The free (Community) tier covers S3, Lambda, SQS, SNS, DynamoDB,
+          API Gateway v1, IAM, CloudWatch Logs… <strong>RDS, ECR and API GW v2
+          are paid</strong> — this course avoids depending on them.</span
+        >
+      </div>
+      <p class="cite">
+        <span data-lang="pt">Fontes:</span
+        ><span data-lang="en">Sources:</span>
+        <a href="https://docs.localstack.cloud/getting-started/installation/">instalação</a>
+        ·
+        <a href="https://www.localstack.cloud/pricing-comparison">cobertura por plano</a>
+      </p>
+
+      <h2 class="section">
+        <span class="num">2</span
+        ><span data-lang="pt">Suba o container e instale o CLI local</span
+        ><span data-lang="en">Start the container and install the local CLI</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >Se você já instalou o LocalStack, pule o primeiro bloco. Se não,
+          <strong>um <code>docker run</code> resolve</strong> — sem compose,
+          sem licença.</span
+        ><span data-lang="en"
+          >If you already installed LocalStack, skip the first block. If not,
+          <strong>one <code>docker run</code> does it</strong> — no compose,
+          no license.</span
+        >
+      </p>
+      <pre class="block"><code><span class="c"># 1 — subir o container (pule se já está rodando)</span>
+docker run -d --name localstack \
+  -p 4566:4566 -p 4510-4559:4510-4559 \
+  localstack/localstack
+
+<span class="c"># 2 — o CLI que aponta sozinho para localhost:4566</span>
+pip install awscli-local          <span class="c"># fornece `awslocal`</span>
+
+<span class="c"># 3 — o CLI oficial da AWS, se ainda não tiver</span>
+pip install awscli                <span class="c"># fornece `aws`</span></code></pre>
+      <div class="callout key">
+        <span data-lang="pt"
+          ><code>awslocal</code> é um wrapper fino do <code>aws</code> que
+          <strong>já injeta <code>--endpoint-url=http://localhost:4566</code>
+          e credenciais falsas</strong>. Guarde o <code>aws</code> puro para a
+          AWS real.</span
+        ><span data-lang="en"
+          ><code>awslocal</code> is a thin wrapper around <code>aws</code> that
+          <strong>already injects <code>--endpoint-url=http://localhost:4566</code>
+          and mock credentials</strong>. Keep plain <code>aws</code> for real
+          AWS.</span
+        >
+      </div>
+      <p class="cite">
+        <a href="https://pypi.org/project/awscli-local/">awscli-local (PyPI)</a> ·
+        <a href="https://docs.localstack.cloud/aws/connecting/aws-cli/">conectando o AWS CLI</a>
+      </p>
+
+      <h2 class="section">
+        <span class="num">3</span
+        ><span data-lang="pt">Desafio (fácil): prove que está vivo</span
+        ><span data-lang="en">Challenge (easy): prove it is alive</span>
+      </h2>
+      <div class="card">
+        <h3>
+          <span data-lang="pt">Passos</span><span data-lang="en">Steps</span>
+        </h3>
+        <ol>
+          <li>
+            <span data-lang="pt">Confirme o container:</span
+            ><span data-lang="en">Confirm the container:</span>
+            <code>docker ps --filter name=localstack</code>
+          </li>
+          <li>
+            <span data-lang="pt">Crie as credenciais falsas no ambiente:</span
+            ><span data-lang="en">Export the mock credentials:</span>
+            <pre class="block"><code>export AWS_ACCESS_KEY_ID=test
+export AWS_SECRET_ACCESS_KEY=test
+export AWS_DEFAULT_REGION=us-east-1</code></pre>
+          </li>
+          <li>
+            <span data-lang="pt">Chame o STS (quem sou eu?):</span
+            ><span data-lang="en">Call STS (who am I?):</span>
+            <code>awslocal sts get-caller-identity</code>
+          </li>
+          <li>
+            <span data-lang="pt">Liste as regiões… sem sair do lugar:</span
+            ><span data-lang="en">List regions… without leaving the spot:</span>
+            <code>awslocal ec2 describe-regions --query "Regions[].RegionName" --output text</code>
+          </li>
+        </ol>
+      </div>
+      <p>
+        <span data-lang="pt"
+          ><strong>Verificação</strong> — o <code>sts</code> deve responder
+          exatamente isto:</span
+        ><span data-lang="en"
+          ><strong>Verify</strong> — the <code>sts</code> call must return
+          exactly this:</span
+        >
+      </p>
+      <pre class="block"><code>awslocal sts get-caller-identity
+<span class="c"># esperado / expected:</span>
+<span class="s">{
+    "UserId": "AKIAIOSFODNN7EXAMPLE",
+    "Account": "000000000000",
+    "Arn": "arn:aws:iam::000000000000:root"
+}</span></code></pre>
+      <div class="callout tip">
+        <span data-lang="pt"
+          >Se der <code>Connection refused</code>: o container não está de pé
+          — <code>docker start localstack</code> e espere o healthcheck.</span
+        ><span data-lang="en"
+          >If you get <code>Connection refused</code>: the container is not up
+          — <code>docker start localstack</code> and wait for the healthcheck.</span
+        >
+      </div>
+
+      <h2 class="section">
+        <span class="num">4</span
+        ><span data-lang="pt">Recupere sem pistas</span
+        ><span data-lang="en">Retrieve without clues</span>
+      </h2>
+      <div class="grid cols-2">
+        <details class="card">
+          <summary>
+            <span data-lang="pt">Qual porta serve todos os serviços?</span
+            ><span data-lang="en">Which port serves every service?</span>
+          </summary>
+          <p><code>4566</code> — <span data-lang="pt">o edge port</span><span data-lang="en">the edge port</span>.</p>
+        </details>
+        <details class="card">
+          <summary>
+            <span data-lang="pt">Quais credenciais o LocalStack espera?</span
+            ><span data-lang="en">What credentials does LocalStack expect?</span>
+          </summary>
+          <p><span data-lang="pt">Qualquer par — o usual é <code>test</code>/<code>test</code>.</span><span data-lang="en">Any pair — the convention is <code>test</code>/<code>test</code>.</span></p>
+        </details>
+        <details class="card">
+          <summary>
+            <span data-lang="pt"><code>awslocal</code> injeta o quê por você?</span
+            ><span data-lang="en"><code>awslocal</code> injects what for you?</span>
+          </summary>
+          <p><code>--endpoint-url=http://localhost:4566</code></p>
+        </details>
+        <details class="card">
+          <summary>
+            <span data-lang="pt">RDS está no plano grátis?</span
+            ><span data-lang="en">Is RDS in the free tier?</span>
+          </summary>
+          <p>
+            <span data-lang="pt">Não — Community não inclui RDS, ECR nem API GW v2.</span
+            ><span data-lang="en">No — Community excludes RDS, ECR and API GW v2.</span>
+          </p>
+        </details>
+      </div>
+
+      <footer class="lesson-foot">
+        <div>
+          <span data-lang="pt">Fonte primária:</span
+          ><span data-lang="en">Primary source:</span>
+          <a href="https://docs.localstack.cloud/getting-started/installation/"
+            >LocalStack · Installation</a
+          >
+        </div>
+        <a class="next-card" href="0002-s3-cli.html"
+          ><span class="lbl"
+            ><span data-lang="pt">Próxima lição</span
+            ><span data-lang="en">Next lesson</span></span
+          >
+          <div class="t">
+            <span data-lang="pt">S3 pelo CLI — buckets, objetos e site →</span
+            ><span data-lang="en">S3 via CLI — buckets, objects and a site →</span>
+          </div></a
+        >
+        <div>
+          <span data-lang="pt"
+            >Algo não ficou claro? Pergunte ao agente — ele é seu
+            professor.</span
+          ><span data-lang="en"
+            >Anything unclear? Ask the agent—your teacher.</span
+          >
+          · <a href="../../../index.html">⬡ Hub</a>
+        </div>
+      </footer>
+    </article>
+  </Fragment>
+</Lesson>

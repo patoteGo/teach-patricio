@@ -1,0 +1,420 @@
+---
+// LocalStack · Lesson 7 — Terraform II: full stack (Lambda + API GW v1 + DynamoDB) + RDS note.
+import Lesson from "../../../../layouts/Lesson.astro";
+const titlePt = "LocalStack 7 — Terraform II";
+const titleEn = "LocalStack 7 — Terraform II";
+const titleFallback = "LocalStack 7 — Terraform II";
+const bodyClass = "lang-pt";
+const viewport = "width=device-width, initial-scale=1.0";
+const assets = [
+	"<link rel=\"stylesheet\" href=\"../assets/style.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/dark.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/i18n.css\" />",
+	"<script src=\"../assets/i18n.js\" defer></script>",
+	"<script src=\"../assets/nav.js\" defer></script>",
+	"<script src=\"../assets/reading-ui.js\" defer></script>",
+];
+---
+<Lesson
+	titlePt={titlePt}
+	titleEn={titleEn}
+	titleFallback={titleFallback}
+	bodyClass={bodyClass}
+	viewport={viewport}
+	assets={assets}
+>
+	<Fragment is:raw>
+    <article class="lesson">
+      <header class="hero">
+        <span class="eyebrow">⬡ LocalStack · Lição 7 · Difícil</span>
+        <h1>
+          <span data-lang="pt">Capstone: uma API completa em um apply</span
+          ><span data-lang="en">Capstone: a whole API in one apply</span>
+        </h1>
+        <p class="lead">
+          <span data-lang="pt"
+            >Lambda (TypeScript) + API Gateway + DynamoDB, tudo declarado em
+            HCL e testável com <code>curl</code>. É <strong>o desenho que
+            sustenta entrevistas e projetos reais</strong> — e cabe num
+            arquivo.</span
+          ><span data-lang="en"
+            >Lambda (TypeScript) + API Gateway + DynamoDB, all declared in
+            HCL and testable with <code>curl</code>. It is <strong>the design
+            that carries interviews and real projects</strong> — and fits in
+            one file.</span
+          >
+        </p>
+      </header>
+
+      <h2 class="section">
+        <span class="num">1</span
+        ><span data-lang="pt">O desenho: pedido → rota → função → tabela</span
+        ><span data-lang="en">The design: request → route → function → table</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >Três recursos e as ligações entre eles: o <strong>API Gateway
+          (v1)</strong> expõe HTTP, a <strong>Lambda</strong> responde, o
+          <strong>DynamoDB</strong> persiste. Permissões via IAM role —
+          igual à lição 3, agora em HCL.</span
+        ><span data-lang="en"
+          >Three resources and the wiring between them: <strong>API Gateway
+          (v1)</strong> exposes HTTP, the <strong>Lambda</strong> responds,
+          <strong>DynamoDB</strong> persists. Permissions via IAM role —
+          like lesson 3, now in HCL.</span
+        >
+      </p>
+      <div class="callout warn">
+        <span data-lang="pt"
+          >Use <strong>API Gateway v1 (REST)</strong> — a v2 (HTTP API)
+          <strong>é paga</strong> no LocalStack. No mundo real as duas
+          existem; aqui, a v1 basta.</span
+        ><span data-lang="en"
+          >Use <strong>API Gateway v1 (REST)</strong> — v2 (HTTP API)
+          <strong>is paid</strong> on LocalStack. Both exist in the real
+          world; here, v1 suffices.</span
+        >
+      </div>
+
+      <h2 class="section">
+        <span class="num">2</span
+        ><span data-lang="pt">O HCL completo (copiável)</span
+        ><span data-lang="en">The complete HCL (copyable)</span>
+      </h2>
+      <pre class="block"><code><span class="c"># main.tf — capstone</span>
+<span class="k">terraform</span> {
+  required_providers {
+    aws = { source = <span class="s">"hashicorp/aws"</span>, version = <span class="s">"~&gt; 5.0"</span> }
+  }
+}
+<span class="k">provider</span> <span class="s">"aws"</span> { region = <span class="s">"us-east-1"</span> }
+
+<span class="c"># ---------- dados: a tabela</span>
+<span class="k">resource</span> <span class="s">"aws_dynamodb_table"</span> <span class="s">"visitas"</span> {
+  name         = <span class="s">"visitas"</span>
+  billing_mode = <span class="s">"PAY_PER_REQUEST"</span>
+  hash_key     = <span class="s">"path"</span>
+  attribute {
+    name = <span class="s">"path"</span>
+    type = <span class="s">"S"</span>
+  }
+}
+
+<span class="c"># ---------- permissões: a role da função</span>
+<span class="k">data</span> <span class="s">"aws_iam_policy_document"</span> <span class="s">"assume"</span> {
+  statement {
+    actions = [<span class="s">"sts:AssumeRole"</span>]
+    principals {
+      type        = <span class="s">"Service"</span>
+      identifiers = [<span class="s">"lambda.amazonaws.com"</span>]
+    }
+  }
+}
+<span class="k">resource</span> <span class="s">"aws_iam_role"</span> <span class="s">"api"</span> {
+  name               = <span class="s">"api-role"</span>
+  assume_role_policy = data.aws_iam_policy_document.assume.json
+}
+<span class="k">data</span> <span class="s">"aws_iam_policy_document"</span> <span class="s">"dynamo"</span> {
+  statement {
+    actions   = [<span class="s">"dynamodb:PutItem"</span>, <span class="s">"dynamodb:GetItem"</span>]
+    resources = [aws_dynamodb_table.visitas.arn]
+  }
+}
+<span class="k">resource</span> <span class="s">"aws_iam_role_policy"</span> <span class="s">"dynamo"</span> {
+  name   = <span class="s">"dynamo"</span>
+  role   = aws_iam_role.api.id
+  policy = data.aws_iam_policy_document.dynamo.json
+}
+
+<span class="c"># ---------- computação: a função (TS da lição 4)</span>
+<span class="k">resource</span> <span class="s">"aws_lambda_function"</span> <span class="s">"api"</span> {
+  function_name = <span class="s">"visitas-api"</span>
+  runtime       = <span class="s">"nodejs20.x"</span>
+  handler       = <span class="s">"index.handler"</span>
+  role          = aws_iam_role.api.arn
+  filename      = <span class="s">"function-ts.zip"</span>   <span class="c"># esbuild da lição 4</span>
+  source_code_hash = filebase64sha256(<span class="s">"function-ts.zip"</span>)
+  environment {
+    variables = { TABLE = aws_dynamodb_table.visitas.name }
+  }
+}
+
+<span class="c"># ---------- HTTP: API Gateway v1 (REST)</span>
+<span class="k">resource</span> <span class="s">"aws_api_gateway_rest_api"</span> <span class="s">"api"</span> {
+  name = <span class="s">"visitas-api"</span>
+}
+<span class="k">resource</span> <span class="s">"aws_api_gateway_resource"</span> <span class="s">"visita"</span> {
+  rest_api_id = aws_api_gateway_rest_api.api.id
+  parent_id   = aws_api_gateway_rest_api.api.root_resource_id
+  path_part   = <span class="s">"visita"</span>
+}
+<span class="k">resource</span> <span class="s">"aws_api_gateway_method"</span> <span class="s">"get"</span> {
+  rest_api_id   = aws_api_gateway_rest_api.api.id
+  resource_id   = aws_api_gateway_resource.visita.id
+  http_method   = <span class="s">"GET"</span>
+  authorization = <span class="s">"NONE"</span>
+}
+<span class="k">resource</span> <span class="s">"aws_api_gateway_integration"</span> <span class="s">"lambda"</span> {
+  rest_api_id             = aws_api_gateway_rest_api.api.id
+  resource_id             = aws_api_gateway_resource.visita.id
+  http_method             = aws_api_gateway_method.get.http_method
+  integration_http_method = <span class="s">"POST"</span>
+  type                    = <span class="s">"AWS_PROXY"</span>
+  uri                     = aws_lambda_function.api.invoke_arn
+}
+<span class="k">resource</span> <span class="s">"aws_lambda_permission"</span> <span class="s">"apigw"</span> {
+  statement_id  = <span class="s">"AllowAPIInvoke"</span>
+  action        = <span class="s">"lambda:InvokeFunction"</span>
+  function_name = aws_lambda_function.api.function_name
+  principal     = <span class="s">"apigateway.amazonaws.com"</span>
+  source_arn    = <span class="s">"</span>${aws_api_gateway_rest_api.api.execution_arn}<span class="s">/*/*"</span>
+}
+<span class="k">resource</span> <span class="s">"aws_api_gateway_deployment"</span> <span class="s">"api"</span> {
+  depends_on = [aws_api_gateway_integration.lambda]
+  rest_api_id = aws_api_gateway_rest_api.api.id
+}
+<span class="k">resource</span> <span class="s">"aws_api_gateway_stage"</span> <span class="s">"dev"</span> {
+  rest_api_id   = aws_api_gateway_rest_api.api.id
+  deployment_id = aws_api_gateway_deployment.api.id
+  stage_name    = <span class="s">"dev"</span>
+}
+
+<span class="k">output</span> <span class="s">"url"</span> {
+  value = <span class="s">"http://</span>${aws_api_gateway_rest_api.api.id}<span class="s">.execute-api.localhost.localstack.cloud:4566/dev/visita"</span>
+}</code></pre>
+      <p>
+        <span data-lang="pt"
+          >O handler grava e conta visitas — <strong>duas linguagens,
+          escolha uma</strong> (o desafio pede a outra):</span
+        ><span data-lang="en"
+          >The handler records and counts visits — <strong>two languages,
+          pick one</strong> (the challenge asks for the other):</span
+        >
+      </p>
+      <div class="grid cols-2">
+        <div class="card">
+          <h3>index.ts (deploy)</h3>
+          <pre class="block"><code><span class="c">// npx esbuild index.ts --bundle --platform=node \</span>
+<span class="c">//   --format=esm --outfile=index.mjs &amp;&amp; \</span>
+<span class="c">//   zip -j function-ts.zip index.mjs</span>
+<span class="k">import</span> { DynamoDBClient, UpdateItemCommand }
+  <span class="k">from</span> <span class="s">"@aws-sdk/client-dynamodb"</span>;
+
+<span class="k">const</span> db = <span class="k">new</span> DynamoDBClient({
+  endpoint: <span class="s">"http://localhost:4566"</span>,
+  region: <span class="s">"us-east-1"</span>,
+  credentials: {
+    accessKeyId: <span class="s">"test"</span>,
+    secretAccessKey: <span class="s">"test"</span> },
+});
+
+<span class="k">export const</span> handler = <span class="k">async</span> (event: <span class="k">any</span>) <span class="k">=&gt;</span> {
+  <span class="k">const</span> path = event.queryStringParameters?.caminho
+    ?? <span class="s">"/"</span>;
+  <span class="k">const</span> r = <span class="k">await</span> db.send(<span class="k">new</span> UpdateItemCommand({
+    TableName: process.env.TABLE!,
+    Key: { path: { S: path } },
+    UpdateExpression: <span class="s">"ADD visitas :um"</span>,
+    ExpressionAttributeValues: { <span class="s">":um"</span>: { N: <span class="s">"1"</span> } },
+    ReturnValues: <span class="s">"UPDATED_NEW"</span>,
+  }));
+  <span class="k">return</span> {
+    statusCode: 200,
+    headers: { <span class="s">"content-type"</span>: <span class="s">"application/json"</span> },
+    body: JSON.stringify({
+      caminho: path,
+      visitas: r.Attributes?.visitas?.N }),
+  };
+};
+<span class="k">export default</span> handler;</code></pre>
+        </div>
+        <div class="card">
+          <h3>index.py (alternativa)</h3>
+          <pre class="block"><code><span class="k">import</span> json, os, boto3
+
+db = boto3.client(<span class="s">"dynamodb"</span>,
+    endpoint_url=<span class="s">"http://localhost:4566"</span>)
+
+<span class="k">def</span> handler(event, context):
+    path = event.get(<span class="s">"queryStringParameters"</span>,
+                     {}).get(<span class="s">"caminho"</span>, <span class="s">"/"</span>)
+    r = db.update_item(
+        TableName=os.environ[<span class="s">"TABLE"</span>],
+        Key={<span class="s">"path"</span>: {<span class="s">"S"</span>: path}},
+        UpdateExpression=<span class="s">"ADD visitas :um"</span>,
+        ExpressionAttributeValues={
+            <span class="s">":um"</span>: {<span class="s">"N"</span>: <span class="s">"1"</span>}},
+        ReturnValues=<span class="s">"UPDATED_NEW"</span>)
+    <span class="k">return</span> {
+        <span class="s">"statusCode"</span>: 200,
+        <span class="s">"headers"</span>: {
+            <span class="s">"content-type"</span>: <span class="s">"application/json"</span>},
+        <span class="s">"body"</span>: json.dumps({
+            <span class="s">"caminho"</span>: path,
+            <span class="s">"visitas"</span>: r[<span class="s">"Attributes"</span>]
+                [<span class="s">"visitas"</span>][<span class="s">"N"</span>]})}</code></pre>
+        </div>
+      </div>
+
+      <h2 class="section">
+        <span class="num">3</span
+        ><span data-lang="pt">Desafio (difícil): a stack viva + port para a outra linguagem</span
+        ><span data-lang="en">Challenge (hard): the live stack + port to the other language</span>
+      </h2>
+      <div class="callout key">
+        <span data-lang="pt"
+          ><strong>Objetivo:</strong> apply único, <code>curl</code> duas
+          vezes no mesmo caminho, contador sobe; depois <strong>porte o
+          handler para a linguagem que você não usou</strong> (mude
+          <code>runtime</code>, <code>handler</code>, <code>filename</code>) e
+          re-aplique — <strong>sem apagar a tabela</strong>.</span
+        ><span data-lang="en"
+          ><strong>Goal:</strong> single apply, <code>curl</code> the same
+          path twice, counter goes up; then <strong>port the handler to the
+          language you did not use</strong> (change
+          <code>runtime</code>, <code>handler</code>, <code>filename</code>)
+          and re-apply — <strong>without deleting the table</strong>.</span
+        >
+      </div>
+      <pre class="block"><code>tflocal init &amp;&amp; tflocal apply -auto-approve
+<span class="c"># espere: Apply complete! (13~ recursos)</span>
+
+curl <span class="s">"&lt;URL do output&gt;?caminho=/home"</span>; echo
+curl <span class="s">"&lt;URL do output&gt;?caminho=/home"</span>; echo
+<span class="c"># esperado / expected:</span>
+<span class="s">{"caminho":"/home","visitas":"1"}</span>
+<span class="s">{"caminho":"/home","visitas":"2"}</span>
+
+<span class="c"># a prova da persistência fora da API:</span>
+awslocal dynamodb get-item --table-name visitas \
+  --key <span class="s">'{"path":{"S":"/home"}}'</span>
+<span class="c"># esperado: Item com visitas N=2</span></code></pre>
+      <div class="callout tip">
+        <span data-lang="pt"
+          >DNS falhou no <code>execute-api.localhost…</code>? Use o formato
+          alternativo do LocalStack:
+          <code>http://localhost:4566/_aws/execute-api/&lt;apiId&gt;/dev/visita</code>.</span
+        ><span data-lang="en"
+          >DNS failed on <code>execute-api.localhost…</code>? Use
+          LocalStack's alternative form:
+          <code>http://localhost:4566/_aws/execute-api/&lt;apiId&gt;/dev/visita</code>.</span
+        >
+      </div>
+
+      <h2 class="section">
+        <span class="num">4</span
+        ><span data-lang="pt">E o RDS? (nota honesta)</span
+        ><span data-lang="en">What about RDS? (honest note)</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >RDS <strong>não está no plano Community</strong> do LocalStack
+          (licença paga). Para um banco relacional grátis no seu Docker,
+          rode um container Postgres/MariaDB ao lado e aponte sua Lambda
+          para ele por conexão normal. DynamoDB cobre o caso NoSQL — e é o
+          que este capstone usa.</span
+        ><span data-lang="en"
+          >RDS <strong>is not in LocalStack's Community plan</strong> (paid
+          license). For a free relational DB in Docker, run a
+          Postgres/MariaDB container next to it and point your Lambda at it
+          with a plain connection. DynamoDB covers the NoSQL case — which is
+          what this capstone uses.</span
+        >
+      </p>
+      <p class="cite">
+        <a href="https://docs.localstack.cloud/aws/services/apigateway/">API Gateway no LocalStack</a> ·
+        <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html">AWS · Lambda proxy integration</a> ·
+        <a href="https://www.localstack.cloud/pricing-comparison">planos LocalStack</a>
+      </p>
+
+      <h2 class="section">
+        <span class="num">5</span
+        ><span data-lang="pt">Recupere sem pistas</span
+        ><span data-lang="en">Retrieve without clues</span>
+      </h2>
+      <div class="grid cols-2">
+        <details class="card">
+          <summary>
+            <span data-lang="pt">Qual a cadeia de um GET /visita?</span
+            ><span data-lang="en">What is the chain for GET /visita?</span>
+          </summary>
+          <p>
+            <span data-lang="pt">API GW (method+integration AWS_PROXY) →
+            Lambda (role com dynamodb:*) → tabela.</span
+            ><span data-lang="en">API GW (method+AWS_PROXY integration) →
+            Lambda (role with dynamodb:*) → table.</span
+          >
+          </p>
+        </details>
+        <details class="card">
+          <summary>
+            <span data-lang="pt">Por que AWS_PROXY?</span
+            ><span data-lang="en">Why AWS_PROXY?</span>
+          </summary>
+          <p>
+            <span data-lang="pt">Passa a requisição inteira ao handler e
+            mapeia o retorno direto para a resposta HTTP.</span
+            ><span data-lang="en">Forwards the whole request to the handler
+            and maps the return directly to the HTTP response.</span
+            >
+          </p>
+        </details>
+        <details class="card">
+          <summary>
+            <span data-lang="pt">O que faz a aws_lambda_permission aqui?</span
+            ><span data-lang="en">What does aws_lambda_permission do here?</span>
+          </summary>
+          <p>
+            <span data-lang="pt">Autoriza o API Gateway a invocar a
+            função.</span
+            ><span data-lang="en">Authorizes API Gateway to invoke the
+            function.</span
+            >
+          </p>
+        </details>
+        <details class="card">
+          <summary>
+            <span data-lang="pt">RDS no Community?</span
+            ><span data-lang="en">RDS on Community?</span>
+          </summary>
+          <p>
+            <span data-lang="pt">Não — pago. Alternativa grátis: container
+            Postgres/MariaDB próprio.</span
+            ><span data-lang="en">No — paid. Free alternative: your own
+            Postgres/MariaDB container.</span
+            >
+          </p>
+        </details>
+      </div>
+
+      <footer class="lesson-foot">
+        <div>
+          <span data-lang="pt">Fonte primária:</span
+          ><span data-lang="en">Primary source:</span>
+          <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html"
+            >AWS · API Gateway Lambda proxy</a
+          >
+        </div>
+        <a class="next-card" href="../reference/cli-cookbook.html"
+          ><span class="lbl"
+            ><span data-lang="pt">Referência do curso</span
+            ><span data-lang="en">Course reference</span></span
+          >
+          <div class="t">
+            <span data-lang="pt">Cookbook CLI + Terraform (revisite sempre) →</span
+            ><span data-lang="en">CLI + Terraform cookbook (revisit often) →</span>
+          </div></a
+        >
+        <div>
+          <span data-lang="pt"
+            >Algo não ficou claro? Pergunte ao agente — ele é seu
+            professor.</span
+          ><span data-lang="en"
+            >Anything unclear? Ask the agent—your teacher.</span
+          >
+          · <a href="../../../index.html">⬡ Hub</a>
+        </div>
+      </footer>
+    </article>
+  </Fragment>
+</Lesson>

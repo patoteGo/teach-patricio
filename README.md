@@ -195,13 +195,28 @@ Action on every push, so it never drifts. (See
 
 ### Tooling
 
-`./src/pages/topics/tooling/` · 1 lesson(s)
+`./src/pages/topics/tooling/` · 2 lesson(s)
 
 | # | Lesson |
 |---|--------|
 | 01 | [Vim — o loop essencial](./src/pages/topics/tooling/lessons/0001-vim-core-loop.html) |
+| 02 | [Orca — o cockpit dos agentes](./src/pages/topics/tooling/lessons/0002-orca-agent-cockpit.html) |
 
-**Total: 45 lesson(s) across 10 topic(s).**
+### LocalStack & AWS
+
+`./src/pages/topics/localstack-aws/` · 7 lesson(s)
+
+| # | Lesson |
+|---|--------|
+| 01 | [LocalStack 1 — o primeiro comando](./src/pages/topics/localstack-aws/lessons/0001-localstack-up.html) |
+| 02 | [LocalStack 2 — S3 pelo CLI](./src/pages/topics/localstack-aws/lessons/0002-s3-cli.html) |
+| 03 | [LocalStack 3 — Lambda em Python](./src/pages/topics/localstack-aws/lessons/0003-lambda-python.html) |
+| 04 | [LocalStack 4 — Lambda em TypeScript](./src/pages/topics/localstack-aws/lessons/0004-lambda-typescript.html) |
+| 05 | [LocalStack 5 — SNS, SQS e gatilhos](./src/pages/topics/localstack-aws/lessons/0005-event-driven.html) |
+| 06 | [LocalStack 6 — Terraform I](./src/pages/topics/localstack-aws/lessons/0006-terraform-first.html) |
+| 07 | [LocalStack 7 — Terraform II](./src/pages/topics/localstack-aws/lessons/0007-terraform-stack.html) |
+
+**Total: 53 lesson(s) across 11 topic(s).**
 <!-- topics:end -->
 
 ## 🗂 Repo map

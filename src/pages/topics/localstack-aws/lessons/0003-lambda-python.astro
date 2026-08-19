@@ -1,0 +1,269 @@
+---
+// LocalStack · Lesson 3 — Lambda in Python: role, zip, deploy, invoke, logs.
+import Lesson from "../../../../layouts/Lesson.astro";
+const titlePt = "LocalStack 3 — Lambda em Python";
+const titleEn = "LocalStack 3 — Lambda in Python";
+const titleFallback = "LocalStack 3 — Lambda em Python";
+const bodyClass = "lang-pt";
+const viewport = "width=device-width, initial-scale=1.0";
+const assets = [
+	"<link rel=\"stylesheet\" href=\"../assets/style.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/dark.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/i18n.css\" />",
+	"<script src=\"../assets/i18n.js\" defer></script>",
+	"<script src=\"../assets/nav.js\" defer></script>",
+	"<script src=\"../assets/reading-ui.js\" defer></script>",
+];
+---
+<Lesson
+	titlePt={titlePt}
+	titleEn={titleEn}
+	titleFallback={titleFallback}
+	bodyClass={bodyClass}
+	viewport={viewport}
+	assets={assets}
+>
+	<Fragment is:raw>
+    <article class="lesson">
+      <header class="hero">
+        <span class="eyebrow">⬡ LocalStack · Lição 3 · Médio</span>
+        <h1>
+          <span data-lang="pt">Lambda em Python: do zip ao log</span
+          ><span data-lang="en">Lambda in Python: from zip to log</span>
+        </h1>
+        <p class="lead">
+          <span data-lang="pt"
+            >O ciclo completo de uma função: <strong>role → zip → deploy →
+            invoke → logs</strong>. Depois desta lição, você nunca mais copia
+            um tutorial de Lambda às cegas.</span
+          ><span data-lang="en"
+            >The full function cycle: <strong>role → zip → deploy → invoke →
+            logs</strong>. After this lesson you never copy a Lambda tutorial
+            blind again.</span
+          >
+        </p>
+      </header>
+
+      <h2 class="section">
+        <span class="num">1</span
+        ><span data-lang="pt">O modelo: handler, evento e runtime</span
+        ><span data-lang="en">The model: handler, event and runtime</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >Lambda roda <strong>uma função sua em resposta a um evento</strong>.
+          O runtime (Python, Node…) injeta um <code>dict</code>/<code>objeto</code>
+          descrevendo o que aconteceu, e lê o que você retorna. Nada de
+          servidor — <strong>you função é a unidade de deploy</strong>.</span
+        ><span data-lang="en"
+          >Lambda runs <strong>your function in response to an event</strong>.
+          The runtime (Python, Node…) injects a <code>dict</code>/<code>object</code>
+          describing what happened, and reads what you return. No server —
+          <strong>the function is the deploy unit</strong>.</span
+        >
+      </p>
+      <pre class="block"><code><span class="c"># lambda_function.py — o menor handler útil</span>
+<span class="k">import</span> json
+
+<span class="k">def</span> <span class="k">handler</span>(event, context):
+    name = event.get(<span class="s">"name"</span>, <span class="s">"mundo"</span>)
+    print(<span class="s">f"recebi: </span>{json.dumps(event)}<span class="s">"</span>)  <span class="c"># vira log</span>
+    <span class="k">return</span> {
+        <span class="s">"statusCode"</span>: 200,
+        <span class="s">"body"</span>: json.dumps({<span class="s">"msg"</span>: <span class="s">f"ola, </span>{name}<span class="s">"</span>}),
+    }</code></pre>
+      <div class="callout key">
+        <span data-lang="pt"
+          ><code>print</code> em Python vira <strong>linha de log no
+          CloudWatch</strong> — é o seu <code>console.log</code> de produção.
+          Sem ele, você depura no escuro.</span
+        ><span data-lang="en"
+          >Python <code>print</code> becomes a <strong>CloudWatch log
+          line</strong> — it is your production <code>console.log</code>.
+          Without it you debug in the dark.</span
+        >
+      </div>
+
+      <h2 class="section">
+        <span class="num">2</span
+        ><span data-lang="pt">Deploy em 4 comandos</span
+        ><span data-lang="en">Deploy in 4 commands</span>
+      </h2>
+      <pre class="block"><code><span class="c"># 1 — a role de execução (quem a função "é" ao rodar)</span>
+awslocal iam create-role \
+  --role-name lambda-python-role \
+  --assume-role-policy-document <span class="s">'{"Version":"2012-10-17",
+    "Statement":[{"Effect":"Allow","Principal":{"Service":"lambda.amazonaws.com"},
+    "Action":"sts:AssumeRole"}]}'</span>
+
+<span class="c"># 2 — empacote</span>
+zip -j function.zip lambda_function.py
+
+<span class="c"># 3 — crie a função</span>
+awslocal lambda create-function \
+  --function-name ola-python \
+  --runtime python3.12 \
+  --handler lambda_function.handler \
+  --zipfile fileb://function.zip \
+  --role arn:aws:iam::000000000000:role/lambda-python-role
+
+<span class="c"># 4 — invoque</span>
+awslocal lambda invoke \
+  --payload <span class="s">'{"name":"Patricio"}'</span> \
+  --cli-binary-format raw-in-base64-out \
+  out.json &amp;&amp; cat out.json</code></pre>
+      <pre class="block"><code>cat out.json
+<span class="c"># esperado / expected:</span>
+<span class="s">{"statusCode": 200, "body": "{\"msg\": \"ola, Patricio\"}"}</span></code></pre>
+      <div class="callout warn">
+        <span data-lang="pt"
+          >Sem <code>--cli-binary-format raw-in-base64-out</code>, o CLI v3
+          exige payload em base64 e o invoke falha com mensagem críptica.
+          <strong>Coloque no seu vocabulário permanente.</strong></span
+        ><span data-lang="en"
+          >Without <code>--cli-binary-format raw-in-base64-out</code>, CLI v2+
+          expects a base64 payload and the invoke fails cryptically.
+          <strong>Add it to your permanent vocabulary.</strong></span
+        >
+      </div>
+
+      <h2 class="section">
+        <span class="num">3</span
+        ><span data-lang="pt">Logs: o feedback loop da função</span
+        ><span data-lang="en">Logs: the function's feedback loop</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >Cada função ganha um <strong>log group
+          <code>/aws/lambda/&lt;nome&gt;</code></strong>. O tail é o seu melhor
+          amigo durante o desafio.</span
+        ><span data-lang="en"
+          >Each function gets a <strong>log group
+          <code>/aws/lambda/&lt;name&gt;</code></strong>. The tail is your best
+          friend during the challenge.</span
+        >
+      </p>
+      <pre class="block"><code><span class="c"># os últimos eventos de log da função</span>
+awslocal logs tail /aws/lambda/ola-python --since 5m
+
+<span class="c"># esperado (entre outras linhas) / expected:</span>
+<span class="s">recebi: {"name": "Patricio"}</span></code></pre>
+
+      <h2 class="section">
+        <span class="num">4</span
+        ><span data-lang="pt">Desafio (médio): contador em env var</span
+        ><span data-lang="en">Challenge (medium): counter in an env var</span>
+      </h2>
+      <div class="callout key">
+        <span data-lang="pt"
+          ><strong>Objetivo:</strong> uma função Python que lê a variável de
+          ambiente <code>PLACE</code> e devolve
+          <code>{"msg": "ola de &lt;PLACE&gt;"}</code>. Você não pode recriar a
+          função — <strong>atualize-a</strong>.</span
+        ><span data-lang="en"
+          ><strong>Goal:</strong> a Python function that reads the
+          <code>PLACE</code> environment variable and returns
+          <code>{"msg": "ola from &lt;PLACE&gt;"}</code>. You cannot recreate
+          the function — <strong>update it</strong>.</span
+        >
+      </div>
+      <div class="card">
+        <h3>
+          <span data-lang="pt">Passos</span><span data-lang="en">Steps</span>
+        </h3>
+        <ol>
+          <li>
+            <span data-lang="pt">Edite o handler para ler
+            <code>os.environ["PLACE"]</code>.</span
+            ><span data-lang="en">Edit the handler to read
+            <code>os.environ["PLACE"]</code>.</span>
+          </li>
+          <li>
+            <span data-lang="pt">Re-zipe e atualize o código:</span
+            ><span data-lang="en">Re-zip and update the code:</span>
+            <code>awslocal lambda update-function-code --function-name ola-python --zipfile fileb://function.zip</code>
+          </li>
+          <li>
+            <span data-lang="pt">Defina a config (env vars):</span
+            ><span data-lang="en">Set the config (env vars):</span>
+            <code>awslocal lambda update-function-configuration --function-name ola-python --environment "Variables={PLACE=localstack}"</code>
+          </li>
+        </ol>
+      </div>
+      <pre class="block"><code>awslocal lambda invoke --payload <span class="s">'{}'</span> \
+  --cli-binary-format raw-in-base64-out out.json &amp;&amp; cat out.json
+<span class="c"># esperado / expected:</span>
+<span class="s">{"statusCode": 200, "body": "{\"msg\": \"ola de localstack\"}"}</span></code></pre>
+
+      <h2 class="section">
+        <span class="num">5</span
+        ><span data-lang="pt">Recupere sem pistas</span
+        ><span data-lang="en">Retrieve without clues</span>
+      </h2>
+      <div class="grid cols-2">
+        <details class="card">
+          <summary>
+            <span data-lang="pt">Qual o log group de uma Lambda?</span
+            ><span data-lang="en">What is a Lambda's log group?</span>
+          </summary>
+          <p><code>/aws/lambda/&lt;nome-da-funcao&gt;</code></p>
+        </details>
+        <details class="card">
+          <summary>
+            <span data-lang="pt">Atualizar código vs configuração — quais comandos?</span
+            ><span data-lang="en">Update code vs config — which commands?</span>
+          </summary>
+          <p><code>update-function-code</code> · <code>update-function-configuration</code></p>
+        </details>
+        <details class="card">
+          <summary>
+            <span data-lang="pt">O que a role de execução representa?</span
+            ><span data-lang="en">What does the execution role represent?</span>
+          </summary>
+          <p>
+            <span data-lang="pt">As permissões da função ao rodar (quem ela
+            "é").</span
+            ><span data-lang="en">The function's permissions at runtime (who
+            it "is").</span>
+          </p>
+        </details>
+        <details class="card">
+          <summary>
+            <span data-lang="pt">Como ver logs de 5 minutos atrás?</span
+            ><span data-lang="en">How to see the last 5 minutes of logs?</span>
+          </summary>
+          <p><code>awslocal logs tail /aws/lambda/f --since 5m</code></p>
+        </details>
+      </div>
+
+      <footer class="lesson-foot">
+        <div>
+          <span data-lang="pt">Fonte primária:</span
+          ><span data-lang="en">Primary source:</span>
+          <a href="https://docs.localstack.cloud/aws/services/lambda/"
+            >LocalStack · Lambda</a
+          >
+        </div>
+        <a class="next-card" href="0004-lambda-typescript.html"
+          ><span class="lbl"
+            ><span data-lang="pt">Próxima lição</span
+            ><span data-lang="en">Next lesson</span></span
+          >
+          <div class="t">
+            <span data-lang="pt">Lambda em TypeScript — o mesmo pelo Node →</span
+            ><span data-lang="en">Lambda in TypeScript — same, via Node →</span>
+          </div></a
+        >
+        <div>
+          <span data-lang="pt"
+            >Algo não ficou claro? Pergunte ao agente — ele é seu
+            professor.</span
+          ><span data-lang="en"
+            >Anything unclear? Ask the agent—your teacher.</span
+          >
+          · <a href="../../../index.html">⬡ Hub</a>
+        </div>
+      </footer>
+    </article>
+  </Fragment>
+</Lesson>
