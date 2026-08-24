@@ -162,7 +162,7 @@ Action on every push, so it never drifts. (See
 
 | # | Lesson |
 |---|--------|
-| 01 | [Apex — a linguagem do Salesforce](./src/pages/topics/salesforce/lessons/0001-apex-basics.html) |
+| 01 | [Apex — a linguagem do Salesforce (para devs JavaScript)](./src/pages/topics/salesforce/lessons/0001-apex-basics.html) |
 | 02 | [SOQL — o SQL especial do Salesforce](./src/pages/topics/salesforce/lessons/0002-soql-basics.html) |
 
 ### Software Company
@@ -226,7 +226,7 @@ Action on every push, so it never drifts. (See
 | 01 | [Vim — o loop essencial](./src/pages/topics/tooling/lessons/0001-vim-core-loop.html) |
 | 02 | [Orca — o cockpit dos agentes](./src/pages/topics/tooling/lessons/0002-orca-agent-cockpit.html) |
 
-**Total: 53 lesson(s) across 11 topic(s).**
+**Total: 56 lesson(s) across 12 topic(s).**
 <!-- topics:end -->
 
 ## 🗂 Repo map
