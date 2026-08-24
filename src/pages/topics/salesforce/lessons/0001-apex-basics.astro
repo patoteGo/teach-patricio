@@ -574,6 +574,82 @@ insert contacts;  <span data-lang="pt"><span class="c">// 1 comando; as linhas a
           outside.</span
         >
       </div>
+      <p>
+        <span data-lang="pt"
+          >Pergunta natural: <em>"e se eu precisar alterar mais de 200
+          linhas? Em blocos?"</em> Não precisa. 200 é o tamanho do
+          <strong>lote da trigger</strong>, não um limite de DML: um único
+          comando DML carrega até <strong>10.000 linhas</strong>. São três
+          números separados — lote da trigger (≤ 200), linhas por DML
+          (10.000), comandos/consultas por transação (150 / 100). Se você
+          já tem os registros na mão, uma lista basta:</span
+        ><span data-lang="en"
+          >Natural question: <em>"what if I need to modify more than 200
+          rows? In chunks?"</em> You don't have to. 200 is the
+          <strong>trigger chunk size</strong>, not a DML limit: a single DML
+          statement carries up to <strong>10,000 rows</strong>. Three
+          separate numbers — trigger batch (≤ 200), rows per DML statement
+          (10,000), statements/queries per transaction (150 / 100). If you
+          already hold the records, one list is enough:</span
+        >
+      </p>
+      <pre class="block"><code><span data-lang="pt"><span class="c">// 5.000 contas = 1 comando DML — não precisa de chunking</span></span
+><span data-lang="en"><span class="c">// 5,000 accounts = 1 DML statement — no chunking needed</span></span>
+update allAccounts;</code></pre>
+      <p>
+        <span data-lang="pt"
+          >E <em>"e se eu não sei quantas vêm?"</em> Numa trigger, você
+          nunca precisa saber: importar 5.000 contas dispara sua trigger
+          <strong>25 vezes com 200 cada</strong>, e cada invocação recebe
+          limites zerados. A plataforma faz o chunking por você — seu código
+          só precisa tratar "até 200" corretamente. Agora, uma operação sua
+          que precisa tocar <strong>mais de 10.000 linhas</strong> (botão de
+          atualização em massa, job de limpeza, migração de dados) é o caso
+          de uso do <strong>Batch Apex</strong>:</span
+        ><span data-lang="en"
+          >And <em>"what if I don't know how many are coming?"</em> In a
+          trigger you never need to know: importing 5,000 accounts fires
+          your trigger <strong>25 times with 200 each</strong>, and every
+          invocation gets fresh limits. The platform does the chunking for
+          you — your code just has to handle "up to 200" correctly. An
+          operation of your own that must touch <strong>more than 10,000
+          rows</strong> (mass-update button, cleanup job, data migration) is
+          the use case for <strong>Batch Apex</strong>:</span
+        >
+      </p>
+      <pre class="block"><code><span class="k">public class</span> MassUpdateAccounts <span class="k">implements</span> Database.Batchable&lt;sObject&gt; {
+    <span class="k">public</span> Database.QueryLocator start(Database.BatchableContext bc) {
+        <span data-lang="pt"><span class="c">// "quantas?" — o QueryLocator não se importa</span></span
+><span data-lang="en"><span class="c">// "how many?" — the QueryLocator doesn't care</span></span>
+        <span class="k">return</span> Database.getQueryLocator(<span class="s">'SELECT Id FROM Account'</span>);
+    }
+
+    <span class="k">public void</span> execute(Database.BatchableContext bc, List&lt;Account&gt; scope) {
+        <span class="k">for</span> (Account a : scope) {
+            a.Description = <span class="s">'Batch updated'</span>;
+        }
+        update scope;
+    }
+
+    <span class="k">public void</span> finish(Database.BatchableContext bc) {}
+}
+
+<span data-lang="pt"><span class="c">// 2º argumento = tamanho do lote (máx 2000, padrão 200)</span></span
+><span data-lang="en"><span class="c">// 2nd argument = chunk size (max 2000, default 200)</span></span>
+Database.executeBatch(<span class="k">new</span> MassUpdateAccounts(), 200);</code></pre>
+      <div class="callout key">
+        <span data-lang="pt"
+          >O truque do Batch Apex: <strong>cada execute() roda numa
+          transação própria com limites zerados</strong>. Como os governors
+          são por transação, basta fazer muitas transações — o QueryLocator
+          entrega o próximo lote sem ninguém contar nada de antemão.</span
+        ><span data-lang="en"
+          >The Batch Apex trick: <strong>each execute() runs in its own
+          transaction with fresh limits</strong>. Since governors are per
+          transaction, it just makes many transactions — the QueryLocator
+          hands out the next chunk without anyone counting ahead.</span
+        >
+      </div>
       <p class="cite">
         <span data-lang="pt">Fontes:</span
         ><span data-lang="en">Sources:</span>
@@ -583,6 +659,10 @@ insert contacts;  <span data-lang="pt"><span class="c">// 1 comando; as linhas a
         ·
         <a href="https://developer.salesforce.com/docs/platform/apex/guide/apex_triggers.htm"
           >Salesforce — Triggers</a
+        >
+        ·
+        <a href="https://developer.salesforce.com/docs/platform/apex/guide/apex_batch_interface.htm"
+          >Salesforce — Batch Apex</a
         >
       </p>
 
