@@ -74,6 +74,12 @@
 			pt: "Load balancer",
 			en: "Load balancer",
 		},
+		{
+			file: "0013-aws-lambda.html",
+			n: "13",
+			pt: "AWS Lambda",
+			en: "AWS Lambda",
+		},
 	];
 	const groups = {
 		aws: { pt: "AWS", en: "AWS" },

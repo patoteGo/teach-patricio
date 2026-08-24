@@ -156,6 +156,15 @@ Action on every push, so it never drifts. (See
 | 01 | [Falsos amigos — as palavras que te traem](./src/pages/topics/portuguese/lessons/0001-falsos-amigos-traicoeiros.html) |
 | 02 | [Sotaque — as cinco marcas que entregam](./src/pages/topics/portuguese/lessons/0002-sotaque-cinco-marcas.html) |
 
+### Salesforce
+
+`./src/pages/topics/salesforce/` · 2 lesson(s)
+
+| # | Lesson |
+|---|--------|
+| 01 | [Apex — a linguagem do Salesforce](./src/pages/topics/salesforce/lessons/0001-apex-basics.html) |
+| 02 | [SOQL — o SQL especial do Salesforce](./src/pages/topics/salesforce/lessons/0002-soql-basics.html) |
+
 ### Software Company
 
 `./src/pages/topics/software-company/` · 1 lesson(s)
@@ -166,7 +175,7 @@ Action on every push, so it never drifts. (See
 
 ### Software Concepts
 
-`./src/pages/topics/software-concepts/` · 12 lesson(s)
+`./src/pages/topics/software-concepts/` · 13 lesson(s)
 
 | # | Lesson |
 |---|--------|
@@ -182,6 +191,7 @@ Action on every push, so it never drifts. (See
 | 10 | [Redis — memória com TTL](./src/pages/topics/software-concepts/lessons/0010-redis.html) |
 | 11 | [PostgreSQL vs MySQL — irmãos, não gêmeos](./src/pages/topics/software-concepts/lessons/0011-postgres-vs-mysql.html) |
 | 12 | [Load balancer — o porteiro que divide a fila](./src/pages/topics/software-concepts/lessons/0012-load-balancer.html) |
+| 13 | [AWS Lambda — o código que só acorda quando é chamado](./src/pages/topics/software-concepts/lessons/0013-aws-lambda.html) |
 
 ### System Design
 

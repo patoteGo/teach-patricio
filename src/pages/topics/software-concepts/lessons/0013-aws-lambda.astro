@@ -1,0 +1,575 @@
+---
+// Lesson 13 — AWS Lambda, foundational. Registered in nav.js, README, hub (index.astro), and chained from 0012's concept-nav.
+import Lesson from "../../../../layouts/Lesson.astro";
+const titlePt = "AWS Lambda — o código que só acorda quando é chamado";
+const titleEn = "AWS Lambda — code that only wakes up when called";
+const titleFallback = "AWS Lambda";
+const bodyClass = "lang-pt";
+const viewport = "width=device-width,initial-scale=1.0";
+const assets = [
+	"<link rel=\"stylesheet\" href=\"../assets/style.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/dark.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/i18n.css\" />",
+	"<link rel=\"stylesheet\" href=\"../assets/concepts.css\" />",
+	"<script src=\"../assets/i18n.js\" defer></script>",
+	"<script src=\"../assets/nav.js\" defer></script>",
+	"<script src=\"../assets/reading-ui.js\" defer></script>",
+	"<script src=\"../assets/concepts.js\" defer></script>",
+];
+
+---
+<Lesson
+	titlePt={titlePt}
+	titleEn={titleEn}
+	titleFallback={titleFallback}
+	bodyClass={bodyClass}
+	viewport={viewport}
+	assets={assets}
+>
+	<Fragment is:raw>
+    <article class="lesson">
+      <header class="hero">
+        <span class="eyebrow"
+          >⬡ <span data-lang="pt">Conceitos · AWS Lambda</span
+          ><span data-lang="en">Concepts · AWS Lambda</span></span
+        >
+        <h1>
+          <span data-lang="pt"
+            >Sem servidor para cuidar. Você traz o código; a AWS traz o
+            resto.</span
+          ><span data-lang="en"
+            >No server to babysit. You bring the code; AWS brings everything
+            else.</span
+          >
+        </h1>
+        <p class="lead">
+          <span data-lang="pt"
+            >Lambda é um <strong>funcionário sob demanda</strong>: seu código
+            fica guardado, dormindo, e só acorda quando algo acontece — um
+            upload, um pedido HTTP, uma mensagem na fila do
+            <a href="0007-aws-sqs.html">SQS</a>. Nada chamou? Nada roda, nada
+            custa.</span
+          ><span data-lang="en"
+            >Lambda is an <strong>on-demand worker</strong>: your code sits
+            stored, asleep, and only wakes up when something happens — an
+            upload, an HTTP request, a message on the
+            <a href="0007-aws-sqs.html">SQS</a> queue. Nothing called? Nothing
+            runs, nothing costs.</span
+          >
+        </p>
+      </header>
+      <nav class="concept-nav">
+        <a href="0012-load-balancer.html"
+          ><span data-lang="pt">← Load balancer</span
+          ><span data-lang="en">← Load balancer</span></a
+        ><a href="0007-aws-sqs.html"
+          ><span data-lang="pt">SQS</span><span data-lang="en">SQS</span></a
+        ><a href="0008-aws-s3.html"
+          ><span data-lang="pt">S3</span><span data-lang="en">S3</span></a
+        ><a href="../reference/software-concepts-cheatsheet.html"
+          ><span data-lang="pt">Folha</span><span data-lang="en">Cheat</span></a
+        >
+      </nav>
+
+      <h2 class="section">
+        <span class="num">1</span
+        ><span data-lang="pt">O problema: um servidor ligado cobra 24 horas por
+        dia</span
+        ><span data-lang="en">The problem: a running server bills 24 hours a
+        day</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >Do jeito tradicional, colocar código na nuvem significa alugar uma
+          máquina (um servidor, na AWS chamado
+          <a href="https://aws.amazon.com/ec2/">EC2</a>) e deixar seu programa
+          rodando nela <strong>sem parar</strong>. Afinal, um visitante pode
+          chegar a qualquer momento.</span
+        ><span data-lang="en"
+          >The traditional way to put code in the cloud means renting a machine
+          (a server, on AWS called EC2) and leaving your program running on it
+          <strong>nonstop</strong>. After all, a visitor might show up at any
+          moment.</span
+        >
+      </p>
+      <p>
+        <span data-lang="pt"
+          >O problema: essa máquina <strong>cobra por segundo, mesmo às 3 da
+          manhã</strong>, com zero visitantes. E ela é problema seu — atualizar,
+          reiniciar, escalar quando lota. É como alugar uma loja aberta 24h para
+          vender 5 itens por dia.</span
+        ><span data-lang="en"
+          >The problem: that machine <strong>bills per second, even at 3am</strong>,
+          with zero visitors. And it's your problem — patching, restarting,
+          scaling when it fills up. It's like renting a store open 24/7 to sell
+          5 items a day.</span
+        >
+      </p>
+      <p>
+        <span data-lang="pt"
+          >Lambda inverte o jogo: você entrega <strong>só o código de uma
+          função</strong> (uma peça pequena, tipo “gere a miniatura desta
+          foto”). A AWS guarda esse código dormindo. Quando um evento acontece,
+          a AWS liga uma cópia, roda sua função por alguns milissegundos,
+          devolve a resposta e desliga. Você paga por
+          <strong>chamada + tempo de execução</strong> — não por hora.</span
+        ><span data-lang="en"
+          >Lambda flips the game: you hand over <strong>just one function's
+          code</strong> (a small piece, like “generate the thumbnail for this
+          photo”). AWS stores that code asleep. When an event happens, AWS
+          starts a copy, runs your function for a few hundred milliseconds,
+          returns the response, and shuts down. You pay per
+          <strong>call + execution time</strong> — not by the hour.</span
+        >
+      </p>
+      <div class="callout key">
+        <p>
+          <span data-lang="pt"
+            ><strong>“Serverless” não significa “sem servidor” — significa “sem
+            servidor <em>seu</em>”.</strong> O servidor existe, é da AWS, e
+            aparece só nos milissegundos em que seu código roda. Daí o nome:
+            função como serviço (FaaS).</span
+          ><span data-lang="en"
+            ><strong>“Serverless” doesn't mean “no server” — it means “no server
+            <em>of yours</em>”.</strong> The server exists, it's AWS's, and it
+            only appears for the milliseconds your code runs. Hence the name:
+            Function as a Service (FaaS).</span
+          >
+        </p>
+      </div>
+
+      <h2 class="section">
+        <span class="num">2</span
+        ><span data-lang="pt">O modelo mental (a vida de uma chamada)</span
+        ><span data-lang="en">The mental model (the life of one call)</span>
+      </h2>
+      <div class="flow-board" data-flow>
+        <div class="flow-row">
+          <span class="step">1</span>
+          <div>
+            <b
+              ><span data-lang="pt">Evento chega</span
+              ><span data-lang="en">An event arrives</span></b
+            >
+            <p>
+              <span data-lang="pt"
+                >Algo acontece: um pedido HTTP (via API Gateway), um arquivo
+                caiu no <a href="0008-aws-s3.html">S3</a>, uma mensagem entrou
+                na fila do <a href="0007-aws-sqs.html">SQS</a>, um cron disparou
+                (EventBridge). O evento é um <strong>JSON</strong> com os
+                detalhes.</span
+              ><span data-lang="en"
+                >Something happens: an HTTP request (via API Gateway), a file
+                landed in <a href="0008-aws-s3.html">S3</a>, a message arrived
+                on the <a href="0007-aws-sqs.html">SQS</a> queue, a cron fired
+                (EventBridge). The event is a <strong>JSON</strong> with the
+                details.</span
+              >
+            </p>
+          </div>
+        </div>
+        <div class="flow-row">
+          <span class="step">2</span>
+          <div>
+            <b
+              ><span data-lang="pt">AWS acorda o código</span
+              ><span data-lang="en">AWS wakes the code up</span></b
+            >
+            <p>
+              <span data-lang="pt"
+                >Se faz tempo que ninguém chamou, a AWS precisa “dar partida”
+                num mini-ambiente: boot de linguagem + seu código. É o
+                <strong>cold start</strong> — uma fração de segundo que a
+                primeira chamada paga.</span
+              ><span data-lang="en"
+                >If nobody has called in a while, AWS has to “start up” a
+                mini-environment: language boot + your code. That's the
+                <strong>cold start</strong> — a fraction of a second the first
+                call pays.</span
+              >
+            </p>
+          </div>
+        </div>
+        <div class="flow-row">
+          <span class="step">3</span>
+          <div>
+            <b
+              ><span data-lang="pt">Sua função roda</span
+              ><span data-lang="en">Your function runs</span></b
+            >
+            <p>
+              <span data-lang="pt"
+                >O <em>handler</em> recebe o evento (JSON) e faz uma coisa:
+                grava no banco, gera a thumbnail, manda o e-mail. Cada chamada
+                dura no máximo <strong>15 minutos</strong>.</span
+              ><span data-lang="en"
+                >The <em>handler</em> receives the event (JSON) and does one
+                thing: write to the database, generate the thumbnail, send the
+                email. Each call lasts at most <strong>15 minutes</strong>.</span
+              >
+            </p>
+          </div>
+        </div>
+        <div class="flow-row">
+          <span class="step">4</span>
+          <div>
+            <b
+              ><span data-lang="pt">Responde e volta a dormir</span
+              ><span data-lang="en">Responds and goes back to sleep</span></b
+            >
+            <p>
+              <span data-lang="pt"
+                >O resultado sai e o ambiente congela, pronto para a próxima. Se
+                chegarem 100 eventos juntos, a AWS cria
+                <strong>100 cópias em paralelo</strong>, sem você configurar
+                nada.</span
+              ><span data-lang="en"
+                >The result goes out and the environment freezes, ready for the
+                next one. If 100 events arrive at once, AWS spins up
+                <strong>100 copies in parallel</strong> — nothing for you to
+                configure.</span
+              >
+            </p>
+          </div>
+        </div>
+        <div class="flow-controls">
+          <button type="button" data-next>
+            <span data-lang="pt">Próxima etapa →</span
+            ><span data-lang="en">Next step →</span>
+          </button>
+          <button type="button" data-reset>
+            <span data-lang="pt">Reiniciar</span
+            ><span data-lang="en">Reset</span>
+          </button>
+          <span class="flow-status" data-flow-status></span>
+        </div>
+      </div>
+
+      <h2 class="section">
+        <span class="num">3</span
+        ><span data-lang="pt"
+          >O detalhe que todo mundo erra: a função não lembra de nada</span
+        ><span data-lang="en"
+          >The detail everyone misses: the function remembers nothing</span
+        >
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >Cada cópia da sua função é <strong>stateless</strong>: sem memória
+          entre chamadas. Não existe “variável que acumula o total de vendas” —
+          quando o ambiente reinicia (o que a AWS faz quando quer), ela volta
+          zerada. Se precisa lembrar de algo, guarda <strong>fora</strong>: S3,
+          DynamoDB, <a href="0010-redis.html">Redis</a>.</span
+        ><span data-lang="en"
+          >Each copy of your function is <strong>stateless</strong>: no memory
+          between calls. There's no “variable accumulating total sales” — when
+          the environment restarts (which AWS does whenever it wants), it comes
+          back blank. If you need to remember something, store it
+          <strong>outside</strong>: S3, DynamoDB,
+          <a href="0010-redis.html">Redis</a>.</span
+        >
+      </p>
+      <div class="callout warn">
+        <p>
+          <span data-lang="pt"
+            ><strong>Pense nela como um freela, não como um funcionário.</strong>
+            O frela acorda, lê o briefing (o evento JSON), faz o trabalho e vai
+            embora. Ele não lembra do trabalho de ontem — se o trabalho
+            precisar de contexto, o contexto viaja <em>no evento</em> ou vive num
+            banco.</span
+          ><span data-lang="en"
+            ><strong>Think of it as a freelancer, not an employee.</strong> The
+            freelancer wakes up, reads the briefing (the event JSON), does the
+            job, and leaves. They don't remember yesterday's job — if the work
+            needs context, the context travels <em>in the event</em> or lives in
+            a database.</span
+          >
+        </p>
+      </div>
+      <p>
+        <span data-lang="pt"
+          >O <strong>cold start</strong> é o outro detalhe: a primeira chamada
+          após um período parado paga o boot. Para um e-mail ou thumbnail,
+          irrelevante. Para uma API onde cada 100ms contam, você pode manter
+          cópias pré-aquecidas (<em>provisioned concurrency</em>) — ou aceitar
+          que Lambda não é a ferramenta certa ali.</span
+        ><span data-lang="en"
+          >The <strong>cold start</strong> is the other detail: the first call
+          after an idle period pays the boot. For an email or a thumbnail,
+          irrelevant. For an API where every 100ms counts, you can keep
+          pre-warmed copies (<em>provisioned concurrency</em>) — or accept that
+          Lambda isn't the right tool there.</span
+        >
+      </p>
+
+      <h2 class="section">
+        <span class="num">4</span
+        ><span data-lang="pt">EC2 vs Lambda — quando cada um brilha</span
+        ><span data-lang="en">EC2 vs Lambda — when each one shines</span>
+      </h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th></th>
+              <th>EC2 (servidor)</th>
+              <th>Lambda (função)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <span data-lang="pt">Modelo</span
+                ><span data-lang="en">Model</span>
+              </td>
+              <td>
+                <span data-lang="pt">máquina sempre ligada rodando seu
+                programa</span
+                ><span data-lang="en">an always-on machine running your
+                program</span>
+              </td>
+              <td>
+                <span data-lang="pt">código dormindo que acorda por evento</span
+                ><span data-lang="en">asleep code that wakes on an event</span>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="pt">Cobra por</span
+                ><span data-lang="en">Bills by</span>
+              </td>
+              <td>
+                <span data-lang="pt">tempo ligado (mesmo parado)</span
+                ><span data-lang="en">time running (even when idle)</span>
+              </td>
+              <td>
+                <span data-lang="pt">chamada + ms de execução</span
+                ><span data-lang="en">call + ms of execution</span>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="pt">Escala</span
+                ><span data-lang="en">Scaling</span>
+              </td>
+              <td>
+                <span data-lang="pt">você configura (autoscaling)</span
+                ><span data-lang="en">you configure it (autoscaling)</span>
+              </td>
+              <td>
+                <span data-lang="pt">automática (cópias em paralelo)</span
+                ><span data-lang="en">automatic (parallel copies)</span>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="pt">Limite</span
+                ><span data-lang="en">Limit</span>
+              </td>
+              <td>
+                <span data-lang="pt">nenhum — roda por meses</span
+                ><span data-lang="en">none — runs for months</span>
+              </td>
+              <td>
+                <span data-lang="pt">15 min por chamada</span
+                ><span data-lang="en">15 min per call</span>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <span data-lang="pt">Use quando</span
+                ><span data-lang="en">Use when</span>
+              </td>
+              <td>
+                <span data-lang="pt"
+                  >app sempre ativo, tráfego constante, estado em memória</span
+                ><span data-lang="en"
+                  >always-on app, steady traffic, in-memory state</span
+                >
+              </td>
+              <td>
+                <span data-lang="pt"
+                  >cola entre serviços, picos esporádicos, tarefas curtas</span
+                ><span data-lang="en"
+                  >glue between services, sporadic spikes, short tasks</span
+                >
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout tip">
+        <p>
+          <span data-lang="pt"
+            ><strong>Regra de bolso:</strong> tráfego esporádico ou dirigido a
+            eventos → Lambda (parado custa ~zero). Tráfego alto e constante 24/7
+            → EC2/containers saem mais baratos que pagar chamada por chamada.</span
+          ><span data-lang="en"
+            ><strong>Rule of thumb:</strong> sporadic or event-driven traffic →
+            Lambda (idle costs ~zero). High, steady 24/7 traffic →
+            EC2/containers end up cheaper than paying call by call.</span
+          >
+        </p>
+      </div>
+
+      <h2 class="section">
+        <span class="num">5</span
+        ><span data-lang="pt">A jogada de entrevista (30 segundos)</span
+        ><span data-lang="en">The interview move (30 seconds)</span>
+      </h2>
+      <div class="code-stage">
+        <pre><code><span data-lang="pt"><span style="color:#8b88b8">// o código TODO que você entrega pra AWS — um handler</span>
+export const handler = async (event) => {
+  // "event" é o JSON do disparo: quem, o quê, quando
+  const file = event.Records[0].s3.object.key; // foto enviada
+
+  await resize(file);           // faz o trabalho (~300ms)
+  return { statusCode: 200 };   // responde e morre
+};</span><span data-lang="en"><span style="color:#8b88b8">// the ENTIRE code you hand AWS — one handler</span>
+export const handler = async (event) => {
+  // "event" is the trigger's JSON: who, what, when
+  const file = event.Records[0].s3.object.key; // uploaded photo
+
+  await resize(file);           // do the work (~300ms)
+  return { statusCode: 200 };   // respond and die
+};</span></code></pre>
+      </div>
+      <div class="callout key">
+        <p>
+          <span data-lang="pt"
+            ><strong>Frase que fecha a questão:</strong> “Uso Lambda como cola
+            entre serviços: o S3 dispara no upload, a função gera a thumbnail e
+            grava de volta. Pago por chamada, escala sozinha até milhares de
+            cópias, e como é stateless o estado vive no DynamoDB. Se a tarefa
+            passa de 15 min ou o tráfego vira constante, aí eu troco por
+            EC2/containers.”</span
+          ><span data-lang="en"
+            ><strong>The sentence that closes the question:</strong> “I use
+            Lambda as glue between services: S3 fires on upload, the function
+            generates the thumbnail and writes it back. I pay per call, it
+            scales by itself to thousands of copies, and since it's stateless
+            the state lives in DynamoDB. If the task exceeds 15 min or traffic
+            turns constant, I switch to EC2/containers.”</span
+          >
+        </p>
+      </div>
+
+      <div class="mcq" data-mcq>
+        <p class="mcq-q">
+          <span data-lang="pt"
+            >Sua função guarda um contador de vendas numa variável global. Depois
+            de algumas horas, o número não bate com o banco. Por quê?</span
+          ><span data-lang="en"
+            >Your function keeps a sales counter in a global variable. After a
+            few hours the number doesn't match the database. Why?</span
+          >
+        </p>
+        <div class="mcq-opts">
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="Bug na variável é improvável — o problema é o modelo: a AWS reinicia e duplica ambientes quando quer. Contador em memória nunca foi confiável aqui."
+            data-fb-en="A variable bug is unlikely — the problem is the model: AWS restarts and duplicates environments at will. An in-memory counter was never reliable here."
+          >
+            <span data-lang="pt">Bug na variável — troque por let</span
+            ><span data-lang="en">A variable bug — switch to let</span>
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="true"
+            data-fb-pt="Exato: cada chamada pode cair num ambiente diferente (ou num recém-reiniciado, zerado). Estado entre chamadas tem que viver fora: DynamoDB, Redis, S3."
+            data-fb-en="Exactly: each call may land on a different environment (or a freshly restarted, blank one). State between calls must live outside: DynamoDB, Redis, S3."
+          >
+            <span data-lang="pt"
+              >Lambda é stateless — cada ambiente tem a própria memória, que
+              some</span
+            ><span data-lang="en"
+              >Lambda is stateless — each environment has its own memory, which
+              vanishes</span
+            >
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="Global variables existem, sim — a questão é que não são confiáveis entre chamadas. Esconder o estado em arquivo local tem o mesmo fim: /tmp também some no reinício."
+            data-fb-en="Global variables do exist — the point is they're not reliable across calls. Hiding state in a local file ends the same way: /tmp also vanishes on restart."
+          >
+            <span data-lang="pt"
+              >Lambda não permite variáveis globais</span
+            ><span data-lang="en">Lambda doesn't allow global variables</span>
+          </button>
+        </div>
+        <div class="mcq-fb" data-fb></div>
+      </div>
+
+      <div class="mcq" data-mcq>
+        <p class="mcq-q">
+          <span data-lang="pt"
+            >Seu site institucional usa Lambda + API Gateway e recebe ~5 visitas
+            por dia. Um colega diz: “troca por um EC2, é mais sério.” Vale?</span
+          ><span data-lang="en"
+            >Your portfolio site runs on Lambda + API Gateway and gets ~5 visits
+            a day. A colleague says: “switch to EC2, it's more serious.” Worth
+            it?</span
+          >
+        </p>
+        <div class="mcq-opts">
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="Agora você paga 24/7 para servir 5 visitas — o caso onde Lambda brilha justamente porque parado custa ~zero."
+            data-fb-en="Now you pay 24/7 to serve 5 visits — the exact case where Lambda shines because idle costs ~zero."
+          >
+            <span data-lang="pt">Sim — EC2 é mais profissional</span
+            ><span data-lang="en">Yes — EC2 is more professional</span>
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="true"
+            data-fb-pt="Correto: 5 chamadas/dia custam centavos por mês. O EC2 trocaria “centavos por chamada” por “horas 24/7”. A regra: tráfego esporádico → Lambda."
+            data-fb-en="Correct: 5 calls/day cost pennies a month. EC2 would trade “pennies per call” for “24/7 hours”. The rule: sporadic traffic → Lambda."
+          >
+            <span data-lang="pt"
+              >Não — 5 visitas/dia no Lambda custam quase zero; o EC2 cobraria
+              24/7</span
+            ><span data-lang="en"
+              >No — 5 visits/day on Lambda cost near zero; EC2 would bill
+              24/7</span
+            >
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="Cold start existe (~fração de segundo), mas para um site institucional é irrelevante — e não é motivo para pagar um servidor 24/7."
+            data-fb-en="The cold start is real (~a fraction of a second), but for a portfolio site it's irrelevant — not a reason to pay for a 24/7 server."
+          >
+            <span data-lang="pt"
+              >Sim — o cold start do Lambda vai espantar os visitantes</span
+            ><span data-lang="en"
+              >Yes — Lambda's cold start will scare visitors away</span
+            >
+          </button>
+        </div>
+        <div class="mcq-fb" data-fb></div>
+      </div>
+
+      <p class="cite-line">
+        <span data-lang="pt">Revisão:</span><span data-lang="en">Review:</span>
+        <a href="0007-aws-sqs.html"
+          ><span data-lang="pt">SQS (a fila que a Lambda consome)</span
+          ><span data-lang="en">SQS (the queue Lambda consumes)</span></a
+        >
+        ·
+        <a href="0008-aws-s3.html"
+          ><span data-lang="pt">S3 (o gatilho de upload)</span
+          ><span data-lang="en">S3 (the upload trigger)</span></a
+        >
+        ·
+        <a
+          href="https://docs.aws.amazon.com/lambda/latest/dg/welcome.html"
+          >AWS Lambda Developer Guide</a
+        >.
+      </p>
+    </article>
+  </Fragment>
+</Lesson>

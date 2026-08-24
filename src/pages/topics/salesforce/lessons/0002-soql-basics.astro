@@ -1,0 +1,695 @@
+---
+// Salesforce · Lesson 2 — SOQL: SQL's read-only cousin + inline practice sandboxes.
+// Sandboxes reuse the shared concepts.js engine; each has its own data-key.
+// Registered: nav.js, README, hub card, chain (links back to lesson 1).
+import Lesson from "../../../../layouts/Lesson.astro";
+const titlePt = "SOQL — o SQL especial do Salesforce";
+const titleEn = "SOQL — Salesforce's special SQL";
+const titleFallback = "SOQL — o SQL especial do Salesforce";
+const assets = [
+	'<link rel="stylesheet" href="../assets/style.css" />',
+	'<link rel="stylesheet" href="../assets/dark.css" />',
+	'<link rel="stylesheet" href="../assets/i18n.css" />',
+	'<link rel="stylesheet" href="../assets/concepts.css" />',
+	'<script src="../assets/i18n.js" defer></script>',
+	'<script src="../assets/nav.js" defer></script>',
+	'<script src="../assets/reading-ui.js" defer></script>',
+	'<script src="../assets/concepts.js" defer></script>',
+];
+---
+<Lesson
+	titlePt={titlePt}
+	titleEn={titleEn}
+	titleFallback={titleFallback}
+	assets={assets}
+>
+	<Fragment is:raw>
+    <article class="lesson">
+      <header class="hero">
+        <span class="eyebrow"
+          >⬡ Salesforce · <span data-lang="pt">Lição 2 · dados</span
+          ><span data-lang="en">Lesson 2 · data</span></span
+        >
+        <h1>
+          <span data-lang="pt">SOQL: SQL com <strong>um objeto raiz</strong></span
+          ><span data-lang="en">SOQL: SQL with <strong>one root object</strong></span>
+        </h1>
+        <p class="lead">
+          <span data-lang="pt"
+            >A anatomia de uma query, as 6 diferenças que pegam quem vem do
+            SQL, relacionamentos sem JOIN — e <strong>9 exercícios de
+            escrita</strong> espalhados pela lição para o conhecimento
+            grudar. Escreva sem copiar; o sandbox corrige na hora.</span
+          ><span data-lang="en"
+            >A query's anatomy, the 6 differences that trip up SQL folks,
+            relationships without JOIN — and <strong>9 writing
+            exercises</strong> spread through the lesson so the knowledge
+            sticks. Write without copying; the sandbox corrects you
+            instantly.</span
+          >
+        </p>
+      </header>
+
+      <nav class="concept-nav">
+        <a href="0001-apex-basics.html">Apex</a
+        ><a href="0002-soql-basics.html">SOQL →</a
+        ><a href="../../../index.html">Hub</a>
+      </nav>
+
+      <h2 class="section">
+        <span class="num">1</span
+        ><span data-lang="pt">O modelo mental: SQL de leitura, um objeto raiz</span
+        ><span data-lang="en">The mental model: read-only SQL, one root object</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >SOQL (<strong>Salesforce Object Query Language</strong>) é a
+          linguagem de consulta da plataforma. O vocabulário traduz direto do
+          SQL: tabela vira <strong>objeto</strong> (<code>Account</code>,
+          <code>Contact</code>), linha vira <strong>registro</strong>, coluna
+          vira <strong>campo</strong>. Mas o design é diferente em tudo que
+          importa:</span
+        ><span data-lang="en"
+          >SOQL (<strong>Salesforce Object Query Language</strong>) is the
+          platform's query language. The vocabulary translates directly from
+          SQL: table becomes <strong>object</strong> (<code>Account</code>,
+          <code>Contact</code>), row becomes <strong>record</strong>, column
+          becomes <strong>field</strong>. But the design differs in everything
+          that matters:</span
+        >
+      </p>
+      <div class="grid cols-2">
+        <div class="card">
+          <h3>Só lê</h3>
+          <p>
+            <span data-lang="pt"
+              ><strong>Não existe</strong> INSERT/UPDATE/DELETE em SOQL.
+              Escrita é DML do Apex (lição 1).</span
+            ><span data-lang="en"
+              >There is <strong>no</strong> INSERT/UPDATE/DELETE in SOQL.
+              Writing is Apex DML (lesson 1).</span
+            >
+          </p>
+        </div>
+        <div class="card">
+          <h3>Um objeto raiz</h3>
+          <p>
+            <span data-lang="pt"
+              >O <code>FROM</code> externo tem <strong>um objeto raiz</strong>.
+              Objetos relacionados entram por caminhos, subqueries e
+              semi-joins suportados.</span
+            ><span data-lang="en"
+              >The outer <code>FROM</code> has <strong>one root object</strong>.
+              Related objects enter through paths, subqueries, and supported
+              semi-joins.</span
+            >
+          </p>
+        </div>
+      </div>
+      <pre class="block"><code><span class="k">SELECT</span> Name, Industry, AnnualRevenue
+<span class="k">FROM</span> Account
+<span class="k">WHERE</span> Industry = <span class="s">'Technology'</span>
+<span class="k">ORDER BY</span> AnnualRevenue <span class="k">DESC</span>
+<span class="k">LIMIT</span> 10</code></pre>
+      <p>
+        <span data-lang="pt"
+          >Os operadores de filtro são os amigos de sempre — mais alguns
+          exemplos de cada:</span
+        ><span data-lang="en"
+          >The filter operators are the usual friends — a few examples of
+          each:</span
+        >
+      </p>
+      <pre class="block"><code><span class="k">WHERE</span> Industry != <span class="s">'Technology'</span>
+<span class="k">WHERE</span> Industry <span class="k">IN</span> (<span class="s">'Technology'</span>, <span class="s">'Consulting'</span>)
+<span class="k">WHERE</span> Name <span class="k">LIKE</span> <span class="s">'A%'</span>
+<span class="k">WHERE</span> AnnualRevenue &gt; 1000000
+<span class="k">WHERE</span> CreatedDate = <span class="k">TODAY</span>
+<span class="k">WHERE</span> Industry = <span class="k">NULL</span></code></pre>
+      <p class="kicker">
+        <span data-lang="pt"
+          ><code>%</code> é curinga; datas aceitam literais como
+          <code>TODAY</code> e <code>LAST_N_DAYS:n</code>; campo vazio usa
+          <code>= null</code>, não <code>IS NULL</code>.</span
+        ><span data-lang="en"
+          ><code>%</code> is a wildcard; dates accept literals such as
+          <code>TODAY</code> and <code>LAST_N_DAYS:n</code>; an empty field uses
+          <code>= null</code>, not <code>IS NULL</code>.</span
+        >
+      </p>
+      <p class="cite">
+        <span data-lang="pt">Fontes:</span
+        ><span data-lang="en">Sources:</span>
+        <a href="https://trailhead.salesforce.com/content/learn/modules/database_basics_dotnet/sql_to_soql"
+          >Trailhead — Move from SQL to SOQL</a
+        >
+        ·
+        <a href="https://developer.salesforce.com/docs/platform/sfdc-api/guide/sforce_api_calls_soql.html"
+          >SOQL Reference</a
+        >
+      </p>
+
+      <div class="playground sql-sandbox" data-sql-sandbox data-key="sf-soql-basic">
+        <div class="sandbox-head">
+          <div>
+            <h3 data-question-title></h3>
+            <p data-question-prompt></p>
+          </div>
+          <span class="sandbox-count" data-count></span>
+        </div>
+        <div class="sandbox-schema" data-schema></div>
+        <label for="sql-editor-1"
+          ><span data-lang="pt">Sua consulta SOQL</span
+          ><span data-lang="en">Your SOQL query</span></label
+        >
+        <textarea
+          id="sql-editor-1"
+          spellcheck="false"
+          autocapitalize="off"
+          autocomplete="off"
+          placeholder="SELECT ..."
+        ></textarea>
+        <div class="sandbox-actions">
+          <button class="primary" type="button" data-check-sql>
+            <span data-lang="pt">Executar ⌘↵</span
+            ><span data-lang="en">Run ⌘↵</span></button
+          ><button type="button" data-hint-sql>
+            <span data-lang="pt">Pista</span
+            ><span data-lang="en">Hint</span></button
+          ><button type="button" data-solution-sql>
+            <span data-lang="pt">Mostrar solução</span
+            ><span data-lang="en">Show solution</span></button
+          ><button type="button" data-next-sql>
+            <span data-lang="pt">Próxima →</span
+            ><span data-lang="en">Next →</span>
+          </button>
+        </div>
+        <div class="sandbox-feedback" data-feedback aria-live="polite"></div>
+        <script type="application/json" data-questions>
+          [
+            {
+              "id": "basic-select",
+              "ptTitle": "1 · Escolha campos",
+              "enTitle": "1 · Choose fields",
+              "ptPrompt": "Mostre Name e Industry de todas as contas.",
+              "enPrompt": "Show Name and Industry for every account.",
+              "schema": ["Account(Id, Name, Industry, AnnualRevenue, Phone)"],
+              "answers": ["SELECT Name, Industry FROM Account"],
+              "ptHint": "SELECT com dois campos, FROM Account. Não use SELECT * — não existe.",
+              "enHint": "SELECT with two fields, FROM Account. Don't use SELECT * — it doesn't exist."
+            },
+            {
+              "id": "basic-where",
+              "ptTitle": "2 · Filtre linhas",
+              "enTitle": "2 · Filter rows",
+              "ptPrompt": "Mostre Name das contas da indústria Technology.",
+              "enPrompt": "Show Name of accounts in the Technology industry.",
+              "schema": ["Account(Id, Name, Industry, AnnualRevenue, Phone)"],
+              "answers": ["SELECT Name FROM Account WHERE Industry = 'Technology'"],
+              "ptHint": "Adicione WHERE Industry = 'Technology' depois do FROM.",
+              "enHint": "Add WHERE Industry = 'Technology' after FROM."
+            },
+            {
+              "id": "basic-order-limit",
+              "ptTitle": "3 · Ordene e limite",
+              "enTitle": "3 · Order and limit",
+              "ptPrompt": "As 5 contas com maior AnnualRevenue: mostre Name e AnnualRevenue.",
+              "enPrompt": "The 5 accounts with the highest AnnualRevenue: show Name and AnnualRevenue.",
+              "schema": ["Account(Id, Name, Industry, AnnualRevenue, Phone)"],
+              "answers": ["SELECT Name, AnnualRevenue FROM Account ORDER BY AnnualRevenue DESC LIMIT 5"],
+              "ptHint": "ORDER BY AnnualRevenue DESC e depois LIMIT 5 — nessa ordem.",
+              "enHint": "ORDER BY AnnualRevenue DESC then LIMIT 5 — in that order."
+            },
+            {
+              "id": "basic-in-like",
+              "ptTitle": "4 · Combine filtros",
+              "enTitle": "4 · Combine filters",
+              "ptPrompt": "Contas de Technology OU Consulting cujo nome começa com A: mostre Name.",
+              "enPrompt": "Accounts in Technology OR Consulting whose name starts with A: show Name.",
+              "schema": ["Account(Id, Name, Industry, AnnualRevenue, Phone)"],
+              "answers": ["SELECT Name FROM Account WHERE Industry IN ('Technology','Consulting') AND Name LIKE 'A%'"],
+              "ptHint": "IN para a lista de indústrias, LIKE 'A%' para o curinga, AND junta os dois.",
+              "enHint": "IN for the industry list, LIKE 'A%' for the wildcard, AND joins both."
+            }
+          ]
+        </script>
+      </div>
+
+      <h2 class="section">
+        <span class="num">2</span
+        ><span data-lang="pt">As 6 diferenças que pegam quem vem do SQL</span
+        ><span data-lang="en">The 6 differences that trip up SQL folks</span>
+      </h2>
+      <div class="grid cols-2">
+        <div class="card">
+          <h3>1 · Sem <code>SELECT *</code></h3>
+          <p>
+            <span data-lang="pt"
+              >Liste os campos. <code>FIELDS(ALL)</code> existe em contextos
+              suportados, mas consultas não limitadas precisam ser
+              <strong>bounded</strong> a no máximo 200 linhas — normalmente
+              com <code>LIMIT 200</code> ou menor (listas de até 200 IDs também
+              podem limitar). Em Apex, prefira a lista explícita.</span
+            ><span data-lang="en"
+              >List the fields. <code>FIELDS(ALL)</code> exists in supported
+              contexts, but unbounded queries must be <strong>bounded</strong>
+              to at most 200 rows—usually with <code>LIMIT 200</code> or less
+              (lists of up to 200 IDs can also provide the bound). In Apex,
+              prefer an explicit field list.</span
+            >
+          </p>
+        </div>
+        <div class="card">
+          <h3>2 · Sem <code>JOIN</code> arbitrário</h3>
+          <p>
+            <span data-lang="pt"
+              >SOQL não tem a cláusula JOIN livre do SQL. Use relacionamentos
+              declarados: ponto, subquery e semi-/anti-join com
+              <code>IN</code>/<code>NOT IN</code>.</span
+            ><span data-lang="en"
+              >SOQL has no arbitrary SQL JOIN clause. Use declared
+              relationships: dot notation, subqueries, and semi-/anti-joins
+              with <code>IN</code>/<code>NOT IN</code>.</span
+            >
+          </p>
+        </div>
+        <div class="card">
+          <h3>3 · <code>=</code> ignora maiúsculas</h3>
+          <p>
+            <span data-lang="pt"
+              ><code>WHERE Name = 'acme'</code> encontra <code>Acme</code> e
+              <code>ACME</code>. Campos de texto comuns ignoram case; campos
+              únicos configurados como case-sensitive são a exceção.</span
+            ><span data-lang="en"
+              ><code>WHERE Name = 'acme'</code> matches <code>Acme</code> and
+              <code>ACME</code>. Ordinary text fields ignore case; unique
+              fields configured as case-sensitive are the exception.</span
+            >
+          </p>
+        </div>
+        <div class="card">
+          <h3>4 · <code>OFFSET</code> ≤ 2000</h3>
+          <p>
+            <span data-lang="pt"
+              ><code>OFFSET</code> pula no máximo 2000 linhas. <code>LIMIT</code>
+              não é obrigatório, mas paginação normalmente combina
+              <code>ORDER BY</code>, <code>LIMIT</code> e
+              <code>OFFSET</code>.</span
+            ><span data-lang="en"
+              ><code>OFFSET</code> skips at most 2,000 rows.
+              <code>LIMIT</code> isn't required, but pagination normally
+              combines <code>ORDER BY</code>, <code>LIMIT</code>, and
+              <code>OFFSET</code>.</span
+            >
+          </p>
+        </div>
+        <div class="card">
+          <h3>5 · Sem <code>UNION</code></h3>
+          <p>
+            <span data-lang="pt"
+              >SOQL não combina result sets com <code>UNION</code>. Faça
+              consultas separadas e, quando necessário, una resultados
+              compatíveis no Apex.</span
+            ><span data-lang="en"
+              >SOQL doesn't combine result sets with <code>UNION</code>. Run
+              separate queries and, when needed, merge compatible results in
+              Apex.</span
+            >
+          </p>
+        </div>
+        <div class="card">
+          <h3>6 · Sufixos <code>__c</code> / <code>__r</code></h3>
+          <p>
+            <span data-lang="pt"
+              >Objetos e campos customizados: <code>Book__c</code>; o
+              relacionamento customizado usa <code>__r</code>.</span
+            ><span data-lang="en"
+              >Custom objects and fields: <code>Book__c</code>; the custom
+              relationship uses <code>__r</code>.</span
+            >
+          </p>
+        </div>
+      </div>
+
+      <h2 class="section">
+        <span class="num">3</span
+        ><span data-lang="pt">Relacionamento sem JOIN: ponto e subquery</span
+        ><span data-lang="en">Relationship without JOIN: dot and subquery</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >Todo campo de lookup é uma <strong>relação filho → pai</strong>:
+          um <code>Contact</code> tem um <code>Account</code>. Para subir a
+          hierarquia, use <strong>notação de ponto</strong>:</span
+        ><span data-lang="en"
+          >Every lookup field is a <strong>child → parent</strong> relation: a
+          <code>Contact</code> has one <code>Account</code>. To go up the
+          hierarchy, use <strong>dot notation</strong>:</span
+        >
+      </p>
+      <p class="kicker">
+        <span data-lang="pt">Filho → pai: ponto (até 5 níveis acima)</span
+        ><span data-lang="en">Child → parent: dot (up to 5 levels up)</span>
+      </p>
+      <pre class="block"><code><span class="k">SELECT</span> LastName, Account.Name, Account.Industry
+<span class="k">FROM</span> Contact
+<span class="k">WHERE</span> Account.Industry = <span class="s">'Technology'</span></code></pre>
+      <p class="kicker">
+        <span data-lang="pt">Pai → filhos: subquery com o nome do relacionamento</span
+        ><span data-lang="en">Parent → children: subquery with the relationship name</span>
+      </p>
+      <pre class="block"><code><span class="k">SELECT</span> Name, (<span class="k">SELECT</span> LastName <span class="k">FROM</span> Contacts)
+<span class="k">FROM</span> Account</code></pre>
+      <p class="kicker">
+        <span data-lang="pt">Custom: Book__c aponta para Author__c via Author__r</span
+        ><span data-lang="en">Custom: Book__c looks up to Author__c via Author__r</span>
+      </p>
+      <pre class="block"><code><span class="k">SELECT</span> Title__c, Author__r.Name <span class="k">FROM</span> Book__c</code></pre>
+      <div class="callout key">
+        <span data-lang="pt"
+          >No SOQL com <code>FROM Contact</code>, ponto sobe como
+          <code>Account.Name</code>; depois da query, o Apex lê
+          <code>contact.Account?.Name</code>. Subquery desce com
+          <code>SELECT … FROM Contacts</code>. Nomes padrão costumam ser o
+          plural; sempre confirme, especialmente nos relacionamentos custom.</span
+        ><span data-lang="en"
+          >In SOQL with <code>FROM Contact</code>, dots go up as
+          <code>Account.Name</code>; after the query, Apex reads
+          <code>contact.Account?.Name</code>. A subquery goes down with
+          <code>SELECT … FROM Contacts</code>. Standard names are often the
+          plural; always verify, especially for custom relationships.</span
+        >
+      </div>
+      <p class="cite">
+        <span data-lang="pt">Fontes:</span
+        ><span data-lang="en">Sources:</span>
+        <a href="https://developer.salesforce.com/blogs/2013/05/basic-soql-relationship-queries"
+          >Salesforce — Basic SOQL Relationship Queries</a
+        >
+        ·
+        <a href="https://trailhead.salesforce.com/content/learn/modules/soql-for-admins/create-relationship-queries-with-standard-objects"
+          >Trailhead — Relationship Queries</a
+        >
+      </p>
+
+      <div class="playground sql-sandbox" data-sql-sandbox data-key="sf-soql-rel">
+        <div class="sandbox-head">
+          <div>
+            <h3 data-question-title></h3>
+            <p data-question-prompt></p>
+          </div>
+          <span class="sandbox-count" data-count></span>
+        </div>
+        <div class="sandbox-schema" data-schema></div>
+        <label for="sql-editor-2"
+          ><span data-lang="pt">Sua consulta SOQL</span
+          ><span data-lang="en">Your SOQL query</span></label
+        >
+        <textarea
+          id="sql-editor-2"
+          spellcheck="false"
+          autocapitalize="off"
+          autocomplete="off"
+          placeholder="SELECT ..."
+        ></textarea>
+        <div class="sandbox-actions">
+          <button class="primary" type="button" data-check-sql>
+            <span data-lang="pt">Executar ⌘↵</span
+            ><span data-lang="en">Run ⌘↵</span></button
+          ><button type="button" data-hint-sql>
+            <span data-lang="pt">Pista</span
+            ><span data-lang="en">Hint</span></button
+          ><button type="button" data-solution-sql>
+            <span data-lang="pt">Mostrar solução</span
+            ><span data-lang="en">Show solution</span></button
+          ><button type="button" data-next-sql>
+            <span data-lang="pt">Próxima →</span
+            ><span data-lang="en">Next →</span>
+          </button>
+        </div>
+        <div class="sandbox-feedback" data-feedback aria-live="polite"></div>
+        <script type="application/json" data-questions>
+          [
+            {
+              "id": "rel-dot-up",
+              "ptTitle": "1 · Suba para o pai",
+              "enTitle": "1 · Go up to the parent",
+              "ptPrompt": "LastName e nome da conta de cada contato — só de contas da indústria Technology.",
+              "enPrompt": "Each contact's LastName and their account's name — only for Technology accounts.",
+              "schema": ["Contact(Id, LastName, Email, AccountId)", "Account(Id, Name, Industry)"],
+              "answers": ["SELECT LastName, Account.Name FROM Contact WHERE Account.Industry = 'Technology'"],
+              "ptHint": "No SELECT, suba com Account.Name (ponto). No WHERE, o mesmo: Account.Industry = 'Technology'.",
+              "enHint": "In SELECT, go up with Account.Name (dot). In WHERE, same thing: Account.Industry = 'Technology'."
+            },
+            {
+              "id": "rel-subquery",
+              "ptTitle": "2 · Desça para os filhos",
+              "enTitle": "2 · Go down to the children",
+              "ptPrompt": "Nome de cada conta junto com os LastName dos seus contatos.",
+              "enPrompt": "Each account's name together with its contacts' LastName.",
+              "schema": ["Contact(Id, LastName, Email, AccountId)", "Account(Id, Name, Industry)"],
+              "answers": ["SELECT Name, (SELECT LastName FROM Contacts) FROM Account"],
+              "ptHint": "O FROM principal é Account; a subquery vai entre parênteses dentro do SELECT: (SELECT LastName FROM Contacts).",
+              "enHint": "The main FROM is Account; the subquery goes in parentheses inside SELECT: (SELECT LastName FROM Contacts)."
+            },
+            {
+              "id": "rel-custom",
+              "ptTitle": "3 · Objeto custom",
+              "enTitle": "3 · Custom object",
+              "ptPrompt": "Title__c de cada livro com o nome do autor.",
+              "enPrompt": "Each book's Title__c with the author's name.",
+              "schema": ["Book__c(Id, Title__c, Author__c)", "Author__c(Id, Name)", "lookup Book__c.Author__c → Author__c (relationship: Author__r)"],
+              "answers": ["SELECT Title__c, Author__r.Name FROM Book__c"],
+              "ptHint": "O campo lookup Author__c vira Author__r na navegação: Author__r.Name sobe até o nome.",
+              "enHint": "The lookup field Author__c becomes Author__r when navigating: Author__r.Name goes up to the name."
+            }
+          ]
+        </script>
+      </div>
+
+      <h2 class="section">
+        <span class="num">4</span
+        ><span data-lang="pt">Agregação: <code>GROUP BY</code> devolve <code>AggregateResult</code></span
+        ><span data-lang="en">Aggregation: <code>GROUP BY</code> returns <code>AggregateResult</code></span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          ><code>COUNT()</code>, <code>SUM()</code>, <code>AVG()</code>,
+          <code>MIN()</code>, <code>MAX()</code> funcionam como no SQL, com
+          <code>GROUP BY</code> e <code>HAVING</code>. Queries agrupadas
+          retornam linhas <strong>AggregateResult</strong>, lidas com
+          <code>get()</code>; um <code>COUNT()</code> isolado pode ser
+          atribuído diretamente a um <code>Integer</code>.</span
+        ><span data-lang="en"
+          ><code>COUNT()</code>, <code>SUM()</code>, <code>AVG()</code>,
+          <code>MIN()</code>, <code>MAX()</code> work like SQL, with
+          <code>GROUP BY</code> and <code>HAVING</code>. Grouped queries return
+          <strong>AggregateResult</strong> rows read with <code>get()</code>;
+          a bare <code>COUNT()</code> can be assigned directly to an
+          <code>Integer</code>.</span
+        >
+      </p>
+      <pre class="block"><code><span data-lang="pt"><span class="c">// quem tem mais de 5 contatos?</span></span
+><span data-lang="en"><span class="c">// who has more than 5 contacts?</span></span>
+List&lt;AggregateResult&gt; results = [
+    <span class="k">SELECT</span> AccountId, <span class="k">COUNT</span>(Id) cnt
+    <span class="k">FROM</span> Contact
+    <span class="k">GROUP BY</span> AccountId
+    <span class="k">HAVING</span> <span class="k">COUNT</span>(Id) &gt; 5
+];
+<span class="k">for</span> (AggregateResult ar : results) {
+    System.debug(ar.<span class="k">get</span>(<span class="s">'AccountId'</span>) + <span class="s">' → '</span> + ar.<span class="k">get</span>(<span class="s">'cnt'</span>));
+}</code></pre>
+      <p>
+        <span data-lang="pt"
+          >E dentro do Apex, a query mora <strong>entre colchetes</strong> —
+          variáveis locais entram com <code>:</code> (bind variable):</span
+        ><span data-lang="en"
+          >And inside Apex, the query lives <strong>between brackets</strong>
+          — local variables enter with <code>:</code> (bind variable):</span
+        >
+      </p>
+      <pre class="block"><code>String industry = <span class="s">'Technology'</span>;
+List&lt;Account&gt; accs = [<span class="k">SELECT</span> Name <span class="k">FROM</span> Account <span class="k">WHERE</span> Industry = :industry];</code></pre>
+
+      <div class="playground sql-sandbox" data-sql-sandbox data-key="sf-soql-agg">
+        <div class="sandbox-head">
+          <div>
+            <h3 data-question-title></h3>
+            <p data-question-prompt></p>
+          </div>
+          <span class="sandbox-count" data-count></span>
+        </div>
+        <div class="sandbox-schema" data-schema></div>
+        <label for="sql-editor-3"
+          ><span data-lang="pt">Sua consulta SOQL</span
+          ><span data-lang="en">Your SOQL query</span></label
+        >
+        <textarea
+          id="sql-editor-3"
+          spellcheck="false"
+          autocapitalize="off"
+          autocomplete="off"
+          placeholder="SELECT ..."
+        ></textarea>
+        <div class="sandbox-actions">
+          <button class="primary" type="button" data-check-sql>
+            <span data-lang="pt">Executar ⌘↵</span
+            ><span data-lang="en">Run ⌘↵</span></button
+          ><button type="button" data-hint-sql>
+            <span data-lang="pt">Pista</span
+            ><span data-lang="en">Hint</span></button
+          ><button type="button" data-solution-sql>
+            <span data-lang="pt">Mostrar solução</span
+            ><span data-lang="en">Show solution</span></button
+          ><button type="button" data-next-sql>
+            <span data-lang="pt">Próxima →</span
+            ><span data-lang="en">Next →</span>
+          </button>
+        </div>
+        <div class="sandbox-feedback" data-feedback aria-live="polite"></div>
+        <script type="application/json" data-questions>
+          [
+            {
+              "id": "agg-count",
+              "ptTitle": "1 · Conte por grupo",
+              "enTitle": "1 · Count per group",
+              "ptPrompt": "Quantas contas existem por indústria: Industry e a quantidade.",
+              "enPrompt": "How many accounts exist per industry: Industry and the count.",
+              "schema": ["Account(Id, Name, Industry, AnnualRevenue, Phone)"],
+              "answers": ["SELECT Industry, COUNT(Id) FROM Account GROUP BY Industry"],
+              "ptHint": "SELECT Industry, COUNT(Id) … GROUP BY Industry — o campo do SELECT vira o grupo.",
+              "enHint": "SELECT Industry, COUNT(Id) … GROUP BY Industry — the selected field becomes the group."
+            },
+            {
+              "id": "agg-having",
+              "ptTitle": "2 · Filtre grupos",
+              "enTitle": "2 · Filter groups",
+              "ptPrompt": "Os AccountId que têm mais de 5 contatos: AccountId e a quantidade.",
+              "enPrompt": "The AccountIds that have more than 5 contacts: AccountId and the count.",
+              "schema": ["Contact(Id, LastName, Email, AccountId)"],
+              "answers": ["SELECT AccountId, COUNT(Id) FROM Contact GROUP BY AccountId HAVING COUNT(Id) > 5"],
+              "ptHint": "WHERE filtra LINHAS, HAVING filtra GRUPOS. Depois do GROUP BY, use HAVING COUNT(Id) > 5.",
+              "enHint": "WHERE filters ROWS, HAVING filters GROUPS. After GROUP BY, use HAVING COUNT(Id) > 5."
+            }
+          ]
+        </script>
+      </div>
+
+      <h2 class="section">
+        <span class="num">5</span
+        ><span data-lang="pt">Checagem rápida</span
+        ><span data-lang="en">Quick check</span>
+      </h2>
+      <div class="mcq" data-mcq>
+        <p class="mcq-q">
+          <span data-lang="pt"
+            >Você quer, numa query só, cada conta e seus contatos. O que
+            usar?</span
+          ><span data-lang="en"
+            >You want, in one query, each account and its contacts. What do
+            you use?</span
+          >
+        </p>
+        <div class="mcq-opts">
+          <button
+            class="mcq-opt"
+            data-correct="true"
+            data-fb-pt="Exato: subquery pai → filho: SELECT Name, (SELECT LastName FROM Contacts) FROM Account. Contas e contatos numa resposta só, sem JOIN."
+            data-fb-en="Exactly: parent → child subquery: SELECT Name, (SELECT LastName FROM Contacts) FROM Account. Accounts and contacts in one result, no JOIN."
+          >
+            <span data-lang="pt">Subquery dentro do SELECT</span
+            ><span data-lang="en">A subquery inside SELECT</span>
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="Não existe JOIN em SOQL. A junção de tabelas do SQL vira navegação de relacionamento: ponto para subir, subquery para descer."
+            data-fb-en="There is no JOIN in SOQL. SQL's table joining becomes relationship navigation: dot to go up, subquery to go down."
+          >
+            <span data-lang="pt">Um JOIN com Accounts</span
+            ><span data-lang="en">A JOIN with Accounts</span>
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="O FROM externo tem um objeto raiz — não dá para listar Account e Contact como raízes lado a lado. Para descer de Account até Contacts, use a subquery."
+            data-fb-en="The outer FROM has one root object — you can't list Account and Contact as side-by-side roots. To go down from Account to Contacts, use the subquery."
+          >
+            <span data-lang="pt">FROM Account, Contact</span
+            ><span data-lang="en">FROM Account, Contact</span>
+          </button>
+        </div>
+        <div class="mcq-fb" data-fb></div>
+      </div>
+
+      <div class="mcq" data-mcq>
+        <p class="mcq-q">
+          <span data-lang="pt"
+            >O que acontece com <code>SELECT Name FROM Account WHERE Name =
+            'acme'</code> quando o registro gravado é <code>Acme</code>?</span
+          ><span data-lang="en"
+            >What happens with <code>SELECT Name FROM Account WHERE Name =
+            'acme'</code> when the stored record is <code>Acme</code>?</span
+          >
+        </p>
+        <div class="mcq-opts">
+          <button
+            class="mcq-opt"
+            data-correct="true"
+            data-fb-pt="Correto: Account.Name é um campo de texto comum, então 'acme' encontra Acme e ACME. Campos únicos case-sensitive são a exceção."
+            data-fb-en="Correct: Account.Name is an ordinary text field, so 'acme' matches Acme and ACME. Case-sensitive unique fields are the exception."
+          >
+            <span data-lang="pt">Encontra — ignora maiúsculas</span
+            ><span data-lang="en">Finds it — case is ignored</span>
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="Para Account.Name, = ignora maiúsculas. SOQL não tem um comparador case-sensitive universal; a exceção são campos únicos configurados como case-sensitive."
+            data-fb-en="For Account.Name, = ignores case. SOQL has no universal case-sensitive comparator; the exception is unique fields configured as case-sensitive."
+          >
+            <span data-lang="pt">Retorna zero registros</span
+            ><span data-lang="en">Returns zero records</span>
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="SOQL não reescreve nem normaliza seus dados — ele apenas compara sem diferenciar maiúsculas de minúsculas. O dado gravado continua 'Acme'."
+            data-fb-en="SOQL neither rewrites nor normalizes your data — it just compares without distinguishing upper from lower case. The stored data stays 'Acme'."
+          >
+            <span data-lang="pt">Erro de sintaxe na query</span
+            ><span data-lang="en">Query syntax error</span>
+          </button>
+        </div>
+        <div class="mcq-fb" data-fb></div>
+      </div>
+
+      <p class="cite-line">
+        <span data-lang="pt">Revisão:</span
+        ><span data-lang="en">Review:</span>
+        <a href="0001-apex-basics.html"
+          ><span data-lang="pt">Apex (onde a query roda)</span
+          ><span data-lang="en">Apex (where the query runs)</span></a
+        >
+        ·
+        <a href="https://trailhead.salesforce.com/content/learn/modules/soql-for-admins"
+          >Trailhead — SOQL for Admins</a
+        >
+        ·
+        <a href="https://resources.docs.salesforce.com/latest/latest/en-us/sfdc/pdf/salesforce_soql_sosl.pdf"
+          >SOQL &amp; SOSL Reference (PDF)</a
+        >.
+        <span data-lang="pt"
+          >Termine os 9 exercícios e volte amanhã para reescrever os que
+          precisou de pista — repetição espaçada é o que gruda. Dúvida em
+          qualquer parte? Pergunte ao agente — ele é seu professor.</span
+        ><span data-lang="en"
+          >Finish all 9 exercises and come back tomorrow to rewrite the ones
+          you needed hints for — spaced repetition is what sticks. Stuck on
+          any part? Ask the agent — it's your teacher.</span
+        >
+      </p>
+    </article>
+  </Fragment>
+</Lesson>

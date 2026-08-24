@@ -1,0 +1,742 @@
+---
+// Salesforce · Lesson 1 — Apex for a JavaScript developer.
+// Note (NOTES): user is a JS dev — every concept is bridged from JS/Node.
+// Registered: nav.js, README, hub card, chain (lesson 2 links back).
+import Lesson from "../../../../layouts/Lesson.astro";
+const titlePt = "Apex — a linguagem do Salesforce (para devs JavaScript)";
+const titleEn = "Apex — Salesforce's language (for JavaScript devs)";
+const titleFallback = "Apex — a linguagem do Salesforce";
+const assets = [
+	'<link rel="stylesheet" href="../assets/style.css" />',
+	'<link rel="stylesheet" href="../assets/dark.css" />',
+	'<link rel="stylesheet" href="../assets/i18n.css" />',
+	'<link rel="stylesheet" href="../assets/concepts.css" />',
+	'<script src="../assets/i18n.js" defer></script>',
+	'<script src="../assets/nav.js" defer></script>',
+	'<script src="../assets/reading-ui.js" defer></script>',
+	'<script src="../assets/concepts.js" defer></script>',
+];
+---
+<Lesson
+	titlePt={titlePt}
+	titleEn={titleEn}
+	titleFallback={titleFallback}
+	assets={assets}
+>
+	<Fragment is:raw>
+    <article class="lesson">
+      <header class="hero">
+        <span class="eyebrow"
+          >⬡ Salesforce · <span data-lang="pt">Lição 1 · fundamentos</span
+          ><span data-lang="en">Lesson 1 · fundamentals</span></span
+        >
+        <h1>
+          <span data-lang="pt">Apex, explicado para quem pensa em <strong>JavaScript</strong></span
+          ><span data-lang="en">Apex, explained for someone who thinks in <strong>JavaScript</strong></span>
+        </h1>
+        <p class="lead">
+          <span data-lang="pt"
+            >Você escreve Node? Então Apex é um TypeScript rigoroso que roda
+            <em>dentro</em> do Salesforce, com o banco de dados embutido e um
+            limite de recursos por transação. Em 20 minutos: tipos, coleções,
+            registros, triggers — e a regra que resume a plataforma:
+            <strong>sempre pense em bulk</strong>.</span
+          ><span data-lang="en"
+            >You write Node? Then Apex is a strict TypeScript that runs
+            <em>inside</em> Salesforce, with the database built in and a
+            resource cap per transaction. In 20 minutes: types, collections,
+            records, triggers — and the rule that sums up the platform:
+            <strong>always think bulk</strong>.</span
+          >
+        </p>
+      </header>
+
+      <nav class="concept-nav">
+        <a href="0001-apex-basics.html">Apex</a
+        ><a href="0002-soql-basics.html">SOQL →</a
+        ><a href="../../../index.html">Hub</a>
+      </nav>
+
+      <h2 class="section">
+        <span class="num">1</span
+        ><span data-lang="pt">O modelo mental: Node sem servidor, multilocatário</span
+        ><span data-lang="en">The mental model: Node without a server, multi-tenant</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >No seu mundo, o backend é um processo Node que você inicia, com
+          rotas Express, um banco em algum lugar e <code>console.log</code>
+          para depurar. No mundo Salesforce, <strong>o backend já existe</strong>
+          — é a nuvem do CRM — e Apex é sua linguagem de programação
+          server-side. Você não instala pacotes npm nem controla o sistema
+          operacional/runtime. Escreve uma classe, e o Salesforce compila e
+          executa.</span
+        ><span data-lang="en"
+          >In your world, the backend is a Node process you start, with
+          Express routes, a database somewhere and <code>console.log</code>
+          for debugging. In the Salesforce world, <strong>the backend already
+          exists</strong> — it's the CRM's cloud — and Apex is its server-side
+          programming language. You don't install npm packages or control the
+          operating system/runtime. You write a class, and Salesforce compiles
+          and runs it.</span
+        >
+      </p>
+      <p>
+        <span data-lang="pt"
+          >E ele é <strong>multilocatário</strong>: sua empresa (a "org")
+          compartilha os mesmos servidores com milhares de outras. Para
+          ninguém monopolizar a máquina, toda transação tem limites duros —
+          os <strong>governor limits</strong>. Guarde esse fato: ele explica
+          90% das regras estranhas que você vai ver em Apex.</span
+        ><span data-lang="en"
+          >And it's <strong>multi-tenant</strong>: your company (the "org")
+          shares the same servers with thousands of others. So nobody
+          monopolizes the machine, every transaction has hard caps — the
+          <strong>governor limits</strong>. Remember this fact: it explains
+          90% of the strange rules you'll see in Apex.</span
+        >
+      </p>
+      <pre class="block"><code><span class="c">// JavaScript (Node)</span>
+console.log(<span class="s">'hello'</span>);
+
+<span class="c">// Apex</span>
+System.debug(<span class="s">'hello'</span>);</code></pre>
+      <div class="callout key">
+        <span data-lang="pt"
+          >Apex é uma linguagem de <strong>automação de registros</strong>:
+          código que reage quando dados entram e saem do CRM — não um
+          servidor web de propósito geral.</span
+        ><span data-lang="en"
+          >Apex is a <strong>record-automation</strong> language: code that
+          reacts when data enters and leaves the CRM — not a general-purpose
+          web server.</span
+        >
+      </div>
+      <p class="cite">
+        <span data-lang="pt">Fontes:</span
+        ><span data-lang="en">Sources:</span>
+        <a href="https://developer.salesforce.com/docs/platform/apex/guide/apex_intro_what_is_apex.html"
+          >Salesforce — What is Apex?</a
+        >
+      </p>
+
+      <h2 class="section">
+        <span class="num">2</span
+        ><span data-lang="pt">Variáveis e tipos: tudo declarado, sempre</span
+        ><span data-lang="en">Variables and types: everything declared, always</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >Em JS você escreve <code>let</code>/<code>const</code> e o tipo
+          acompanha o valor. Em Apex você declara o tipo na frente, sempre —
+          como TypeScript, mas sem a opção de desligar. Não existe
+          <code>var</code>, <code>let</code>, <code>const</code> nem
+          inferência solta: <code>Tipo nome = valor;</code>.</span
+        ><span data-lang="en"
+          >In JS you write <code>let</code>/<code>const</code> and the type
+          follows the value. In Apex you declare the type up front, always —
+          like TypeScript, but with no opt-out. There is no <code>var</code>,
+          <code>let</code>, <code>const</code> or loose inference:
+          <code>Type name = value;</code>.</span
+        >
+      </p>
+      <pre class="block"><code><span class="c">// JavaScript</span>
+<span class="k">const</span> name = <span class="s">'Acme'</span>;
+<span class="k">const</span> employees = 42;
+<span class="k">const</span> price = 19.99;
+<span class="k">const</span> active = <span class="k">true</span>;
+
+<span class="c">// Apex</span>
+String name = <span class="s">'Acme'</span>;      <span data-lang="pt"><span class="c">// aspas simples, sempre</span></span
+><span data-lang="en"><span class="c">// single quotes, always</span></span>
+Integer employees = 42;      <span data-lang="pt"><span class="c">// inteiro de 32 bits</span></span
+><span data-lang="en"><span class="c">// 32-bit integer</span></span>
+Decimal price = 19.99;       <span data-lang="pt"><span class="c">// use Decimal para valores monetários</span></span
+><span data-lang="en"><span class="c">// use Decimal for monetary values</span></span>
+Boolean active = <span class="k">true</span>;</code></pre>
+      <p>
+        <span data-lang="pt"
+          >Três tipos merecem atenção especial:</span
+        ><span data-lang="en"
+          >Three types deserve special attention:</span
+        >
+      </p>
+      <div class="grid cols-3">
+        <div class="card">
+          <h3><code>Decimal</code></h3>
+          <p>
+            <span data-lang="pt"
+              >Número decimal de precisão arbitrária. É a escolha normal para
+              moeda e evita artefatos binários como o <code>Number</code> do
+              JS, embora precisão, escala e arredondamento ainda importem.</span
+            ><span data-lang="en"
+              >An arbitrary-precision decimal number. It's the normal choice
+              for currency and avoids binary artifacts like JS
+              <code>Number</code>, though precision, scale, and rounding still
+              matter.</span
+            >
+          </p>
+        </div>
+        <div class="card">
+          <h3><code>Id</code></h3>
+          <p>
+            <span data-lang="pt"
+              >O identificador de um registro, representado em 15 ou 18
+              caracteres (a forma de 18 é case-safe). Apex fornece um tipo
+              validado <code>Id</code>, não uma <code>String</code> qualquer.</span
+            ><span data-lang="en"
+              >A record identifier, represented in 15- or 18-character form
+              (the 18-character form is case-safe). Apex provides a validated
+              <code>Id</code> type, not an arbitrary <code>String</code>.</span
+            >
+          </p>
+        </div>
+        <div class="card">
+          <h3><code>null</code></h3>
+          <p>
+            <span data-lang="pt"
+              >Existe <code>null</code>, <strong>não existe
+              <code>undefined</code></strong>. Variáveis Apex começam em
+              <code>null</code>; use <code>?.</code> ao navegar algo que pode
+              faltar.</span
+            ><span data-lang="en"
+              ><code>null</code> exists, <strong><code>undefined</code> does
+              not</strong>. Apex variables start as <code>null</code>; use
+              <code>?.</code> when traversing something that may be absent.</span
+            >
+          </p>
+        </div>
+      </div>
+      <p>
+        <span data-lang="pt"
+          >E aqui vai a pegadinha para quem vem do JS: em Apex,
+          <code>==</code> compara o <strong>conteúdo</strong> de strings sem
+          diferenciar maiúsculas, segundo o locale do usuário. Já
+          <code>===</code> não é um comparador de conteúdo case-sensitive: é
+          identidade exata — <strong>a mesma posição na memória</strong>.
+          Para comparar conteúdo de string com diferenciação de maiúsculas,
+          use <code>String.equals()</code>:</span
+        ><span data-lang="en"
+          >And here's the gotcha for someone coming from JS: in Apex,
+          <code>==</code> compares String <strong>content</strong> without
+          case, according to the user's locale. But <code>===</code> isn't a
+          case-sensitive content comparator: it tests exact identity —
+          <strong>the same memory location</strong>. For case-sensitive String
+          content, use <code>String.equals()</code>:</span
+        >
+      </p>
+      <pre class="block"><code>String lower = <span class="s">'acme'</span>;
+String title = <span class="s">'Acme'</span>;
+System.debug(lower == title);          <span data-lang="pt"><span class="c">// true  — conteúdo, sem case</span></span
+><span data-lang="en"><span class="c">// true  — content, ignoring case</span></span>
+System.debug(lower.equals(title));     <span data-lang="pt"><span class="c">// false — conteúdo, com case</span></span
+><span data-lang="en"><span class="c">// false — content, case-sensitive</span></span>
+
+Account first = <span class="k">new</span> Account(Name = <span class="s">'Acme'</span>);
+Account same = first;
+Account other = <span class="k">new</span> Account(Name = <span class="s">'Acme'</span>);
+System.debug(first === same);          <span data-lang="pt"><span class="c">// true  — mesma instância</span></span
+><span data-lang="en"><span class="c">// true  — same instance</span></span>
+System.debug(first === other);         <span data-lang="pt"><span class="c">// false — outra instância</span></span
+><span data-lang="en"><span class="c">// false — different instance</span></span></code></pre>
+      <p class="cite">
+        <span data-lang="pt">Referência:</span
+        ><span data-lang="en">Reference:</span>
+        <a href="https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/langCon_apex_expressions_operators_understanding.htm"
+          >Salesforce — Expression Operators</a
+        >
+      </p>
+
+      <h2 class="section">
+        <span class="num">3</span
+        ><span data-lang="pt">Classes e métodos: parecidos, mais cerimoniosos</span
+        ><span data-lang="en">Classes and methods: familiar, more ceremonious</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >A sintaxe de classe lembra a do ES6, mas todo método declara tipo
+          de retorno. Modificadores como <code>public</code>,
+          <code>private</code>, <code>protected</code> e <code>global</code>
+          existem; se omitidos em um membro da classe, o acesso padrão é
+          privado. "Estático" significa a mesma coisa que em JS:</span
+        ><span data-lang="en"
+          >The class syntax resembles ES6, but every method declares its
+          return type. Modifiers such as <code>public</code>,
+          <code>private</code>, <code>protected</code>, and
+          <code>global</code> are available; when omitted on a class member,
+          access defaults to private. "Static" means the same thing as in
+          JS:</span
+        >
+      </p>
+      <pre class="block"><code><span class="c">// JavaScript</span>
+<span class="k">export class</span> DiscountService {
+  applyDiscount(pct) {
+    <span class="k">return</span> 1 - pct / 100;
+  }
+}
+
+<span class="c">// Apex</span>
+<span class="k">public class</span> DiscountService {
+    <span class="k">public static</span> Decimal applyDiscount(Decimal pct) {
+        <span class="k">return</span> 1 - pct / 100;
+    }
+}</code></pre>
+      <p>
+        <span data-lang="pt"
+          >O que <strong>não</strong> existe: arrow functions
+          (<code>=&gt;</code>), funções de primeira classe, callbacks
+          arbitrários, <code>async/await</code>, desestruturação,
+          template literals. Código Apex é verboso e explícito — o estilo
+          anos 2000 de Java. Quando precisar de comportamento assíncrono
+          (chamar uma API externa sem travar a transação), a plataforma tem
+          mecanismos próprios: <code>Queueable</code> e <code>@future</code>
+          — material de uma lição futura.</span
+        ><span data-lang="en"
+          >What does <strong>not</strong> exist: arrow functions
+          (<code>=&gt;</code>), first-class functions, arbitrary callbacks,
+          <code>async/await</code>, destructuring, template literals. Apex
+          code is verbose and explicit — Java's 2000s style. When you need
+          async behavior (call an external API without blocking the
+          transaction), the platform has its own mechanisms:
+          <code>Queueable</code> and <code>@future</code> — future lesson
+          material.</span
+        >
+      </p>
+      <p>
+        <span data-lang="pt"
+          >Controle de fluxo é o de sempre: <code>if/else</code>,
+          <code>while</code>, <code>switch</code>. Só o <code>for</code>
+          tem uma forma nova — a que você mais vai usar:</span
+        ><span data-lang="en"
+          >Control flow is the usual: <code>if/else</code>, <code>while</code>,
+          <code>switch</code>. Only <code>for</code> has a new form — the one
+          you'll use most:</span
+        >
+      </p>
+      <pre class="block"><code><span class="c">// JavaScript — for...of</span>
+<span class="k">for</span> (<span class="k">const</span> acc <span class="k">of</span> accounts) {
+  console.log(acc.name);
+}
+
+<span class="c">// Apex — for each</span>
+<span class="k">for</span> (Account acc : accounts) {
+    System.debug(acc.Name);
+}</code></pre>
+
+      <h2 class="section">
+        <span class="num">4</span
+        ><span data-lang="pt">Coleções: List, Map, Set</span
+        ><span data-lang="en">Collections: List, Map, Set</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >As três coleções que você conhece existem com outros nomes e uma
+          sintaxe de literal curiosa — repare no <code>new</code> seguido de
+          chaves:</span
+        ><span data-lang="en"
+          >The three collections you know exist under other names and a
+          curious literal syntax — note the <code>new</code> followed by
+          braces:</span
+        >
+      </p>
+      <pre class="block"><code><span class="c">// JavaScript</span>
+<span class="k">const</span> names = [<span class="s">'acme'</span>, <span class="s">'globex'</span>];
+<span class="k">const</span> byId = { a1: <span class="s">'Acme'</span> };
+<span class="k">const</span> unique = <span class="k">new</span> Set([<span class="s">'a'</span>]);
+
+<span class="c">// Apex</span>
+List&lt;String&gt; names = <span class="k">new</span> List&lt;String&gt;{<span class="s">'acme'</span>, <span class="s">'globex'</span>};
+Map&lt;String, String&gt; byId = <span class="k">new</span> Map&lt;String, String&gt;{<span class="s">'a1'</span> =&gt; <span class="s">'Acme'</span>};
+Set&lt;String&gt; unique = <span class="k">new</span> Set&lt;String&gt;{<span class="s">'a'</span>};</code></pre>
+      <div class="grid cols-3">
+        <div class="card">
+          <h3><code>List</code> ≈ Array</h3>
+          <p>
+            <span data-lang="pt"
+              >Ordenada, aceita repetidos. <code>add()</code> é o
+              <code>push()</code>; <code>.size()</code> é o
+              <code>.length</code>.</span
+            ><span data-lang="en"
+              >Ordered, allows duplicates. <code>add()</code> is your
+              <code>push()</code>; <code>.size()</code> is your
+              <code>.length</code>.</span
+            >
+          </p>
+        </div>
+        <div class="card">
+          <h3><code>Map</code> ≈ Object/Map</h3>
+          <p>
+            <span data-lang="pt"
+              ><code>put(k, v)</code> grava, <code>get(k)</code> lê (ou
+              <code>null</code>). Chaves de qualquer tipo — inclusive
+              <code>Id</code>.</span
+            ><span data-lang="en"
+              ><code>put(k, v)</code> writes, <code>get(k)</code> reads (or
+              <code>null</code>). Keys of any type — including
+              <code>Id</code>.</span
+            >
+          </p>
+        </div>
+        <div class="card">
+          <h3><code>Set</code> ≈ Set</h3>
+          <p>
+            <span data-lang="pt"
+              >Sem repetidos, ótimo para "já vi este Id?" com
+              <code>contains()</code>.</span
+            ><span data-lang="en"
+              >No duplicates, great for "have I seen this Id?" with
+              <code>contains()</code>.</span
+            >
+          </p>
+        </div>
+      </div>
+      <p>
+        <span data-lang="pt"
+          >Não existe <code>.map()</code>, <code>.filter()</code>,
+          <code>.reduce()</code> nem spread — loops <code>for</code> fazem
+          todo o trabalho. Exemplo real de conversão Lista → Mapa, o padrão
+          que você vai escrever toda semana:</span
+        ><span data-lang="en"
+          >There's no <code>.map()</code>, <code>.filter()</code>,
+          <code>.reduce()</code> or spread — <code>for</code> loops do all
+          the work. A real-world List → Map conversion, the pattern you'll
+          write weekly:</span
+        >
+      </p>
+      <pre class="block"><code><span data-lang="pt"><span class="c">// JS: Object.fromEntries(accs.map(a =&gt; [a.Id, a]))</span></span
+><span data-lang="en"><span class="c">// JS: Object.fromEntries(accs.map(a =&gt; [a.Id, a]))</span></span>
+Map&lt;Id, Account&gt; accsById = <span class="k">new</span> Map&lt;Id, Account&gt;();
+<span class="k">for</span> (Account acc : accountList) {
+    accsById.put(acc.Id, acc);
+}
+Account first = accsById.get(someId);  <span data-lang="pt"><span class="c">// lookup O(1), sem loop</span></span
+><span data-lang="en"><span class="c">// O(1) lookup, no loop</span></span></code></pre>
+
+      <h2 class="section">
+        <span class="num">5</span
+        ><span data-lang="pt">Registros são objetos — literais inclusive</span
+        ><span data-lang="en">Records are objects — literals included</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >A parte que vai parecer natural para você: cada objeto padrão do
+          CRM — <code>Account</code>, <code>Contact</code>,
+          <code>Opportunity</code> — é uma <strong>classe Apex real</strong>.
+          Construir um registro lembra um objeto literal do JS:</span
+        ><span data-lang="en"
+          >The part that will feel natural to you: every standard CRM
+          object — <code>Account</code>, <code>Contact</code>,
+          <code>Opportunity</code> — is a <strong>real Apex class</strong>.
+          Constructing a record resembles a JS object literal:</span
+        >
+      </p>
+      <pre class="block"><code><span class="c">// JavaScript</span>
+<span class="k">const</span> acc = { name: <span class="s">'Acme'</span>, industry: <span class="s">'Technology'</span> };
+
+<span class="c">// Apex — argumentos nomeados</span>
+Account acc = <span class="k">new</span> Account(Name = <span class="s">'Acme'</span>, Industry = <span class="s">'Technology'</span>);
+System.debug(acc.Name);        <span data-lang="pt"><span class="c">// acesso por ponto, igual</span></span
+><span data-lang="en"><span class="c">// dot access, same as JS</span></span>
+acc.AnnualRevenue = 1000000;   <span data-lang="pt"><span class="c">// atribuição por ponto</span></span
+><span data-lang="en"><span class="c">// dot assignment</span></span></code></pre>
+      <p>
+        <span data-lang="pt"
+          >Campo não preenchido? <code>null</code> — nunca
+          <code>undefined</code>. Depois de consultar
+          <code>Account.Name</code> em SOQL, uma variável Contact pode ler
+          <code>contact.Account?.Name</code>. Relacionamentos não fazem lazy
+          loading: o campo relacionado precisa estar no <code>SELECT</code>.</span
+        ><span data-lang="en"
+          >Field not filled in? <code>null</code> — never
+          <code>undefined</code>. After querying <code>Account.Name</code> in
+          SOQL, a Contact variable can read
+          <code>contact.Account?.Name</code>. Relationships aren't lazily
+          loaded: the related field must be in the <code>SELECT</code>.</span
+        >
+      </p>
+
+      <h2 class="section">
+        <span class="num">6</span
+        ><span data-lang="pt">Gravar: DML, triggers e o pecado capital</span
+        ><span data-lang="en">Writing: DML, triggers and the cardinal sin</span>
+      </h2>
+      <p>
+        <span data-lang="pt"
+          >Apex oferece comandos DML como <code>insert</code>,
+          <code>update</code> e <code>delete</code>, além dos métodos
+          equivalentes da classe <code>Database</code>. Vários DML normalmente
+          participam da <strong>mesma transação Apex</strong>. Os comandos são
+          all-or-none por padrão; uma exceção não tratada reverte a transação,
+          enquanto métodos <code>Database.*(..., false)</code> podem permitir
+          sucesso parcial.</span
+        ><span data-lang="en"
+          >Apex provides DML statements such as <code>insert</code>,
+          <code>update</code>, and <code>delete</code>, plus equivalent
+          <code>Database</code> methods. Multiple DML operations normally
+          participate in the <strong>same Apex transaction</strong>.
+          Statements are all-or-none by default; an unhandled exception rolls
+          back the transaction, while <code>Database.*(..., false)</code>
+          methods can allow partial success.</span
+        >
+      </p>
+      <pre class="block"><code>Account acc = <span class="k">new</span> Account(Name = <span class="s">'Acme'</span>);
+insert acc;              <span data-lang="pt"><span class="c">// 1 DML — acc.Id é populado aqui</span></span
+><span data-lang="en"><span class="c">// 1 DML — acc.Id is populated here</span></span>
+acc.Industry = <span class="s">'Technology'</span>;
+update acc;              <span data-lang="pt"><span class="c">// outro DML</span></span
+><span data-lang="en"><span class="c">// another DML</span></span></code></pre>
+      <p>
+        <span data-lang="pt"
+          >E o lugar onde Apex mais roda na vida real: o
+          <strong>trigger</strong> — código que dispara quando registros são
+          inseridos, alterados ou apagados. Não existe
+          <code>app.post('/accounts', …)</code>; o "evento" é o próprio
+          CRM:</span
+        ><span data-lang="en"
+          >And where Apex runs most in real life: the <strong>trigger</strong>
+          — code that fires when records are inserted, updated or deleted.
+          There's no <code>app.post('/accounts', …)</code>; the "event" is
+          the CRM itself:</span
+        >
+      </p>
+      <pre class="block"><code><span class="k">trigger</span> AccountTrigger <span class="k">on</span> Account (<span class="k">before insert</span>, <span class="k">before update</span>) {
+    <span data-lang="pt"><span class="c">// Trigger.new = lote atual de inserts/updates</span></span
+><span data-lang="en"><span class="c">// Trigger.new = current insert/update batch</span></span>
+    <span class="k">for</span> (Account acc : Trigger.new) {
+        <span data-lang="pt"><span class="c">// Em before trigger, altere o próprio registro sem outro DML.</span></span
+><span data-lang="en"><span class="c">// In a before trigger, change the record directly—no extra DML.</span></span>
+        acc.Description = <span class="s">'Atualizado em '</span> + System.today();
+    }
+}</code></pre>
+      <div class="callout warn">
+        <span data-lang="pt"
+          ><code>Trigger.new</code> existe em insert, update e undelete; delete
+          usa <code>Trigger.old</code>. O lote atual costuma ter até 200
+          registros, mas uma importação maior pode gerar vários lotes e
+          transações. Sempre escreva para uma coleção, nunca para "um registro".</span
+        ><span data-lang="en"
+          ><code>Trigger.new</code> is available in insert, update, and
+          undelete; delete uses <code>Trigger.old</code>. The current batch is
+          commonly up to 200 records, but a larger import can create multiple
+          batches and transactions. Always code for a collection, never "one
+          record."</span
+        >
+      </div>
+      <p>
+        <span data-lang="pt"
+          >Numa transação Apex síncrona padrão, os limites incluem
+          <strong>100 consultas SOQL</strong>, <strong>50.000 linhas
+          consultadas</strong>, <strong>150 comandos DML</strong> e
+          <strong>10.000 linhas DML</strong>. Apex assíncrono normalmente
+          permite 200 consultas SOQL. Uma <code>LimitException</code> não pode
+          ser capturada com <code>try/catch</code>:</span
+        ><span data-lang="en"
+          >In a standard synchronous Apex transaction, limits include
+          <strong>100 SOQL queries</strong>, <strong>50,000 queried
+          rows</strong>, <strong>150 DML statements</strong>, and
+          <strong>10,000 DML rows</strong>. Asynchronous Apex generally allows
+          200 SOQL queries. A <code>LimitException</code> can't be caught with
+          <code>try/catch</code>:</span
+        >
+      </p>
+      <pre class="block"><code><span data-lang="pt"><span class="c">// ERRADO (after insert): 1 DML por conta para criar contatos</span></span
+><span data-lang="en"><span class="c">// WRONG (after insert): 1 DML per account to create contacts</span></span>
+<span class="k">for</span> (Account acc : Trigger.new) {
+    insert <span class="k">new</span> Contact(LastName = <span class="s">'Principal'</span>, AccountId = acc.Id);
+}
+
+<span data-lang="pt"><span class="c">// CERTO — colete registros relacionados, depois faça 1 DML</span></span
+><span data-lang="en"><span class="c">// RIGHT — collect related records, then perform 1 DML</span></span>
+List&lt;Contact&gt; contacts = <span class="k">new</span> List&lt;Contact&gt;();
+<span class="k">for</span> (Account acc : Trigger.new) {
+    contacts.add(<span class="k">new</span> Contact(LastName = <span class="s">'Principal'</span>, AccountId = acc.Id));
+}
+insert contacts;  <span data-lang="pt"><span class="c">// 1 comando; as linhas ainda contam no limite de 10.000</span></span
+><span data-lang="en"><span class="c">// 1 statement; rows still count toward the 10,000-row limit</span></span></code></pre>
+      <p>
+        <span data-lang="pt"
+          >É o mesmo conselho do seu mundo: N+1 queries numa rota Express —
+          aqui a plataforma simplesmente <strong>mata a transação</strong>
+          em vez de ficar lenta.</span
+        ><span data-lang="en"
+          >It's the same advice from your world: N+1 queries in an Express
+          route — except here the platform simply <strong>kills the
+          transaction</strong> instead of getting slow.</span
+        >
+      </p>
+      <div class="callout key">
+        <span data-lang="pt"
+          >Regra de ouro do Apex: <strong>zero SOQL e zero DML dentro de
+          loops</strong>. Colete em List/Set/Map, execute uma vez fora.</span
+        ><span data-lang="en"
+          >Apex golden rule: <strong>zero SOQL and zero DML inside
+          loops</strong>. Collect into List/Set/Map, execute once
+          outside.</span
+        >
+      </div>
+      <p class="cite">
+        <span data-lang="pt">Fontes:</span
+        ><span data-lang="en">Sources:</span>
+        <a href="https://developer.salesforce.com/docs/platform/apex/guide/apex_gov_limits.html"
+          >Salesforce — Governor Limits</a
+        >
+        ·
+        <a href="https://developer.salesforce.com/docs/platform/apex/guide/apex_triggers.htm"
+          >Salesforce — Triggers</a
+        >
+      </p>
+
+      <h2 class="section">
+        <span class="num">7</span
+        ><span data-lang="pt">Checagem rápida</span
+        ><span data-lang="en">Quick check</span>
+      </h2>
+      <div class="mcq" data-mcq>
+        <p class="mcq-q">
+          <span data-lang="pt"
+            >Qual expressão compara o conteúdo de duas strings com
+            diferenciação de maiúsculas?</span
+          ><span data-lang="en"
+            >Which expression compares two Strings' content with case
+            sensitivity?</span
+          >
+        </p>
+        <div class="mcq-opts">
+          <button
+            class="mcq-opt"
+            data-correct="true"
+            data-fb-pt="Correto: String.equals() compara a mesma sequência binária de caracteres, portanto diferencia 'acme' de 'Acme'."
+            data-fb-en="Correct: String.equals() compares the same binary sequence of characters, so it distinguishes 'acme' from 'Acme'."
+          >
+            <code>'acme'.equals('Acme')</code>
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="Em Apex, == compara conteúdo de String sem diferenciar maiúsculas, segundo o locale do usuário."
+            data-fb-en="In Apex, == compares String content without case, according to the user's locale."
+          >
+            <code>'acme' == 'Acme'</code>
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="=== testa identidade exata (a mesma posição na memória), não conteúdo case-sensitive."
+            data-fb-en="=== tests exact identity (the same memory location), not case-sensitive content."
+          >
+            <code>'acme' === 'Acme'</code>
+          </button>
+        </div>
+        <div class="mcq-fb" data-fb></div>
+      </div>
+
+      <div class="mcq" data-mcq>
+        <p class="mcq-q">
+          <span data-lang="pt"
+            >Suponha que um <em>after insert</em> receba um lote de 200 contas
+            e execute <code>insert new Contact(...)</code> dentro do loop. O
+            que acontece?</span
+          ><span data-lang="en"
+            >Suppose an <em>after insert</em> receives a 200-account batch and
+            executes <code>insert new Contact(...)</code> inside the loop.
+            What happens?</span
+          >
+        </p>
+        <div class="mcq-opts">
+          <button
+            class="mcq-opt"
+            data-correct="true"
+            data-fb-pt="Exato: o 151º comando DML excede o limite de 150. A LimitException não pode ser capturada e a transação falha."
+            data-fb-en="Exactly: the 151st DML statement exceeds the limit of 150. LimitException can't be caught, and the transaction fails."
+          >
+            <span data-lang="pt">Estoura o limite de DML</span
+            ><span data-lang="en">Blows the DML statement limit</span>
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="O cenário já diz que o trigger recebeu um lote: ele percorre 200 registros numa invocação, não uma invocação por registro."
+            data-fb-en="The scenario says the trigger received a batch: it loops over 200 records in one invocation, not one invocation per record."
+          >
+            <span data-lang="pt">O trigger roda 200 vezes</span
+            ><span data-lang="en">The trigger runs 200 times</span>
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="200 linhas cabem no limite de 10.000 linhas DML. O problema é emitir 200 comandos; uma única inserção com uma lista de 200 usa 1 comando."
+            data-fb-en="200 rows fit within the 10,000 DML-row limit. The problem is issuing 200 statements; one insert with a 200-record list uses 1 statement."
+          >
+            <span data-lang="pt">200 linhas excedem o máximo</span
+            ><span data-lang="en">200 rows exceed the maximum</span>
+          </button>
+        </div>
+        <div class="mcq-fb" data-fb></div>
+      </div>
+
+      <div class="mcq" data-mcq>
+        <p class="mcq-q">
+          <span data-lang="pt"
+            >Qual o propósito principal dos governor limits?</span
+          ><span data-lang="en"
+            >What's the main purpose of governor limits?</span
+          >
+        </p>
+        <div class="mcq-opts">
+          <button
+            class="mcq-opt"
+            data-correct="true"
+            data-fb-pt="Correto: multi-tenancy significa recursos compartilhados. Os governors garantem que nenhum inquilino monopolize CPU, banco ou memória dos vizinhos."
+            data-fb-en="Correct: multi-tenancy means shared resources. Governors guarantee no tenant monopolizes CPU, database or memory from their neighbors."
+          >
+            <span data-lang="pt">Proteger os vizinhos multi-tenant</span
+            ><span data-lang="en">Protect multi-tenant neighbors</span>
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="Não é segurança de dados — é proteção de recursos. Acessos são controlados por perfis, permission sets e sharing rules, outra conversa."
+            data-fb-en="It's not data security — it's resource protection. Access is controlled by profiles, permission sets and sharing rules, a different conversation."
+          >
+            <span data-lang="pt">Impedir acesso indevido a dados</span
+            ><span data-lang="en">Prevent unauthorized data access</span>
+          </button>
+          <button
+            class="mcq-opt"
+            data-correct="false"
+            data-fb-pt="Não é cobrança — limites por transação são fixos por licença/edição, não um medidor de faturamento. O propósito é isolar inquilinos."
+            data-fb-en="It's not billing — per-transaction caps are fixed per license/edition, not a billing meter. The purpose is tenant isolation."
+          >
+            <span data-lang="pt">Medir uso para cobrança</span
+            ><span data-lang="en">Meter usage for billing</span>
+          </button>
+        </div>
+        <div class="mcq-fb" data-fb></div>
+      </div>
+
+      <p class="cite-line">
+        <span data-lang="pt">Próximo:</span
+        ><span data-lang="en">Next:</span>
+        <a href="0002-soql-basics.html"
+          ><span data-lang="pt">SOQL — o SQL especial do Salesforce</span
+          ><span data-lang="en">SOQL — Salesforce's special SQL</span></a
+        >
+        ·
+        <a href="https://trailhead.salesforce.com/content/learn/modules/apex_database/apex_database_soql"
+          >Trailhead — SOQL Queries in Apex</a
+        >
+        ·
+        <a href="https://developer.salesforce.com/docs/platform/apex/guide/apex_dev_guide.html"
+          >Apex Developer Guide</a
+        >.
+        <span data-lang="pt"
+          >Dúvida em qualquer parte? Pergunte ao agente — ele é seu professor e
+          pode destrinchar qualquer seção.</span
+        ><span data-lang="en"
+          >Stuck on any part? Ask the agent — it's your teacher and can break
+          down any section.</span
+        >
+      </p>
+    </article>
+  </Fragment>
+</Lesson>
